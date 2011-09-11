@@ -1,0 +1,3 @@
+All others: self-drawn SVG files or created via scripts
+
+batch-system.png screenshot from Cecilia Rodrigues' masters thesis; used with permission. See her email from early 2011.
