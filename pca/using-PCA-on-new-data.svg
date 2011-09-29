@@ -120,7 +120,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -265,32 +265,26 @@
        x="178.2296"
        y="517.4657"
        ry="0" />
-    <g
-       id="g3867"
-       transform="translate(-2,4)">
-      <text
-         xml:space="preserve"
-         style="font-size:50px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman, Bold Italic'"
-         x="331.6427"
-         y="540.40112"
-         id="text3023"
-         sodipodi:linespacing="125%"><tspan
-           y="540.40112"
-           x="331.6427"
-           id="tspan3027"
-           sodipodi:role="line">x</tspan></text>
-      <text
-         sodipodi:linespacing="125%"
-         id="text3029"
-         y="546.40112"
-         x="355.6427"
-         style="font-size:30px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-         xml:space="preserve"><tspan
-           y="546.40112"
-           x="355.6427"
-           id="tspan3033"
-           sodipodi:role="line">new</tspan></text>
-    </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3023"
+       y="544.40112"
+       x="329.6427"
+       style="font-size:50px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman, Bold Italic'"
+       xml:space="preserve"><tspan
+         sodipodi:role="line"
+         id="tspan3051">x'</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+       x="353.6427"
+       y="550.40112"
+       id="text3029"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3033"
+         x="353.6427"
+         y="550.40112">new</tspan></text>
     <path
        inkscape:connector-curvature="0"
        id="path3833"
@@ -304,32 +298,26 @@
        x="736.80615"
        y="516.5412"
        ry="0" />
-    <g
-       id="g3855"
-       transform="translate(9.6449814,7.247093)">
-      <text
-         sodipodi:linespacing="125%"
-         id="text3845"
-         y="540.40112"
-         x="751.6427"
-         style="font-size:50px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman, Bold Italic'"
-         xml:space="preserve"><tspan
-           id="tspan3853"
-           sodipodi:role="line"
-           x="751.6427"
-           y="540.40112">t</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-size:30px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-         x="767.6427"
-         y="546.40112"
-         id="text3849"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan3851"
-           x="767.6427"
-           y="546.40112">new</tspan></text>
-    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:50px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman, Bold Italic'"
+       x="761.28766"
+       y="547.64819"
+       id="text3845"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3057">t'</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3849"
+       y="553.64819"
+       x="777.28766"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+       xml:space="preserve"><tspan
+         y="553.64819"
+         x="777.28766"
+         id="tspan3851"
+         sodipodi:role="line">new</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
@@ -419,14 +407,14 @@
     <text
        sodipodi:linespacing="125%"
        id="text3911"
-       y="473.26999"
+       y="481.26999"
        x="781.20685"
        style="font-size:30px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
        xml:space="preserve"><tspan
          sodipodi:role="line"
          id="tspan3047"
          x="781.20685"
-         y="473.26999">Using the model in the future</tspan></text>
+         y="481.26999">Using the model in the future</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text3917"

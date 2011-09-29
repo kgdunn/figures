@@ -24,7 +24,7 @@ par(cex.lab=1.1, cex.main=1.1, cex.sub=1.1, cex.axis=1.1)
 par(mar=c(2.0, 2.0, 1.0, 0.5))  # (bottom, left, top, right);
 plot(x, y, type='p', xlim=c(1, 11), ylim=c(0, 11), cex=2, lwd=4, main="Linear model")
 lines(new_x$x, predict(linmod, new_x), type='l', col='blue', lw=1)
-legend(7, 4, c('Linear'), cex=1.3,
+legend(7, 4, c('Linear'), cex=1,
        lwd=c(1), col=c('blue'))
 dev.off()
 
