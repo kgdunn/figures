@@ -95,7 +95,7 @@
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1441"
+     inkscape:window-width="1440"
      inkscape:window-height="820"
      inkscape:window-x="0"
      inkscape:window-y="0"
@@ -343,7 +343,7 @@
          y="560.57574">1</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:3.31931424;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:9.95794291, 9.95794291;stroke-dashoffset:0"
-       d="m 112.87815,429.4567 1067.62085,0"
+       d="m 110.87815,429.4567 1067.62085,0"
        id="path3873"
        inkscape:connector-curvature="0" />
     <path
@@ -420,13 +420,13 @@
        sodipodi:linespacing="125%"
        id="text3911"
        y="473.26999"
-       x="925.01056"
+       x="781.20685"
        style="font-size:30px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
        xml:space="preserve"><tspan
          sodipodi:role="line"
-         id="tspan3915"
-         x="925.01056"
-         y="473.26999">Using the model</tspan></text>
+         id="tspan3047"
+         x="781.20685"
+         y="473.26999">Using the model in the future</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text3917"
