@@ -1,8 +1,0 @@
-[auth]
-notes.prefix=https://bitbucket.org/kevindunn
-notes.username=kevindunn
-notes.password=DrAD4dra
-notes.schemes=https
-
-[paths]
-default=https://bitbucket.org/kevindunn/figures
