@@ -15,7 +15,7 @@
    version="1.1"
    inkscape:version="0.48.1 "
    sodipodi:docname="contribution-plots-in-the-scores.svg"
-   inkscape:export-filename="contribution-plots-in-the-scores-part1.png"
+   inkscape:export-filename="contribution-plots-in-the-scores-one-PC.png"
    inkscape:export-xdpi="300.08572"
    inkscape:export-ydpi="300.08572">
   <defs
@@ -112,7 +112,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
