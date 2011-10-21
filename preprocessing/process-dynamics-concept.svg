@@ -14,9 +14,9 @@
    id="svg2470"
    sodipodi:version="0.32"
    inkscape:version="0.48.0 r9654"
-   sodipodi:docname="soft-sensor-concept.svg"
+   sodipodi:docname="process-dynamics-concept.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="soft-sensor-concept.png"
+   inkscape:export-filename="process-dynamics-concept.png"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300"
    version="1.1">
@@ -69,7 +69,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4661538"
-     inkscape:cx="325"
+     inkscape:cx="239.40189"
      inkscape:cy="125"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -78,7 +78,7 @@
      inkscape:window-height="796"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="0"
+     inkscape:window-maximized="1"
      showguides="true"
      inkscape:guide-bbox="true" />
   <metadata
@@ -138,19 +138,27 @@
        inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
-       x="331.50171"
-       y="920.22565"
+       style="font-size:35px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       x="332.46362"
+       y="872.34247"
        id="text3873"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan3875"
-         x="331.50171"
-         y="920.22565">Soft</tspan><tspan
+         id="tspan3060"
+         x="332.46362"
+         y="872.34247">Process</tspan><tspan
          sodipodi:role="line"
-         x="331.50171"
-         y="970.22565"
-         id="tspan3877">sensor</tspan></text>
+         id="tspan3062"
+         x="332.46362"
+         y="916.09247">System</tspan><tspan
+         sodipodi:role="line"
+         id="tspan3064"
+         x="332.46362"
+         y="959.84247">with</tspan><tspan
+         sodipodi:role="line"
+         id="tspan3066"
+         x="332.46362"
+         y="1003.5924">dynamics</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text3879"
