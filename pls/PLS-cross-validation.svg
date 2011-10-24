@@ -15,7 +15,7 @@
    version="1.1"
    inkscape:version="0.48.0 r9654"
    sodipodi:docname="PLS-cross-validation.svg"
-   inkscape:export-filename="PLS-cross-validation-group3.png"
+   inkscape:export-filename="PLS-cross-validation-group1.png"
    inkscape:export-xdpi="200"
    inkscape:export-ydpi="200"
    style="display:inline">
@@ -60,7 +60,7 @@
      inkscape:window-height="796"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="0" />
+     inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -1627,10 +1627,22 @@
          id="tspan5804"
          x="567.31775"
          y="899.65442">-</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5790"
+       y="1017.0867"
+       x="509.88348"
+       style="font-size:40.65252686px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+       xml:space="preserve"
+       transform="matrix(1.475923,0,0,0.67754212,0,308.2677)"><tspan
+         sodipodi:role="line"
+         id="tspan5794"
+         x="509.88348"
+         y="1017.0867">^</tspan></text>
   </g>
   <g
      transform="translate(0,-194.09448)"
-     style="display:none"
+     style="display:inline"
      inkscape:label="Group1"
      id="g4795"
      inkscape:groupmode="layer">
@@ -2184,18 +2196,6 @@
          x="848.54889"
          id="tspan4981"
          sodipodi:role="line">(-1)</tspan></text>
-    <text
-       sodipodi:linespacing="125%"
-       id="text5790"
-       y="1017.0867"
-       x="509.88348"
-       style="font-size:40.65252686px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-       xml:space="preserve"
-       transform="scale(1.475923,0.67754212)"><tspan
-         sodipodi:role="line"
-         id="tspan5794"
-         x="509.88348"
-         y="1017.0867">^</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:30px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
@@ -2822,7 +2822,7 @@
   </g>
   <g
      transform="translate(0,-194.09448)"
-     style="display:inline"
+     style="display:none"
      inkscape:label="Group3"
      id="g5312"
      inkscape:groupmode="layer">
