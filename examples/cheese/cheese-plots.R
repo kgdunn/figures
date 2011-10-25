@@ -34,6 +34,15 @@ summary(model.lm.acetic)
 RMSEE.lm.acetic <- sqrt(mean((cheese$Taste - predict(model.lm.acetic))**2))
 
 print(c(RMSEE.lm, RMSEE.lm.acetic, RMSEE.lm.H2S, RMSEE.lm.lactic))
+
+#Neural network model
+#--------------------
+# model.nn <- nnet(cheese[,2:4], cheese[,5], size = 5)
+
+library(neuralnet)
+model.nn <- neuralnet(Taste ~ Acetic + H2S + Lactic, cheese, hidden=2, linear.output = FALSE, algorithm="backprop") act.fct="logistic")
+yhat <- model.nn$net.result
+
 # PCA model
 # -----------------------
 model.pca <- prcomp(cheese[,2:4], scale=TRUE)
