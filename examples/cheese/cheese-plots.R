@@ -10,7 +10,7 @@ part2 <- seq(2, dim(cheese)[1], 2)
 # NN
 # Do a testing/training switch and estimate RMSEP
 
-
+Add column on random numbers still
 
 library(car)
 
