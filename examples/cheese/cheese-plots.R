@@ -128,12 +128,12 @@ summary(model.pls)
 # R2_taste, using 1PC = 61.7%
 RMSEE.pls <- sqrt(mean((cheese$Taste - predict(model.pls)[,,1])**2))
 
-model.pcr.quick.1 <- mvr(Taste ~ Acetic + H2S + Lactic, data=cheese, method="svdpc", scale=TRUE, subset=part1)
-model.pcr.quick.2 <- mvr(Taste ~ Acetic + H2S + Lactic, data=cheese, method="svdpc", scale=TRUE, subset=part2)
+model.pls.1 <- mvr(Taste ~ Acetic + H2S + Lactic, data=cheese, method="simpls", scale=TRUE, subset=part1)
+model.pls.2 <- mvr(Taste ~ Acetic + H2S + Lactic, data=cheese, method="simpls", scale=TRUE, subset=part2)
 
-RMSEP.pcr.quick1 <- sqrt(mean((cheese$Taste[part1] - predict(model.pcr.quick.2, cheese[part1,])[,,1])**2))
-RMSEP.pcr.quick2 <- sqrt(mean((cheese$Taste[part2] - predict(model.pcr.quick.1, cheese[part2,])[,,1])**2))
-RMSEP.pcr <- mean(c(RMSEP.pcr.quick1, RMSEP.pcr.quick2))
+RMSEP.pls.1 <- sqrt(mean((cheese$Taste[part1] - predict(model.pls.2, cheese[part1,])[,,1])**2))
+RMSEP.pls.2 <- sqrt(mean((cheese$Taste[part2] - predict(model.pls.1, cheese[part2,])[,,1])**2))
+RMSEP.pls <- mean(c(RMSEP.pls.1, RMSEP.pls.2))
 
 
 # Plot observed against predicted
