@@ -26,9 +26,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.96333333"
-     inkscape:cx="350"
-     inkscape:cy="300"
+     inkscape:zoom="1.3623591"
+     inkscape:cx="364.23927"
+     inkscape:cy="283.88581"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -37,7 +37,7 @@
      inkscape:window-height="796"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="0" />
   <defs
      id="defs4">
     <marker
@@ -446,7 +446,7 @@
        d="m 336.67596,234.58609 a 15.117731,15.117731 0 1 1 -30.23546,0 15.117731,15.117731 0 1 1 30.23546,0 z"
        transform="matrix(0.58953374,0.08285357,0.08285357,-0.58953374,117.03479,913.47206)" />
     <path
-       transform="matrix(0.58953374,0.08285357,0.08285357,-0.58953374,183.03479,909.47206)"
+       transform="matrix(0.58953374,0.08285357,0.08285357,-0.58953374,179.03479,909.47206)"
        d="m 336.67596,234.58609 a 15.117731,15.117731 0 1 1 -30.23546,0 15.117731,15.117731 0 1 1 30.23546,0 z"
        sodipodi:ry="15.117731"
        sodipodi:rx="15.117731"

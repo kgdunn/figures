@@ -11,4 +11,3 @@ x2tr_pp = (x2tr - np.mean(x2tr))/np.std(x2tr)
 
 plot(x1pp, x2pp)
 plot(x1pp, x2tr_pp)
-grid

@@ -1,6 +1,6 @@
 # Load the data and create training/testing splits
-#cheese <- read.csv('http://datasets.connectmv.com/file/cheddar-cheese.csv')
-cheese <- read.csv('C:/kgd61600/My-projects/Datasets/cheese/cheddar-cheese.csv')
+cheese <- read.csv('http://datasets.connectmv.com/file/cheddar-cheese.csv')
+#cheese <- read.csv('C:/kgd61600/My-projects/Datasets/cheese/cheddar-cheese.csv')
 N = dim(cheese)[1]
 set.seed(0)
 cheese$Random <- rnorm(N, 1)
@@ -8,23 +8,18 @@ part1 <- seq(1, dim(cheese)[1], 2)
 part2 <- seq(2, dim(cheese)[1], 2)
 cols <- c("Acetic", "H2S", "Lactic", "Random")
 
-# PCR 
-# LS
-# PLS (and convert model to coefficients)
+# PLS: convert model to coefficients
 # NN
-# Do a testing/training switch and estimate RMSEP
-
-#Add column of random numbers still
 
 library(car)
 
 # Scatter plot matrix
 # -----------------------
-#bitmap('cheese-plots.png', type="png256", width=6, height=6, res=300, pointsize=14)
-#par(mar=c(1.5, 1.5, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
-#par(cex.lab=1.5, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
-#scatterplotMatrix(cheese[,2:6], col=c(1,1,1), smooth=FALSE)
-#dev.off()
+bitmap('cheese-plots.png', type="png256", width=6, height=6, res=300, pointsize=14)
+par(mar=c(1.5, 1.5, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+par(cex.lab=1.5, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
+scatterplotMatrix(cheese[,2:6], col=c(1,1,1), smooth=FALSE)
+dev.off()
 
 # Least squares model
 # -----------------------
