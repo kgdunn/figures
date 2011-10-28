@@ -9,6 +9,8 @@ part1 <- seq(1, dim(cheese)[1], 2)
 part2 <- seq(2, dim(cheese)[1], 2)
 cols <- c("Acetic", "H2S", "Lactic", "Random")
 
+cor(cheese)
+
 new.cheese <- data.frame(Acetic=9.0, H2S=4.0, Lactic=1.8, Random=0)
 
 write.csv(cheese, 'cheese-with-random-data.csv')  # to double check PLS calculations in other software packages

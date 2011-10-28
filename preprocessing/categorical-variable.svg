@@ -59,7 +59,7 @@
      inkscape:window-height="796"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="0" />
+     inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -219,12 +219,10 @@
        id="text4020"
        y="638.62646"
        x="375.54016"
-       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
        xml:space="preserve"><tspan
          sodipodi:role="line"
-         id="tspan4026"
-         x="375.54016"
-         y="638.62646">A</tspan></text>
+         id="tspan3016">T</tspan></text>
     <path
        inkscape:connector-curvature="0"
        id="path4028"
@@ -238,7 +236,7 @@
        id="text4030"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan4040">B</tspan></text>
+         id="tspan3022">D</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Mend)"
        d="m 360.96859,744.04639 -74.19622,0"
@@ -252,6 +250,6 @@
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
        xml:space="preserve"><tspan
          sodipodi:role="line"
-         id="tspan4042">C</tspan></text>
+         id="tspan3025">H</tspan></text>
   </g>
 </svg>
