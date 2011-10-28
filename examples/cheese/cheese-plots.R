@@ -1,12 +1,16 @@
 # Load the data and create training/testing splits
 cheese <- read.csv('http://datasets.connectmv.com/file/cheddar-cheese.csv')
+
 #cheese <- read.csv('C:/kgd61600/My-projects/Datasets/cheese/cheddar-cheese.csv')
 N = dim(cheese)[1]
-set.seed(0)
+set.seed(2)
 cheese$Random <- rnorm(N, 1)
 part1 <- seq(1, dim(cheese)[1], 2)
 part2 <- seq(2, dim(cheese)[1], 2)
 cols <- c("Acetic", "H2S", "Lactic", "Random")
+
+
+write.csv(cheese, 'cheese-with-random-data.csv')  # to double check PLS calculations in other software packages
 
 # PLS: convert model to coefficients
 # NN
@@ -17,7 +21,7 @@ library(car)
 # -----------------------
 bitmap('cheese-plots.png', type="png256", width=6, height=6, res=300, pointsize=14)
 par(mar=c(1.5, 1.5, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
-par(cex.lab=1.5, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
+par(cex.lab=1.2, cex.main=1.2, cex.sub=1.2, cex.axis=1.2)
 scatterplotMatrix(cheese[,2:6], col=c(1,1,1), smooth=FALSE)
 dev.off()
 
@@ -25,6 +29,7 @@ dev.off()
 # -----------------------
 model.lm <- lm(Taste ~ Acetic + H2S + Lactic + Random, data=cheese)
 summary(model.lm)
+confint(model.lm)
 RMSEE.lm <- sqrt(mean((cheese$Taste - predict(model.lm))**2))
 # Predictions
 model.lm1 <- lm(Taste ~ Acetic + H2S + Lactic, data=cheese[part1,])
@@ -37,6 +42,7 @@ RMSEP.lm <- mean(c(RMSEP.lm1, RMSEP.lm2))
 # -----------------------
 model.lm.H2S <- lm(Taste ~ H2S, data=cheese)
 summary(model.lm.H2S)
+confint(model.lm.H2S)
 RMSEE.lm.H2S <- sqrt(mean((cheese$Taste - predict(model.lm.H2S))**2))
 # Predictions
 model.H2S.lm1 <- lm(Taste ~ H2S, data=cheese[part1,])
@@ -46,13 +52,13 @@ RMSEP.H2S.lm2 <- sqrt(mean((cheese$Taste[part2] - predict(model.H2S.lm1, cheese[
 RMSEP.H2S.lm <- mean(c(RMSEP.H2S.lm1, RMSEP.H2S.lm2))
 
 
-# Least squares model: lactic
+# Least squares model: lactic (skip)
 # -----------------------
 model.lm.lactic <- lm(cheese$Taste ~  cheese$Lactic )
 summary(model.lm.lactic)
 RMSEE.lm.lactic <- sqrt(mean((cheese$Taste - predict(model.lm.lactic))**2))
 
-# Least squares model: acetic
+# Least squares model: acetic (skip)
 # -----------------------
 model.lm.acetic <- lm(cheese$Taste ~ cheese$Acetic )
 summary(model.lm.acetic)
@@ -68,7 +74,7 @@ print(c(RMSEE.lm, RMSEE.lm.acetic, RMSEE.lm.H2S, RMSEE.lm.lactic))
 #model.nn <- neuralnet(Taste ~ Acetic + H2S + Lactic + Random, cheese, hidden=2, linear.output = FALSE, algorithm="backprop", act.fct="logistic")
 #yhat <- model.nn$net.result
 
-# PCR model (one component)
+# PCR model (one component): long way
 # -----------------------
 model.pca <- prcomp(cheese[,cols], scale=TRUE)
 summary(model.pca)
@@ -77,6 +83,9 @@ T <- model.pca$x
 model.pcr <- lm(cheese$Taste ~ T[,1])
 summary(model.pcr)
 RMSEE.pcr <- sqrt(mean((cheese$Taste - predict(model.pcr))**2))
+
+# regression coefficients
+P[,1] * model.pcr$coef[2] / model.pca$scale
 
 # Model for part 1
 model.pca.1 <- prcomp(cheese[part1,cols], scale=TRUE)
@@ -109,7 +118,7 @@ RMSEP.pcr <- mean(c(RMSEP.pcr.lm1, RMSEP.pcr.lm2))
 library(pls)
 model.pcr.quick <- mvr(Taste ~ Acetic + H2S + Lactic + Random, data=cheese, method="svdpc", scale=TRUE)
 summary(model.pcr.quick)
-# R2_taste, using 1PC = 58.01%
+# R2_taste, using 1PC = 62.04%
 RMSEE.pcr <- sqrt(mean((cheese$Taste - predict(model.pcr.quick)[,,1])**2))
 
 model.pcr.quick.1 <- mvr(Taste ~ Acetic + H2S + Lactic + Random, data=cheese, method="svdpc", scale=TRUE, subset=part1)
@@ -118,6 +127,9 @@ model.pcr.quick.2 <- mvr(Taste ~ Acetic + H2S + Lactic + Random, data=cheese, me
 RMSEP.pcr.quick1 <- sqrt(mean((cheese$Taste[part1] - predict(model.pcr.quick.2, cheese[part1,])[,,1])**2))
 RMSEP.pcr.quick2 <- sqrt(mean((cheese$Taste[part2] - predict(model.pcr.quick.1, cheese[part2,])[,,1])**2))
 RMSEP.pcr <- mean(c(RMSEP.pcr.quick1, RMSEP.pcr.quick2))
+
+# Regression coefficients with 1 PC
+coef(model.pcr.quick, ncomp=1)
 
 # PLS using the "pls" package
 # ----------------------------
@@ -134,6 +146,15 @@ RMSEP.pls.1 <- sqrt(mean((cheese$Taste[part1] - predict(model.pls.2, cheese[part
 RMSEP.pls.2 <- sqrt(mean((cheese$Taste[part2] - predict(model.pls.1, cheese[part2,])[,,1])**2))
 RMSEP.pls <- mean(c(RMSEP.pls.1, RMSEP.pls.2))
 
+
+# Coefficients and reliability intervals from ProMV 11.08,  but divide them by "model.pls$scale" and times by sd(y)
+#               Coeff               Lower bound         Upper bound
+# H2S       1   0.341649600476995   0.214433534821241   0.46886566613275
+# Lactic    2   0.318015562701819   0.237906914060081   0.398124211343557
+# Acetic    3   0.248419848376738   0.176929971367371   0.319909725386105
+# Random	4	0.126124729088615	-0.034083388621767	0.286332846798997
+
+c(0.3416, 0.3180, 0.2484, 0.1261) / model.pls$scale
 
 # Plot observed against predicted
 # -----------------------
