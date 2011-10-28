@@ -9,6 +9,7 @@ part1 <- seq(1, dim(cheese)[1], 2)
 part2 <- seq(2, dim(cheese)[1], 2)
 cols <- c("Acetic", "H2S", "Lactic", "Random")
 
+new.cheese <- data.frame(Acetic=9.0, H2S=4.0, Lactic=1.8, Random=0)
 
 write.csv(cheese, 'cheese-with-random-data.csv')  # to double check PLS calculations in other software packages
 
@@ -30,6 +31,7 @@ dev.off()
 model.lm <- lm(Taste ~ Acetic + H2S + Lactic + Random, data=cheese)
 summary(model.lm)
 confint(model.lm)
+predict(model.lm, new.cheese)  # 29.9
 RMSEE.lm <- sqrt(mean((cheese$Taste - predict(model.lm))**2))
 # Predictions
 model.lm1 <- lm(Taste ~ Acetic + H2S + Lactic, data=cheese[part1,])
@@ -43,6 +45,7 @@ RMSEP.lm <- mean(c(RMSEP.lm1, RMSEP.lm2))
 model.lm.H2S <- lm(Taste ~ H2S, data=cheese)
 summary(model.lm.H2S)
 confint(model.lm.H2S)
+predict(model.lm.H2S, new.cheese) 
 RMSEE.lm.H2S <- sqrt(mean((cheese$Taste - predict(model.lm.H2S))**2))
 # Predictions
 model.H2S.lm1 <- lm(Taste ~ H2S, data=cheese[part1,])
@@ -68,11 +71,36 @@ print(c(RMSEE.lm, RMSEE.lm.acetic, RMSEE.lm.H2S, RMSEE.lm.lactic))
 
 #Neural network model
 #--------------------
-# model.nn <- nnet(cheese[,2:4], cheese[,5], size = 5)
+#nnet(Taste ~ Acetic + H2S + Lactic + Random, data=cheese, size=5)
+#model.nn <- nnet(cheese[,2:4], cheese[,5], size = 5)
 
-#library(neuralnet)
-#model.nn <- neuralnet(Taste ~ Acetic + H2S + Lactic + Random, cheese, hidden=2, linear.output = FALSE, algorithm="backprop", act.fct="logistic")
-#yhat <- model.nn$net.result
+library(neuralnet)
+model.nn <- neuralnet(Taste ~ Acetic + H2S + Lactic + Random, cheese, 
+                      hidden=1, 
+                      likelihood=TRUE,
+                      algorithm="rprop+",
+                      linear.output = TRUE)  # because we want predictions of y, not a classifier
+yhat <- compute(model.nn, cheese[,c(2,3,4,6)])$net.result 
+yhat <- model.nn$net.result[[1]][,1]  # two ways of getting the neural network predictions
+resid <- cheese$Taste - yhat
+RMSEE.nn <- sqrt(mean(resid**2))
+R2.nn <- 1 - var(resid) / var(cheese$Taste )
+compute(model.nn, new.cheese)   # 38.8
+
+# Predictions
+model.nn1 <- neuralnet(Taste ~ Acetic + H2S + Lactic + Random, cheese[part1,], hidden=1, linear.output = TRUE) 
+### model.nn2 <- neuralnet(Taste ~ Acetic + H2S + Lactic + Random, cheese[part2,], hidden=1, linear.output = TRUE, algorithm="rprop+", rep=3)   # doesn't converge !!
+# so add one extra observation: 
+model.nn2 <- neuralnet(Taste ~ Acetic + H2S + Lactic + Random, cheese[c(1,part2),], hidden=1, linear.output = TRUE)   
+
+
+yhat.nn.2 <- compute(model.nn1, cheese[part2, c(2,3,4,6)])$net.result   # predict part2's data, given model built from part 1
+yhat.nn.1 <- compute(model.nn2, cheese[part1, c(2,3,4,6)])$net.result   # predict part1's data, given model built from part 2
+RMSEP.nn.2 <- sqrt(mean((cheese$Taste[part2] - yhat.nn.2)**2))  # 14.9
+RMSEP.nn.1 <- sqrt(mean((cheese$Taste[part1] - yhat.nn.1)**2))
+RMSEP.nn <- mean(c(RMSEP.nn.1, RMSEP.nn.2))
+
+
 
 # PCR model (one component): long way
 # -----------------------
@@ -120,6 +148,8 @@ model.pcr.quick <- mvr(Taste ~ Acetic + H2S + Lactic + Random, data=cheese, meth
 summary(model.pcr.quick)
 # R2_taste, using 1PC = 62.04%
 RMSEE.pcr <- sqrt(mean((cheese$Taste - predict(model.pcr.quick)[,,1])**2))
+predict.mvr(model.pcr.quick, new.cheese)  # 54.3
+
 
 model.pcr.quick.1 <- mvr(Taste ~ Acetic + H2S + Lactic + Random, data=cheese, method="svdpc", scale=TRUE, subset=part1)
 model.pcr.quick.2 <- mvr(Taste ~ Acetic + H2S + Lactic + Random, data=cheese, method="svdpc", scale=TRUE, subset=part2)
@@ -138,6 +168,7 @@ model.pls <- mvr(Taste ~ Acetic + H2S + Lactic + Random, data=cheese, method="si
 summary(model.pls)
 # R2_taste, using 1PC = 62.7%
 RMSEE.pls <- sqrt(mean((cheese$Taste - predict(model.pls)[,,1])**2))
+predict.mvr(model.pls, new.cheese) 
 
 model.pls.1 <- mvr(Taste ~ Acetic + H2S + Lactic + Random, data=cheese, method="simpls", scale=TRUE, subset=part1)
 model.pls.2 <- mvr(Taste ~ Acetic + H2S + Lactic + Random, data=cheese, method="simpls", scale=TRUE, subset=part2)
@@ -154,7 +185,7 @@ RMSEP.pls <- mean(c(RMSEP.pls.1, RMSEP.pls.2))
 # Acetic    3   0.248419848376738   0.176929971367371   0.319909725386105
 # Random	4	0.126124729088615	-0.034083388621767	0.286332846798997
 
-c(0.3416, 0.3180, 0.2484, 0.1261) / model.pls$scale
+c(0.3416, 0.3180, 0.2484, 0.1261) / model.pls$scale * sd(cheese$Taste)
 
 # Plot observed against predicted
 # -----------------------
