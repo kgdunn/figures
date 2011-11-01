@@ -1,7 +1,5 @@
 # Load the data and create training/testing splits
 cheese <- read.csv('http://datasets.connectmv.com/file/cheddar-cheese.csv')
-
-#cheese <- read.csv('C:/kgd61600/My-projects/Datasets/cheese/cheddar-cheese.csv')
 N = dim(cheese)[1]
 set.seed(2)
 cheese$Random <- rnorm(N, 1)
@@ -9,41 +7,38 @@ part1 <- seq(1, dim(cheese)[1], 2)
 part2 <- seq(2, dim(cheese)[1], 2)
 cols <- c("Acetic", "H2S", "Lactic", "Random")
 
+# Correlation between variables
 cor(cheese)
 
+# Create a new cheese with these properties
 new.cheese <- data.frame(Acetic=9.0, H2S=4.0, Lactic=1.8, Random=0)
-
-write.csv(cheese, 'cheese-with-random-data.csv')  # to double check PLS calculations in other software packages
-
-# PLS: convert model to coefficients
-# NN
-
-library(car)
+write.csv(cheese, 'cheese-with-random-data.csv')  # to double check calculations in other software packages
 
 # Scatter plot matrix
 # -----------------------
+library(car)
 bitmap('cheese-plots.png', type="png256", width=6, height=6, res=300, pointsize=14)
 par(mar=c(1.5, 1.5, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.2, cex.main=1.2, cex.sub=1.2, cex.axis=1.2)
 scatterplotMatrix(cheese[,2:6], col=c(1,1,1), smooth=FALSE)
 dev.off()
 
-# Least squares model
+# Multiple linear regression model
 # -----------------------
 model.lm <- lm(Taste ~ Acetic + H2S + Lactic + Random, data=cheese)
 summary(model.lm)
 confint(model.lm)
 predict(model.lm, new.cheese)  # 29.9
 RMSEE.lm <- sqrt(mean((cheese$Taste - predict(model.lm))**2))
-# Predictions
+# Predictions using the "test set swap" procedure
 model.lm1 <- lm(Taste ~ Acetic + H2S + Lactic, data=cheese[part1,])
 model.lm2 <- lm(Taste ~ Acetic + H2S + Lactic, data=cheese[part2,])
 RMSEP.lm1 <- sqrt(mean((cheese$Taste[part1] - predict(model.lm2, cheese[part1,]))**2))
 RMSEP.lm2 <- sqrt(mean((cheese$Taste[part2] - predict(model.lm1, cheese[part2,]))**2))
 RMSEP.lm <- mean(c(RMSEP.lm1, RMSEP.lm2))
 
-# Least squares model: H2S
-# -----------------------
+# Ordinary Least Squares model: H2S selected since it has highest correlation with Taste
+# ----------------------------
 model.lm.H2S <- lm(Taste ~ H2S, data=cheese)
 summary(model.lm.H2S)
 confint(model.lm.H2S)
@@ -57,31 +52,14 @@ RMSEP.H2S.lm2 <- sqrt(mean((cheese$Taste[part2] - predict(model.H2S.lm1, cheese[
 RMSEP.H2S.lm <- mean(c(RMSEP.H2S.lm1, RMSEP.H2S.lm2))
 
 
-# Least squares model: lactic (skip)
-# -----------------------
-model.lm.lactic <- lm(cheese$Taste ~  cheese$Lactic )
-summary(model.lm.lactic)
-RMSEE.lm.lactic <- sqrt(mean((cheese$Taste - predict(model.lm.lactic))**2))
-
-# Least squares model: acetic (skip)
-# -----------------------
-model.lm.acetic <- lm(cheese$Taste ~ cheese$Acetic )
-summary(model.lm.acetic)
-RMSEE.lm.acetic <- sqrt(mean((cheese$Taste - predict(model.lm.acetic))**2))
-
-print(c(RMSEE.lm, RMSEE.lm.acetic, RMSEE.lm.H2S, RMSEE.lm.lactic))
-
 #Neural network model
 #--------------------
-#nnet(Taste ~ Acetic + H2S + Lactic + Random, data=cheese, size=5)
-#model.nn <- nnet(cheese[,2:4], cheese[,5], size = 5)
-
 library(neuralnet)
 model.nn <- neuralnet(Taste ~ Acetic + H2S + Lactic + Random, cheese, 
                       hidden=1, 
                       likelihood=TRUE,
                       algorithm="rprop+",
-                      linear.output = TRUE)  # because we want predictions of y, not a classifier
+                      linear.output = TRUE)  # because we want predictions of y, not a 0/1 classifier
 yhat <- compute(model.nn, cheese[,c(2,3,4,6)])$net.result 
 yhat <- model.nn$net.result[[1]][,1]  # two ways of getting the neural network predictions
 resid <- cheese$Taste - yhat
@@ -89,22 +67,18 @@ RMSEE.nn <- sqrt(mean(resid**2))
 R2.nn <- 1 - var(resid) / var(cheese$Taste )
 compute(model.nn, new.cheese)   # 38.8
 
-# Predictions
+# Predictions, using test set swap
 model.nn1 <- neuralnet(Taste ~ Acetic + H2S + Lactic + Random, cheese[part1,], hidden=1, linear.output = TRUE) 
-### model.nn2 <- neuralnet(Taste ~ Acetic + H2S + Lactic + Random, cheese[part2,], hidden=1, linear.output = TRUE, algorithm="rprop+", rep=3)   # doesn't converge !!
-# so add one extra observation: 
-model.nn2 <- neuralnet(Taste ~ Acetic + H2S + Lactic + Random, cheese[c(1,part2),], hidden=1, linear.output = TRUE)   
-
-
+# model.nn2 <- neuralnet(Taste ~ Acetic + H2S + Lactic + Random, cheese[part2,], hidden=1, linear.output = TRUE, algorithm="rprop+", rep=3)   
+# Previous model doesn't converge with that particular training set. Add one extra observation to the part 2 data: converges now
+model.nn2 <- neuralnet(Taste ~ Acetic + H2S + Lactic + Random, cheese[c(1, part2),], hidden=1, linear.output = TRUE)   
 yhat.nn.2 <- compute(model.nn1, cheese[part2, c(2,3,4,6)])$net.result   # predict part2's data, given model built from part 1
 yhat.nn.1 <- compute(model.nn2, cheese[part1, c(2,3,4,6)])$net.result   # predict part1's data, given model built from part 2
 RMSEP.nn.2 <- sqrt(mean((cheese$Taste[part2] - yhat.nn.2)**2))  # 14.9
 RMSEP.nn.1 <- sqrt(mean((cheese$Taste[part1] - yhat.nn.1)**2))
 RMSEP.nn <- mean(c(RMSEP.nn.1, RMSEP.nn.2))
 
-
-
-# PCR model (one component): long way
+# PCR model (one component): long way (manually create PCR model, then linear regression model)
 # -----------------------
 model.pca <- prcomp(cheese[,cols], scale=TRUE)
 summary(model.pca)
@@ -179,7 +153,6 @@ RMSEP.pls.1 <- sqrt(mean((cheese$Taste[part1] - predict(model.pls.2, cheese[part
 RMSEP.pls.2 <- sqrt(mean((cheese$Taste[part2] - predict(model.pls.1, cheese[part2,])[,,1])**2))
 RMSEP.pls <- mean(c(RMSEP.pls.1, RMSEP.pls.2))
 
-
 # Coefficients and reliability intervals from ProMV 11.08,  but divide them by "model.pls$scale" and times by sd(y)
 #               Coeff               Lower bound         Upper bound
 # H2S       1   0.341649600476995   0.214433534821241   0.46886566613275
@@ -188,8 +161,3 @@ RMSEP.pls <- mean(c(RMSEP.pls.1, RMSEP.pls.2))
 # Random	4	0.126124729088615	-0.034083388621767	0.286332846798997
 
 c(0.3416, 0.3180, 0.2484, 0.1261) / model.pls$scale * sd(cheese$Taste)
-
-# Plot observed against predicted
-# -----------------------
-#plot(cheese$Taste, predict(model.pcr.2))
-#abline(lm(predict(model.pcr.2) ~ cheese$Taste -1))
