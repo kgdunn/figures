@@ -42,7 +42,14 @@ scaleT_avg = mean(scaleT);
 [val, idx] = sort(diag(val), 'descend');
 P = P(:,idx);
 % For this data set only:
-P(:,1) = -P(:,1);
+P(:,2) = -P(:,2);
+temp = -maxT_avg(1);
+maxT_avg(1) = -minT_avg(1);
+minT_avg(1) = temp;
+
+temp = -maxT_avg(2);
+maxT_avg(2) = -minT_avg(2);
+minT_avg(2) = temp;
 
 scoreplots = uint8(zeros(256,256,nFrames));
 for k = 1:nFrames                                               % Store the individual frames in the storage array
