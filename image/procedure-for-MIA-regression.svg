@@ -13,8 +13,11 @@
    height="1052.36"
    id="svg2"
    version="1.1"
-   inkscape:version="0.47 r22583"
-   sodipodi:docname="C_chart.svg">
+   inkscape:version="0.48.0 r9654"
+   sodipodi:docname="procedure-for-MIA-regression.svg"
+   inkscape:export-filename="procedure-for-MIA-regression.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
   <defs
      id="defs4">
     <marker
@@ -58,17 +61,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.30224066"
-     inkscape:cx="276.7914"
-     inkscape:cy="590.35099"
+     inkscape:zoom="1.0069231"
+     inkscape:cx="650"
+     inkscape:cy="676.63275"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1440"
-     inkscape:window-height="784"
+     inkscape:window-height="796"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1"
+     inkscape:window-maximized="0"
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:snap-to-guides="false">
@@ -125,7 +128,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
