@@ -2,3 +2,4 @@ previous
 examples/flame/video/.*\.png
 examples/flame/video/.*\.mp4
 kernel-adaptive/paper
+examples/oats-groats/originals*
