@@ -14,7 +14,10 @@
    id="svg4556"
    version="1.1"
    inkscape:version="0.48.0 r9654"
-   sodipodi:docname="PLSDA-setup.svg">
+   sodipodi:docname="PLSDA-setup.svg"
+   inkscape:export-filename="PLSDA-setup.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
   <defs
      id="defs4558">
     <marker
@@ -40,7 +43,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.72036364"
-     inkscape:cx="282.99532"
+     inkscape:cx="108.77775"
      inkscape:cy="388.89924"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -96,13 +99,13 @@
        sodipodi:linespacing="125%"
        id="text5409"
        y="646.13074"
-       x="61.293564"
+       x="47.043564"
        style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:arial;-inkscape-font-specification:arial"
        xml:space="preserve"><tspan
          sodipodi:role="line"
          id="tspan3000"
-         x="61.293564"
-         y="646.13074">Grade A oat pixels</tspan></text>
+         x="47.043564"
+         y="646.13074">Grade A groat pixels</tspan></text>
     <rect
        style="fill:#ffd5d5;fill-opacity:1;stroke:none"
        id="rect5419"
