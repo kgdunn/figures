@@ -42,9 +42,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.72036364"
-     inkscape:cx="432.17314"
-     inkscape:cy="364.28571"
+     inkscape:zoom="1.63625"
+     inkscape:cx="400"
+     inkscape:cy="150"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -61,7 +61,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -129,23 +129,17 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial;writing-mode:lr"
        x="391.28058"
        y="956.82153"
        id="text4576"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan4578"
-         x="391.28058"
-         y="956.82153">Sphts hull</tspan><tspan
+         id="tspan3017">Splits hull</tspan><tspan
          sodipodi:role="line"
-         x="391.28058"
-         y="979.32153"
-         id="tspan4580">off the</tspan><tspan
+         id="tspan3019">off the</tspan><tspan
          sodipodi:role="line"
-         x="391.28058"
-         y="1001.8215"
-         id="tspan4582">inner groat</tspan></text>
+         id="tspan3021">inner groat</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
@@ -201,19 +195,15 @@
          y="782.40356">Hulls</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial;writing-mode:lr"
        x="729.37433"
        y="1017.9271"
        id="text4600"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan4602"
-         x="729.37433"
-         y="1017.9271">Oats and groats</tspan><tspan
+         id="tspan3018">Mostly groats</tspan><tspan
          sodipodi:role="line"
-         x="729.37433"
-         y="1040.4271"
-         id="tspan4604">stream</tspan></text>
+         id="tspan3020">with some oats</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mend)"
        d="m 68.98334,899.23101 51.36295,0"
