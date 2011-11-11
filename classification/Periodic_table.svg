@@ -1,0 +1,401 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <g transform="translate(-.5,-56.5)">
+    <g stroke="#000" stroke-width="1">
+      <path fill="rgb(255,153,204)" stroke-width="0"
+      d="M144,387v-36h36v36z" />
+      <path fill="rgb(255,191,255)" stroke-width="0"
+      d="M144,347v-36h36v36z" />
+      <path fill="rgb(255,222,173)" d="M104,387v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M184,387v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M224,387v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M264,387v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M304,387v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M344,387v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M384,387v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M424,387v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M464,387v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M504,387v-36h36v36z" />
+      <path fill="rgb(204,204,204)" d="M544,387v-36h36v36z" />
+      <path fill="rgb(204,204,204)" d="M584,387v-36h36v36z" />
+      <path fill="rgb(204,204,204)" d="M624,387v-36h36v36z" />
+      <path fill="rgb(204,204,204)" d="M664,387v-36h36v36z" />
+      <path fill="rgb(255,255,153)" d="M704,387v-36h36v36z" />
+      <path fill="rgb(192,255,255)" d="M744,387v-36h36v36z" />
+      <path fill="rgb(255,102,102)" d="M64,387v-36h36v36z" />
+      <path fill="rgb(255,222,173)" d="M104,347v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M184,347v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M224,347v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M264,347v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M304,347v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M344,347v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M384,347v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M424,347v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M464,347v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M504,347v-36h36v36z" />
+      <path fill="rgb(204,204,204)" d="M544,347v-36h36v36z" />
+      <path fill="rgb(204,204,204)" d="M584,347v-36h36v36z" />
+      <path fill="rgb(204,204,204)" d="M624,347v-36h36v36z" />
+      <path fill="rgb(204,204,153)" d="M664,347v-36h36v36z" />
+      <path fill="rgb(255,255,153)" d="M704,347v-36h36v36z" />
+      <path fill="rgb(192,255,255)" d="M744,347v-36h36v36z" />
+      <path fill="rgb(255,102,102)" d="M64,347v-36h36v36z" />
+      <path fill="rgb(255,222,173)" d="M104,307v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M144,307v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M184,307v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M224,307v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M264,307v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M304,307v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M344,307v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M384,307v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M424,307v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M464,307v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M504,307v-36h36v36z" />
+      <path fill="rgb(204,204,204)" d="M544,307v-36h36v36z" />
+      <path fill="rgb(204,204,204)" d="M584,307v-36h36v36z" />
+      <path fill="rgb(204,204,153)" d="M624,307v-36h36v36z" />
+      <path fill="rgb(204,204,153)" d="M664,307v-36h36v36z" />
+      <path fill="rgb(255,255,153)" d="M704,307v-36h36v36z" />
+      <path fill="rgb(192,255,255)" d="M744,307v-36h36v36z" />
+      <path fill="rgb(255,102,102)" d="M 64,307v-36h36v36z" />
+      <path fill="rgb(255,222,173)" d="M104,267v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M144,267v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M184,267v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M224,267v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M264,267v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M304,267v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M344,267v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M384,267v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M424,267v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M464,267v-36h36v36z" />
+      <path fill="rgb(255,192,192)" d="M504,267v-36h36v36z" />
+      <path fill="rgb(204,204,204)" d="M544,267v-36h36v36z" />
+      <path fill="rgb(204,204,153)" d="M584,267v-36h36v36z" />
+      <path fill="rgb(204,204,153)" d="M624,267v-36h36v36z" />
+      <path fill="rgb(160,255,160)" d="M664,267v-36h36v36z" />
+      <path fill="rgb(255,255,153)" d="M704,267v-36h36v36z" />
+      <path fill="rgb(192,255,255)" d="M744,267v-36h36v36z" />
+      <path fill="rgb(255,102,102)" d="M64,267v-36h36v36z" />
+      <path fill="rgb(255,222,173)" d="M104,227v-36h36v36z" />
+      <path fill="rgb(255,102,102)" d="M64,227v-36h36v36z" />
+      <path fill="rgb(255,222,173)" d="M104,187v-36h36v36z" />
+      <path fill="rgb(255,102,102)" d="M64,187v-36h36v36z" />
+      <path fill="rgb(160,255,160)" d="M64,147v-36h36v36z" />
+      <path fill="rgb(204,204,204)" d="M544,227v-36h36v36z" />
+      <path fill="rgb(204,204,153)" d="M584,227v-36h36v36z" />
+      <path fill="rgb(160,255,160)" d="M624,227v-36h36v36z" />
+      <path fill="rgb(160,255,160)" d="M664,227v-36h36v36z" />
+      <path fill="rgb(255,255,153)" d="M704,227v-36h36v36z" />
+      <path fill="rgb(192,255,255)" d="M744,227v-36h36v36z" />
+      <path fill="rgb(204,204,153)" d="M544,187v-36h36v36z" />
+      <path fill="rgb(160,255,160)" d="M584,187v-36h36v36z" />
+      <path fill="rgb(160,255,160)" d="M624,187v-36h36v36z" />
+      <path fill="rgb(160,255,160)" d="M664,187v-36h36v36z" />
+      <path fill="rgb(255,255,153)" d="M704,187v-36h36v36z" />
+      <path fill="rgb(192,255,255)" d="M744,187v-36h36v36z" />
+      <path fill="rgb(192,255,255)" d="M744,147v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M184,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M224,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M264,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M304,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M344,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M384,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M424,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M464,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M504,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M544,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M584,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M624,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M664,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M704,447v-36h36v36z" />
+      <path fill="rgb(255,191,255)" d="M744,447v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M184,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M224,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M264,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M304,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M344,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M384,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M424,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M464,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M504,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M544,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M584,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M624,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M664,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M704,487v-36h36v36z" />
+      <path fill="rgb(255,153,204)" d="M744,487v-36h36v36z" />
+    </g>
+    <g text-anchor="middle" font-family="sans">
+      <text x="81" y="94">1</text>
+      <text x="121" y="94">2</text>
+      <text x="161" y="94">3</text>
+      <text x="201" y="94">4</text>
+      <text x="241" y="94">5</text>
+      <text x="281" y="94">6</text>
+      <text x="321" y="94">7</text>
+      <text x="361" y="94">8</text>
+      <text x="401" y="94">9</text>
+      <text x="441" y="94">10</text>
+      <text x="481" y="94">11</text>
+      <text x="521" y="94">12</text>
+      <text x="561" y="94">13</text>
+      <text x="601" y="94">14</text>
+      <text x="641" y="94">15</text>
+      <text x="681" y="94">16</text>
+      <text x="721" y="94">17</text>
+      <text x="761" y="94">18</text>
+      <text x="42" y="134">1</text>
+      <text x="42" y="174">2</text>
+      <text x="42" y="214">3</text>
+      <text x="42" y="254">4</text>
+      <text x="42" y="294">5</text>
+      <text x="42" y="334">6</text>
+      <text x="42" y="374">7</text>
+      <g font-size="12px">
+        <text y="125" x="762">2</text>
+        <text y="125" x="82">1</text>
+        <text y="141" x="762">He</text>
+        <text y="141" x="82">H</text>
+        <text y="165" x="122">4</text>
+        <text y="165" x="562">5</text>
+        <text y="165" x="602">6</text>
+        <text y="165" x="642">7</text>
+        <text y="165" x="682">8</text>
+        <text y="165" x="722">9</text>
+        <text y="165" x="762">10</text>
+        <text y="165" x="82">3</text>
+        <text y="181" x="122">Be</text>
+        <text y="181" x="562">B</text>
+        <text y="181" x="602">C</text>
+        <text y="181" x="642">N</text>
+        <text y="181" x="682">O</text>
+        <text y="181" x="722">F</text>
+        <text y="181" x="762">Ne</text>
+        <text y="181" x="82">Li</text>
+        <text y="205" x="122">12</text>
+        <text y="205" x="562">13</text>
+        <text y="205" x="602">14</text>
+        <text y="205" x="642">15</text>
+        <text y="205" x="682">16</text>
+        <text y="205" x="722">17</text>
+        <text y="205" x="762">18</text>
+        <text y="205" x="82">11</text>
+        <text y="221" x="122">Mg</text>
+        <text y="221" x="562">Al</text>
+        <text y="221" x="602">Si</text>
+        <text y="221" x="642">P</text>
+        <text y="221" x="682">S</text>
+        <text y="221" x="722">Cl</text>
+        <text y="221" x="762">Ar</text>
+        <text y="221" x="82">Na</text>
+        <text y="245" x="122">20</text>
+        <text y="245" x="162">21</text>
+        <text y="245" x="202">22</text>
+        <text y="245" x="242">23</text>
+        <text y="245" x="282">24</text>
+        <text y="245" x="322">25</text>
+        <text y="245" x="362">26</text>
+        <text y="245" x="402">27</text>
+        <text y="245" x="442">28</text>
+        <text y="245" x="482">29</text>
+        <text y="245" x="522">30</text>
+        <text y="245" x="562">31</text>
+        <text y="245" x="602">32</text>
+        <text y="245" x="642">33</text>
+        <text y="245" x="682">34</text>
+        <text y="245" x="722">35</text>
+        <text y="245" x="762">36</text>
+        <text y="245" x="82">19</text>
+        <text y="261" x="122">Ca</text>
+        <text y="261" x="162">Sc</text>
+        <text y="261" x="202">Ti</text>
+        <text y="261" x="242">V</text>
+        <text y="261" x="282">Cr</text>
+        <text y="261" x="322">Mn</text>
+        <text y="261" x="362">Fe</text>
+        <text y="261" x="402">Co</text>
+        <text y="261" x="442">Ni</text>
+        <text y="261" x="482">Cu</text>
+        <text y="261" x="522">Zn</text>
+        <text y="261" x="562">Ga</text>
+        <text y="261" x="602">Ge</text>
+        <text y="261" x="642">As</text>
+        <text y="261" x="682">Se</text>
+        <text y="261" x="722">Br</text>
+        <text y="261" x="762">Kr</text>
+        <text y="261" x="82">K</text>
+        <text y="285" x="122">38</text>
+        <text y="285" x="162">39</text>
+        <text y="285" x="202">40</text>
+        <text y="285" x="242">41</text>
+        <text y="285" x="282">42</text>
+        <text y="285" x="322">43</text>
+        <text y="285" x="362">44</text>
+        <text y="285" x="402">45</text>
+        <text y="285" x="442">46</text>
+        <text y="285" x="482">47</text>
+        <text y="285" x="522">48</text>
+        <text y="285" x="562">49</text>
+        <text y="285" x="602">50</text>
+        <text y="285" x="642">51</text>
+        <text y="285" x="682">52</text>
+        <text y="285" x="722">53</text>
+        <text y="285" x="762">54</text>
+        <text y="285" x="82">37</text>
+        <text y="301" x="482">Ag</text>
+        <text y="301" x="122">Sr</text>
+        <text y="301" x="162">Y</text>
+        <text y="301" x="202">Zr</text>
+        <text y="301" x="242">Nb</text>
+        <text y="301" x="282">Mo</text>
+        <text y="301" x="322">Tc</text>
+        <text y="301" x="362">Ru</text>
+        <text y="301" x="402">Rh</text>
+        <text y="301" x="442">Pd</text>
+        <text y="301" x="522">Cd</text>
+        <text y="301" x="562">In</text>
+        <text y="301" x="602">Sn</text>
+        <text y="301" x="642">Sb</text>
+        <text y="301" x="682">Te</text>
+        <text y="301" x="722">I</text>
+        <text y="301" x="762">Xe</text>
+        <text y="301" x="82">Rb</text>
+        <text y="325" x="122">56</text>
+        <text y="325" x="202">72</text>
+        <text y="325" x="242">73</text>
+        <text y="325" x="282">74</text>
+        <text y="325" x="322">75</text>
+        <text y="325" x="362">76</text>
+        <text y="325" x="402">77</text>
+        <text y="325" x="442">78</text>
+        <text y="325" x="482">79</text>
+        <text y="325" x="522">80</text>
+        <text y="325" x="562">81</text>
+        <text y="325" x="602">82</text>
+        <text y="325" x="642">83</text>
+        <text y="325" x="682">84</text>
+        <text y="325" x="722">85</text>
+        <text y="325" x="762">86</text>
+        <text y="325" x="82">55</text>
+        <text y="341" x="122">Ba</text>
+        <text y="341" x="202">Hf</text>
+        <text y="341" x="242">Ta</text>
+        <text y="341" x="282">W</text>
+        <text y="341" x="322">Re</text>
+        <text y="341" x="362">Os</text>
+        <text y="341" x="402">Ir</text>
+        <text y="341" x="442">Pt</text>
+        <text y="341" x="482">Au</text>
+        <text y="341" x="522">Hg</text>
+        <text y="341" x="562">Tl</text>
+        <text y="341" x="602">Pb</text>
+        <text y="341" x="642">Bi</text>
+        <text y="341" x="682">Po</text>
+        <text y="341" x="722">At</text>
+        <text y="341" x="762">Rn</text>
+        <text y="341" x="82">Cs</text>
+        <text y="365" x="122">88</text>
+        <text y="365" x="202">104</text>
+        <text y="365" x="242">105</text>
+        <text y="365" x="282">106</text>
+        <text y="365" x="322">107</text>
+        <text y="365" x="362">108</text>
+        <text y="365" x="402">109</text>
+        <text y="365" x="442">110</text>
+        <text y="365" x="482">111</text>
+        <text y="365" x="522">112</text>
+        <text y="365" x="562">113</text>
+        <text y="365" x="602">114</text>
+        <text y="365" x="642">115</text>
+        <text y="365" x="682">116</text>
+        <text y="365" x="722">117</text>
+        <text y="365" x="762">118</text>
+        <text y="365" x="82">87</text>
+        <text y="381" x="282">Sg</text>
+        <text y="381" x="482">Rg</text>
+        <text y="381" x="602">Uuq</text>
+        <text y="381" x="642">Uup</text>
+        <text y="381" x="122">Ra</text>
+        <text y="381" x="202">Rf</text>
+        <text y="381" x="242">Db</text>
+        <text y="381" x="322">Bh</text>
+        <text y="381" x="362">Hs</text>
+        <text y="381" x="402">Mt</text>
+        <text y="381" x="442">Ds</text>
+        <text y="381" x="522">Cn</text>
+        <text y="381" x="562">Uut</text>
+        <text y="381" x="682">Uuh</text>
+        <text y="381" x="722">Uus</text>
+        <text y="381" x="762">Uuo</text>
+        <text y="381" x="82">Fr</text>
+        <text y="425" x="202">57</text>
+        <text y="425" x="242">58</text>
+        <text y="425" x="282">59</text>
+        <text y="425" x="322">60</text>
+        <text y="425" x="362">61</text>
+        <text y="425" x="402">62</text>
+        <text y="425" x="442">63</text>
+        <text y="425" x="482">64</text>
+        <text y="425" x="522">65</text>
+        <text y="425" x="562">66</text>
+        <text y="425" x="602">67</text>
+        <text y="425" x="642">68</text>
+        <text y="425" x="682">69</text>
+        <text y="425" x="722">70</text>
+        <text y="425" x="762">71</text>
+        <text y="441" x="562">Dy</text>
+        <text y="441" x="202">La</text>
+        <text y="441" x="242">Ce</text>
+        <text y="441" x="282">Pr</text>
+        <text y="441" x="322">Nd</text>
+        <text y="441" x="362">Pm</text>
+        <text y="441" x="402">Sm</text>
+        <text y="441" x="442">Eu</text>
+        <text y="441" x="482">Gd</text>
+        <text y="441" x="522">Tb</text>
+        <text y="441" x="602">Ho</text>
+        <text y="441" x="642">Er</text>
+        <text y="441" x="682">Tm</text>
+        <text y="441" x="722">Yb</text>
+        <text y="441" x="762">Lu</text>
+        <text y="465" x="202">89</text>
+        <text y="465" x="242">90</text>
+        <text y="465" x="282">91</text>
+        <text y="465" x="322">92</text>
+        <text y="465" x="362">93</text>
+        <text y="465" x="402">94</text>
+        <text y="465" x="442">95</text>
+        <text y="465" x="482">96</text>
+        <text y="465" x="522">97</text>
+        <text y="465" x="562">98</text>
+        <text y="465" x="602">99</text>
+        <text y="465" x="642">100</text>
+        <text y="465" x="682">101</text>
+        <text y="465" x="722">102</text>
+        <text y="465" x="762">103</text>
+        <text y="481" x="202">Ac</text>
+        <text y="481" x="242">Th</text>
+        <text y="481" x="282">Pa</text>
+        <text y="481" x="322">U</text>
+        <text y="481" x="362">Np</text>
+        <text y="481" x="402">Pu</text>
+        <text y="481" x="442">Am</text>
+        <text y="481" x="482">Cm</text>
+        <text y="481" x="522">Bk</text>
+        <text y="481" x="562">Cf</text>
+        <text y="481" x="602">Es</text>
+        <text y="481" x="642">Fm</text>
+        <text y="481" x="682">Md</text>
+        <text y="481" x="722">No</text>
+        <text y="481" x="762">Lr</text>
+        <text text-anchor="start" x="10" y="93">Group</text>
+        <text text-anchor="start" x="20" y="108">Period</text>
+      </g>
+      <g font-size="14px" text-anchor="end">
+        <text x="169" y="434">Lanthanides</text>
+        <text x="169" y="472">Actinides</text>
+      </g>
+    </g>
+    <path fill="#000" d="M11.5,97h1v10h-2l2.5,4l2.5-4h-2v-10" />
+    <path fill="#000" d="M52,88.5v1h10v-2l4,2.5l-4,2.5v-2h-10" />
+  </g>
+</svg>
