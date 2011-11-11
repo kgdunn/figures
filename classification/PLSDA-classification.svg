@@ -13,9 +13,9 @@
    height="820"
    id="svg2"
    version="1.1"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.48.0 r9654"
    sodipodi:docname="PLSDA-classification.svg"
-   inkscape:export-filename="/Users/kevindunn/Statistics course/Course notes/Latent-variable-modelling/images/PLSDA-classification.png"
+   inkscape:export-filename="PLSDA-classification.png"
    inkscape:export-xdpi="200"
    inkscape:export-ydpi="200">
   <defs
@@ -48,8 +48,8 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.67324589"
-     inkscape:cx="767.75296"
+     inkscape:zoom="0.69247296"
+     inkscape:cx="767.92874"
      inkscape:cy="408.9835"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
@@ -58,7 +58,7 @@
      inkscape:window-height="796"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -795,5 +795,36 @@
          id="tspan3908"
          x="813.77734"
          y="720.91278">^</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:187.25474548px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+       x="3029.0227"
+       y="177.78166"
+       id="text3118"
+       sodipodi:linespacing="125%"
+       transform="scale(0.3526461,2.8357041)"><tspan
+         sodipodi:role="line"
+         id="tspan3120"
+         x="3029.0227"
+         y="177.78166">}</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:45px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans"
+       x="1121.4866"
+       y="337.80145"
+       id="text3122"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan3128"
+         x="1121.4866"
+         y="337.80145">Also use the</tspan><tspan
+         sodipodi:role="line"
+         id="tspan3130"
+         x="1121.4866"
+         y="382.80145">boundaries in</tspan><tspan
+         sodipodi:role="line"
+         id="tspan3132"
+         x="1121.4866"
+         y="427.80145">the score space</tspan></text>
   </g>
 </svg>
