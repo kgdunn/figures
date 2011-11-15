@@ -1,0 +1,973 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1052.3622"
+   height="1488.189"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.44"
+   sodipodi:docbase="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures"
+   sodipodi:docname="batchunfolding.svg"
+   inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/batchunfolding.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300"
+   version="1.0">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lend"
+       style="overflow:visible">
+      <path
+         id="path14652"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.97309,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend"
+       style="overflow:visible">
+      <path
+         id="path15333"
+         d="M 0,0 L 5,-5 L -12.5,0 L 5,5 L 0,0 z "
+         style="fill-rule:evenodd;stroke:black;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path15336"
+         d="M 0,0 L 5,-5 L -12.5,0 L 5,5 L 0,0 z "
+         style="fill-rule:evenodd;stroke:black;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.8,0,0,0.8,10,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="white"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="1"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.3697599"
+     inkscape:cx="695.06267"
+     inkscape:cy="621.96391"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="950"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     width="1488.189px"
+     height="1052.3622px" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1.79760122;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect12426"
+       width="158.20239"
+       height="188.20239"
+       x="194.46782"
+       y="20.96431"
+       rx="0"
+       ry="0"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:2.25478864;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect12424"
+       width="140.44334"
+       height="188.40407"
+       x="106.67953"
+       y="173.69836"
+       rx="0"
+       ry="0"
+       transform="matrix(0.786771,-0.617245,0,1,0,0)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1956"
+       width="158.20239"
+       height="188.20239"
+       x="178.8988"
+       y="33.713562"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Arrow1Lstart);marker-mid:none;marker-end:none;stroke-opacity:1"
+       d="M 174.66269,21.23888 L 63.444499,107.34062"
+       id="path14276"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-size:18.00053978px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="48.009789"
+       y="115.80867"
+       id="text15345"
+       sodipodi:linespacing="125%"
+       transform="matrix(0.798635,-0.601816,0.601816,0.798635,0,0)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan15349"
+         x="48.009789"
+         y="115.80867">Time</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="-201.367"
+       y="56.856995"
+       id="text15353"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan15357"
+         x="-201.367"
+         y="56.856995">Batches</tspan></text>
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Lend);stroke-opacity:1"
+       d="M 63.181209,107.00666 L 63.181209,297.00666"
+       id="path15361"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect2847"
+       width="158.20239"
+       height="188.20239"
+       x="137.5"
+       y="65.65979"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4619"
+       width="158.20239"
+       height="188.20239"
+       x="119.51686"
+       y="80.085327"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4621"
+       width="158.20239"
+       height="188.20239"
+       x="100.59011"
+       y="94.478493"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1.79760122;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect2760"
+       width="158.20239"
+       height="188.20239"
+       x="84.079605"
+       y="107.9054"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:2.25478864;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect12422"
+       width="140.44334"
+       height="188.40407"
+       x="307.50012"
+       y="297.16156"
+       rx="0"
+       ry="0"
+       transform="matrix(0.786771,-0.617245,0,1,0,0)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:0.99115705px;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Arrow1Lstart);marker-end:url(#Arrow1Lend);stroke-opacity:1"
+       d="M 85.17677,126.00666 L 242.18561,126.00666"
+       id="path16250"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect5508"
+       width="158.20239"
+       height="188.20239"
+       x="258.5"
+       y="310.29761"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect5510"
+       width="158.20239"
+       height="188.20239"
+       x="439.29761"
+       y="309.5"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="-632.86035"
+       y="61.675781"
+       id="text5518"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan5520"
+         x="-632.86035"
+         y="61.675781">Batches</tspan></text>
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Lend);stroke-opacity:1"
+       d="M 68,538.5 L 68,728.5"
+       id="path5522"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="337.86975"
+       y="409.91638"
+       id="text5524"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan5530"
+         x="337.86975"
+         y="409.91638">Sample at t=1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="518.90857"
+       y="408.56702"
+       id="text5532"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan5536"
+         x="518.90857"
+         y="408.56702">Sample at t=2</tspan></text>
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect5514"
+       width="158.20239"
+       height="188.20239"
+       x="749.29761"
+       y="309.5"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#505050;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:6, 2;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 258,499 L 98,729"
+       id="path5544"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#505050;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:6, 2;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 257.5,309.5 L 97.5,539.5"
+       id="path6433"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#505050;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:6, 2;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 907.5,309.5 L 976.95382,539.5"
+       id="path6435"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#505050;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:6, 2;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 908.5,498.5 L 977.95386,728.5"
+       id="path6437"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:2.34584522;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect5516"
+       width="876.85657"
+       height="186.85655"
+       x="99.970497"
+       y="540.17291"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Century Schoolbook L"
+       x="114.019"
+       y="717.09601"
+       id="text6441"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6447"
+         x="114.019"
+         y="717.09601">I</tspan></text>
+    <g
+       id="g6463"
+       transform="translate(232,-190)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300">
+      <text
+         sodipodi:linespacing="125%"
+         id="text6449"
+         y="753.09601"
+         x="710.06396"
+         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Century Schoolbook L"
+         xml:space="preserve"><tspan
+           y="753.09601"
+           x="710.06396"
+           id="tspan6455"
+           sodipodi:role="line">J    K</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text6457"
+         y="751.66815"
+         x="689.20984"
+         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans Mono"
+         xml:space="preserve"><tspan
+           y="751.66815"
+           x="689.20984"
+           id="tspan6461"
+           sodipodi:role="line">   x</tspan></text>
+    </g>
+    <g
+       id="g14867"
+       transform="translate(-7.224162,0)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300">
+      <text
+         sodipodi:linespacing="125%"
+         id="text5538"
+         y="408.56702"
+         x="827.75281"
+         style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="408.56702"
+           x="827.75281"
+           id="tspan6469"
+           sodipodi:role="line">Sample at t=</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text6473"
+         y="408.42401"
+         x="894.45612"
+         style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Century Schoolbook L"
+         xml:space="preserve"><tspan
+           y="408.42401"
+           x="894.45612"
+           id="tspan6485"
+           sodipodi:role="line">K</tspan></text>
+    </g>
+    <g
+       id="g6505"
+       transform="translate(18,4)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300">
+      <text
+         sodipodi:linespacing="125%"
+         id="text16252"
+         y="141.09013"
+         x="154.72812"
+         style="font-size:18px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="141.09013"
+           x="154.72812"
+           id="tspan16256"
+           sodipodi:role="line">Variables</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text6489"
+         y="141.23393"
+         x="100.9464"
+         style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Century Schoolbook L"
+         xml:space="preserve"><tspan
+           y="141.23393"
+           x="100.9464"
+           id="tspan6503"
+           sodipodi:role="line">J</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 248.19756,207.74492 C 336.87271,208.0814 336.34128,308.80244 336.34128,308.80244"
+       id="path7400"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 268.93333,189.47872 C 454.17487,189.00772 519.19486,308.06666 519.19486,308.06666"
+       id="path9172"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 344.82448,129.48378 C 706.29795,128.78539 833.17553,305.32256 833.17553,305.32256"
+       id="path10059"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="146.23486"
+       y="716.93958"
+       id="text12718"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan12722"
+         x="146.23486"
+         y="716.93958">rows</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="933.44141"
+       y="584.74512"
+       id="text12724"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan12728"
+         x="933.44141"
+         y="584.74512">columns</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:end;line-height:125%;writing-mode:lr-tb;text-anchor:end;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="980.89062"
+       y="47.849121"
+       id="text14680"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan19400"
+         x="980.89062"
+         y="47.849121">(a) Slice the 3D matrix into K slices, one</tspan><tspan
+         sodipodi:role="line"
+         id="tspan19402"
+         x="988.53125"
+         y="77.849121">slice per time sample, and place the </tspan><tspan
+         sodipodi:role="line"
+         id="tspan19404"
+         x="980.89062"
+         y="107.84912">slices next to each other.</tspan></text>
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1.79760122;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect14704"
+       width="158.20239"
+       height="188.20239"
+       x="171.28662"
+       y="986.6908"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:2.25478864;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect14706"
+       width="140.44334"
+       height="188.40407"
+       x="77.215775"
+       y="1121.2384"
+       rx="0"
+       ry="0"
+       transform="matrix(0.786771,-0.617245,0,1,0,0)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect14708"
+       width="158.20239"
+       height="188.20239"
+       x="155.71759"
+       y="999.44012"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Arrow1Lstart);marker-mid:none;marker-end:none;stroke-opacity:1"
+       d="M 151.48147,986.9653 L 40.26328,1073.0671"
+       id="path14710"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-size:18.00130272px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="-551.70575"
+       y="873.14319"
+       id="text14712"
+       sodipodi:linespacing="125%"
+       transform="matrix(0.798635,-0.601816,0.601816,0.798635,0,0)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan14714"
+         x="-551.70575"
+         y="873.14319">Time</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="-1167.0935"
+       y="33.675781"
+       id="text14716"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan14718"
+         x="-1167.0935"
+         y="33.675781">Batches</tspan></text>
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Lend);stroke-opacity:1"
+       d="M 39.99999,1072.7331 L 39.99999,1262.7331"
+       id="path14720"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect14722"
+       width="158.20239"
+       height="188.20239"
+       x="114.31879"
+       y="1031.3862"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect14724"
+       width="158.20239"
+       height="188.20239"
+       x="96.335632"
+       y="1045.8118"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect14726"
+       width="158.20239"
+       height="188.20239"
+       x="77.408867"
+       y="1060.205"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1.79760122;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect14728"
+       width="158.20239"
+       height="188.20239"
+       x="60.898376"
+       y="1073.6318"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:2.25478864;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect14730"
+       width="140.44334"
+       height="188.40407"
+       x="278.0365"
+       y="1244.7017"
+       rx="0"
+       ry="0"
+       transform="matrix(0.786771,-0.617245,0,1,0,0)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:0.99115705px;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Arrow1Lstart);marker-end:url(#Arrow1Lend);stroke-opacity:1"
+       d="M 61.99555,1091.7331 L 219.00439,1091.7331"
+       id="path14732"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <g
+       id="g14816"
+       transform="translate(283.1812,-294.7024)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300">
+      <rect
+         ry="0"
+         rx="0"
+         y="1064.9866"
+         x="257.31879"
+         height="188.20239"
+         width="158.20239"
+         id="rect14734"
+         style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text14746"
+         y="1164.6052"
+         x="336.68854"
+         style="font-size:18px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="1164.6052"
+           x="336.68854"
+           id="tspan14748"
+           sodipodi:role="line">Sample at t=1</tspan></text>
+    </g>
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect14736"
+       width="158.20239"
+       height="188.20239"
+       x="540.5"
+       y="980.28418"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="620.11096"
+       y="1079.3512"
+       id="text14750"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan14752"
+         x="620.11096"
+         y="1079.3512">Sample at t=2</tspan></text>
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#505050;stroke-width:0.6600914;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.96054846, 1.32018282;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 819.38945,770.02153 L 700.04955,769.85891"
+       id="path14760"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect14738"
+       width="158.20239"
+       height="188.20239"
+       x="541.29761"
+       y="1259.4866"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <g
+       id="g14853"
+       transform="translate(-187.2241,-9.202393)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300">
+      <text
+         sodipodi:linespacing="125%"
+         id="text14754"
+         y="1367.756"
+         x="799.75281"
+         style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="1367.756"
+           x="799.75281"
+           id="tspan14756"
+           sodipodi:role="line">Sample at t=</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text14782"
+         y="1367.613"
+         x="866.45605"
+         style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Century Schoolbook L"
+         xml:space="preserve"><tspan
+           y="1367.613"
+           x="866.45605"
+           id="tspan14784"
+           sodipodi:role="line">K</tspan></text>
+    </g>
+    <g
+       id="g14786"
+       transform="translate(-5.18123,969.726)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300">
+      <text
+         sodipodi:linespacing="125%"
+         id="text14788"
+         y="141.09013"
+         x="154.72812"
+         style="font-size:18px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="141.09013"
+           x="154.72812"
+           id="tspan14790"
+           sodipodi:role="line">Variables</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text14792"
+         y="141.23393"
+         x="100.9464"
+         style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Century Schoolbook L"
+         xml:space="preserve"><tspan
+           y="141.23393"
+           x="100.9464"
+           id="tspan14794"
+           sodipodi:role="line">J</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.11082625;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 226.21712,1227.6336 C 376.3236,873.83147 539.1729,869.45501 539.1729,869.45501"
+       id="path14796"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.29667234;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 241.13044,1207.5406 C 319.00956,1084.6213 539.11948,1080.613 539.11948,1080.613"
+       id="path14798"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.0041424;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 320.72449,1149.8022 C 363.66316,1292.7716 538.82246,1357.6869 538.82246,1357.6869"
+       id="path14800"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="19.355469"
+       y="787.84912"
+       id="text14810"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan19382"
+         x="19.355469"
+         y="787.84912">(b) Slice the 3D matrix into K slices, a </tspan><tspan
+         sodipodi:role="line"
+         id="tspan19384"
+         x="19.355469"
+         y="817.84912">slice per time sample, and place</tspan><tspan
+         sodipodi:role="line"
+         id="tspan19386"
+         x="19.355469"
+         y="847.84912">the slices one below the other.</tspan></text>
+    <rect
+       style="fill:#b5b2c6;fill-opacity:0.625;stroke:black;stroke-width:1.8954314;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect19300"
+       width="158.20239"
+       height="676.14722"
+       x="820.5"
+       y="771.02869"
+       rx="0"
+       ry="0"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <g
+       id="g19410"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300">
+      <text
+         sodipodi:linespacing="125%"
+         id="text14768"
+         y="797.42102"
+         x="967.60223"
+         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Century Schoolbook L"
+         xml:space="preserve"><tspan
+           y="797.42102"
+           x="967.60223"
+           id="tspan19360"
+           sodipodi:role="line">J</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text14802"
+         y="817.93408"
+         x="936.85254"
+         style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="817.93408"
+           x="936.85254"
+           id="tspan19362"
+           sodipodi:role="line">columns</tspan></text>
+    </g>
+    <g
+       id="g19347"
+       transform="translate(-274.2045,129.9999)"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300">
+      <g
+         transform="translate(-1.255805,0)"
+         id="g19341">
+        <text
+           xml:space="preserve"
+           style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Century Schoolbook L"
+           x="1130.064"
+           y="1286.285"
+           id="text14774"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan19325"
+             x="1130.064"
+             y="1286.285">I    K</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans Mono"
+           x="1125.3944"
+           y="1284.8572"
+           id="text14778"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan19339"
+             x="1125.3944"
+             y="1284.8572">x</tspan></text>
+      </g>
+      <text
+         sodipodi:linespacing="125%"
+         id="text14806"
+         y="1307.9342"
+         x="1129.1985"
+         style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="1307.9342"
+           x="1129.1985"
+           id="tspan19327"
+           sodipodi:role="line">rows</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#505050;stroke-width:0.6600914;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.96054846, 1.32018282;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 819.42934,1447.8589 L 700.08944,1447.6963"
+       id="path19306"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/SHARED/transfer/kevin/batch chapter/chapter for submission/figures/rect12426.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+  </g>
+</svg>
