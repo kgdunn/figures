@@ -42,7 +42,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.71467232"
-     inkscape:cx="319.98249"
+     inkscape:cx="319.67488"
      inkscape:cy="417.58938"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -51,7 +51,7 @@
      inkscape:window-height="796"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -60,7 +60,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -797,14 +797,14 @@
        sodipodi:linespacing="125%"
        id="text4087"
        y="19.192463"
-       x="-396.36887"
+       x="-402.34055"
        style="font-size:20px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Oblique"
        xml:space="preserve"
        transform="matrix(0,-1,1,0,0,0)"><tspan
          sodipodi:role="line"
-         id="tspan4213"
-         x="-396.36887"
-         y="19.192463">Temperature</tspan></text>
+         id="tspan3188"
+         x="-402.34055"
+         y="19.192463">Energy added</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:90.92440033px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Garamond;-inkscape-font-specification:Garamond"
@@ -820,22 +820,34 @@
     <text
        sodipodi:linespacing="125%"
        id="text4097"
-       y="313.34064"
+       y="270.54971"
        x="367.2587"
        style="font-size:15.9998312px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
        xml:space="preserve"><tspan
          sodipodi:role="line"
-         id="tspan4233"
+         id="tspan3200"
          x="367.2587"
-         y="313.34064">Sample evenly along</tspan><tspan
+         y="270.54971">Sample evenly</tspan><tspan
          sodipodi:role="line"
-         id="tspan4235"
+         id="tspan3202"
          x="367.2587"
-         y="333.34042">the axis of the</tspan><tspan
+         y="290.5495">along the axis</tspan><tspan
          sodipodi:role="line"
-         id="tspan4237"
+         id="tspan3204"
          x="367.2587"
-         y="353.34021">monotonic tag</tspan></text>
+         y="310.54929">of a monotonic</tspan><tspan
+         sodipodi:role="line"
+         id="tspan3206"
+         x="367.2587"
+         y="330.54907">tag. In this </tspan><tspan
+         sodipodi:role="line"
+         id="tspan3208"
+         x="367.2587"
+         y="350.54886">example it is a </tspan><tspan
+         sodipodi:role="line"
+         id="tspan3210"
+         x="367.2587"
+         y="370.54865">calculated tag.</tspan></text>
     <path
        inkscape:connector-curvature="0"
        id="path4107"
@@ -1214,25 +1226,25 @@
          x="859.35718"
          y="-620.15729">Clock time</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:1.62;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Mend)"
-       d="m 550.11524,417.65196 c 26.68926,2.64136 32.62529,27.33013 33.99539,81.45106"
+       style="fill:none;stroke:#000000;stroke-width:1.30526865;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Mend)"
+       d="m 550.11524,446.22606 c 26.68926,1.71473 32.62529,17.74236 33.99539,52.87696"
        id="path4253"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <text
        xml:space="preserve"
        style="font-size:15.9998312px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
-       x="364.87082"
-       y="425.93381"
+       x="376.06476"
+       y="448.32169"
        id="text4699"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4707"
-         x="364.87082"
-         y="425.93381">The warped variable </tspan><tspan
+         x="376.06476"
+         y="448.32169">The warped variable </tspan><tspan
          sodipodi:role="line"
          id="tspan4709"
-         x="364.87082"
-         y="445.93359">will have even spacing</tspan></text>
+         x="376.06476"
+         y="468.32147">will have even spacing</tspan></text>
   </g>
 </svg>
