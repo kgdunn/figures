@@ -18,7 +18,7 @@
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300"
    style="display:inline"
-   inkscape:export-filename="new-products-data-mixture-matrix.png">
+   inkscape:export-filename="new-products-data-mixture-PLS.png">
   <defs
      id="defs4">
     <marker
@@ -97,9 +97,9 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.0633333"
      inkscape:cx="300"
-     inkscape:cy="333.32712"
+     inkscape:cy="282.33956"
      inkscape:document-units="px"
-     inkscape:current-layer="layer2"
+     inkscape:current-layer="layer7"
      showgrid="false"
      inkscape:window-width="1440"
      inkscape:window-height="856"
@@ -233,70 +233,24 @@
          x="42.247383"
          id="tspan4095"
          sodipodi:role="line">process settings</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="New product"
+     style="display:inline">
     <rect
-       ry="0"
-       y="77.934174"
-       x="-450.20923"
-       height="124.27486"
-       width="243.82207"
-       id="rect4140"
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       transform="matrix(0,-1,1,0,0,0)" />
-    <text
-       sodipodi:linespacing="125%"
-       id="text4142"
-       y="68.005707"
-       x="-413.37073"
-       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
-       xml:space="preserve"
-       transform="matrix(0,-1,1,0,0,0)"><tspan
-         sodipodi:role="line"
-         id="tspan4144"
-         x="-413.37073"
-         y="68.005707">all potential ingredients</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
-       x="77.652191"
-       y="198.27502"
-       id="text4146"
-       sodipodi:linespacing="125%"><tspan
-         y="198.27502"
-         x="77.652191"
-         id="tspan4148"
-         sodipodi:role="line">properties</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:60px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-       x="119.03645"
-       y="348.16147"
-       id="text4152"
-       sodipodi:linespacing="125%"><tspan
-         y="348.16147"
-         x="119.03645"
-         sodipodi:role="line"
-         id="tspan4154">D</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       x="194.85724"
-       y="203.09442"
-       id="text4183"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan4187"
-         x="194.85724"
-         y="203.09442">P</tspan></text>
-    <rect
+       transform="translate(0,-165)"
        ry="0"
        y="732.0116"
        x="43.207645"
        height="24.01656"
        width="208.91406"
        id="rect4202"
-       style="fill:#a6e9f5;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+       style="fill:#a6e9f5;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline" />
     <rect
-       style="fill:#a6e9f5;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       transform="translate(0,-165)"
+       style="fill:#a6e9f5;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
        id="rect4204"
        width="132.02277"
        height="24.013288"
@@ -304,23 +258,26 @@
        y="733.14221"
        ry="0" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:1.579;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12.63199997, 12.63199997;stroke-dashoffset:7.57919998"
+       transform="translate(0,-165)"
+       style="fill:none;stroke:#000000;stroke-width:1.579;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12.63199997, 12.63199997;stroke-dashoffset:7.57919998;display:inline"
        d="m 11.652585,687.07907 581.080575,0"
        id="path4208"
        inkscape:connector-curvature="0" />
     <text
+       transform="translate(0,-165)"
        sodipodi:linespacing="125%"
        id="text4210"
        y="712.53015"
        x="8.2473831"
-       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
        xml:space="preserve"><tspan
          sodipodi:role="line"
          id="tspan4214"
          x="8.2473831"
          y="712.53015">New product</tspan></text>
     <rect
-       style="fill:#eb9747;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       transform="translate(0,-165)"
+       style="fill:#eb9747;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
        id="rect4206"
        width="51.740242"
        height="24.006477"
@@ -328,8 +285,9 @@
        y="733.45624"
        ry="0" />
     <g
+       style="display:inline"
        id="g4292"
-       transform="translate(-1.2871056,-0.5618248)">
+       transform="translate(-1.2871056,-165.56182)">
       <text
          sodipodi:linespacing="125%"
          id="text4216"
@@ -354,54 +312,27 @@
            sodipodi:role="line">des</tspan></text>
     </g>
     <rect
+       transform="translate(0,-165)"
        ry="0"
        y="733.14221"
        x="294.54303"
        height="24.013288"
        width="132.02277"
        id="rect4230"
-       style="fill:#a6e9f5;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+       style="fill:#a6e9f5;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline" />
     <rect
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect4238"
-       width="63.709469"
-       height="156.56148"
-       x="456.98901"
-       y="500.14801"
-       ry="0" />
-    <text
-       xml:space="preserve"
-       style="font-size:50px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-       x="473.43848"
-       y="594.98151"
-       id="text4240"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan4244"
-         x="473.43848"
-         y="594.98151">T</tspan></text>
-    <text
-       sodipodi:linespacing="125%"
-       id="text4246"
-       y="496.53015"
-       x="511.63818"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       xml:space="preserve"><tspan
-         sodipodi:role="line"
-         id="tspan4250"
-         x="511.63818"
-         y="496.53015">A</tspan></text>
-    <rect
+       transform="translate(0,-165)"
        ry="0"
        y="733.45477"
        x="456.23428"
        height="24.009457"
        width="65.218925"
        id="rect4262"
-       style="fill:#a6e9f5;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+       style="fill:#a6e9f5;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline" />
     <g
+       style="display:inline"
        id="g4274"
-       transform="translate(-1.239933,0)">
+       transform="translate(-1.239933,-165)">
       <text
          xml:space="preserve"
          style="font-size:25px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Symbol;-inkscape-font-specification:Symbol Bold Italic"
@@ -425,17 +356,12 @@
            x="486.18597"
            y="752.98151">des</tspan></text>
     </g>
-    <text
-       sodipodi:linespacing="125%"
-       id="text3094"
-       y="457.09442"
-       x="38.857239"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       xml:space="preserve"><tspan
-         sodipodi:role="line"
-         id="tspan3098"
-         x="38.857239"
-         y="457.09442">NN</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="Extra text"
+     style="display:inline">
     <text
        sodipodi:linespacing="125%"
        id="text4121"
@@ -443,12 +369,13 @@
        x="-366.89929"
        style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
        xml:space="preserve"
-       transform="matrix(0,-1,1,0,0,0)"><tspan
+       transform="matrix(0,-1,1,0,0,-165)"><tspan
          sodipodi:role="line"
          id="tspan4125"
          x="-366.89929"
          y="285.46808">properties</tspan></text>
     <text
+       transform="translate(0,-165)"
        sodipodi:linespacing="125%"
        id="text4087"
        y="490.53015"
@@ -460,6 +387,7 @@
          x="294.24738"
          y="490.53015">ingredients</tspan></text>
     <text
+       transform="translate(0,-165)"
        xml:space="preserve"
        style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
        x="296.24738"
@@ -473,8 +401,185 @@
   </g>
   <g
      inkscape:groupmode="layer"
+     id="layer6"
+     inkscape:label="Database"
+     style="display:inline">
+    <rect
+       ry="0"
+       y="77.934174"
+       x="-450.20923"
+       height="124.27486"
+       width="243.82207"
+       id="rect4140"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       transform="matrix(0,-1,1,0,0,-165)" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text4142"
+       y="68.005707"
+       x="-413.37073"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       xml:space="preserve"
+       transform="matrix(0,-1,1,0,0,-165)"><tspan
+         sodipodi:role="line"
+         id="tspan4144"
+         x="-413.37073"
+         y="68.005707">all potential ingredients</tspan></text>
+    <text
+       transform="translate(0,-165)"
+       xml:space="preserve"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       x="77.652191"
+       y="198.27502"
+       id="text4146"
+       sodipodi:linespacing="125%"><tspan
+         y="198.27502"
+         x="77.652191"
+         id="tspan4148"
+         sodipodi:role="line">properties</tspan></text>
+    <text
+       transform="translate(0,-165)"
+       xml:space="preserve"
+       style="font-size:60px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+       x="119.03645"
+       y="348.16147"
+       id="text4152"
+       sodipodi:linespacing="125%"><tspan
+         y="348.16147"
+         x="119.03645"
+         sodipodi:role="line"
+         id="tspan4154">D</tspan></text>
+    <text
+       transform="translate(0,-165)"
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Arial;-inkscape-font-specification:Arial"
+       x="194.85724"
+       y="203.09442"
+       id="text4183"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4187"
+         x="194.85724"
+         y="203.09442">P</tspan></text>
+    <text
+       transform="translate(0,-165)"
+       sodipodi:linespacing="125%"
+       id="text3094"
+       y="457.09442"
+       x="38.857239"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Arial;-inkscape-font-specification:Arial"
+       xml:space="preserve"><tspan
+         sodipodi:role="line"
+         id="tspan3098"
+         x="38.857239"
+         y="457.09442">NN</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer8"
+     inkscape:label="Scores"
+     style="display:inline">
+    <text
+       transform="translate(0,-165)"
+       sodipodi:linespacing="125%"
+       id="text4246"
+       y="496.53015"
+       x="511.63818"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Arial;-inkscape-font-specification:Arial"
+       xml:space="preserve"><tspan
+         sodipodi:role="line"
+         id="tspan4250"
+         x="511.63818"
+         y="496.53015">A</tspan></text>
+    <rect
+       transform="translate(0,-165)"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       id="rect4238"
+       width="63.709469"
+       height="156.56148"
+       x="456.98901"
+       y="500.14801"
+       ry="0" />
+    <text
+       transform="translate(0,-165)"
+       xml:space="preserve"
+       style="font-size:50px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+       x="473.43848"
+       y="594.98151"
+       id="text4240"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4244"
+         x="473.43848"
+         y="594.98151">T</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer7"
+     inkscape:label="Mixture matrix"
+     style="display:inline">
+    <rect
+       ry="0"
+       y="335.82861"
+       x="296.18158"
+       height="155.20027"
+       width="142.39462"
+       id="rect3170"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline" />
+    <g
+       style="display:inline"
+       transform="translate(199.98371,-255)"
+       id="g3172">
+      <text
+         xml:space="preserve"
+         style="font-size:60px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+         x="103.8084"
+         y="689.90332"
+         id="text3174"
+         sodipodi:linespacing="125%"><tspan
+           y="689.90332"
+           x="103.8084"
+           sodipodi:role="line"
+           id="tspan3176">X</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3178"
+         y="657.90332"
+         x="147.80841"
+         style="font-size:35px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+         xml:space="preserve"><tspan
+           sodipodi:role="line"
+           id="tspan3224"
+           x="147.80841"
+           y="657.90332">(mix)</tspan></text>
+    </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3184"
+       y="325.53015"
+       x="296.24738"
+       style="font-size:20px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       xml:space="preserve"><tspan
+         sodipodi:role="line"
+         id="tspan3226"
+         x="296.24738"
+         y="325.53015">blend properties</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Arial;-inkscape-font-specification:Arial"
+       x="431.63818"
+       y="331.53015"
+       id="text3228"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3232"
+         x="431.63818"
+         y="331.53015">P</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
      id="layer2"
-     inkscape:label="Raw materials"
+     inkscape:label="Materials and ratio"
      style="display:inline"
      transform="translate(0,-165)">
     <rect
@@ -520,7 +625,7 @@
          x="432.24738"
          y="496.53015">I</tspan></text>
     <rect
-       style="fill:#3be9f5;fill-opacity:1;stroke:#000000;stroke-width:2.50000000000000000;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       style="fill:#3be9f5;fill-opacity:1;stroke:#000000;stroke-width:2.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
        id="rect4040"
        width="130.50948"
        height="124.27486"
