@@ -18,7 +18,7 @@
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300"
    style="display:inline"
-   inkscape:export-filename="new-products-data-objective.png">
+   inkscape:export-filename="new-products-data-mixture-matrix.png">
   <defs
      id="defs4">
     <marker
@@ -97,9 +97,9 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.0633333"
      inkscape:cx="300"
-     inkscape:cy="297.29633"
+     inkscape:cy="333.32712"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="false"
      inkscape:window-width="1440"
      inkscape:window-height="856"
@@ -166,25 +166,6 @@
    id="tspan3925">P</tspan></tspan></text>
     <rect
        ry="0"
-       y="500.45862"
-       x="295.29968"
-       height="155.94022"
-       width="130.50948"
-       id="rect2765"
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-    <text
-       sodipodi:linespacing="125%"
-       id="text2779"
-       y="598.29199"
-       x="339.76828"
-       style="font-size:60px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-       xml:space="preserve"><tspan
-         sodipodi:role="line"
-         id="tspan3911"
-         x="339.76828"
-         y="598.29199">R</tspan></text>
-    <rect
-       ry="0"
        y="500.14801"
        x="536.98901"
        height="156.56148"
@@ -213,17 +194,6 @@
          id="tspan3915"
          x="577.63818"
          y="496.53015">M</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       x="414.24738"
-       y="496.53015"
-       id="text3917"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan3944"
-         x="414.24738"
-         y="496.53015">K</tspan></text>
     <g
        id="g3937"
        transform="translate(-0.01629257,-90)">
@@ -253,64 +223,6 @@
    style="font-style:italic;-inkscape-font-specification:'Times New Roman, Italic'">P</tspan>)</tspan></text>
     </g>
     <text
-       sodipodi:linespacing="125%"
-       id="text4034"
-       y="496.53015"
-       x="432.24738"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-       xml:space="preserve"><tspan
-         sodipodi:role="line"
-         id="tspan4038"
-         style="font-size:65.00091553%;baseline-shift:sub"
-         x="432.24738"
-         y="496.53015">I</tspan></text>
-    <rect
-       style="fill:#a6e9f5;stroke:#000000;stroke-width:2.50000000000000000;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
-       id="rect4040"
-       width="130.50948"
-       height="124.27486"
-       x="295.29968"
-       y="280.45862"
-       ry="0" />
-    <g
-       id="g4232"
-       transform="translate(-10.742775,0)">
-      <text
-         xml:space="preserve"
-         style="font-size:60px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-         x="350.54953"
-         y="362.45932"
-         id="text4044"
-         sodipodi:linespacing="125%"><tspan
-           y="362.45932"
-           x="350.54953"
-           id="tspan4200"
-           sodipodi:role="line">I</tspan></text>
-      <text
-         sodipodi:linespacing="125%"
-         id="text4048"
-         y="331.90332"
-         x="367.82123"
-         style="font-size:35px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-         xml:space="preserve"><tspan
-           style="font-style:italic;-inkscape-font-specification:'Times New Roman, Italic'"
-           y="331.90332"
-           x="367.82123"
-           id="tspan4198"
-           sodipodi:role="line">T</tspan></text>
-    </g>
-    <text
-       sodipodi:linespacing="125%"
-       id="text4087"
-       y="490.53015"
-       x="294.24738"
-       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
-       xml:space="preserve"><tspan
-         sodipodi:role="line"
-         id="tspan4091"
-         x="294.24738"
-         y="490.53015">ingredients</tspan></text>
-    <text
        xml:space="preserve"
        style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
        x="42.247383"
@@ -321,29 +233,6 @@
          x="42.247383"
          id="tspan4095"
          sodipodi:role="line">process settings</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
-       x="296.24738"
-       y="272.53015"
-       id="text4101"
-       sodipodi:linespacing="125%"><tspan
-         y="272.53015"
-         x="296.24738"
-         id="tspan4103"
-         sodipodi:role="line">ingredients</tspan></text>
-    <text
-       sodipodi:linespacing="125%"
-       id="text4121"
-       y="285.46808"
-       x="-366.89929"
-       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
-       xml:space="preserve"
-       transform="matrix(0,-1,1,0,0,0)"><tspan
-         sodipodi:role="line"
-         id="tspan4125"
-         x="-366.89929"
-         y="285.46808">properties</tspan></text>
     <rect
        ry="0"
        y="77.934174"
@@ -357,13 +246,13 @@
        sodipodi:linespacing="125%"
        id="text4142"
        y="68.005707"
-       x="-447.37073"
+       x="-413.37073"
        style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
        xml:space="preserve"
        transform="matrix(0,-1,1,0,0,0)"><tspan
          sodipodi:role="line"
          id="tspan4144"
-         x="-447.37073"
+         x="-413.37073"
          y="68.005707">all potential ingredients</tspan></text>
     <text
        xml:space="preserve"
@@ -388,29 +277,6 @@
          sodipodi:role="line"
          id="tspan4154">D</tspan></text>
     <text
-       sodipodi:linespacing="125%"
-       id="text4175"
-       y="274.53015"
-       x="414.24738"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       xml:space="preserve"><tspan
-         y="274.53015"
-         x="414.24738"
-         id="tspan4177"
-         sodipodi:role="line">K</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-       x="432.24738"
-       y="274.53015"
-       id="text4179"
-       sodipodi:linespacing="125%"><tspan
-         y="274.53015"
-         x="432.24738"
-         style="font-size:65.00091553%;baseline-shift:sub"
-         id="tspan4181"
-         sodipodi:role="line">I</tspan></text>
-    <text
        xml:space="preserve"
        style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
        x="194.85724"
@@ -421,17 +287,6 @@
          id="tspan4187"
          x="194.85724"
          y="203.09442">P</tspan></text>
-    <text
-       sodipodi:linespacing="125%"
-       id="text4189"
-       y="413.09442"
-       x="274.85724"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       xml:space="preserve"><tspan
-         y="413.09442"
-         x="274.85724"
-         id="tspan4191"
-         sodipodi:role="line">P</tspan></text>
     <rect
        ry="0"
        y="732.0116"
@@ -449,7 +304,7 @@
        y="733.14221"
        ry="0" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:1.579;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12.63199997,12.63199997;stroke-dashoffset:7.57919998"
+       style="fill:none;stroke:#000000;stroke-width:1.579;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12.63199997, 12.63199997;stroke-dashoffset:7.57919998"
        d="m 11.652585,687.07907 581.080575,0"
        id="path4208"
        inkscape:connector-curvature="0" />
@@ -505,7 +360,7 @@
        height="24.013288"
        width="132.02277"
        id="rect4230"
-       style="fill:#a6e9f5;fill-opacity:1;stroke:#000000;stroke-width:1.87500000000000000;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+       style="fill:#a6e9f5;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <rect
        style="fill:none;stroke:#000000;stroke-width:2.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect4238"
@@ -530,10 +385,12 @@
        id="text4246"
        y="496.53015"
        x="511.63818"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
        xml:space="preserve"><tspan
          sodipodi:role="line"
-         id="tspan4250">A</tspan></text>
+         id="tspan4250"
+         x="511.63818"
+         y="496.53015">A</tspan></text>
     <rect
        ry="0"
        y="733.45477"
@@ -541,7 +398,7 @@
        height="24.009457"
        width="65.218925"
        id="rect4262"
-       style="fill:#a6e9f5;stroke:#000000;stroke-width:1.87500000000000000;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1" />
+       style="fill:#a6e9f5;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <g
        id="g4274"
        transform="translate(-1.239933,0)">
@@ -568,110 +425,353 @@
            x="486.18597"
            y="752.98151">des</tspan></text>
     </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3094"
+       y="457.09442"
+       x="38.857239"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       xml:space="preserve"><tspan
+         sodipodi:role="line"
+         id="tspan3098"
+         x="38.857239"
+         y="457.09442">NN</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4121"
+       y="285.46808"
+       x="-366.89929"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       xml:space="preserve"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan4125"
+         x="-366.89929"
+         y="285.46808">properties</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4087"
+       y="490.53015"
+       x="294.24738"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       xml:space="preserve"><tspan
+         sodipodi:role="line"
+         id="tspan4091"
+         x="294.24738"
+         y="490.53015">ingredients</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       x="296.24738"
+       y="272.53015"
+       id="text4101"
+       sodipodi:linespacing="125%"><tspan
+         y="272.53015"
+         x="296.24738"
+         id="tspan4103"
+         sodipodi:role="line">ingredients</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Raw materials"
-     style="display:none"
+     style="display:inline"
      transform="translate(0,-165)">
     <rect
        ry="0"
-       y="590.82861"
-       x="43.206909"
-       height="155.20027"
-       width="208.91553"
-       id="rect3632"
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+       y="500.45862"
+       x="295.29968"
+       height="155.94022"
+       width="130.50948"
+       id="rect2765"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline" />
     <text
        sodipodi:linespacing="125%"
-       id="text3634"
-       y="688.29199"
-       x="126.13147"
-       style="font-size:60px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+       id="text2779"
+       y="598.29199"
+       x="339.76828"
+       style="font-size:60px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
        xml:space="preserve"><tspan
-         y="688.29199"
-         x="126.13147"
-         id="tspan3636"
-         sodipodi:role="line">X</tspan></text>
+         sodipodi:role="line"
+         id="tspan3911"
+         x="339.76828"
+         y="598.29199">R</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       x="24.857239"
-       y="753.09442"
-       id="text3638"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Arial;-inkscape-font-specification:Arial"
+       x="414.24738"
+       y="496.53015"
+       id="text3917"
        sodipodi:linespacing="125%"><tspan
-         y="753.09442"
-         x="24.857239"
-         id="tspan3640"
-         sodipodi:role="line">N</tspan></text>
+         sodipodi:role="line"
+         id="tspan3944"
+         x="414.24738"
+         y="496.53015">K</tspan></text>
     <text
-       xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       x="244.24738"
-       y="586.53015"
-       id="text3642"
-       sodipodi:linespacing="125%"><tspan
-         y="586.53015"
-         x="244.24738"
-         id="tspan3644"
-         sodipodi:role="line">K</tspan></text>
+       sodipodi:linespacing="125%"
+       id="text4034"
+       y="496.53015"
+       x="432.24738"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+       xml:space="preserve"><tspan
+         sodipodi:role="line"
+         id="tspan4038"
+         style="font-size:65.00091553%;baseline-shift:sub"
+         x="432.24738"
+         y="496.53015">I</tspan></text>
     <rect
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect3646"
-       width="24.998926"
-       height="156.56148"
-       x="354.98904"
-       y="590.14801"
+       style="fill:#3be9f5;fill-opacity:1;stroke:#000000;stroke-width:2.50000000000000000;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       id="rect4040"
+       width="130.50948"
+       height="124.27486"
+       x="295.29968"
+       y="280.45862"
+       ry="0" />
+    <g
+       style="display:inline"
+       id="g4232"
+       transform="translate(-10.742775,0)">
+      <text
+         xml:space="preserve"
+         style="font-size:60px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+         x="350.54953"
+         y="362.45932"
+         id="text4044"
+         sodipodi:linespacing="125%"><tspan
+           y="362.45932"
+           x="350.54953"
+           id="tspan4200"
+           sodipodi:role="line">I</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text4048"
+         y="331.90332"
+         x="367.82123"
+         style="font-size:35px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+         xml:space="preserve"><tspan
+           style="font-style:italic;-inkscape-font-specification:'Times New Roman, Italic'"
+           y="331.90332"
+           x="367.82123"
+           id="tspan4198"
+           sodipodi:role="line">T</tspan></text>
+    </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4175"
+       y="274.53015"
+       x="414.24738"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Arial;-inkscape-font-specification:Arial"
+       xml:space="preserve"><tspan
+         y="274.53015"
+         x="414.24738"
+         id="tspan4177"
+         sodipodi:role="line">K</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+       x="432.24738"
+       y="274.53015"
+       id="text4179"
+       sodipodi:linespacing="125%"><tspan
+         y="274.53015"
+         x="432.24738"
+         style="font-size:65.00091553%;baseline-shift:sub"
+         id="tspan4181"
+         sodipodi:role="line">I</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4189"
+       y="413.09442"
+       x="274.85724"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Arial;-inkscape-font-specification:Arial"
+       xml:space="preserve"><tspan
+         y="413.09442"
+         x="274.85724"
+         id="tspan4191"
+         sodipodi:role="line">P</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Annotations"
+     style="display:inline">
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       x="210.94504"
+       y="418.85449"
+       id="text3918"
+       sodipodi:linespacing="125%"><tspan
+         y="418.85449"
+         x="210.94504"
+         id="tspan3920"
+         sodipodi:role="line"
+         style="font-style:normal">Recipe</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3924"
+       y="183.12729"
+       x="177.62863"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light"
+       xml:space="preserve"><tspan
+         sodipodi:role="line"
+         id="tspan3930"
+         x="177.62863"
+         y="183.12729">Properties</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Arial;-inkscape-font-specification:Arial"
+       x="274.85724"
+       y="500.09442"
+       id="text3932"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3938"
+         x="274.85724"
+         y="500.09442">N</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3944"
+       y="138.85449"
+       x="430.94504"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       xml:space="preserve"><tspan
+         sodipodi:role="line"
+         id="tspan3948"
+         x="430.94504"
+         y="138.85449">melting point</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       x="430.94504"
+       y="158.85449"
+       id="text3950"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3954"
+         x="430.94504"
+         y="158.85449">boiling point</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3956"
+       y="210.85449"
+       x="430.94504"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       xml:space="preserve"><tspan
+         sodipodi:role="line"
+         id="tspan3960"
+         x="430.94504"
+         y="210.85449">viscosity</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       x="430.94504"
+       y="234.85449"
+       id="text3962"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3966"
+         x="430.94504"
+         y="234.85449">density</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       id="rect3972"
+       width="130.50948"
+       height="155.94022"
+       x="595.29968"
+       y="135.45862"
        ry="0" />
     <text
        xml:space="preserve"
-       style="font-size:50px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-       x="354.98849"
-       y="674.21484"
-       id="text3648"
+       style="font-size:60px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+       x="607.76831"
+       y="233.29199"
+       id="text3975"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan3664"
-         x="354.98849"
-         y="674.21484">y</tspan></text>
+         id="tspan3981"
+         x="607.76831"
+         y="233.29199">X</tspan></text>
     <text
        sodipodi:linespacing="125%"
-       id="text3652"
-       y="753.09442"
-       x="336.2041"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       id="text3983"
+       y="201.29199"
+       x="655.76831"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
        xml:space="preserve"><tspan
          sodipodi:role="line"
-         id="tspan3654"
-         x="336.2041"
-         y="753.09442">N</tspan></text>
+         id="tspan3987"
+         x="655.76831"
+         y="201.29199">(mix)</tspan></text>
     <text
        sodipodi:linespacing="125%"
-       id="text3656"
-       y="586.53015"
-       x="375.63818"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       id="text3989"
+       y="300.09442"
+       x="572.85724"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Arial;-inkscape-font-specification:Arial"
        xml:space="preserve"><tspan
-         sodipodi:role="line"
-         id="tspan3662"
-         x="375.63818"
-         y="586.53015">1</tspan></text>
-    <path
-       id="path3660"
-       d="m 273.00573,668.42876 67.35537,0"
-       style="fill:none;stroke:#000000;stroke-width:1.67390776;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Mend)"
-       inkscape:connector-curvature="0" />
+         y="300.09442"
+         x="572.85724"
+         id="tspan3991"
+         sodipodi:role="line">N</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Gill Sans;-inkscape-font-specification:Gill Sans"
-       x="278.10947"
-       y="658.35718"
-       id="text3819"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Arial;-inkscape-font-specification:Arial"
+       x="716.85724"
+       y="128.09442"
+       id="text3993"
        sodipodi:linespacing="125%"><tspan
-         y="658.35718"
-         x="278.10947"
-         id="tspan3821"
-         sodipodi:role="line">MLR</tspan></text>
+         sodipodi:role="line"
+         id="tspan3995"
+         x="716.85724"
+         y="128.09442">P</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       x="298.75879"
+       y="-604.18921"
+       id="text3999"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,1,-1,0,0,0)"><tspan
+         y="-604.18921"
+         x="298.75879"
+         id="tspan4001"
+         sodipodi:role="line">melting point of blend</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4003"
+       y="-624.18921"
+       x="298.75879"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       xml:space="preserve"
+       transform="matrix(0,1,-1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan4015"
+         x="298.75879"
+         y="-624.18921">boiling point of blend</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       x="298.75879"
+       y="-692.18921"
+       id="text4007"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,1,-1,0,0,0)"><tspan
+         y="-692.18921"
+         x="298.75879"
+         id="tspan4009"
+         sodipodi:role="line">viscosity of blend</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4011"
+       y="-710.18921"
+       x="298.75879"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:300;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Gill Sans;-inkscape-font-specification:Gill Sans Light Italic"
+       xml:space="preserve"
+       transform="matrix(0,1,-1,0,0,0)"><tspan
+         y="-710.18921"
+         x="298.75879"
+         id="tspan4013"
+         sodipodi:role="line">density of blend</tspan></text>
   </g>
 </svg>
