@@ -1,7 +1,6 @@
-food <- read.csv('/Users/kevindunn/Statistics course/Course notes/Latent variable modelling/images/food-consumption.csv', row.names=1)
+food <- read.csv('food-consumption.csv', row.names=1)
 
-
-bitmap('/Users/kevindunn/Statistics course/Course notes/Latent variable modelling/images/pca-on-food-consumption-scatterplot-matrix.png', type="png256", width=14, height=9, res=300, pointsize=14)
+bitmap('pca-on-food-consumption-scatterplot-matrix.png', type="png256", width=14, height=9, res=300, pointsize=14)
 library(car)
 #scatterplot.matrix(food, col=c(1,1,1,1,1))
 dev.off()
@@ -22,7 +21,7 @@ food.mcuv <- sweep(food.mc, 2, food.sd, FUN='/')
 var.names <- colnames(food)
 
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Latent variable modelling/images/pca-on-food-consumption-centering-and-scaling.png', type="png256", width=14, height=5, res=300, pointsize=14)
+bitmap('pca-on-food-consumption-centering-and-scaling.png', type="png256", width=14, height=5, res=300, pointsize=14)
 par(mar=c(8.5, 4.2, 4.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
 layout(matrix(c(1,2,3),1,3))
@@ -42,14 +41,14 @@ P <- lvm$rotation
 T <- lvm$x
 
 # Plot the loadings as a barplot
-bitmap('/Users/kevindunn/Statistics course/Course notes/Latent variable modelling/images/pca-on-food-consumption-pc1-loadings.png', type="png256", width=10, height=5, res=300, pointsize=14)
+bitmap('pca-on-food-consumption-pc1-loadings.png', type="png256", width=10, height=5, res=300, pointsize=14)
 par(cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
 par(mar=c(3.5, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 barplot(lvm$rotation[,1], col=0, ylim=c(-0.7,0.7), width=1, ylab="1st component loadings")
 abline(h=0)
 dev.off()
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Latent variable modelling/images/pca-on-food-consumption-pc2-loadings.png', type="png256", width=10, height=5.5, res=300, pointsize=14)
+bitmap('pca-on-food-consumption-pc2-loadings.png', type="png256", width=10, height=5.5, res=300, pointsize=14)
 par(cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
 par(mar=c(3.5, 4.2, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 barplot(lvm$rotation[,2], col=0, ylim=c(-1,+1), width=1, ylab="2nd component loadings")
@@ -57,7 +56,7 @@ abline(h=0)
 dev.off()
 
 # Joint loadings plot:
-bitmap('/Users/kevindunn/Statistics course/Course notes/Latent variable modelling/images/pca-on-food-consumption-both-loadings.png', type="png256", width=8, height=8, res=300, pointsize=14)
+bitmap('pca-on-food-consumption-both-loadings.png', type="png256", width=8, height=8, res=300, pointsize=14)
 par(cex.lab=1.3, cex.main=1.3, cex.sub=1.3, cex.axis=1.3)
 par(mar=c(5.0, 4.2, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(lvm$rotation[,1], lvm$rotation[,2], xlim=c(-0.7,+0.3), ylim=c(-0.5,+0.5), pch=20, cex=2, xlab="1st component loadings [61%]", ylab="2nd component loadings [26%]")
@@ -67,7 +66,7 @@ abline(v=0)
 dev.off()
 
 # Plot the scores in sequence order
-bitmap('/Users/kevindunn/Statistics course/Course notes/Latent variable modelling/images/pca-on-food-consumption-pc1-scores.png', type="png256", width=8, height=4.5, res=300, pointsize=14)
+bitmap('pca-on-food-consumption-pc1-scores.png', type="png256", width=8, height=4.5, res=300, pointsize=14)
 par(cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
 par(mar=c(4.5, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(lvm$x[,1], ylab="1st component scores", xlab="Sequence order", ylim=c(-4.3, 4.3))
@@ -75,7 +74,7 @@ abline(h=0)
 dev.off()
 
 # Plot the scores in sequence order
-bitmap('/Users/kevindunn/Statistics course/Course notes/Latent variable modelling/images/pca-on-food-consumption-pc2-scores.png', type="png256", width=8, height=4.5, res=300, pointsize=14)
+bitmap('pca-on-food-consumption-pc2-scores.png', type="png256", width=8, height=4.5, res=300, pointsize=14)
 par(cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
 par(mar=c(4.5, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(lvm$x[,2], ylab="2nd component scores", xlab="Sequence order", ylim=c(-2.5, 2.5))
@@ -83,7 +82,7 @@ abline(h=0)
 dev.off()
 
 # Joint score plot:
-bitmap('/Users/kevindunn/Statistics course/Course notes/Latent variable modelling/images/pca-on-food-consumption-both-scores.png', type="png256", width=8, height=8, res=300, pointsize=14)
+bitmap('pca-on-food-consumption-both-scores.png', type="png256", width=8, height=8, res=300, pointsize=14)
 par(cex.lab=1.3, cex.main=1.3, cex.sub=1.3, cex.axis=1.3)
 par(mar=c(5.0, 4.2, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(lvm$x[,1], lvm$x[,2], xlim=c(-4,+4), ylim=c(-2.5, +2.5), pch=20, cex=2, xlab="1st component scores [31%]", ylab="2nd component scores [20%]")
@@ -93,7 +92,7 @@ abline(v=0)
 dev.off()
 
 # Contribution plot in t_1 for observation 33
-bitmap('/Users/kevindunn/Statistics course/Course notes/Latent variable modelling/images/pca-on-food-consumption-score-t1-contribution-for-obs-12.png', type="png256", width=10, height=4, res=300, pointsize=14)
+bitmap('pca-on-food-consumption-score-t1-contribution-for-obs-12.png', type="png256", width=10, height=4, res=300, pointsize=14)
 par(cex.lab=1.2, cex.main=1.3, cex.sub=1.3, cex.axis=1.3)
 par(mar=c(2.5, 4.2, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 obs_id = 12
