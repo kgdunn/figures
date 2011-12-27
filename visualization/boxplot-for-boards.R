@@ -1,20 +1,13 @@
-boards <- read.csv('/Users/kevindunn/ConnectMV/Datasets/Boards/all-thickness-values.csv')
-nrow(boards)
-ncol(boards)
-boards[1:100,2:7]
+boards <- read.csv('http://datasets.connectmv.com/file/six-point-board-thickness.csv')
+summary(boards)
 
 plot(boards[1:100,5], type='l')
 plot(boards[1:100,5], type='l')
+first100 <- boards[1:100, 2:7]
 
+# Ignore the first date/time column: using only Pos1, Pos2, ... Pos6 columns
 
-# Number of board samples: 
-
-
-# Show the data
-boxplot(boards[1:100, 2:7], ylab="Board thickness (mils)")
-
-boxplot(boards[1:100, 2:7], range=0, ylab="Board thickness (mils)")
-
-#bitmap(file='/Users/kevindunn/Statistics course/Course notes/Visualization/images/boxplot-for-two-by-six-100-boards.png', type="png256", res=300, pointsize=14)
-# Draw the boxplot
-#dev.off()
+bitmap('boxplot-for-two-by-six-100-boards.png', pointsize=14, res=300, type="png256", width=6, heigh=5)
+par(mar=c(2, 4, 0.2, 0.2))  # (bottom, left, top, right) spacing around plot
+boxplot(first100, ylab="Thickness [mils]")
+dev.off()

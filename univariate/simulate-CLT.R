@@ -1,6 +1,6 @@
 N = 500
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Univariate data analysis/images/simulate-CLT.png', type="png256", width=10, height=7, res=300, pointsize=14)
+bitmap('simulate-CLT.png', type="png256", width=10, height=7, res=300, pointsize=14)
 
 m <- t(matrix(seq(1,6), 3, 2))
 layout(m)
