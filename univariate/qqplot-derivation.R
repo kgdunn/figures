@@ -10,7 +10,9 @@ yields.z = (yields - mean.yield)/sd.yield
 yields.z.sorted = sort(yields.z)
 
 bitmap('qqplot-derivation.png', type="png256", width=7, height=7, res=300, pointsize=14)
-plot(theoretical.quantity, yields.z.sorted, type="p", cex.lab=1.5, cex.main=1.8, lwd=4, cex.sub=1.8, cex.axis=1.8)
+plot(theoretical.quantity, yields.z.sorted, type="p", 
+    cex.lab=1.5, cex.main=1.8, lwd=4, cex.sub=1.8, cex.axis=1.8,
+    xlim=c(-1.8, 1.8), ylim=c(-1.8, 1.8))
 dev.off()
 
 bitmap('qqplot-from-R.png', type="png256", width=7, height=7, res=300, pointsize=14)
