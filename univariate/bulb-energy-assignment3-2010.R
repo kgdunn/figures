@@ -17,8 +17,9 @@ e.mean.est <- sum(bin.centers * bin.counts)/N                        # 4127
 e.sd.est <- sqrt(sum(bin.counts*(bin.centers - e.mean.est)^2)/(N-1)) # 78.9
 
 
-bitmap('../images/bulb-energy-barplot.png', type="png256", width=7, height=7, res=250, pointsize=14) 
+bitmap('bulb-energy-barplot.png', type="png256", width=7, height=7, res=250, pointsize=14) 
 bins.centers <- c(4025, 4075, 4125, 4175, 4225, 4275, 4325, 4375)
 bins.counts <- c(4, 19, 14,  5,  4,  1,  2,  1)
-barplot(bins.counts, names.arg=bins.centers, ylab="Number of bulbs (N=50)", xlab="Energy required over 24 hours (W.h)", col="White", ylim=c(0,20), cex.lab=1.5, cex.main=1.8, lwd=2, cex.sub=1.8, cex.axis=1.8)
+barplot(bins.counts, names.arg=bins.centers, ylab="Number of bulbs (N=50)", xlab="Energy required over 24 hours (W.h)", col="White", 
+ylim=c(0,20), cex.lab=1.5, cex.main=1.8, lwd=2, cex.sub=1.8, cex.axis=1.8)
 dev.off()
