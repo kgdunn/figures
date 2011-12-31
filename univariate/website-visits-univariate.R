@@ -20,7 +20,7 @@ pnorm(z.UB) - pnorm(z.LB)                    #  0.7533546
 #-------- END OF CODE HERE
 
 
-bitmap('../images/website-visits-univariate.png', type="png256", width=14, height=7, res=300, pointsize=14) 
+bitmap('website-visits-univariate.png', type="png256", width=14, height=7, res=300, pointsize=14) 
 layout(matrix(c(1,2), 1, 2))
 
 qqnorm(web$Visits)#, cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)

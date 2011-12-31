@@ -1,7 +1,7 @@
 z <- seq(-5, 5, 0.1)
 norm <- pnorm(z)
 
-bitmap('../images/normal-t-comparison.png', type="png256", width=12, height=7, 
+bitmap('normal-t-comparison.png', type="png256", width=12, height=7, 
     res=300, pointsize=14) 
 par(mar=c(4.2, 4.2, 2.2, 0.2))
 
