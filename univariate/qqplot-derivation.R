@@ -15,7 +15,15 @@ plot(theoretical.quantity, yields.z.sorted, type="p",
     xlim=c(-1.8, 1.8), ylim=c(-1.8, 1.8))
 dev.off()
 
-bitmap('qqplot-from-R.png', type="png256", width=7, height=7, res=300, pointsize=14)
-qqnorm(yields, cex.lab=1.5, cex.main=1.5, lwd=2, cex.sub=1.5, cex.axis=1.5)
+bitmap('qqplot-from-R.png', type="png256", width=14, height=7, res=300, pointsize=14)
+
+m <- t(matrix(seq(1,2), 2, 1))
+layout(m)
+
+qqnorm(yields, main="Using the built-in functions")
 qqline(yields)
+
+library(car)
+qqPlot(yields, main="Using the car library", cex=1.5, lwd=2)
+
 dev.off()
