@@ -9,7 +9,7 @@ lattice.options(default.theme = ltheme)
 super.sym <- trellis.par.get("superpose.symbol")
 super.sym$pch[1:3] <- c(1,2,3)
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Latent-variable-modelling/images/brushing-illustration-colour.png', type="png256", width=6, height=6, res=300, pointsize=14)
+bitmap('brushing-illustration-colour.png', type="png256", width=6, height=6, res=300, pointsize=14)
 
 splom(~iris[1:4], groups = Species, data = iris,
       panel = panel.superpose,
