@@ -79,7 +79,7 @@ error.delta <- t.critical*SE*sqrt(1+ 1/N + ((x.new-x.bar)^2)/den)
 
 
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/show-anscome-solution-unmarked.png', type="png256", width=7, height=7, res=300, pointsize=14)
+bitmap('show-anscome-solution-unmarked.png', type="png256", width=7, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(x,y, xlim=c(0, 14), ylim=c(0, 12), cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, main="")
 grid(lwd=2)
@@ -88,7 +88,7 @@ abline(a=b0, b=b1, col="red", lty=1)
 points(x.bar, y.bar, pch="*", cex=2)
 dev.off()
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/show-anscome-solution-marked.png', type="png256", width=7, height=7, res=300, pointsize=14)
+bitmap('show-anscome-solution-marked.png', type="png256", width=7, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(x,y, xlim=c(0, 14), ylim=c(0, 12), cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, main="")
 grid(lwd=2)
@@ -101,7 +101,7 @@ points(x.bar, y.bar, pch="*", cex=2)
 dev.off()
 
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/show-anscome-solution-with-yhat-bounds.png', type="png256", width=7, height=7, res=300, pointsize=14)
+bitmap('show-anscome-solution-with-yhat-bounds.png', type="png256", width=7, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(x,y, cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, main="", ylim=c(1, 12))
 grid(lwd=2)
@@ -116,7 +116,7 @@ dev.off()
 
 
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/show-anscombe-problem-1.png', type="png256", width=7, height=7, res=300, pointsize=14)
+bitmap('show-anscombe-problem-1.png', type="png256", width=7, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(x, y, cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, main="")
 grid(lwd=2)

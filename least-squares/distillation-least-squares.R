@@ -65,7 +65,7 @@ error.delta <- t.critical*SE*sqrt(1+ 1/n + ((x.new-x.bar)^2)/den)
 
 # Plot of the raw data, least squares line, prediction interval for yhat, 
 # slope coefficient confidence interval range
-bitmap('../images/distillation-least-squares.png', type="png256", width=9, height=7, res=300, pointsize=14)
+bitmap('distillation-least-squares.png', type="png256", width=9, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 2, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(x,y, cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, main="", 
           xlab="Temperature (TempC2)", ylab="VapourPressure")

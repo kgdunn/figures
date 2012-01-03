@@ -9,7 +9,7 @@ summary(salt)
 #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 # 460.0   700.0   890.0   813.1   940.0  1100.0
 
-bitmap('../images/soy-salt-content.png', type="png256", width=7, height=7, res=250, pointsize=14) 
+bitmap('soy-salt-content.png', type="png256", width=7, height=7, res=250, pointsize=14) 
 boxplot(salt, ylab="Salt content (mg / 15mL serving)")
 dev.off()
 

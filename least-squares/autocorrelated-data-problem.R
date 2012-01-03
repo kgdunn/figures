@@ -16,7 +16,7 @@ model <- lm(y~x)
 summary(model)
 
 
-#bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/residual-pattern-unmodelled-dynamics.png', type="png256", width=14, height=9, res=300, pointsize=14)
+#bitmap('residual-pattern-unmodelled-dynamics.png', type="png256", width=14, height=9, res=300, pointsize=14)
 # par(mar=c(4.2, 4.2, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 # layout(matrix(c(1,2,3), 1, 3))
 plot(y[1:(N-1)], y[2:N] )

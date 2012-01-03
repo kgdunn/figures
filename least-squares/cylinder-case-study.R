@@ -24,7 +24,7 @@ T.centered <- T - mean(T)
 p.centered <- p - mean(p)
  
 T.p.corr <- mean(T.centered * p.centered) / sqrt(sum((T - mean(T)) * (T - mean(T)))   *   sum((p - mean(p)) * (p - mean(p))) )
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/cylinder-case-study.png', type="png256", width=7, height=7, res=300, pointsize=14)
+bitmap('cylinder-case-study.png', type="png256", width=7, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 1.2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(T, p, xlab="Temperature [K]", ylab="Pressure [kPa]", cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
 dev.off()
@@ -42,7 +42,7 @@ ssq <- function(beta, temperature=c(273, 285, 297, 309, 321, 333, 345, 357, 369,
 }
 obj <- sapply(beta, ssq)
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/cylinder-case-study-objective.png', type="png256", width=7, height=7, res=300, pointsize=14)
+bitmap('cylinder-case-study-objective.png', type="png256", width=7, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 1.2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(beta, obj, ylab="Objective function value",  xlab=expression("b1"), cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
 dev.off()

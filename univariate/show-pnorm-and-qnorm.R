@@ -1,5 +1,5 @@
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Univariate data analysis/images/show-pnorm-and-qnorm.png', type="png256", width=10, height=7, res=300, pointsize=14)
+bitmap('show-pnorm-and-qnorm.png', type="png256", width=10, height=7, res=300, pointsize=14)
 
 z <- seq(-4, 4, 0.01)
 cumulative.norm = pnorm(z)

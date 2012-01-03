@@ -4,7 +4,7 @@ cumulative.quantile = pnorm(q)
 p <- c(0.001, 0.0025, 0.005, 0.010, 0.025, 0.05, 0.075, 0.10, 0.3, 0.5, 0.7, 0.9, 0.925, 0.950, 0.975, 0.99, 0.995, 0.9975, 0.999)
 cumulative.probability = qnorm(p)
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Assignments/Statistical tables/show-pnorm-and-qnorm.png', type="png256", width=16, height=7, res=300, pointsize=14)
+bitmap('show-pnorm-and-qnorm.png', type="png256", width=16, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.2, 1))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 layout(matrix(c(1,2), 1, 2))
 plot(q, cumulative.quantile, type="b", main="", xlab="z", ylab="q = cumulative area under the normal distribution",  

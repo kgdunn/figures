@@ -2,7 +2,7 @@
 
 library(car)
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/non-normal-errors-transformation-required.png', type="png256", width=14, height=8, res=300, pointsize=14)
+bitmap('non-normal-errors-transformation-required.png', type="png256", width=14, height=8, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.3, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
 layout(matrix(c(1,2), 1, 2))
@@ -39,7 +39,7 @@ plot(model.rmoutliers$fitted.values, model.rmoutliers$residuals)
 # Actually the qq-plot of the log(residuals) looks OK, but once you take it to original $ units, 
 # then you see it is worse
 
-# bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/non-normal-errors-transformation.png', type="png256", width=14, height=9, res=300, pointsize=14)
+# bitmap('non-normal-errors-transformation.png', type="png256", width=14, height=9, res=300, pointsize=14)
 # par(mar=c(4.2, 4.2, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 # par(cex.lab=1.3, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
 # layout(matrix(c(1,2), 1, 2))

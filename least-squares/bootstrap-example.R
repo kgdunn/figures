@@ -1,7 +1,7 @@
 library(boot)
 attach(survival)
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/bootstrap-example.png', type="png256", width=15, height=7, res=300, pointsize=14)
+bitmap('bootstrap-example.png', type="png256", width=15, height=7, res=300, pointsize=14)
 layout(matrix(c(1,2), 1, 2))
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.5)
@@ -75,7 +75,7 @@ dev.off()
 
 
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/bootstrap-example-slide1.png', type="png256", width=7, height=7, res=300, pointsize=14)
+bitmap('bootstrap-example-slide1.png', type="png256", width=7, height=7, res=300, pointsize=14)
 #layout(matrix(c(1,2), 1, 2))
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.5)
@@ -86,7 +86,7 @@ abline(coef(base.lm.rm13), lwd=1, col="darkgreen")
 legend(x=650, y=3, legend=c("OLS: all data", "OLS: all data except point 13"), col=c("blue", "darkgreen"), lty=c(1, 1), lwd=c(3,1))
 dev.off()
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/bootstrap-example-slide2.png', type="png256", width=10, height=7, res=300, pointsize=14)
+bitmap('bootstrap-example-slide2.png', type="png256", width=10, height=7, res=300, pointsize=14)
 #layout(matrix(c(1,2), 1, 2))
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.5)

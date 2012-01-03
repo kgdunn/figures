@@ -5,7 +5,7 @@ y <- dist$VapourPressure
 
 model <- lm(log(y) ~ 1/x)
 
-bitmap('../images/residual-plots.png', type="png256", width=14, height=7, res=300, pointsize=14)
+bitmap('residual-plots.png', type="png256", width=14, height=7, res=300, pointsize=14)
 layout(matrix(c(1,2), 1,2))
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 hist(model$residual, breaks=12, xlab="Model residuals", ylab="Freqency count",cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, main="")

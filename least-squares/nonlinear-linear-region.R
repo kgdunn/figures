@@ -12,7 +12,7 @@ startx = 11
 endx = 30
 
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/nonlinear-linear-region.png', type="png256", width=7, height=7, res=300, pointsize=14)
+bitmap('nonlinear-linear-region.png', type="png256", width=7, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.3, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
 plot(x[1:startx], y[1:startx], pch=21, xlim=range(x), ylim=range(y), bg=1, xlab="x", ylab="y")
@@ -33,7 +33,7 @@ dev.off()
 
 # What if we had used the whole region to build the linear model?
 model.all <- lm(y ~ x)
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/nonlinear-detection.png', type="png256", width=16, height=16/3, res=300, pointsize=14)
+bitmap('nonlinear-detection.png', type="png256", width=16, height=16/3, res=300, pointsize=14)
 layout(matrix(c(1,2,3), 1, 3))
 par(mar=c(4.2, 4.2, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.5, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)

@@ -16,12 +16,12 @@ some(Prestige)
 #PLUMBERS                 8.33   6928  0.61     42.9   8791   bc
 #TAXI.DRIVERS             7.93   4224  3.59     25.1   9173   bc
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/non-parametric-plots-without.png', type="png256", width=8, height=7, res=300, pointsize=14)
+bitmap('non-parametric-plots-without.png', type="png256", width=8, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)scatterplot(Prestige$income, Prestige$prestige, xlab="Average income ($)", ylab="Prestige", col=rep("black",5), cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, main="")
 plot(Prestige$income, Prestige$prestige, xlab="Average income ($)", ylab="Prestige",  cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, main="")
 dev.off()
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/non-parametric-plots-with.png', type="png256", width=8, height=7, res=300, pointsize=14)
+bitmap('non-parametric-plots-with.png', type="png256", width=8, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)scatterplot(Prestige$income, Prestige$prestige, xlab="Average income ($)", ylab="Prestige", col=rep("black",5), cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, main="")
 
 scatterplot(Prestige$income, Prestige$prestige, xlab="Average income ($)", ylab="Prestige", col=rep("black",5), cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, main="")

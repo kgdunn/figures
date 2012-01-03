@@ -58,7 +58,7 @@ sd(B)
 # lines(lowess(A.hist.sim[1:N-1], A.hist.sim[2:N]))
 # cov(A.hist.sim[1:N-1], A.hist.sim[2:N])
 # range(A.hist.sim) 
-# write.csv(round(A.hist.sim,2), '/Users/kevindunn/Statistics course/Course notes/Univariate data analysis/images/system-comparison-historical-data.csv', quote=FALSE, row.names=FALSE)
+# write.csv(round(A.hist.sim,2), 'system-comparison-historical-data.csv', quote=FALSE, row.names=FALSE)
 
 A.hist <- read.csv('system-comparison-historical-data.csv', header=FALSE)
 #A.hist <- read.csv('http://datasets.connectmv.com/file/batch-yields.csv', header=FALSE)

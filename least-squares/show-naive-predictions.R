@@ -7,7 +7,7 @@ model = lm(y~x)
 SE = sqrt(sum(model$residuals * model$residuals)/model$df.residual)
 
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/show-naive-predictions.png', type="png256", width=7, height=7, res=300, pointsize=14)
+bitmap('show-naive-predictions.png', type="png256", width=7, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 5, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.7, cex.main=1.4, cex.sub=1.8, cex.axis=1.8)
 plot(x,y,cex=1.5)

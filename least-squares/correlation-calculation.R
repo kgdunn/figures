@@ -2,7 +2,7 @@
 set.seed(2)
 N = 30
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Correlation, covariance and least squares/images/correlation-calculation.png', type="png256", width=14, height=14, res=300, pointsize=14)
+bitmap('correlation-calculation.png', type="png256", width=14, height=14, res=300, pointsize=14)
 
 layout(matrix(c(1,2,3, 4), 2,2))
 par(mar=c(4.2, 4.2, 2, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)

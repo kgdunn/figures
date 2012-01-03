@@ -19,7 +19,7 @@ mean(dilution)
 plot(dilution, type="p", pch="x")
 lines(manometric, type="p", pch="o")
 
-bitmap('/Users/kevindunn/Statistics course/Course notes/Assignments/Assignment 3/images/BOD-comparison-plot.png', type="png256", width=7, height=7, res=250, pointsize=14) 
+bitmap('BOD-comparison-plot.png', type="png256", width=7, height=7, res=250, pointsize=14) 
 par(mar=c(4.2, 4.2, 0.2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(dilution-manometric, type="b", ylab="Dilution - Manometric", xlab="Sample number", cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
 abline(h=0, col="grey60")
