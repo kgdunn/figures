@@ -12,7 +12,7 @@ raw.sample <- dnorm(steps, mean=base.mean, sd=base.sd/sqrt(N))
 
 bitmap('explain-confidence-interval.png', type="png256", width=10, height=7, res=300, pointsize=14)
 
-plot(steps, raw.sample, lwd=4, type="l", xlab="x", ylab="Probability density", 
+plot(steps, raw.sample, lwd=4, type="l", xlab=expression(paste("x (thin), or  ", bar(x), " (thick)")), ylab="Probability density", 
     cex.lab=1.5, cex.main=1.3, cex.sub=1.8, cex.axis=1.8,
     main="Raw data distribution, and sample mean distribution")
 lines(steps, raw)
@@ -32,7 +32,7 @@ raw.sample <- dnorm(steps, mean=base.mean, sd=base.sd/sqrt(N))
 
 bitmap('explain-confidence-interval-normalized.png', type="png256", width=10, height=7, res=300, pointsize=14)
 
-plot(steps, raw.sample, lwd=4, type="l", xlab="x", ylab="Probability density", 
+plot(steps, raw.sample, lwd=4, type="l", xlab="z", ylab="Probability density", 
     cex.lab=1.5, cex.main=1.3, cex.sub=1.8, cex.axis=1.8,
     ylim=c(0,1),
     main="Raw data distribution, and sample mean distribution")

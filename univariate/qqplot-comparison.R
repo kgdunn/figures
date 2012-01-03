@@ -6,7 +6,8 @@ bitmap('qqplot-comparison.png', type="png256", width=14, height=7, res=300, poin
 m <- t(matrix(seq(1,2), 2, 1))
 layout(m)
 
-hist(rand.f, freq=FALSE, ylim=c(0, 2.6))                        # looks sort of normally distributed
+# looks sort of normally distributed
+hist(rand.f, freq=FALSE, ylim=c(0, 2.6), main="Are these data from a normal distribution?")                        
 lines(density(rand.f))
 
 qqPlot(rand.f, distribution="norm", main="q-q plot against the normal distribution")
