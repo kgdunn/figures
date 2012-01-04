@@ -10,9 +10,9 @@ limits <- range(data$obs)
 layout(matrix(c(1, 1:3), 1, 4))
 boxplot(data$obs ~ data$method, cex.lab=1.8, cex.main=1.8, lwd=2, cex.sub=1.8, cex.axis=1.8, ylim=limits, main="Batch yield (%) for two trials")
 plot(A, main="A", ylab="", ylim=limits, cex.lab=1.8, cex.main=1.8, lwd=2, cex.sub=1.8, cex.axis=1.8)
-abline(h=mean(A))
+abline(h=mean(A), lwd=5)
 plot(B, main="B", ylab="", ylim=limits, cex.lab=1.8, cex.main=1.8, lwd=2, cex.sub=1.8, cex.axis=1.8)
-abline(h=mean(B))
+abline(h=mean(B), lwd=5)
 dev.off()
 
 
