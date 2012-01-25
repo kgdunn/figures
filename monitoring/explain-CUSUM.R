@@ -17,7 +17,7 @@ bitmap('explain-CUSUM.png', type="png256", width=20, height=25, res=300, pointsi
 m <- t(matrix(seq(1,4), 1, 4))
 layout(m)
 
-plot(data, type="p", pch=".", cex=10, cex.lab=1.5, cex.main=3, cex.sub=3, cex.axis=3, xlab="", ylab="", main="Raw data: no shift in mean")
+plot(data, type="p", pch=".", cex=10, cex.lab=1.5, cex.main=3, cex.sub=3, cex.axis=3, xlab="", ylab="", main="Case 1, raw data: no shift in mean")
 abline(h=base.mean, col="grey80")
 points(data, type="p",pch=".", cex=10)
 
@@ -28,7 +28,7 @@ for (k in 2:N)
    S[k] <- S[k-1] + data[k] - target
 }
 range(S)
-plot(S, type="b", cex.lab=1.5, cex.main=3, cex.sub=3, cex.axis=3, xlab="Time steps", ylab="", main="S(t)", ylim=c(-20, 120))
+plot(S, type="b", cex.lab=1.5, cex.main=3, cex.sub=3, cex.axis=3, xlab="Time steps", ylab="", main="Case 1: S(t)", ylim=c(-20, 120))
 abline(h=0)
 x=170
 d = 10
@@ -47,7 +47,7 @@ step.fraction <- 0.4
 data.shift <- data
 data.shift[step.point:N] <- data.shift[step.point:N] + step.fraction*base.sd
 
-plot(data.shift, type="p", pch=".", cex=10, cex.lab=1.5, cex.main=3, cex.sub=3, cex.axis=3, xlab="", ylab="", main="A shift of 1.2 units (0.4 sigma) at t=150")
+plot(data.shift, type="p", pch=".", cex=10, cex.lab=1.5, cex.main=3, cex.sub=3, cex.axis=3, xlab="", ylab="", main="Case 2, a shift of 1.2 units (0.4 sigma) at t=150")
 abline(h=base.mean, col="grey80")
 
 
@@ -57,7 +57,7 @@ for (k in 2:N)
 {
    S.shift[k] <- S.shift[k-1] + data.shift[k] - target
 }
-plot(S.shift, type="b", cex.lab=1.5, cex.main=3, cex.sub=3, cex.axis=3, xlab="Time steps", ylab="", main="S(t)", ylim=c(-20, 120))
+plot(S.shift, type="b", cex.lab=1.5, cex.main=3, cex.sub=3, cex.axis=3, xlab="Time steps", ylab="", main="Case 2: S(t)", ylim=c(-20, 120))
 abline(h=0)
 
 
