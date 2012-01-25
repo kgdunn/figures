@@ -12,7 +12,7 @@ step.fraction <- 1
 data[step.point:N] <- data[step.point:N] + step.fraction*base.sd
 
 
-bitmap('demo-of-monitoring-chart.png', type="png256", width=10, height=5, res=300, pointsize=14)
+bitmap('demo-of-monitoring-chart.png', type="png256", width=10, height=4, res=300, pointsize=14)
 
 ewma <- function(x, lambda, target=x[1]){
     N <- length(x)
@@ -32,12 +32,12 @@ UCL = base.mean+3*base.sd * sqrt(lambda/(2-lambda))
 plot(ewma(data, lambda=lambda, target=base.mean), type="l", ylim=c(LCL*0.90, UCL*1.15), 
     xlab="", ylab="TC241 [degC]", main="Tank temperature, TC241 [degC]", 
     cex.lab=1.5, cex.main=1.2, cex.sub=1.8, cex.axis=1.8)
-abline(h=base.mean, col="grey60")
+abline(h=base.mean, col="grey60", lwd=3)
 lines(ewma(data, lambda=lambda, target=base.mean))
-abline(h=LCL, col="red")
-abline(h=UCL, col="red")
+abline(h=LCL, col="red", lwd=2)
+abline(h=UCL, col="red", lwd=2)
 
-text(3, 15, "UCL", cex=1.2)
-text(3, 6, "LCL", cex=1.2)
+text(3, 15.5, "UCL", cex=1.2)
+text(3, 6.5, "LCL", cex=1.2)
 
 dev.off()
