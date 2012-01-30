@@ -1,4 +1,8 @@
 
+
+TRIM THE TOP WHITESPACE OFF; TRANSPARENT BACKGROUND
+
+
 set.seed(42)
 N = 5
 samples = 100
@@ -28,7 +32,7 @@ UCL <- xdb + 3*s.bar/an.5/sqrt(N)
 c(LCL, UCL)
 c(sum(groups.x<LCL), sum(groups.x>UCL))
 
-bitmap('/Users/kevindunn/transfer/Stats-course/Course notes/Control charts/images/bale-image-colour.png', type="png256", width=10, height=7, res=300, pointsize=14)
+bitmap('bale-image-colour.png', type="png256", width=10, height=5, res=300, pointsize=14)
 plot(groups.x, ylim=c(LCL-2, UCL+2), ylab="Subgroup averages (n=5)", xlab="Sequence order",  cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
 abline(h=LCL, col="red")
 abline(h=UCL, col="red")

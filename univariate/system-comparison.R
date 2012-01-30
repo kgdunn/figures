@@ -107,7 +107,7 @@ for (i in 1:(N-delta-delta+1))
 difference = mean(B)-mean(A)
 maxrange = max(ceiling(abs(A.hist.means.diffs)))
 
-#bitmap('system-comparison-dotplot-grouped.png', type="png256", width=12, height=7, res=300, pointsize=14) 
+bitmap('system-comparison-dotplot-grouped-new.png', type="png256", width=12, height=7, res=300, pointsize=14) 
 dotPlot(A.hist.means.diffs, xlab="Difference between means of 2 adjacent groups (10 batches per group)", xlim=c(-maxrange, maxrange))
 lines(x=c(difference, difference), y=c(0,0.35))
 arrows(difference, 0.2, difference+1.6, 0.2, code=2)
