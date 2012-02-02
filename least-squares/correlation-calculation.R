@@ -25,7 +25,7 @@ text(10, 375, paste("r(x,y) = ", round(cor(x, y),3)), cex=1.5)
 set.seed(4)
 x <- rnorm(N, mean=, sd=9)
 y <- 0.3*x +  rnorm(N, mean=50, sd = 4) + rt(N, df=4) + rf(N, df1=10, df2=10)
-plot(x, y, main="A positive correlation", cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
+plot(x, y, main="A moderate, positive correlation", cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
 text(5, 40, paste("r(x,y) = ", round(cor(x, y),3)), cex=1.5)
 
 dev.off()
