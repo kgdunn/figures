@@ -16,8 +16,23 @@ manometric <- c(25,  3, 27, 30, 33, 16, 28, 27, 12, 32, 16)
 mean(manometric)
 mean(dilution)
 
-plot(dilution, type="p", pch="x")
-lines(manometric, type="p", pch="o")
+bitmap('BOD-comparison-raw-data.png', type="png256", width=7, height=7, res=250, pointsize=14) 
+par(mar=c(4.2, 4.2, 0.2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+plot(dilution, type="p", pch=4, 
+    cex=2, cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, 
+    ylab="BOD values", xlab="Sample number",
+    ylim=c(0,35), xlim=c(0,11.5), col="darkgreen")
+lines(manometric, type="p", pch=16, cex=2, col="blue")
+lines(rep(0, N), dilution, type="p", pch=4, cex=2, col="darkgreen")
+lines(rep(0, N), manometric, type="p", pch=16, cex=2, col="blue")
+
+abline(v=0.5)
+
+legend(8, 5, pch=c(4, 16), c("Dilution", "Manometric"), col=c("darkgreen", "blue"), pt.cex=2)
+dev.off()
+
+
+
 
 bitmap('BOD-comparison-plot.png', type="png256", width=7, height=7, res=250, pointsize=14) 
 par(mar=c(4.2, 4.2, 0.2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
