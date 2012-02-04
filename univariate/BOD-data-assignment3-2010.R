@@ -92,11 +92,12 @@ t.test(dilution, manometric, alternative="two.sided", mu = 0, paired = FALSE, va
 
 # Drop out the second point
 dilution[2] <- NA
-manometric[2] <- NA
+#manometric[2] <- NA  # no need to remove this point
 group_difference(dilution, manometric)
-# z = 3.237439
-# t.critical = 0.997715
-# 3.2297 < mu.diff < 15.1703
+# z = 2.128
+# t.critical = 0.9766
+# 0.119 < mu.diff < 14.35
+
 
 t.test(dilution, manometric, alternative="two.sided", mu = 0, paired = FALSE, var.equal = TRUE, conf.level = 0.95)
 #   Two Sample t-test

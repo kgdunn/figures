@@ -1,8 +1,3 @@
-
-
-TRIM THE TOP WHITESPACE OFF; TRANSPARENT BACKGROUND
-
-
 set.seed(42)
 N = 5
 samples = 100
@@ -33,6 +28,7 @@ c(LCL, UCL)
 c(sum(groups.x<LCL), sum(groups.x>UCL))
 
 bitmap('bale-image-colour.png', type="png256", width=10, height=5, res=300, pointsize=14)
+par(mar=c(2, 4.2, 2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(groups.x, ylim=c(LCL-2, UCL+2), ylab="Subgroup averages (n=5)", xlab="Sequence order",  cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
 abline(h=LCL, col="red")
 abline(h=UCL, col="red")
