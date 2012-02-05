@@ -16,6 +16,16 @@ manometric <- c(25,  3, 27, 30, 33, 16, 28, 27, 12, 32, 16)
 mean(manometric)
 mean(dilution)
 
+
+bitmap('BOD-comparison-raw-data-alternative.png', type="png256", width=7, height=5, res=250, pointsize=14) 
+par(mar=c(4.2, 4.2, 0.2, 0.2))
+plot(c(dilution, manometric), ylab="BOD values")
+text(5.5,3, "Dilution")
+text(18,3, "Manometric")
+abline(v=11.5)
+dev.off()
+
+
 bitmap('BOD-comparison-raw-data.png', type="png256", width=7, height=7, res=250, pointsize=14) 
 par(mar=c(4.2, 4.2, 0.2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(dilution, type="p", pch=4, 
