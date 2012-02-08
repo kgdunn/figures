@@ -15,7 +15,6 @@ plot(B, main="B", ylab="", ylim=limits, cex.lab=1.8, cex.main=1.8, lwd=2, cex.su
 abline(h=mean(B), lwd=5)
 dev.off()
 
-
 bitmap('system-comparison-boxplot-plots-obvious.png', type="png256", width=12, height=7, res=250, pointsize=14) 
 data$obs[data$method==data$method[1]] <- data$obs[data$method==data$method[1]] - 12
 data$obs[data$method==data$method[11]] <- data$obs[data$method==data$method[11]] + 4

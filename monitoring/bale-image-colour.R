@@ -15,7 +15,7 @@ groups.x <- round(apply(reshaped, 2, mean))
 
 
 groups.x
-
+groups.S
 xdb <- mean(groups.x)
 s.bar <- mean(groups.S)
 
