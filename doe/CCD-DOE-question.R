@@ -13,6 +13,13 @@
 # | 5         | 0          |  0        |  49        |
 # | 6         | 0          |  0        |  51        |
 
+xt = 2
+xc = 1.41
+xt * 5 + 355
+xc * 2 + 5
+50 + 5.455*xt + 4.452*xc -1.626*xt*xt - 3.135*xc*xc +2.5*xt*xc
+
+
 T <- c(-1, +1, -1, +1,  0,  0)
 C <- c(-1, -1, +1, +1,  0,  0)
 y <- c(36, 45, 41, 60, 53, 49)
@@ -25,6 +32,7 @@ C <- c(-1, -1, +1, +1,    0, 1.41,     0, -1.41,  0,  0,  0)
 y <- c(36, 45, 41, 60,   52,   49,    41,    38, 53, 49, 48)
 
 mod <- lm(y ~ T + C + T*C +I(T^2) + I(C^2))
+vcov(mod)
 summary(mod)
 confint(mod)
 # The lower and upper bounds, in coded units, over which we want
