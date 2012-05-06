@@ -13,11 +13,11 @@
    height="765"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.47 r22583"
-   sodipodi:docname="X-and-Y-matrices.svg"
+   inkscape:version="0.48.0 r9654"
+   sodipodi:docname="X-and-T-matrices.svg"
    version="1.0"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="/Users/kevindunn/Statistics course/Course notes/Latent variable modelling/images/X-and-T-matrices.png"
+   inkscape:export-filename="X-and-T-matrices.png"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300">
   <defs
@@ -92,14 +92,14 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.3502856"
-     inkscape:cx="599.0793"
+     inkscape:zoom="1.3065999"
+     inkscape:cx="463.61319"
      inkscape:cy="379.48132"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1440"
-     inkscape:window-height="878"
+     inkscape:window-height="856"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0">
@@ -117,7 +117,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -126,7 +126,7 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:#dcdcdc;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect2385"
        width="374.42123"
        height="278.15201"
@@ -173,7 +173,7 @@
        height="279.47815"
        width="113.74738"
        id="rect2765"
-       style="fill:#dcdcdc;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <text
        sodipodi:linespacing="125%"
        id="text2779"

@@ -1,4 +1,4 @@
-food <- read.csv('/Users/kevindunn/ConnectMV/Datasets/LDPE/food-texture.csv')
+food <- read.csv('http://datasets.connectmv.com/file/food-texture.csv')
 
 # Calculate the mean and standard deviation, ignoring missing values
 food.mean <- apply(food, 2, mean, na.rm=TRUE)

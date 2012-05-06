@@ -18,8 +18,8 @@
    version="1.0"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    inkscape:export-filename="residual-matrix.png"
-   inkscape:export-xdpi="150.04286"
-   inkscape:export-ydpi="150.04286">
+   inkscape:export-xdpi="299.95715"
+   inkscape:export-ydpi="299.95715">
   <defs
      id="defs4">
     <inkscape:perspective
@@ -40,9 +40,9 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.75555556"
-     inkscape:cx="495"
-     inkscape:cy="382.5"
+     inkscape:zoom="1.0380435"
+     inkscape:cx="460"
+     inkscape:cy="350"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -50,7 +50,7 @@
      inkscape:window-height="796"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="0">
+     inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
        id="grid2383"
@@ -77,7 +77,7 @@
      id="layer1"
      transform="translate(0,-65)">
     <rect
-       style="fill:#f0f0f0;fill-opacity:1;stroke:#373737;stroke-width:5.92678785;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:none;fill-opacity:1;stroke:#373737;stroke-width:5.92678785000000019;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect2385"
        width="748.84247"
        height="556.30402"
