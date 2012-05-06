@@ -12,18 +12,20 @@ dev.off()
 
 # Calculate the mean and standard deviation, ignoring missing values
 food.mean <- apply(food, 2, mean, na.rm=TRUE)
+food.median <- apply(food, 2, median, na.rm=TRUE)
 food.sd <- apply(food, 2, sd, na.rm=TRUE)
 
 # Remove the calculated mean (the statistic) from each column (margin=2)
 # by using the subtract function (fun)
 food.mc <- sweep(food, 2, food.mean)
+food.medc <- sweep(food, 2, food.median)
 
 # Scale each column, by dividing through by the standard deviation
 food.mcuv <- sweep(food.mc, 2, food.sd, FUN='/')
+food.medcuc <- sweep(food.medc, 2, food.sd, FUN='/')
 
 # Now draw the boxplots
 var.names <- colnames(food)
-
 
 # Show scatterplot matrix after centering and scaling
 bitmap('pca-on-food-texture-scatterplot-matrix-after-preprocessing.png', type="png256", width=14, height=9, res=300, pointsize=14)
@@ -38,12 +40,23 @@ par(cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
 layout(matrix(c(1,2,3),1,3))
 boxplot(food, main="Raw data", xaxt="n")
 axis(1, at=1:length(var.names), labels=var.names, las=2)
-boxplot(food.mc, main="with mean centering", xaxt="n")
+boxplot(food.mc, main="after mean centering", xaxt="n")
 axis(1, at=1:length(var.names), labels=var.names, las=2)
 boxplot(food.mcuv, main="centered and scaled to unit variance", xaxt="n")
 axis(1, at=1:length(var.names), labels=var.names, las=2)
 dev.off()
 
+bitmap('pca-on-food-texture-centering-and-scaling-median.png', type="png256", width=14, height=5, res=300, pointsize=14)
+par(mar=c(8.5, 4.2, 4.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+par(cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8)
+layout(matrix(c(1,2,3),1,3))
+boxplot(food, main="Raw data", xaxt="n")
+axis(1, at=1:length(var.names), labels=var.names, las=2)
+boxplot(food.medc, main="after mean centering", xaxt="n")
+axis(1, at=1:length(var.names), labels=var.names, las=2)
+boxplot(food.medcuc, main="centered and scaled to unit variance", xaxt="n")
+axis(1, at=1:length(var.names), labels=var.names, las=2)
+dev.off()
 
 lvm <- prcomp(food, scale=TRUE)
 names(lvm)
