@@ -42,6 +42,8 @@ plot(wavelengths, R2.k.a, col='darkgreen', type='l', lwd=a*2, ylim=c(0,1), ylab=
 a = 2
 spectra.Xhat.a <- spectra.T[,seq(1,a)] %*% t(spectra.P[,seq(1,a)])
 spectra.E <- spectra.mcuv - spectra.Xhat.a
+spectra.E.mean <- apply(spectra.E, 1, mean, na.rm=TRUE)  # mean for each row
+spectra.E.mean
 spectra.E2 <- spectra.E * spectra.E
 spectra.Xhat.a.2 <- spectra.Xhat.a * spectra.Xhat.a
 
