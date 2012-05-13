@@ -68,7 +68,7 @@ SPE.A <- apply(temps.E.A ** 2, 1, sum)
 reasonable.limit.95 = quantile(c(SPE.A[1:40], SPE.A[60:120]), 0.95)
 par(mar=c(3.0, 4.2, 3.0, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.3, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
-plot(SPE.A, type='p', main="SPE after using 1 LV", ylab="SPE", xlab="Time order", pch=20, cex=3)
+plot(SPE.A, type='p', main="SPE after using 2 LV", ylab="SPE", xlab="Time order", pch=20, cex=3)
 lines(order[grouper==2], SPE.A[grouper==2], pch=20, type="p", col="blue", cex=2)
 lines(order[grouper==3], SPE.A[grouper==3], pch=20, type="p", col="red", cex=2)
 

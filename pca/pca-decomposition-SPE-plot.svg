@@ -173,7 +173,7 @@
 <text transform="translate(26.67,247.99)  rotate(-90)"  style="font-size:15" >2</text>
 <text transform="translate(26.67,137.89)  rotate(-90)"  style="font-size:15" >3</text>
 <polyline points="35.00 , 480.89 1441.23 , 480.89 1441.23 , 25.00 35.00 , 25.00 35.00 , 480.89 " style="stroke-width:1;stroke:#000000;fill:#000000;stroke-opacity:1.000000;fill-opacity:0.000000"/>
-<text transform="translate(668.07,18.75) "  style="font-size:15" >SPE after using 1 LV</text>
+<text transform="translate(668.07,18.75) "  style="font-size:15" >SPE after using 2 LV</text>
 <circle cx="542.35" cy="452.17" r="3.12" style="stroke-width:1;stroke:#0000FF;fill:#0000FF;stroke-opacity:1.000000;fill-opacity:1.000000" />
 <circle cx="551.46" cy="442.20" r="3.12" style="stroke-width:1;stroke:#0000FF;fill:#0000FF;stroke-opacity:1.000000;fill-opacity:1.000000" />
 <circle cx="560.56" cy="449.42" r="3.12" style="stroke-width:1;stroke:#0000FF;fill:#0000FF;stroke-opacity:1.000000;fill-opacity:1.000000" />
