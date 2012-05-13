@@ -32,10 +32,11 @@ SPE.1 <- sqrt(apply(spectra.E2, 1, sum))
 R2.k.a <- apply(spectra.Xhat.a.2, 2, sum) / apply(spectra.X2, 2, sum)
 
 bitmap('spectral-data-R2-per-variable.png', type="png256", width=15, height=6.6665, res=300, pointsize=14)
-par(mar=c(4.5, 4.5, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+par(mar=c(4.5, 5.5, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=2, cex.main=2, cex.sub=2, cex.axis=2)
 wavelengths=seq(600, 1898, 2)
-plot(wavelengths, R2.k.a, col='darkgreen', type='l', lwd=a*2, ylim=c(0,1), ylab="R2 for each variable (wavelength)", xlab="Wavelengths")
+plot(wavelengths, R2.k.a, col='darkgreen', type='l', lwd=a*2, ylim=c(0,1), 
+    ylab=expression("R"^2*" per component (wavelength)"), xlab="Wavelengths")
 
 # A = 2
 #------
@@ -66,8 +67,10 @@ R2.k.a <- apply(spectra.Xhat.a.2, 2, sum) / apply(spectra.X2, 2, sum)
 
 lines(wavelengths, R2.k.a, col='blue', type='l', lwd=a*2)
 
-legend(x=650, y=0.35, legend=c("R2: 1st component", "R2: 2nd component", "R2: 3rd component"), col=c("darkgreen", "black", "blue"), lty=c(1, 1, 1), lwd=c(2,4,6), cex=2.0)
+legend(x=650, y=0.35, legend=c(expression("R"^2*": 1st component"), expression("R"^2*": 2nd component"), expression("R"^2*": 3rd component")), col=c("darkgreen", "black", "blue"), lty=c(1, 1, 1), lwd=c(2,4,6), cex=2.0)
 dev.off()
+
+
 
 bitmap('spectral-data-SPE-per-tablet.png', type="png256", width=15, height=7, res=300, pointsize=14)
 N <- dim(spectra)[1]
@@ -130,4 +133,3 @@ abline(h=T2lim.99, col="red", lty=2, lwd=2)
 text(20,T2lim.95,"95% limit", pos=3, col="darkgreen")
 text(20,T2lim.99,"99% limit", pos=3, col="red")
 dev.off()
-
