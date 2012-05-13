@@ -17,7 +17,7 @@ cube <- function(angle){
                  type="p",
                  groups = grouper,
                  pch=20,
-                 col=c("black", "blue", "blue"),   
+                 col=c("black", "blue", "red"),   
                  main="",
                  screen = list(z = angle, x = -70, y = 0),        
                  par.settings = list(axis.line = list(col = "transparent")), 
@@ -55,12 +55,13 @@ par(mar=c(5, 4.2, 4.0, 0.5))  # (bottom, left, top, right); defaults are par(mar
 par(cex.lab=1.5, cex.main=1.8, cex.sub=1.5, cex.axis=1.1)
 plot(temps.T[,1], temps.T[,2], xlab="Score 1", ylab="Score 2", main="Room temperature data", 
 pch=20, cex=3, xlim=c(-3.5,3.5))
-lines(temps.T[grouper>1,1], temps.T[grouper>1,2], col="blue", type="p", pch=20, cex=3)
+lines(temps.T[grouper==2,1], temps.T[grouper==2,2], col="blue", type="p", pch=20, cex=3)
+lines(temps.T[grouper==3,1], temps.T[grouper==3,2], col="red", type="p", pch=20, cex=3)
 abline(h=0, v=0)
 dev.off()
 
 devSVG("pca-decomposition-SPE-plot.svg", width=20, height=7)
-A <- 1
+A <- 2
 order <- seq(1,nrow(temps.T))
 temps.E.A <- temps.mcuv - as.matrix(temps.T[,seq(1,A)],N,A) %*% t(temps.P[,seq(1,A)])  # if A=1: 
 SPE.A <- apply(temps.E.A ** 2, 1, sum)
@@ -68,7 +69,9 @@ reasonable.limit.95 = quantile(c(SPE.A[1:40], SPE.A[60:120]), 0.95)
 par(mar=c(3.0, 4.2, 3.0, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.3, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
 plot(SPE.A, type='p', main="SPE after using 1 LV", ylab="SPE", xlab="Time order", pch=20, cex=3)
-lines(order[grouper>1], SPE.A[grouper>1], pch=20, type="p", col="blue", cex=2)
+lines(order[grouper==2], SPE.A[grouper==2], pch=20, type="p", col="blue", cex=2)
+lines(order[grouper==3], SPE.A[grouper==3], pch=20, type="p", col="red", cex=2)
+
 abline(h=reasonable.limit.95, col='red')
 dev.off()
 
