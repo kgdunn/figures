@@ -1,4 +1,5 @@
 spectra <- read.csv('http://datasets.connectmv.com/file/tablet-spectra.csv', header=FALSE)
+#spectra <- read.csv('spectral-data.csv', header=FALSE)
 K <- ncol(spectra)
 spectra <- spectra[,2:K]
 model.pca <- prcomp(spectra, scale=TRUE)
@@ -125,9 +126,9 @@ abline(h=0, v=0)
 dev.off()
 
 bitmap('spectral-data-T2-lineplot.png', type="png256", width=10, height=5, res=300, pointsize=14)
-par(mar=c(4.5, 4.5, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+par(mar=c(4.5, 5.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.5, cex.main=1.8, cex.sub=1.5, cex.axis=1.5)
-plot(T2, type="l", xlab="Tablet order", ylab="Hotelling's T2")
+plot(T2, type="l", xlab="Tablet order", ylab=expression("Hotelling's T"^2*""))
 abline(h=T2lim.95, col="darkgreen", lty=2, lwd=2)
 abline(h=T2lim.99, col="red", lty=2, lwd=2)
 text(20,T2lim.95,"95% limit", pos=3, col="darkgreen")
