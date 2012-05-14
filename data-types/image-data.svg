@@ -81,7 +81,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -136,7 +136,7 @@
          y="746.49255">Left-to-right</tspan></text>
     <rect
        transform="matrix(1,0,-0.90769464,0.41963132,0,0)"
-       style="fill:#e0e0e0;fill-opacity:1;stroke:#000000;stroke-width:2.86196923;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#e0e0e0;fill-opacity:0.74509805;stroke:#000000;stroke-width:2.86196923000000014;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3588"
        width="206.74054"
        height="171.0519"
@@ -150,11 +150,11 @@
        height="171.0519"
        width="206.74054"
        id="rect3586"
-       style="fill:#e0e0e0;fill-opacity:1;stroke:#000000;stroke-width:2.86196923;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#e0e0e0;fill-opacity:0.74509805;stroke:#000000;stroke-width:2.86196923000000014;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        transform="matrix(1,0,-0.90769464,0.41963132,0,0)" />
     <rect
        transform="matrix(1,0,-0.90769464,0.41963132,0,0)"
-       style="fill:#e0e0e0;fill-opacity:1;stroke:#000000;stroke-width:2.86196923;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#e0e0e0;fill-opacity:0.74509805;stroke:#000000;stroke-width:2.86196923000000014;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3584"
        width="206.74054"
        height="171.0519"
@@ -168,11 +168,11 @@
        height="171.0519"
        width="206.74054"
        id="rect3582"
-       style="fill:#e0e0e0;fill-opacity:1;stroke:#000000;stroke-width:2.86196923;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#e0e0e0;fill-opacity:0.74509805;stroke:#000000;stroke-width:2.86196923000000014;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        transform="matrix(1,0,-0.90769464,0.41963132,0,0)" />
     <rect
        transform="matrix(1,0,-0.90769464,0.41963132,0,0)"
-       style="fill:#e0e0e0;fill-opacity:1;stroke:#000000;stroke-width:2.86196923;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#e0e0e0;fill-opacity:0.74509805;stroke:#000000;stroke-width:2.86196923000000014;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3580"
        width="206.74054"
        height="171.0519"
@@ -186,7 +186,7 @@
        height="171.0519"
        width="206.74054"
        id="rect3578"
-       style="fill:#e0e0e0;fill-opacity:1;stroke:#000000;stroke-width:2.86196923;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#e0e0e0;fill-opacity:0.74509805;stroke:#000000;stroke-width:2.86196923000000014;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        transform="matrix(1,0,-0.90769464,0.41963132,0,0)" />
     <path
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none;marker-end:url(#Arrow1Lend)"
