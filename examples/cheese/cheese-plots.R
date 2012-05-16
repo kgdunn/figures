@@ -23,6 +23,12 @@ par(cex.lab=1.2, cex.main=1.2, cex.sub=1.2, cex.axis=1.2)
 scatterplotMatrix(cheese[,2:6], col=c(1,1,1), smooth=FALSE)
 dev.off()
 
+bitmap('cheese-plots-no-random.png', type="png256", width=6, height=6, res=300, pointsize=14)
+par(mar=c(1.5, 1.5, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+par(cex.lab=1.2, cex.main=1.2, cex.sub=1.2, cex.axis=1.2)
+scatterplotMatrix(cheese[,2:5], col=c(1,1,1), smooth=FALSE)
+dev.off()
+
 # Multiple linear regression model
 # -----------------------
 model.lm <- lm(Taste ~ Acetic + H2S + Lactic + Random, data=cheese)
@@ -50,7 +56,6 @@ model.H2S.lm2 <- lm(Taste ~ H2S, data=cheese[part2,])
 RMSEP.H2S.lm1 <- sqrt(mean((cheese$Taste[part1] - predict(model.H2S.lm2, cheese[part1,]))**2))
 RMSEP.H2S.lm2 <- sqrt(mean((cheese$Taste[part2] - predict(model.H2S.lm1, cheese[part2,]))**2))
 RMSEP.H2S.lm <- mean(c(RMSEP.H2S.lm1, RMSEP.H2S.lm2))
-
 
 #Neural network model
 #--------------------
@@ -116,6 +121,27 @@ pred.1 <- model.pcr.2$coef[1] + model.pcr.2$coef[2] * T.1.hat[,1]
 RMSEP.pcr.lm1 <- sqrt(mean((cheese$Taste[part1] - pred.1)**2))
 RMSEP.pcr.lm2 <- sqrt(mean((cheese$Taste[part2] - pred.2)**2))
 RMSEP.pcr <- mean(c(RMSEP.pcr.lm1, RMSEP.pcr.lm2))
+
+# Plot the PCA score and the taste value in the scatter plot matrix
+T.1 <- model.pca.1$x
+# Create a new cheese with these properties
+t1 <- T[,1]
+new.cheese <- cbind(cheese, t1)
+bitmap('cheese-plots-with-t1.png', type="png256", width=6, height=6, res=300, pointsize=14)
+par(mar=c(1.5, 1.5, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+par(cex.lab=1.2, cex.main=1.2, cex.sub=1.2, cex.axis=1.2)
+scatterplotMatrix(new.cheese[,c(2:5,7)], col=c(1,1,1), smooth=FALSE)
+dev.off() 
+
+# Scatter plot matrix
+# -----------------------
+library(car)
+bitmap('cheese-plots.png', type="png256", width=6, height=6, res=300, pointsize=14)
+par(mar=c(1.5, 1.5, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+par(cex.lab=1.2, cex.main=1.2, cex.sub=1.2, cex.axis=1.2)
+scatterplotMatrix(cheese[,2:6], col=c(1,1,1), smooth=FALSE)
+dev.off()
+
 
 # PCR using the "pls" package (gets the same results as the longer code above)
 # ----------------------------
