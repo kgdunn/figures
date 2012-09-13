@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="1000"
+   width="750"
    height="350"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.2 r9819"
    sodipodi:docname="circular-tank-sedimentation.svg"
-   inkscape:export-filename="rectangular-tank-sedimentation.png"
+   inkscape:export-filename="circular-tank-sedimentation.png"
    inkscape:export-xdpi="200"
    inkscape:export-ydpi="200">
   <defs
@@ -70,9 +70,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.418"
-     inkscape:cx="500"
-     inkscape:cy="372.46121"
+     inkscape:zoom="1.8906667"
+     inkscape:cx="375"
+     inkscape:cy="175"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -103,156 +103,156 @@
        id="rect2985"
        width="655.013"
        height="261.97101"
-       x="172.4935"
+       x="12.4935"
        y="743.67694" />
     <path
        inkscape:connector-curvature="0"
        id="path3759"
-       d="m 477,957.06717 0,-212.89746"
+       d="m 317,957.06717 0,-212.89746"
        style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
        style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 523,957.06717 0,-212.89746"
+       d="m 363,957.06717 0,-212.89746"
        id="path3761"
        inkscape:connector-curvature="0" />
     <path
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8, 8;stroke-dashoffset:0"
-       d="m 212.38298,745.51112 0,259.57448"
+       d="m 52.38298,745.51112 0,259.57448"
        id="path4213"
        inkscape:connector-curvature="0" />
     <path
        inkscape:connector-curvature="0"
        id="path4217"
-       d="m 208.88541,957.9792 577.76295,0"
+       d="m 48.88541,957.9792 577.76295,0"
        style="fill:none;stroke:#000000;stroke-width:1.99231434;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:7.96925728, 7.96925728;stroke-dashoffset:7.77002584" />
     <text
        sodipodi:linespacing="125%"
        id="text4407"
        y="752.92023"
-       x="862.31732"
+       x="702.31732"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
        xml:space="preserve"><tspan
          y="752.92023"
-         x="862.31732"
+         x="702.31732"
          id="tspan4409"
          sodipodi:role="line">Q</tspan></text>
     <path
        inkscape:connector-curvature="0"
        id="path4411"
-       d="m 813.33862,764.53727 67.23404,0"
+       d="m 653.33862,764.53727 67.23404,0"
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Mend)" />
     <text
        xml:space="preserve"
        style="font-size:25px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       x="438.84833"
+       x="278.84833"
        y="986.78473"
        id="text4413"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4415"
-         x="438.84833"
+         x="278.84833"
          y="986.78473">sludge zone</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text4417"
        y="827.73181"
-       x="500.13519"
+       x="340.13519"
        style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
        xml:space="preserve"><tspan
          sodipodi:role="line"
          id="tspan4421"
-         x="500.13519"
+         x="340.13519"
          y="827.73181">inlet</tspan><tspan
          sodipodi:role="line"
          id="tspan4423"
-         x="500.13519"
+         x="340.13519"
          y="850.23181">zone</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:25px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
        x="-877.25232"
-       y="200.05594"
+       y="40.055939"
        id="text4425"
        sodipodi:linespacing="125%"
        transform="matrix(0,-1,1,0,0,0)"><tspan
          sodipodi:role="line"
          id="tspan5073"
          x="-877.25232"
-         y="200.05594">outlet zone</tspan></text>
+         y="40.055939">outlet zone</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text4435"
        y="1038.7847"
-       x="334.57031"
+       x="174.57031"
        style="font-size:16px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial Italic"
        xml:space="preserve"><tspan
          sodipodi:role="line"
          id="tspan5038"
-         x="334.57031"
+         x="174.57031"
          y="1038.7847">fluid velocity is not constant; has a radial profile</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:1.00349855px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)"
-       d="m 522.85589,778.34837 c 172.13909,-0.0899 233.36553,92.15202 234.41155,178.78195"
+       d="m 362.85589,778.34837 c 172.13909,-0.0899 233.36553,92.15202 234.41155,178.78195"
        id="path4460"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
-       d="m 552.47332,853.80501 0,-74.75318 86.03667,0"
+       d="m 392.47332,853.80501 0,-74.75318 86.03667,0"
        id="path4462"
        inkscape:connector-curvature="0" />
     <text
        sodipodi:linespacing="125%"
        id="text4836"
        y="873.66339"
-       x="546.32867"
+       x="386.32867"
        style="font-size:25px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
        xml:space="preserve"><tspan
          sodipodi:role="line"
          id="tspan4840"
-         x="546.32867"
+         x="386.32867"
          y="873.66339">v</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:16px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial Italic"
-       x="644.46967"
+       x="484.46967"
        y="783.62671"
        id="text4842"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4846"
-         x="644.46967"
+         x="484.46967"
          y="783.62671">fluid velocity</tspan></text>
     <path
        inkscape:connector-curvature="0"
        id="path5065"
-       d="m 788.38298,745.51112 0,259.57448"
+       d="m 628.38298,745.51112 0,259.57448"
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8, 8;stroke-dashoffset:0" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       x="514.88025"
-       y="740.73785"
+       x="344.88025"
+       y="734.73785"
        id="text5067"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5069"
-         x="514.88025"
-         y="740.73785">Q</tspan></text>
+         x="344.88025"
+         y="734.73785">Q</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Mend)"
-       d="m 500.26852,717.98788 0,67.23404"
+       d="m 340.26852,717.98788 0,67.23404"
        id="path5071"
        inkscape:connector-curvature="0" />
     <text
        transform="matrix(0,1,-1,0,0,0)"
        sodipodi:linespacing="125%"
        id="text5075"
-       y="-796.69879"
+       y="-636.69879"
        x="877.47205"
        style="font-size:25px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
        xml:space="preserve"><tspan
-         y="-796.69879"
+         y="-636.69879"
          x="877.47205"
          id="tspan5077"
          sodipodi:role="line">outlet zone</tspan></text>
