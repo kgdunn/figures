@@ -10,6 +10,7 @@ yields.z = (yields - mean.yield)/sd.yield
 yields.z.sorted = sort(yields.z)
 
 bitmap('qqplot-derivation.png', type="png256", width=7, height=7, res=300, pointsize=14)
+par(mar=c(4.2, 4.2, 0.2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(theoretical.quantity, yields.z.sorted, type="p", 
     cex.lab=1.5, cex.main=1.8, lwd=4, cex.sub=1.8, cex.axis=1.8,
     xlim=c(-1.8, 1.8), ylim=c(-1.8, 1.8))
