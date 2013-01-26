@@ -13,7 +13,7 @@ raw.sample <- dnorm(steps, mean=base.mean, sd=base.sd/sqrt(N))
 after <- dnorm(steps, mean=base.mean+Delta, sd=base.sd)
 after.sample <- dnorm(steps, mean=base.mean+Delta, sd=base.sd/sqrt(N))
 
-#bitmap('/Users/kevindunn/transfer/Stats-course/Course notes/Control charts/images/show-shift-beta-error-raw.png', type="png256", width=20, height=20, res=300, pointsize=14)
+#bitmap('show-shift-beta-error-raw.png', type="png256", width=20, height=20, res=300, pointsize=14)
 library(RSvgDevice)
 devSVG("show-shift-beta-error-raw.svg", width=20, height=10)
 

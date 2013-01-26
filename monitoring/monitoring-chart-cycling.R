@@ -1,4 +1,4 @@
-feed <- read.csv('/Users/kevindunn/Statistics course/Course notes/Assignments/Written final/images/monitoring-data.csv', header=F)
+feed <- read.csv('/Users/kevindunn/Courses/4C3/2010/Exams/Written final/images/monitoring-data.csv', header=F)
 set.seed(44)
 N = length(feed$V1)
 Feed <- feed$V1 + rnorm(N, mean=2.0, sd=0.3) 

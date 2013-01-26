@@ -1,5 +1,16 @@
 N = 500
 
+
+
+
+
+
+
+
+
+
+
+
 bitmap('simulate-CLT.png', type="png256", width=10, height=7, res=300, pointsize=14)
 
 m <- t(matrix(seq(1,6), 3, 2))
@@ -16,7 +27,7 @@ s9 <- as.integer(runif(N, 1, 7))
 s10 <- as.integer(runif(N, 1, 7))
 
 
-hist(s1, main="", xlab="One throw")
+hist(s1, main="", xlab="One throw", breaks=seq(0,6)+0.5)
 bins = 8
 hist((s1+s2)/2, breaks=bins, main="", xlab="Average of two throws")
 hist((s1+s2+s3+s4)/4, breaks=bins, main="", xlab="Average of 4 throws")

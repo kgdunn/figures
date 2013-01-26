@@ -62,14 +62,15 @@ sd(B)
 A.hist <- read.csv('system-comparison-historical-data.csv', header=FALSE)
 #A.hist <- read.csv('http://datasets.connectmv.com/file/batch-yields.csv', header=FALSE)
 A.hist <- A.hist$V1
-N = length(A.hist)
+N <- length(A.hist)
 
 #library(nlme)
 #acf(A.hist)
 
 bitmap('system-comparison-sequence-plot.png', type="png256", width=10, height=7, res=250, pointsize=14) 
 plot(c(A.hist, B), xlab="300 samples from A, 10 samples of B", ylab="Yield (%)", main="", cex.lab=1.5, cex.main=1.8, lwd=3, cex.sub=1.8, cex.axis=1.8)
-abline(v=length(A.hist))
+abline(v=length(A.hist)-10, lty=3, lwd=2)
+abline(v=length(A.hist), lwd=2)
 text(length(A.hist)/2, 98, "A", cex=2)
 text(length(A.hist)+length(B), 98, "B", cex=2)
 dev.off()
