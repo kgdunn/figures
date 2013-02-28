@@ -1,4 +1,4 @@
-cam <- read.csv('cameras.csv')
+cam <- read.csv('least-squares/cameras.csv')
 plot(cam$Cameras, cam$Deaths)
 grid()
 #identify(cam$Cameras, cam$Deaths, cam$Country)

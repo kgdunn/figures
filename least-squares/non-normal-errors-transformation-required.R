@@ -29,7 +29,7 @@ qq.plot(model.base, col=c(1,1,1), ylab="Residuals: y ~ x", main="Original data")
 model.rmoutliers <- lm(sqrt(y) ~ x)
 summary(model.rmoutliers)
 confint(model.rmoutliers)
-qq.plot(model.rmoutliers, col=c(1,1,1), ylab="Residuals: sqrt(y) ~ x", main="Applying a square root transformation")
+qq.plot(model.rmoutliers, col=c(1,1,1), ylab="Residuals: sqrt(y) ~ x", main="Applying a square root transformation on y")
 
 dev.off()
 

@@ -15,7 +15,7 @@
    version="1.1"
    inkscape:version="0.48.2 r9819"
    sodipodi:docname="Hunter-EWMA-example.svg"
-   inkscape:export-filename="Hunter-EWMA-example.png"
+   inkscape:export-filename="Hunter-EWMA-example-wtih-connections.png"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300">
   <defs
@@ -42,18 +42,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.60597545"
-     inkscape:cx="775.09674"
-     inkscape:cy="325.6492"
+     inkscape:zoom="0.71056751"
+     inkscape:cx="918.28009"
+     inkscape:cy="325"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="false"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:window-width="1440"
-     inkscape:window-height="784"
-     inkscape:window-x="0"
-     inkscape:window-y="22"
+     inkscape:window-width="1708"
+     inkscape:window-height="911"
+     inkscape:window-x="1482"
+     inkscape:window-y="51"
      inkscape:window-maximized="0"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -67,7 +67,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -84,7 +84,7 @@
        sodipodi:cy="244.09448"
        sodipodi:rx="12.857142"
        sodipodi:ry="12.857142"
-       d="m -88.571431,244.09448 a 12.857142,12.857142 0 1 1 -25.714289,0 12.857142,12.857142 0 1 1 25.714289,0 z"
+       d="m -88.571431,244.09448 c 0,7.10081 -5.756339,12.85714 -12.857139,12.85714 -7.10081,0 -12.85715,-5.75633 -12.85715,-12.85714 0,-7.1008 5.75634,-12.85714 12.85715,-12.85714 7.1008,0 12.857139,5.75634 12.857139,12.85714 z"
        transform="translate(362.99566,562.32717)" />
     <path
        sodipodi:type="arc"
@@ -94,7 +94,7 @@
        sodipodi:cy="244.09448"
        sodipodi:rx="12.857142"
        sodipodi:ry="12.857142"
-       d="m -88.571431,244.09448 a 12.857142,12.857142 0 1 1 -25.714289,0 12.857142,12.857142 0 1 1 25.714289,0 z"
+       d="m -88.571431,244.09448 c 0,7.10081 -5.756339,12.85714 -12.857139,12.85714 -7.10081,0 -12.85715,-5.75633 -12.85715,-12.85714 0,-7.1008 5.75634,-12.85714 12.85715,-12.85714 7.1008,0 12.857139,5.75634 12.857139,12.85714 z"
        transform="translate(62.97109,595.82738)" />
     <path
        style="fill:none;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:none"
@@ -867,7 +867,7 @@
        sodipodi:cy="244.09448"
        sodipodi:rx="12.857142"
        sodipodi:ry="12.857142"
-       d="m -88.571431,244.09448 a 12.857142,12.857142 0 1 1 -25.714289,0 12.857142,12.857142 0 1 1 25.714289,0 z"
+       d="m -88.571431,244.09448 c 0,7.10081 -5.756339,12.85714 -12.857139,12.85714 -7.10081,0 -12.85715,-5.75633 -12.85715,-12.85714 0,-7.1008 5.75634,-12.85714 12.85715,-12.85714 7.1008,0 12.857139,5.75634 12.857139,12.85714 z"
        transform="translate(-134.34748,304.30981)" />
     <text
        xml:space="preserve"
@@ -908,5 +908,20 @@
          id="tspan3083"
          x="300.3526"
          y="561.07812">EWMA value</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Connections">
+    <path
+       style="fill:none;stroke:#0000ff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 174.92458,318.30339 54.45765,-36.3051 36.3051,94.06322 72.6102,-103.96461 61.05858,62.70881 59.40835,-8.25116 61.05858,80.86137 57.75811,-46.2065 54.45766,-39.60556 62.70881,-24.75348 56.10788,-4.9507 54.45765,23.10325 64.35905,82.51159 62.70881,-33.00463 66.00927,-57.75812 61.05862,69.30974 64.359,-57.75812 61.0586,-51.15718 79.2111,-26.40371 74.2604,-59.40835 57.7582,37.95533"
+       id="path3076"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#d45500;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 175.03352,233.42022 51.34317,253.21516 33.83981,-309.22589 75.84786,175.03352 59.5114,-21.00402 67.67963,145.86127 50.17627,-201.872 72.34719,39.67427 47.8425,-52.51006 58.34451,35.00671 61.84517,53.67694 57.17762,87.51676 57.17762,-120.18968 66.51274,-53.67695 64.17896,157.53017 66.51273,-159.86395 67.6796,-64.17896 53.677,16.33647 79.3485,-71.1803 72.3472,85.18298"
+       id="path3854"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>

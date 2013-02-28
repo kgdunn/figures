@@ -85,7 +85,7 @@ lines(lowess(A.hist[1:N-1], A.hist[2:N]))
 dev.off()
 
 summary(A.hist)
-delta=10
+delta <- 10
 A.hist.means <- numeric(N-delta+1) 
 
 for (i in 1:(N-delta+1))
@@ -104,8 +104,8 @@ for (i in 1:(N-delta-delta+1))
 # Cross-reference to BHH: 
 # A.hist.means.diffs/2.341  <---- should get the same results as their table 2.2 (edition 1)
 
-difference = mean(B)-mean(A)
-maxrange = max(ceiling(abs(A.hist.means.diffs)))
+difference <- mean(B)-mean(A)
+maxrange <- max(ceiling(abs(A.hist.means.diffs)))
 
 bitmap('system-comparison-dotplot-grouped-new.png', type="png256", width=12, height=7, res=300, pointsize=14) 
 dotPlot(A.hist.means.diffs, xlab="Difference between means of 2 adjacent groups (10 batches per group)", xlim=c(-maxrange, maxrange))
@@ -128,8 +128,8 @@ difference <- B.mean - A.mean
 c_n = qnorm(0.975)
 sigma = sd(A.hist)
 sigma
-na = length(A)
-nb = length(B)
+na <- length(A)
+nb <- length(B)
 
 denom_sigma =  sqrt(sigma^2*(1/na + 1/nb))
 
@@ -144,8 +144,8 @@ c(LB, UB)
 #---------
 # Using intenal variance estimate
 #---------------------------
-na = length(A)
-nb = length(B)
+na <- length(A)
+nb <- length(B)
 B.mean <- mean(B)
 A.mean <- mean(A)
 B.var <- var(B)
@@ -154,7 +154,7 @@ dof <- na+nb-2
 var.pooled = ((na-1)*A.var + (nb-1)*B.var) / (na+nb-2)
 
 difference <- B.mean - A.mean
-c_t = qt(0.975, df = dof)
+c_t <- qt(0.975, df = dof)
 
 denom_sigma =  sqrt(var.pooled*(1/na + 1/nb))
 denom_sigma
