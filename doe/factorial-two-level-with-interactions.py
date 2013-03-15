@@ -46,7 +46,7 @@ z = +30*xs + 16*ys - 10*xs*xs - 20*ys*ys + 16*xs*ys + 40
 print z
 
 fig = Figure(figsize=(4, 3.5))
-rect = [0.2, 0.15, 0.70, 0.75]  # Left, bottom, width, height
+rect = [0.2, 0.15, 0.70, 0.82]  # Left, bottom, width, height
 ax = fig.add_axes(rect, frame_on=True)
 levels = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90, 95])
 

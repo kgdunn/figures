@@ -67,7 +67,7 @@ plt.plot(346, 1.5, 'ko', ms=25, markerfacecolor='none', markeredgewidth=2)
 plt.plot(330, 0.75, 'kH', ms=25, markerfacecolor='none', markeredgewidth=2)
 
 
-plt.text(346, 1.60, "Baseline", horizontalalignment='center')
+plt.text(346, 1.60, "Base case", horizontalalignment='center')
 plt.text(355, 1.53, "1", horizontalalignment='center')
 plt.text(339, 1.53, "2", horizontalalignment='center')
 plt.text(323, 1.53, "4", horizontalalignment='center')

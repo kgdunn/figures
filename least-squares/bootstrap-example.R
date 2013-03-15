@@ -23,7 +23,7 @@ predictions <- base.lm$fitted
 residuals <- base.lm$residuals
 
 # Calculate the 3 standard errors
-n = 14
+n <- 14
 den <- sum((dose - mean(dose)) * (dose - mean(dose)))
 SE <- sqrt(sum(residuals^2) / (n-2))
 SE.b1 <- sqrt(SE^2 / den)

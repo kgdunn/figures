@@ -30,7 +30,7 @@ phase2.start <- phase1.end + 1
 phase2.end <- floor(N.all/N.subgroup)
 
 # Plot all the data
-bitmap('../images/Kappa-raw-data.png', type="png256", width=10, height=4, res=300, pointsize=14)
+bitmap('Kappa-raw-data.png', type="png256", width=10, height=4, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.3, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
 plot(Kappa, type="p", pch=".", cex=2, main="", ylab="Kappa number: raw data", 
@@ -78,7 +78,7 @@ UCL <- limits[3]
 c(LCL, xdb, UCL)
 
 # Any points outside these limits?  Yup, quite a few.
-bitmap('../images/Kappa-phaseI-first-round.png', type="png256", width=10, height=4, res=300, pointsize=14)
+bitmap('Kappa-phaseI-first-round.png', type="png256", width=10, height=4, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.3, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
 plot(phase1.xbar, type="b", pch=".", cex=5, main="", ylab="Phase I subgroups: round 1", 
@@ -106,7 +106,7 @@ UCL <- limits[3]
 c(LCL, xdb, UCL)
 
 # Replot the data: everything is inside the limits this time
-bitmap('../images/Kappa-phaseI-second-round.png', type="png256", width=10, height=4, res=300, pointsize=14)
+bitmap('Kappa-phaseI-second-round.png', type="png256", width=10, height=4, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.3, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
 plot(phase1.xbar, type="b", pch=".", cex=5, main="", ylab="Phase I subgroups: round 2", 
@@ -118,7 +118,7 @@ lines(phase1.xbar, type="b", pch=".", cex=5)
 dev.off()
 
 outside <- (phase1.xbar > UCL) + (phase1.xbar < LCL)
-sum(outside)  # yeah, it is zero!
+sum(outside)  # yay, it is zero!
 
 # Using subgroups of size 4 or smaller will require an additional
 # round of pruning subgroups  
@@ -134,7 +134,7 @@ c(LCL, xdb, UCL)
 
 # Replot the data: everything is inside the limits after the second
 # or third round of pruning.
-bitmap('../images/Kappa-phaseI-third-round.png', type="png256", width=10, height=4, res=300, pointsize=14)
+bitmap('Kappa-phaseI-third-round.png', type="png256", width=10, height=4, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.3, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
 plot(phase1.xbar, type="b", pch=".", cex=5, main="", ylab="Phase I subgroups: round 3", 
@@ -149,7 +149,7 @@ outside <- (phase1.xbar > UCL) + (phase1.xbar < LCL)
 sum(outside)  # yeah, it is zero!
 
 # Now test the Shewhart limits on the phase II data
-bitmap('../images/Kappa-phaseII-testing.png', type="png256", width=10, height=4, res=300, pointsize=14)
+bitmap('Kappa-phaseII-testing.png', type="png256", width=10, height=4, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.3, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
 plot(phase2.xbar, type="b", pch=".", cex=5, main="", ylab="Phase II subgroups: testing", 
@@ -163,6 +163,6 @@ outside.phase2 <- (phase2.xbar > UCL) + (phase2.xbar < LCL)
 alpha <- sum(outside.phase2) / length(phase2.xbar)
 alpha  
 
-# Alpha = 7.5% for this phase 2 data, much higher than the 0.27% expected for 
+# Alpha = 7.9% for this phase 2 data, much higher than the 0.27% expected for 
 # 3 sigma limits to be expected, because there are process problems on at 
 # least 3 occasions in this phase 2 data.
