@@ -59,27 +59,42 @@ f <- ffDesMatrix(k=4)
 ff <- ffFullMatrix(f, x=c(1,2,3,4), 4)
 #X <- ffDesMatrix(k=4, gen=list(c(1,2,3,4)))  # Generator: I=1234    # This creates a wierd XTX matrix: cross pattern
 #ff <- ffFullMatrix(X, x=c(1,2,3,4), maxInt=4)
-y = c(45,71,48,65,68,60,80,65,43,100,45,104,75,86,70,96)
+y <- c(45,71,48,65,68,60,80,65,43,100,45,104,75,86,70,96)
 X <- ff$Xa
 XtX <- t(X) %*% X
 Xty <- t(X) %*% y
 b = solve(XtX) %*% Xty
 
-N = length(b)
-b.mod = abs(b[2:N])
-idx = order(b.mod)
-b.mod = b.mod[idx]
-labels=colnames(X)[2:N]
-labels.mod = labels[idx]
-library(lattice)
+A <- design$A
+B <- design$B
+C <- design$C
+D <- design$D
+mod.full <- lm( y ~ (A + B + C + D)^4 ) 
+coeff.full <- coef(mod.full)[2:length(coef(mod.full))]
 
-labels=c("A", "B", "C", "D", "AB", "AC", "AD", "BC", "BD", "CD", "ABC", "ABD", "ACD", "BCD", "ABCD")
-labels.mod = labels[idx]
+# N = length(b)
+# b.mod = abs(b[2:N])
+# idx = order(b.mod)
+# b.mod = b.mod[idx]
+# labels=colnames(X)[2:N]
+# labels.mod = labels[idx]
+# library(lattice)
+# 
+# labels=c("A", "B", "C", "D", "AB", "AC", "AD", "BC", "BD", "CD", "ABC", "ABD", "ACD", "BCD", "ABCD")
+# labels.mod = labels[idx]
 
 bitmap('pareto-plot-full-fraction.png', type="png256", width=7, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 
-barchart(as.matrix(b.mod), ylab = list("Effect", cex=1.5), 
-        xlab=list("Magnitude of effect", cex=1.5), col=0,
-        scales=list(cex=1.5,y=list(labels=labels.mod))) 
+library(lattice)
+barchart(sort(abs(coeff.full)), 
+         xlab=list("Magnitude of effect", cex=1.5), 
+         ylab = list("Effect", cex=1.5),
+         groups=coeff.full>0, col=c("lightblue", "orange"),
+         #scales=list(cex=1.5,y=list(labels=labels.mod))
+)
+
+#barchart(as.matrix(b.mod), ylab = list("Effect", cex=1.5), 
+#        xlab=list("Magnitude of effect", cex=1.5), col=0,
+#        scales=list(cex=1.5,y=list(labels=labels.mod))) 
 dev.off()
