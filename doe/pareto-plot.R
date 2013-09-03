@@ -16,6 +16,16 @@ library(lattice)
 bitmap('pareto-plot.png', type="png256", width=7, height=7, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 
+coeff.full <- b[2:length(b)]
+coeff <- sort(abs(coeff.full), index.return=TRUE)
+barchart(as.matrix(coeff$x), 
+         xlim=c(0, max(abs(coeff.full))+0.1),
+         xlab=list("Magnitude of effect", cex=1.5), 
+         ylab = list("Effect", cex=1.5),
+         groups=(coeff.full>0)[coeff$ix], col=c("lightblue", "orange"),
+         scales=list(cex=1.5,y=list(labels=labels[coeff$ix])))
+
+
 barchart(as.matrix(b.mod), ylab = list("Effect", cex=1.5), 
         xlab=list("Magnitude of effect", cex=1.5), col=0,
         scales=list(cex=1.5,y=list(labels=labels.mod))) 
@@ -84,14 +94,16 @@ coeff.full <- coef(mod.full)[2:length(coef(mod.full))]
 # labels.mod = labels[idx]
 
 bitmap('pareto-plot-full-fraction.png', type="png256", width=7, height=7, res=300, pointsize=14)
-par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+par(mar=c(4.2, 4.2, 0, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 
 library(lattice)
-barchart(sort(abs(coeff.full)), 
+coeff <- sort(abs(coeff.full), index.return=TRUE)
+barchart(coeff$x, 
+         xlim=c(0, max(abs(coeff.full))+0.1),
          xlab=list("Magnitude of effect", cex=1.5), 
          ylab = list("Effect", cex=1.5),
-         groups=coeff.full>0, col=c("lightblue", "orange"),
-         #scales=list(cex=1.5,y=list(labels=labels.mod))
+         groups=(coeff.full>0)[coeff$ix], col=c("lightblue", "orange"),
+         scales=list(cex=1.5)
 )
 
 #barchart(as.matrix(b.mod), ylab = list("Effect", cex=1.5), 
