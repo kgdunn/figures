@@ -83,7 +83,7 @@
        id="perspective9" />
   </defs>
   <sodipodi:namedview
-     inkscape:window-height="790"
+     inkscape:window-height="852"
      inkscape:window-width="1440"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -95,13 +95,13 @@
      pagecolor="#ffffff"
      id="base"
      showgrid="false"
-     inkscape:zoom="2.19875"
-     inkscape:cx="400"
-     inkscape:cy="150"
-     inkscape:window-x="1617"
-     inkscape:window-y="157"
+     inkscape:zoom="1.6384979"
+     inkscape:cx="402.17317"
+     inkscape:cy="151.58919"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:current-layer="layer2"
-     inkscape:window-maximized="0" />
+     inkscape:window-maximized="1" />
   <g
      inkscape:groupmode="layer"
      id="layer2"
@@ -507,67 +507,67 @@
     <text
        xml:space="preserve"
        style="font-size:26px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
-       x="704.86414"
-       y="306.93796"
+       x="700.86414"
+       y="304.93796"
        id="text3074"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3076"
-         x="704.86414"
-         y="306.93796">C</tspan></text>
+         x="700.86414"
+         y="304.93796">C</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text3078"
-       y="313.30521"
-       x="723.05634"
+       y="311.30521"
+       x="719.05634"
        style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
        xml:space="preserve"><tspan
          sodipodi:role="line"
          id="tspan3082"
-         x="723.05634"
-         y="313.30521">w</tspan></text>
+         x="719.05634"
+         y="311.30521">w</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text3084"
-       y="120.38082"
-       x="532.93695"
+       y="304.38083"
+       x="558.93695"
        style="font-size:26px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
        xml:space="preserve"><tspan
-         y="120.38082"
-         x="532.93695"
+         y="304.38083"
+         x="558.93695"
          id="tspan3086"
          sodipodi:role="line">C</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
-       x="551.12915"
-       y="126.74807"
+       x="577.12915"
+       y="310.74808"
        id="text3088"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan3083">f</tspan></text>
+         id="tspan3083">b</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:26px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
        x="740.14673"
-       y="245.45189"
+       y="305.4519"
        id="text3094"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3096"
          x="740.14673"
-         y="245.45189">C</tspan></text>
+         y="305.4519">C</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text3098"
-       y="251.81914"
+       y="311.81915"
        x="758.33893"
        style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
        xml:space="preserve"><tspan
          sodipodi:role="line"
          id="tspan3102"
          x="758.33893"
-         y="251.81914">g</tspan></text>
+         y="311.81915">g</tspan></text>
     <path
        inkscape:connector-curvature="0"
        id="path3108"
@@ -589,5 +589,25 @@
          id="tspan3906"
          x="642.95013"
          y="100.16211">Boundary layer</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:26px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+       x="630.93695"
+       y="128.38083"
+       id="text3097"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3105">L</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3101"
+       y="134.74808"
+       x="647.12915"
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+       xml:space="preserve"><tspan
+         sodipodi:role="line"
+         id="tspan3107"
+         x="647.12915"
+         y="134.74808">c</tspan></text>
   </g>
 </svg>
