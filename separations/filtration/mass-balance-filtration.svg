@@ -15,7 +15,7 @@
    version="1.1"
    inkscape:version="0.48.2 r9819"
    sodipodi:docname="mass-balance-filtration.svg"
-   inkscape:export-filename=""
+   inkscape:export-filename="mass-balance-filtration.png"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300">
   <defs
@@ -56,9 +56,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.5661785"
-     inkscape:cx="223"
-     inkscape:cy="226.34477"
+     inkscape:zoom="2.54"
+     inkscape:cx="200"
+     inkscape:cy="225"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -84,6 +84,11 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-602.36218)">
+    <path
+       inkscape:connector-curvature="0"
+       id="path3055"
+       d="m 89.4,1041.3077 c -4.675,-0.079 -15.5875,-0.459 -24.25,-0.8419 l -15.75,-0.6963 0,-47.58955 0,-47.58986 8.25,-0.69188 c 9.069039,-0.76062 157.1892,-0.52581 166,0.26316 l 4.75,0.42527 0,47.0221 0,47.02216 -11.25,0.3198 c -16.70359,0.4745 -49.71791,1.6301 -62.25,2.1789 -10.06223,0.4405 -44.70893,0.5347 -65.5,0.1773 z"
+       style="fill:#d3faf6;fill-opacity:1;stroke:none" />
     <path
        style="fill:none;stroke:#000000;stroke-width:4.06461096;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 47,605.34502 0,441.34478"
@@ -142,7 +147,7 @@
        sodipodi:cy="115"
        sodipodi:rx="6.5"
        sodipodi:ry="5"
-       d="m 146,115 a 6.5,5 0 1 1 -13,0 6.5,5 0 1 1 13,0 z"
+       d="m 146,115 c 0,2.76142 -2.91015,5 -6.5,5 -3.58985,0 -6.5,-2.23858 -6.5,-5 0,-2.76142 2.91015,-5 6.5,-5 3.58985,0 6.5,2.23858 6.5,5 z"
        transform="translate(-9.8682028,556.20174)" />
     <path
        sodipodi:type="arc"
@@ -192,7 +197,7 @@
        sodipodi:cy="128.5"
        sodipodi:rx="2.5"
        sodipodi:ry="5.5"
-       d="m 125,128.5 a 2.5,5.5 0 1 1 -5,0 2.5,5.5 0 1 1 5,0 z"
+       d="m 125,128.5 c 0,3.03757 -1.11929,5.5 -2.5,5.5 -1.38071,0 -2.5,-2.46243 -2.5,-5.5 0,-3.03757 1.11929,-5.5 2.5,-5.5 1.38071,0 2.5,2.46243 2.5,5.5 z"
        transform="translate(-3.6332507,571.78912)" />
     <path
        sodipodi:type="arc"
@@ -202,7 +207,7 @@
        sodipodi:cy="145.5"
        sodipodi:rx="2"
        sodipodi:ry="4.5"
-       d="m 147,145.5 a 2,4.5 0 1 1 -4,0 2,4.5 0 1 1 4,0 z"
+       d="m 147,145.5 c 0,2.48528 -0.89543,4.5 -2,4.5 -1.10457,0 -2,-2.01472 -2,-4.5 0,-2.48528 0.89543,-4.5 2,-4.5 1.10457,0 2,2.01472 2,4.5 z"
        transform="translate(-7.9197803,583.86934)" />
     <path
        sodipodi:type="arc"
@@ -236,7 +241,7 @@
        sodipodi:type="arc" />
     <path
        transform="matrix(-0.81915205,0.57357645,-0.57357645,-0.81915205,281.1595,679.51557)"
-       d="m 176,81 a 9,10 0 1 1 -18,0 9,10 0 1 1 18,0 z"
+       d="m 176,81 c 0,5.522847 -4.02944,10 -9,10 -4.97056,0 -9,-4.477153 -9,-10 0,-5.522847 4.02944,-10 9,-10 4.97056,0 9,4.477153 9,10 z"
        sodipodi:ry="10"
        sodipodi:rx="9"
        sodipodi:cy="81"
@@ -266,7 +271,7 @@
        sodipodi:type="arc" />
     <path
        transform="matrix(-1,0,0,-1,309.11748,831.06704)"
-       d="m 166,134.5 a 2,6.5 0 1 1 -4,0 2,6.5 0 1 1 4,0 z"
+       d="m 166,134.5 c 0,3.58985 -0.89543,6.5 -2,6.5 -1.10457,0 -2,-2.91015 -2,-6.5 0,-3.58985 0.89543,-6.5 2,-6.5 1.10457,0 2,2.91015 2,6.5 z"
        sodipodi:ry="6.5"
        sodipodi:rx="2"
        sodipodi:cy="134.5"
