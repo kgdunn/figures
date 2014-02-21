@@ -8,6 +8,9 @@ N = 11
 dilution <- round(rnorm(N, mean=BOD.mean, sd=BOD.sd))
 manometric <- round(rnorm(N, mean=BOD.mean*1.6, sd=1.5*BOD.sd))
 
+library(car)
+qqPlot(dilution)
+qqPlot(manometric)
 
 # Analysis of the data here:
 dilution <-   c(11, 26, 18, 16, 20, 12,  8, 26, 12, 17, 14)
@@ -19,7 +22,7 @@ mean(dilution)
 
 bitmap('BOD-comparison-raw-data-alternative.png', type="png256", width=7, height=5, res=250, pointsize=14) 
 par(mar=c(4.2, 4.2, 0.2, 0.2))
-plot(c(dilution, manometric), ylab="BOD values")
+plot(c(dilution, manometric), ylab="BOD values", xaxt='n')
 text(5.5,3, "Dilution")
 text(18,3, "Manometric")
 abline(v=11.5)
@@ -30,7 +33,7 @@ bitmap('BOD-comparison-raw-data.png', type="png256", width=7, height=7, res=250,
 par(mar=c(4.2, 4.2, 0.2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(dilution, type="p", pch=4, 
     cex=2, cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, 
-    ylab="BOD values", xlab="Sample number",
+    ylab="BOD values", xlab="Sample number", xaxt='n',
     ylim=c(0,35), xlim=c(0,11.5), col="darkgreen")
 lines(manometric, type="p", pch=16, cex=2, col="blue")
 lines(rep(0, N), dilution, type="p", pch=4, cex=2, col="darkgreen")
@@ -51,6 +54,12 @@ plot(dilution-manometric, type="p", ylab="Dilution - Manometric", xlab="Sample n
 abline(h=0, col="grey60")
 dev.off()
 
+bitmap('BOD-comparison-plot-flipped.png', type="png256", width=7, height=7, res=250, pointsize=14) 
+par(mar=c(4.2, 4.2, 0.2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+plot(manometric-dilution, type="p", ylab="Manometric - Dilution", xlab="Sample number", 
+     cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, cex=2)
+abline(h=0, col="grey60")
+dev.off()
 
 
 # I used the same function in "brittleness-comparison-assignment3-2010.R"
@@ -123,8 +132,8 @@ t.test(dilution, manometric, alternative="two.sided", mu = 0, paired = FALSE, va
 #========================
 # Pairing
 #
-groupA <- dilution
-groupB <- manometric
+groupA <- dilution <-  c(11, 26, 18, 16, 20, 12,  8, 26, 12, 17, 14)
+groupB <- manometric <- c(25,  3, 27, 30, 33, 16, 28, 27, 12, 32, 16)
 
 diffs <- groupB[!is.na(groupA) & !is.na(groupB)] - groupA[!is.na(groupA) & !is.na(groupB)]
 
