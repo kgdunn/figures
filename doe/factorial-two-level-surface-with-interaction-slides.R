@@ -31,7 +31,7 @@ surface.linear.no.interaction <- function(x1,x2){
     x2scale = (1.25-0.5)/2
     x2s = (x2 - x2off)/x2scale
     
-    z = 2.5*x1s + 3.5*x2s + 81.5 + 1.5
+    z = 2.5*x1s + 3.5*x2s + 81.5
 }
 
 
@@ -108,3 +108,4 @@ print(wireframe(y ~ x1*x2,
         #screen = list(z = 0, x = 45, y =45),
         )
 )
+dev.off()
