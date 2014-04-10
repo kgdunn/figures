@@ -15,10 +15,20 @@ b <- coef(mod.full)
 coeff.full <- coef(mod.full)[2:length(coef(mod.full))]
 library(lattice)
 
+
+
+
 bitmap('bioreactor-pareto-plot.png', type="png256", width=8, 
         height=8, res=300, pointsize=14)
-barchart(sort(abs(coeff.full)), xlab="Magnitude of effect", 
-        ylab="Effect", col=0)
+library(lattice)
+coeff <- sort(abs(coeff.full), index.return=TRUE)
+barchart(coeff$x, 
+         xlim=c(0, max(abs(coeff.full))+0.1),
+         xlab=list("Magnitude of effect", cex=1.5), 
+         ylab = list("Effect", cex=1.5),
+         groups=(coeff.full>0)[coeff$ix], col=c("lightblue", "orange"),
+         scales=list(cex=1.5)
+)
 dev.off()
 
 # Refit the model with only: B, C, D, BC, CD and intercept
@@ -41,4 +51,16 @@ y[subset]
 mod.frac <- lm(y[subset] ~ A.s + B.s + C.s + D.s + A.s*B.s + A.s*C.s + A.s*D.s)
 summary(mod.frac)
 coeff.frac <- coef(mod.frac)[2:length(coef(mod.frac))]
-barchart(sort(abs(coeff.frac)), xlab="Magnitude of effect", ylab="Effect", col=0)
+
+bitmap('bioreactor-pareto-plot-half-fraction.png', type="png256", width=8, 
+       height=8, res=300, pointsize=14)
+
+coeff <- sort(abs(coeff.frac), index.return=TRUE)
+barchart(coeff$x, 
+         xlim=c(0, max(abs(coeff.full))+0.1),
+         xlab=list("Magnitude of effect", cex=1.5), 
+         ylab = list("Effect", cex=1.5),
+         groups=(coeff.full>0)[coeff$ix], col=c("lightblue", "orange"),
+         scales=list(cex=1.5)
+)
+dev.off()
