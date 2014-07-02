@@ -50,8 +50,15 @@ rect = [0.2, 0.15, 0.70, 0.82]  # Left, bottom, width, height
 ax = fig.add_axes(rect, frame_on=True)
 levels = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90, 95])
 
-CS = ax.contour(X, Y, Z, colors='#444444', linestyles='dotted',)
+CS = ax.contour(X, Y, Z, colors='#444444', linestyles='dashdot',)
 ax.clabel(CS, inline=1, fontsize=10, fmt='%1.0f')
+
+ax.text(389, 0.35, "77", multialignment='center', weight='bold')
+ax.text(389, 1.30, "81", multialignment='center', weight='bold')
+ax.text(399, 0.35, "79", multialignment='center', weight='bold')
+ax.text(399, 1.30, "89", multialignment='center', weight='bold')
+
+
 #ax.set_title('Theoretical yield profiles', fontsize=16)
 ax.set_xlabel('Temperature [K]', fontsize=12)
 ax.set_ylabel('Substrate \n concentration [g/L]', fontsize=12, multialignment='center')#x`horizontalalignment='center', verticalalignment='baseline')
