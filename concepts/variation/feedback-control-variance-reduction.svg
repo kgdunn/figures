@@ -13,7 +13,7 @@
    height="700"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.5 r10040"
    version="1.0"
    sodipodi:docname="feedback-control-variance-reduction.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
@@ -206,7 +206,7 @@
          id="tspan8261"
          x="211.0907"
          y="373.30606"
-         style="font-size:36px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Oblique">Raw</tspan><tspan
+         style="font-size:36px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Oblique">Incoming</tspan><tspan
          sodipodi:role="line"
          x="211.0907"
          y="418.30606"
@@ -286,7 +286,7 @@
          y="109.30605"
          x="211.0907"
          id="tspan8318"
-         sodipodi:role="line">Raw</tspan><tspan
+         sodipodi:role="line">Incoming</tspan><tspan
          id="tspan8320"
          style="font-size:36px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Oblique"
          y="154.30606"
