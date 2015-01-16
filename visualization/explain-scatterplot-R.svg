@@ -13,7 +13,10 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="explain-scatterplot-R.svg">
+   sodipodi:docname="explain-scatterplot-R.svg"
+   inkscape:export-filename="explain-scatterplot-R-no-arrows.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -23,12 +26,12 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1440"
-     inkscape:window-height="851"
+     inkscape:window-width="2560"
+     inkscape:window-height="1339"
      id="namedview90"
      showgrid="false"
-     inkscape:zoom="0.91216216"
-     inkscape:cx="539.37778"
+     inkscape:zoom="1.5702703"
+     inkscape:cx="500"
      inkscape:cy="370"
      inkscape:window-x="0"
      inkscape:window-y="0"
@@ -597,4 +600,14 @@
      d="M 900.05926,138.13333 C 493.03153,-87.96572 152.34496,248.59553 84.414814,625.98518"
      style="fill:none;stroke:#c300c3;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Mendk)"
      sodipodi:nodetypes="cc" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Base"
+     style="display:none" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Embell"
+     style="display:none" />
 </svg>
