@@ -30,7 +30,7 @@ dev.off()
 
 
 bitmap('BOD-comparison-raw-data.png', type="png256", width=7, height=7, res=250, pointsize=14) 
-par(mar=c(4.2, 4.2, 0.2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+par(mar=c(4.2, 4.4, 0.2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(dilution, type="p", pch=4, 
     cex=2, cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, 
     ylab="BOD values", xlab="Sample number", xaxt='n',
@@ -49,14 +49,14 @@ dev.off()
 
 bitmap('BOD-comparison-plot.png', type="png256", width=7, height=7, res=250, pointsize=14) 
 par(mar=c(4.2, 4.2, 0.2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
-plot(dilution-manometric, type="p", ylab="Dilution - Manometric", xlab="Sample number", 
+plot(dilution-manometric, type="p", ylab="Dilution: Manometric", xlab="Sample number", 
      cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, cex=2)
 abline(h=0, col="grey60")
 dev.off()
 
 bitmap('BOD-comparison-plot-flipped.png', type="png256", width=7, height=7, res=250, pointsize=14) 
 par(mar=c(4.2, 4.2, 0.2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
-plot(manometric-dilution, type="p", ylab="Manometric - Dilution", xlab="Sample number", 
+plot(manometric-dilution, type="p", ylab="Manometric: Dilution", xlab="Sample number", 
      cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, cex=2)
 abline(h=0, col="grey60")
 dev.off()
