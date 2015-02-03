@@ -7,9 +7,12 @@ m <- t(matrix(seq(1,2), 2, 1))
 layout(m)
 
 # looks sort of normally distributed
-hist(rand.f, freq=FALSE, ylim=c(0, 2.6), main="Are these data from a normal distribution?")                        
+hist(rand.f, freq=FALSE, ylim=c(0, 2.6), 
+     main="Are these data from a normal distribution?",
+     ylab="Frequency")
 lines(density(rand.f))
 
 qqPlot(rand.f, distribution="norm", main="q-q plot against the normal distribution")
 
 dev.off()
+
