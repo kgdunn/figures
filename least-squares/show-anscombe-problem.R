@@ -123,10 +123,23 @@ grid(lwd=2)
 points(x, y)
 dev.off()
 
-
-
 model <- lm(y ~ x)
 summary(model)
+
+
+bitmap('show-anscombe-problem-1-solution.png', type="png256", width=7, height=7, res=300, pointsize=14)
+par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+plot(x, y, cex.lab=1.5, cex.main=1.8, cex.sub=1.8, cex.axis=1.8, main="")
+abline(model)
+grid(lwd=2)
+points(x, y)
+points(5.5, 5.75, col="red", cex=2, lwd=2)
+text(6.6, 5.75, "Prediction", col="red")
+dev.off()
+
+
+
+
 
 
 

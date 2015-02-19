@@ -1,4 +1,4 @@
-cars <-read.csv('Readings/kuiper.csv')
+cars <-read.csv('kuiper.csv')
 attach(cars)
 library(car)
 

@@ -37,10 +37,27 @@ layout(matrix(c(1,2), 1, 2))
 plot(x, y, type="p", cex.lab=1.5, cex.main=1.2, cex.sub=1.8, cex.axis=1.8, main="Raw data with the calculated least squares model")
 abline(a=model$coefficients[1], b=model$coefficients[2])
 
-plot(model$fitted, model$residuals, ylab="Residuals", xlab="Fitted values (y-hat)", cex.lab=1.5, cex.main=1.2, cex.sub=1.8, cex.axis=1.8, main="Fitted values vs the residuals")
+plot(model$fitted, model$residuals, ylab="Residuals", xlab="Fitted values (y-hat)", 
+     cex.lab=1.5, cex.main=1.2, cex.sub=1.8, cex.axis=1.8, main="Fitted values vs the residuals")
+
 abline(h=0)
 #lines(lowess(model$fitted, model$residuals), col="red")
 dev.off()
+
+
+bitmap('residual-pattern-non-contant-error-with-x-and-y-hat.png', type="png256", width=14, height=7, res=300, pointsize=14)
+par(mar=c(4.2, 4.2, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+layout(matrix(c(1,2), 1, 2))
+
+plot(model$fitted, model$residuals, ylab="Residuals", xlab="Fitted values (y-hat)", 
+     cex.lab=1.5, cex.main=1.2, cex.sub=1.8, cex.axis=1.8, main="Fitted values vs the residuals")
+abline(h=0)
+
+plot(x, model$residuals, ylab="Residuals", xlab="x values", 
+     cex.lab=1.5, cex.main=1.2, cex.sub=1.8, cex.axis=1.8, main="x values vs the residuals")
+abline(h=0)
+dev.off()
+
 
 
 # Non-normal error structure
