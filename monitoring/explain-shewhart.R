@@ -11,15 +11,18 @@ raw.sample <- dnorm(steps, mean=base.mean, sd=base.sd/sqrt(N))
 
 
 bitmap('explain-shewhart.png', type="png256", width=10, height=7, res=300, pointsize=14)
-
+par(mar=c(4, 4.2, 2, 0.2))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 plot(steps, raw.sample, lwd=4, type="l", xlab="x", ylab="Probability density", 
     cex.lab=1.5, cex.main=1.3, cex.sub=1.8, cex.axis=1.8, xlim=c(0, 12),
     main="Shewhart chart: using theoretical (usually unknown) parameters")
 lines(steps, raw)
 abline(v=base.mean)
 
-legend(x=-0.4, y=0.36, xjust=0, lwd=c(4, 1), cex=0.7,
-      legend=c("Sub group data's distribution", (expression("Raw data's distribution: "*sigma*"=2")) ) )
+legend(x=-0.4, y=0.36, xjust=0, lwd=c(4, 1, 2), col=c("black", "black", "red"), 
+       cex=0.7,
+      legend=c("Sub group data's distribution", 
+               (expression("Raw data's distribution: "*sigma*"=2")),
+               "Control limits") )
 
 #yval = dnorm(1)
 #arrows(x0=base.mean, y0=yval, x1=base.mean+base.sd, y1=yval, code=2)

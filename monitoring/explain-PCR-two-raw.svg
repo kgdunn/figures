@@ -12,9 +12,13 @@
    viewBox="0,0,1445.40,722.70"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="explain-PCR-two-raw.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.1"
+   inkscape:export-filename="explain-PCR-two-raw.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
   <metadata
      id="metadata71">
     <rdf:RDF>
@@ -23,6 +27,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -52,9 +57,10 @@
      inkscape:zoom="0.66909711"
      inkscape:cx="728.95004"
      inkscape:cy="347.5218"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:current-layer="svg2" />
+     inkscape:window-x="389"
+     inkscape:window-y="237"
+     inkscape:current-layer="svg2"
+     inkscape:window-maximized="0" />
   <desc
      id="desc4">R SVG Plot!</desc>
   <polyline

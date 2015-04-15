@@ -83,15 +83,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.8"
-     inkscape:cx="500"
+     inkscape:cx="348.75"
      inkscape:cy="350"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:window-width="1425"
-     inkscape:window-height="778"
+     inkscape:window-width="1873"
+     inkscape:window-height="1008"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0" />
@@ -197,21 +197,15 @@
        inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
-       style="font-size:80px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-size:35px;font-style:italic;font-weight:normal;text-align:center;line-height:125%;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;writing-mode:lr;-inkscape-font-specification:Arial Italic;font-stretch:normal;font-variant:normal"
        x="211.0907"
        y="373.30606"
        id="text8259"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan8261"
-         x="211.0907"
-         y="373.30606"
-         style="font-size:36px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Oblique">Incoming</tspan><tspan
+         id="tspan3030">Incoming</tspan><tspan
          sodipodi:role="line"
-         x="211.0907"
-         y="418.30606"
-         style="font-size:36px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Oblique"
-         id="tspan8263">materials</tspan></text>
+         id="tspan3032">disturbances</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text8265"
@@ -276,23 +270,6 @@
        id="path8314"
        inkscape:connector-curvature="0" />
     <text
-       sodipodi:linespacing="125%"
-       id="text8316"
-       y="109.30605"
-       x="211.0907"
-       style="font-size:80px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       xml:space="preserve"><tspan
-         style="font-size:36px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Oblique"
-         y="109.30605"
-         x="211.0907"
-         id="tspan8318"
-         sodipodi:role="line">Incoming</tspan><tspan
-         id="tspan8320"
-         style="font-size:36px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Oblique"
-         y="154.30606"
-         x="211.0907"
-         sodipodi:role="line">materials</tspan></text>
-    <text
        xml:space="preserve"
        style="font-size:80px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
        x="430.20123"
@@ -342,5 +319,20 @@
        d="m 851.03156,245.35149 c -8.15888,-11.11772 -16.78364,-17.25977 -44.84724,-31.9376 -33.89586,-17.72825 -42.7072,-25.04911 -47.08732,-39.12238 -5.02622,-16.14928 1.64326,-29.75764 21.07296,-42.99712 2.48572,-1.69381 14.11208,-8.17125 25.83634,-14.39434 28.86172,-15.31952 35.6531,-20.076865 43.09836,-30.190545 l 4.05484,-5.50812 -0.0298,83.484315 -0.0298,83.48428 -2.06842,-2.81849 z"
        style="fill:none;stroke:none"
        inkscape:connector-curvature="0" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text3034"
+       y="105.30606"
+       x="211.0907"
+       style="font-size:35px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial Italic"
+       xml:space="preserve"><tspan
+         id="tspan3036"
+         sodipodi:role="line"
+         x="211.0907"
+         y="105.30606">Incoming</tspan><tspan
+         id="tspan3038"
+         sodipodi:role="line"
+         x="211.0907"
+         y="149.05606">disturbances</tspan></text>
   </g>
 </svg>

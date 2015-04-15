@@ -1,5 +1,5 @@
-bitmap('../images/plastic-sheet-control-specification-limits.png', type="png256", width=9, height=7, res=300, pointsize=14)
-par(mar=c(4.2, 4.2, 2, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+bitmap('plastic-sheet-control-specification-limits.png', type="png256", width=9, height=7, res=300, pointsize=14)
+par(mar=c(4.2, 0.5, 2, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 
 n = 4                   # subgroup size
 Cp = 1.7

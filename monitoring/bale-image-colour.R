@@ -1,14 +1,19 @@
-set.seed(42)
-N = 5
-samples = 100
-raw.bale <- as.integer(runif(samples, 220, 255))
-reshaped <- matrix(raw.bale, N, samples/N)
+# set.seed(42)
+# N = 5
+# samples = 100
+# raw.bale <- as.integer(runif(samples, 220, 255))
+# reshaped <- matrix(raw.bale, N, samples/N)
+# 
+# reshaped[1,14] <- 254
+# reshaped[2,14] <- 255
+# reshaped[3,14] <- 253
+# reshaped[4,14] <- 252
+# reshaped[5,14] <- 251
 
-reshaped[1,14] <- 254
-reshaped[2,14] <- 255
-reshaped[3,14] <- 253
-reshaped[4,14] <- 252
-reshaped[5,14] <- 251
+raw.bale <- read.csv('http://datasets.connectmv.com/file/rubber-colour.csv')
+N <- 5
+samples <- dim(raw.bale )[1]
+reshaped <- matrix(raw.bale$Colour, N, samples/N)
 
 groups.S <- apply(reshaped, 2, sd)
 groups.x <- round(apply(reshaped, 2, mean))
