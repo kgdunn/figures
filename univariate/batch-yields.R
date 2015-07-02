@@ -1,5 +1,5 @@
 # import data
-data <- read.csv('http://datasets.connectmv.com/file/batch-yields.csv')
+data <- read.csv('http://openmv.net/file/batch-yields.csv')
 
 # Determine statistics
 summary(data)

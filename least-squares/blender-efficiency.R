@@ -1,4 +1,4 @@
-data <- read.csv('http://datasets.connectmv.com/file/blender-efficiency.csv')
+data <- read.csv('http://openmv.net/file/blender-efficiency.csv')
 summary(data)
 cov(data)
 model<-lm(data$BlendingEfficiency ~ data$ParticleSize + data$MixerDiameter + 

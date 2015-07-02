@@ -1,4 +1,4 @@
-data <- read.csv('http://datasets.connectmv.com/file/gas-furnace.csv')
+data <- read.csv('http://openmv.net/file/gas-furnace.csv')
 CO2 <- data$CO2
 N.raw <- length(CO2)
 N.sub <- 6  

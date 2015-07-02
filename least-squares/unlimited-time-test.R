@@ -1,4 +1,4 @@
-grades <- read.csv("http://datasets.connectmv.com/file/unlimited-time-test.csv")
+grades <- read.csv("http://openmv.net/file/unlimited-time-test.csv")
 summary(grades)
 y <- grades$Grade
 x <- grades$Time

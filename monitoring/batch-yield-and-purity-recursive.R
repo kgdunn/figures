@@ -1,7 +1,7 @@
 # Thanks to Mudassir for his source code to recursively calculate
 # the limits. Some updates were made.
 # ----------------------------------------------------------------
-data <- read.csv('http://datasets.connectmv.com/file/batch-yield-and-purity.csv')
+data <- read.csv('http://openmv.net/file/batch-yield-and-purity.csv')
 y <- data$yield
 variable <- "Yield"
 N <- 3

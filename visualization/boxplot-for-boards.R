@@ -1,4 +1,4 @@
-boards <- read.csv('http://datasets.connectmv.com/file/six-point-board-thickness.csv')
+boards <- read.csv('http://openmv.net/file/six-point-board-thickness.csv')
 summary(boards)
 
 plot(boards[1:100,5], type='l')

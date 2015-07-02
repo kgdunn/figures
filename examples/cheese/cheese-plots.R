@@ -1,5 +1,5 @@
 # Load the data and create training/testing splits
-cheese <- read.csv('http://datasets.connectmv.com/file/cheddar-cheese.csv')
+cheese <- read.csv('http://openmv.net/file/cheddar-cheese.csv')
 N = dim(cheese)[1]
 set.seed(2)
 cheese$Random <- rnorm(N, 1)

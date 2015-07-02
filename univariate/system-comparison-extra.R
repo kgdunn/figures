@@ -1,4 +1,4 @@
-A.hist <- read.csv('http://datasets.connectmv.com/file/batch-yields.csv')
+A.hist <- read.csv('http://openmv.net/file/batch-yields.csv')
 A.hist <- A.hist$Yield
 N <- length(A.hist)
 B <- c(83.5,78.9,82.7,93.2,86.3,74.7,81.6,92.4,83.6,72.4,70.8,77.7,80.7,81.4,86.1,77.9)

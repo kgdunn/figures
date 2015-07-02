@@ -1,4 +1,4 @@
-batch <- read.csv('http://datasets.connectmv.com/file/batch-yields.csv')
+batch <- read.csv('http://openmv.net/file/batch-yields.csv')
 summary(batch)  # make sure we have the expected data
 attach(batch)
 

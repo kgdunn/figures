@@ -1,4 +1,4 @@
-data <- read.csv('http://datasets.connectmv.com/file/flotation-cell.csv')
+data <- read.csv('http://openmv.net/file/flotation-cell.csv')
 summary(data)
 
 # Time-series data for the entire sequence of observations for the 

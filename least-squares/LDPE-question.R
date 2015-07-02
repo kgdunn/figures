@@ -1,4 +1,4 @@
-LDPE <- read.csv('http://datasets.connectmv.com/file/LDPE.csv')
+LDPE <- read.csv('http://openmv.net/file/LDPE.csv')
 summary(LDPE)
 N <- nrow(LDPE)
 

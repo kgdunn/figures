@@ -1,4 +1,4 @@
-roomtemp <- read.csv('http://datasets.connectmv.com/file/room-temperature.csv')
+roomtemp <- read.csv('http://openmv.net/file/room-temperature.csv')
 summary(roomtemp)
 ylim = c(290, 300)
 

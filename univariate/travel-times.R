@@ -1,4 +1,4 @@
-travel <- read.csv('http://datasets.connectmv.com/file/travel-times.csv')
+travel <- read.csv('http://openmv.net/file/travel-times.csv')
 summary(travel)
 
 # Confirm it is not normally distributed

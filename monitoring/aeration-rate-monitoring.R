@@ -11,7 +11,7 @@ return(S)
 }
 
 # Import data and remove missing values (NA)
-aeration.data <- read.csv('http://datasets.connectmv.com/file/aeration-rate.csv')
+aeration.data <- read.csv('http://openmv.net/file/aeration-rate.csv')
 aeration <- na.omit(aeration.data$Aeration)
 
 # Plot raw data

@@ -1,4 +1,4 @@
-boards <- read.csv('http://datasets.connectmv.com/file/board-thickness.csv')
+boards <- read.csv('http://openmv.net/file/board-thickness.csv')
 attach(boards)
 
 N.raw <- length(Thickness)  # Total number of boards

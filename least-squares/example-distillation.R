@@ -1,4 +1,4 @@
-dist <- read.csv('http://datasets.connectmv.com/file/distillation-tower.csv')
+dist <- read.csv('http://openmv.net/file/distillation-tower.csv')
 
 x <- dist$TempC2
 y <- dist$VapourPressure 

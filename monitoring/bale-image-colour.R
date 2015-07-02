@@ -10,7 +10,7 @@
 # reshaped[4,14] <- 252
 # reshaped[5,14] <- 251
 
-raw.bale <- read.csv('http://datasets.connectmv.com/file/rubber-colour.csv')
+raw.bale <- read.csv('http://openmv.net/file/rubber-colour.csv')
 N <- 5
 samples <- dim(raw.bale )[1]
 reshaped <- matrix(raw.bale$Colour, N, samples/N)

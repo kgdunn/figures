@@ -1,4 +1,4 @@
-web <- read.csv('http://datasets.connectmv.com/file/website-traffic.csv')
+web <- read.csv('http://openmv.net/file/website-traffic.csv')
 summary(web)
 
 # Plot the default boxplot: the days are not in the usual order

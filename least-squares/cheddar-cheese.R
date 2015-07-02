@@ -1,4 +1,4 @@
-cheese <- read.csv('http://datasets.connectmv.com/file/cheddar-cheese.csv')
+cheese <- read.csv('http://openmv.net/file/cheddar-cheese.csv')
 summary(cheese)
 
 # Proving that mean-centering has no effect on model parameters

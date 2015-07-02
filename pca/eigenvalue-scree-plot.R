@@ -1,4 +1,4 @@
-dist <- read.csv('http://datasets.connectmv.com/file/distillation-tower.csv')
+dist <- read.csv('http://openmv.net/file/distillation-tower.csv')
 X <- as.matrix(dist[,2:28])
 X.mean <- apply(X, 2, mean, na.rm=TRUE)
 X.mc <- sweep(X, 2, X.mean)

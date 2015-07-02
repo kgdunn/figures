@@ -1,5 +1,5 @@
-nh4 <- read.csv('http://datasets.connectmv.com/file/ammonia.csv')
-summary(nh4$Ammonia)              # just to check we've got the right data
+nh4 <- read.csv('http://openmv.net/file/ammonia.csv')
+summary(nh4$Ammonia)              # just to check if the data seem OK
 #    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 #    9.99   30.22   36.18   36.09   42.37   58.74
 

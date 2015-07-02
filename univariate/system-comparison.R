@@ -60,7 +60,7 @@ sd(B)
 # write.csv(round(A.hist.sim,2), 'system-comparison-historical-data.csv', quote=FALSE, row.names=FALSE)
 
 A.hist <- read.csv('system-comparison-historical-data.csv', header=FALSE)
-#A.hist <- read.csv('http://datasets.connectmv.com/file/batch-yields.csv', header=FALSE)
+#A.hist <- read.csv('http://openmv.net/file/batch-yields.csv', header=FALSE)
 A.hist <- A.hist$V1
 N <- length(A.hist)
 

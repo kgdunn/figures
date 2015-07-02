@@ -1,4 +1,4 @@
-method <- read.csv('http://datasets.connectmv.com/file/systematic-method.csv')
+method <- read.csv('http://openmv.net/file/systematic-method.csv')
 summary(method)
 
 bitmap('boxplot-for-systematic-method-used-2014.png', pointsize=14, res=300,

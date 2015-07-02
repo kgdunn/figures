@@ -15,7 +15,7 @@
 # Then use the remaining data as your phase II (testing) data. 
 # Does the chart perform as expected?
 
-kappa <- read.csv('http://datasets.connectmv.com/file/kappa-number.csv')
+kappa <- read.csv('http://openmv.net/file/kappa-number.csv')
 summary(kappa)
 attach(kappa)    # gives access to the variable "Kappa"
 

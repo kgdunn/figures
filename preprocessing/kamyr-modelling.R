@@ -1,4 +1,4 @@
-kamyr <- read.csv('http://datasets.connectmv.com/file/kamyr-digester.csv')
+kamyr <- read.csv('http://openmv.net/file/kamyr-digester.csv')
 cleaned <- na.omit(cbind(kamyr$Y.Kappa, kamyr$UCZAA))
 
 bitmap('kappa-number-autocorrelation.png', type="png256", width=14, height=14/2, res=300, pointsize=14)

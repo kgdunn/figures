@@ -1,4 +1,4 @@
-gas <- read.csv('http://datasets.connectmv.com/file/gas-furnace.csv')
+gas <- read.csv('http://openmv.net/file/gas-furnace.csv')
 summary(gas)
 
 library(car)

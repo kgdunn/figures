@@ -1,6 +1,6 @@
 # Calcuations with R
 
-distillation <- read.csv('http://datasets.connectmv.com/file/distillation-tower.csv')
+distillation <- read.csv('http://openmv.net/file/distillation-tower.csv')
 model <- lm(distillation$VapourPressure ~ distillation$TempC2)
 summary(model)
 

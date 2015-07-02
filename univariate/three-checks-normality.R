@@ -19,7 +19,7 @@ qqPlot(grades$Grades, ylab="Grades from a course")
 dev.off()
 
 # 2.
-furnace <- read.csv('http://datasets.connectmv.com/file/gas-furnace.csv')
+furnace <- read.csv('http://openmv.net/file/gas-furnace.csv')
 summary(furnace)
 
 bitmap('Furnace-TS.png', type="png256", width=7, height=7, res=300, pointsize=16)

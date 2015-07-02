@@ -1,4 +1,4 @@
-e<-read.csv('http://datasets.connectmv.com/file/gas-furnace.csv')
+e<-read.csv('http://openmv.net/file/gas-furnace.csv')
 
 bitmap('time-series-cycle.png', type="png256", width=14, height=4, res=300, pointsize=14)
 par(mar=c(4.2, 4.2, 1.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)

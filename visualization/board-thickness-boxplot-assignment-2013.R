@@ -1,4 +1,4 @@
-boards <- read.csv('http://datasets.connectmv.com/file/six-point-board-thickness.csv')
+boards <- read.csv('http://openmv.net/file/six-point-board-thickness.csv')
 summary(boards)
 
 # Ignore the first date/time column: using only Pos1, Pos2, ... Pos6 columns

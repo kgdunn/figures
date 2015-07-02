@@ -1,5 +1,5 @@
 #food <- read.csv('/Users/kevindunn/ConnectMV/Datasets/LDPE/food-texture.csv')
-food <- read.csv('http://datasets.connectmv.com/file/food-texture.csv')
+food <- read.csv('http://openmv.net/file/food-texture.csv')
 food[,1] <- c()  # Delete the variable name column
 
 
