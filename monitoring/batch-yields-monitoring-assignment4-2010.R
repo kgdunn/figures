@@ -18,7 +18,8 @@ subgroup.xbar <- apply(subgroup, 2, mean)
 plot(subgroup.xbar, type="b", ylab="Subgroup average")
 plot(subgroup.sd, type="b",  ylab="Subgroup spread")
 
-# Report your target value, lower control limit and upper control limit, showing the calculations you made. 
+# Report your target value, lower control limit and upper control limit, showing
+# the calculations you made. 
 target <- mean(subgroup.xbar)
 Sbar <- mean(subgroup.sd)
 an <- 0.94
