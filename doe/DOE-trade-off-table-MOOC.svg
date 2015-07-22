@@ -43,7 +43,7 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="0.93"
-     inkscape:cx="545.16129"
+     inkscape:cx="498.92473"
      inkscape:cy="300"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
@@ -1729,7 +1729,7 @@
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Cell1 highlight - threshold 37"
-     style="display:inline"
+     style="display:none"
      transform="translate(0,20)">
     <path
        style="fill:#cccccc;fill-opacity:1;stroke:none"
@@ -1761,7 +1761,7 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Other half fractions"
-     style="display:inline"
+     style="display:none"
      transform="translate(0,20)">
     <path
        style="fill:#cccccc;fill-opacity:1;stroke:none"
