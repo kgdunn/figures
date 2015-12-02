@@ -13,7 +13,7 @@
    height="369.04001"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.2 r9819"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="factorial-two-levels-two-variables-bread-dough.svg"
    inkscape:export-filename="factorial-two-levels-two-variables-bread-dough.png"
    inkscape:export-xdpi="300"
@@ -63,14 +63,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.7992629"
-     inkscape:cx="216.3894"
-     inkscape:cy="177.85061"
+     inkscape:zoom="1.8561673"
+     inkscape:cx="209.72"
+     inkscape:cy="184.52"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1440"
-     inkscape:window-height="852"
+     inkscape:window-height="851"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -155,16 +155,16 @@
        inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
-       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:113.99999857%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial Bold"
-       x="241.78815"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:20px;line-height:113.99999857%;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+       x="220.04985"
        y="964.31586"
        id="text3614"
        sodipodi:linespacing="114%"><tspan
          sodipodi:role="line"
          id="tspan3060"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:113.99999857%;writing-mode:lr-tb;text-anchor:start;font-family:Arial;-inkscape-font-specification:Arial Bold"
-         x="241.78815"
-         y="964.31586">Type of sugar</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:20px;line-height:113.99999857%;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:start;writing-mode:lr-tb;text-anchor:start"
+         x="220.04985"
+         y="964.31586">Type of sweetener</tspan></text>
     <text
        sodipodi:linespacing="114%"
        id="text3618"
@@ -179,15 +179,15 @@
     <text
        sodipodi:linespacing="114%"
        id="text3645"
-       y="925.36218"
-       x="179.64458"
-       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:113.99999857%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       y="911.36218"
+       x="146.07036"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20px;line-height:113.99999857%;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
        xml:space="preserve"><tspan
-         y="925.36218"
-         x="179.64458"
+         y="911.36218"
+         x="146.07036"
          id="tspan3647"
          sodipodi:role="line"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:113.99999857%;writing-mode:lr-tb;text-anchor:start;font-family:Arial;-inkscape-font-specification:Arial">Sugar</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20px;line-height:113.99999857%;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;writing-mode:lr-tb;text-anchor:start">Natural sugar</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:113.99999857%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
@@ -199,7 +199,7 @@
          sodipodi:role="line"
          id="tspan3651"
          x="379.48245"
-         y="925.36218"> </tspan></text>
+         y="925.36218" /></text>
     <text
        sodipodi:linespacing="114%"
        id="text3657"
@@ -238,16 +238,21 @@
          sodipodi:role="line">52</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:113.99999857%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       x="358.49225"
-       y="925.36218"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20px;line-height:113.99999857%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none"
+       x="406.48541"
+       y="902.07153"
        id="text3056"
        sodipodi:linespacing="114%"><tspan
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:113.99999857%;writing-mode:lr-tb;text-anchor:start;font-family:Arial;-inkscape-font-specification:Arial"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20px;line-height:113.99999857%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:center;writing-mode:lr-tb;text-anchor:middle"
          sodipodi:role="line"
          id="tspan3058"
-         x="358.49225"
-         y="925.36218">Sweetener</tspan></text>
+         x="409.25885"
+         y="902.07153">Artificial </tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20px;line-height:113.99999857%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:center;writing-mode:lr-tb;text-anchor:middle"
+         sodipodi:role="line"
+         x="406.48541"
+         y="924.87152"
+         id="tspan3367">sweetener</tspan></text>
     <text
        sodipodi:linespacing="114%"
        id="text3030"
