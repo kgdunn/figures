@@ -15,7 +15,7 @@
    version="1.1"
    inkscape:version="0.91 r13725"
    sodipodi:docname="DOE-trade-off-table-MOOC.svg"
-   inkscape:export-filename="DOE-trade-off-table.png"
+   inkscape:export-filename="DOE-trade-off-table-half-fractions.png"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300">
   <defs
@@ -42,9 +42,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.93"
-     inkscape:cx="498.92473"
-     inkscape:cy="300"
+     inkscape:zoom="0.913"
+     inkscape:cx="500"
+     inkscape:cy="310"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -66,7 +66,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -97,7 +97,7 @@
          sodipodi:role="line"
          id="tspan4527"
          x="884.26123"
-         y="796.13562"></tspan><tspan
+         y="796.13562" /><tspan
          sodipodi:role="line"
          id="tspan4529"
          x="884.26123"
@@ -274,7 +274,7 @@
          sodipodi:role="line"
          id="tspan4511"
          x="794.35498"
-         y="696.13562"></tspan><tspan
+         y="696.13562" /><tspan
          sodipodi:role="line"
          id="tspan4513"
          x="794.35498"
@@ -330,11 +330,11 @@
          sodipodi:role="line"
          id="tspan4535"
          x="784.26123"
-         y="796.13562"></tspan><tspan
+         y="796.13562" /><tspan
          sodipodi:role="line"
          id="tspan4537"
          x="784.26123"
-         y="816.13562"></tspan><tspan
+         y="816.13562" /><tspan
          sodipodi:role="line"
          id="tspan4539"
          x="784.26123"
@@ -945,11 +945,11 @@
          sodipodi:role="line"
          id="tspan4483"
          x="694.35498"
-         y="696.13562"></tspan><tspan
+         y="696.13562" /><tspan
          sodipodi:role="line"
          id="tspan4485"
          x="694.35498"
-         y="716.13562"></tspan><tspan
+         y="716.13562" /><tspan
          sodipodi:role="line"
          id="tspan4487"
          x="694.35498"
@@ -1591,26 +1591,22 @@
          y="691.50275">III</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman,';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.99999952px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;"
        x="968.52917"
        y="675.50275"
        id="text4567"
        sodipodi:linespacing="125%"><tspan
-         y="675.50275"
-         x="968.52917"
-         id="tspan4569"
-         sodipodi:role="line">9-4</tspan></text>
+         sodipodi:role="line"
+         id="tspan3696">9-5</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text4573"
        y="775.50275"
        x="968.52917"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman,';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.99999952px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;"
        xml:space="preserve"><tspan
-         y="775.50275"
-         x="968.52917"
-         id="tspan4575"
-         sodipodi:role="line">9-3</tspan></text>
+         sodipodi:role="line"
+         id="tspan3700">9-4</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text4587"
@@ -1657,21 +1653,19 @@
          sodipodi:role="line">IV</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman,';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.99999952px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;"
        x="968.52917"
        y="875.50275"
        id="text4603"
        sodipodi:linespacing="125%"><tspan
-         y="875.50275"
-         x="968.52917"
-         id="tspan4605"
-         sodipodi:role="line">9-2</tspan></text>
+         sodipodi:role="line"
+         id="tspan3698">9-3</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Arrow-annotations"
-     style="display:inline"
+     style="display:none"
      transform="translate(0,20)">
     <path
        style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
@@ -1696,40 +1690,44 @@
     <path
        inkscape:connector-curvature="0"
        id="path5071"
-       d="m 310.58553,572.9964 426.31578,0"
+       d="m 310.58553,570.80792 426.31578,0"
        style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)" />
     <text
        sodipodi:linespacing="125%"
        id="text5081"
-       y="566.5921"
+       y="564.40363"
        x="279.72369"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none"
        xml:space="preserve"><tspan
          sodipodi:role="line"
          id="tspan4617"
          x="279.72369"
-         y="566.5921">increasing information</tspan><tspan
+         y="564.40363">increasing information</tspan><tspan
          sodipodi:role="line"
          id="tspan4619"
          x="279.72369"
-         y="596.5921">about factors</tspan></text>
+         y="594.40363">about additional factors</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none"
        x="939.72369"
-       y="581.44562"
+       y="561.87238"
        id="text4621"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan4627"
+         id="tspan3702"
          x="939.72369"
-         y="581.44562">lower resolution</tspan></text>
+         y="561.87238">lower resolution</tspan><tspan
+         sodipodi:role="line"
+         id="tspan3704"
+         x="939.72369"
+         y="591.87238">greater aliasing</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Cell1 highlight - threshold 37"
-     style="display:none"
+     style="display:inline"
      transform="translate(0,20)">
     <path
        style="fill:#cccccc;fill-opacity:1;stroke:none"
@@ -1761,7 +1759,7 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Other half fractions"
-     style="display:none"
+     style="display:inline"
      transform="translate(0,20)">
     <path
        style="fill:#cccccc;fill-opacity:1;stroke:none"
