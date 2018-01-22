@@ -79,7 +79,7 @@ dev.off()
 bitmap('system-comparison-autocorrelation-scatterplot.png',type="png256", width=7, height=7, res=300, pointsize=14) 
 plot(A.hist[1:N-1], A.hist[2:N], xlab="x[k]", ylab="x[k+1]", 
     main="Autocorrelation between successive values of batch yield", 
-    cex.lab=1.2, cex.main=1.2, lwd=3, cex.sub=1.2, cex.axis=1.2,
+    cex.lab=1.2, cex.main=1.0, lwd=3, cex.sub=1.2, cex.axis=1.2,
     xlim=c(60,100), ylim=c(60,100))
 lines(lowess(A.hist[1:N-1], A.hist[2:N]))
 dev.off()
