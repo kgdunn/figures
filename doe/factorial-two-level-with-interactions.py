@@ -38,12 +38,12 @@ y= np.array([ylo, yhi])
 xs = ((xlo-Xoff)/Xscale)
 ys = ((y-Yoff)/Yscale)
 z = +30*xs + 16*ys - 10*xs*xs - 20*ys*ys + 16*xs*ys + 40
-print z
+print(z)
 
 xs = ((xhi-Xoff)/Xscale)
 ys = ((y-Yoff)/Yscale)
 z = +30*xs + 16*ys - 10*xs*xs - 20*ys*ys + 16*xs*ys + 40
-print z
+print(z)
 
 fig = Figure(figsize=(4, 3.5))
 rect = [0.2, 0.15, 0.70, 0.82]  # Left, bottom, width, height
@@ -53,12 +53,12 @@ levels = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90, 95])
 CS = ax.contour(X, Y, Z, colors='#444444', linestyles='dotted',)
 ax.clabel(CS, inline=1, fontsize=10, fmt='%1.0f')
 
-ax.text(390, 0.5, "77")
+ax.text(387.7, 0.38, "77", color='blue', fontsize=8)
 
 
 #ax.set_title('Theoretical yield profiles', fontsize=16)
-ax.set_xlabel('Temperature [K]', fontsize=12)
-ax.set_ylabel('Substrate \n concentration [g/L]', fontsize=12, multialignment='center')#x`horizontalalignment='center', verticalalignment='baseline')
+ax.set_xlabel('Temperature [K]', fontsize=10)
+ax.set_ylabel('Substrate \n concentration [g/L]', fontsize=10, multialignment='center')#x`horizontalalignment='center', verticalalignment='baseline')
 #ax.set_xticks([330, 340, 350, 360, 370])
 
 
