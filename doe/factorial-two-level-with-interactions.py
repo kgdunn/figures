@@ -53,7 +53,10 @@ levels = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90, 95])
 CS = ax.contour(X, Y, Z, colors='#444444', linestyles='dotted',)
 ax.clabel(CS, inline=1, fontsize=10, fmt='%1.0f')
 
-ax.text(387.7, 0.38, "77", color='blue', fontsize=8)
+ax.text(387.7, 0.48, "77", color='blue', fontsize=8)
+ax.text(400.9, 0.48, "79", color='blue', fontsize=8)
+ax.text(387.7, 1.23, "81", color='blue', fontsize=8)
+ax.text(400.9, 1.23, "89", color='blue', fontsize=8)
 
 
 #ax.set_title('Theoretical yield profiles', fontsize=16)

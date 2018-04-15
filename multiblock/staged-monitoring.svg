@@ -10,10 +10,10 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="1100"
-   height="140"
+   height="160"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
    sodipodi:docname="staged-monitoring.svg"
    inkscape:export-filename="staged-monitoring.png"
    inkscape:export-xdpi="250.07143"
@@ -25,16 +25,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.79416667"
-     inkscape:cx="600"
-     inkscape:cy="70"
+     inkscape:zoom="0.83419798"
+     inkscape:cx="543.94222"
+     inkscape:cy="78.256131"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1440"
      inkscape:window-height="796"
      inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-y="1"
      inkscape:window-maximized="0" />
   <defs
      id="defs4">
@@ -47,8 +47,8 @@
        style="overflow:visible">
       <path
          id="path4883"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
          transform="matrix(-0.4,0,0,-0.4,-4,0)"
          inkscape:connector-curvature="0" />
     </marker>
@@ -63,7 +63,7 @@
          id="path4901"
          style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
          d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
-         transform="scale(-0.6,-0.6)"
+         transform="scale(-0.6)"
          inkscape:connector-curvature="0" />
     </marker>
     <marker
@@ -75,8 +75,8 @@
        style="overflow:visible">
       <path
          id="path5558"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
-         style="fill:#6e6e6e;fill-rule:evenodd;stroke:#6e6e6e;stroke-width:1pt;marker-start:none"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#6e6e6e;fill-rule:evenodd;stroke:#6e6e6e;stroke-width:1.00000003pt;marker-start:none"
          transform="matrix(-0.4,0,0,-0.4,-4,0)"
          inkscape:connector-curvature="0" />
     </marker>
@@ -89,8 +89,8 @@
        style="overflow:visible">
       <path
          id="path5561"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
-         style="fill:#6e6e6e;fill-rule:evenodd;stroke:#6e6e6e;stroke-width:1pt;marker-start:none"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#6e6e6e;fill-rule:evenodd;stroke:#6e6e6e;stroke-width:1.00000003pt;marker-start:none"
          transform="matrix(-0.4,0,0,-0.4,-4,0)"
          inkscape:connector-curvature="0" />
     </marker>
@@ -103,8 +103,8 @@
        style="overflow:visible">
       <path
          id="path5721"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
-         style="marker-start:none;stroke:#7a7a7a;stroke-width:1pt;fill:#7a7a7a;fill-rule:evenodd"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#7a7a7a;fill-rule:evenodd;stroke:#7a7a7a;stroke-width:1.00000003pt;marker-start:none"
          transform="matrix(-0.4,0,0,-0.4,-4,0)"
          inkscape:connector-curvature="0" />
     </marker>
@@ -117,8 +117,8 @@
        style="overflow:visible">
       <path
          id="path5724"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
-         style="marker-start:none;stroke:#7a7a7a;stroke-width:1pt;fill:#7a7a7a;fill-rule:evenodd"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#7a7a7a;fill-rule:evenodd;stroke:#7a7a7a;stroke-width:1.00000003pt;marker-start:none"
          transform="matrix(-0.4,0,0,-0.4,-4,0)"
          inkscape:connector-curvature="0" />
     </marker>
@@ -139,17 +139,17 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-912.36218)">
+     transform="translate(0,-892.36218)">
     <path
-       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Mend)"
-       d="m 10.495711,974.50507 66.897109,0"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="M 10.495711,955.60743 H 77.39282"
        id="path4869"
        inkscape:connector-curvature="0" />
     <g
-       transform="translate(-31.54303,-4)"
+       transform="translate(-31.54303,-22.897638)"
        id="g5682">
       <rect
-         style="color:#000000;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
          id="rect5511"
          width="125.71429"
          height="91.428574"
@@ -157,145 +157,133 @@
          y="929.21936" />
       <text
          xml:space="preserve"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman,';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
          x="802.08386"
          y="991.96014"
-         id="text5535"
-         sodipodi:linespacing="125%"><tspan
+         id="text5535"><tspan
            sodipodi:role="line"
            id="tspan5537"
            x="802.08386"
-           y="991.96014">X<tspan
+           y="991.96014"
+           style="font-size:40px;line-height:1.25">X<tspan
    style="font-size:65.00091553%;baseline-shift:super"
    id="tspan5539">(4)</tspan></tspan></text>
     </g>
-    <g
-       transform="translate(-20.000565,-4)"
-       id="g5658">
-      <rect
-         y="929.21936"
-         x="108.46429"
-         height="91.428574"
-         width="125.71429"
-         id="rect4099"
-         style="color:#000000;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text5517"
-         y="991.96014"
-         x="142.08392"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-         xml:space="preserve"><tspan
-           y="991.96014"
-           x="142.08392"
-           id="tspan5519"
-           sodipodi:role="line">X<tspan
-   id="tspan5521"
-   style="font-size:65.00091553%;baseline-shift:super">(1)</tspan></tspan></text>
-      <text
-         sodipodi:linespacing="125%"
-         id="text5547"
-         y="1047.1072"
-         x="134.12904"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#066606;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
-         xml:space="preserve"><tspan
-           y="1047.1072"
-           x="134.12904"
-           id="tspan5549"
-           sodipodi:role="line">SPE OK</tspan></text>
-    </g>
-    <g
-       transform="translate(-26.747375,-4)"
-       id="g5666">
-      <rect
-         style="color:#000000;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         id="rect5503"
-         width="125.71429"
-         height="91.428574"
-         x="328.46429"
-         y="929.21936" />
-      <text
-         xml:space="preserve"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-         x="362.08392"
-         y="991.96014"
-         id="text5523"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan5525"
-           x="362.08392"
-           y="991.96014">X<tspan
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4099"
+       width="125.71429"
+       height="91.428574"
+       x="88.463722"
+       y="906.32172" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman,';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+       x="122.08336"
+       y="969.0625"
+       id="text5517"><tspan
+         style="font-size:40px;line-height:1.25"
+         sodipodi:role="line"
+         id="tspan5519"
+         x="122.08336"
+         y="969.0625">X<tspan
    style="font-size:65.00091553%;baseline-shift:super"
-   id="tspan5527">(2)</tspan></tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#066606;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
-         x="354.12906"
-         y="1047.1072"
-         id="text5623"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan5625"
-           x="354.12906"
-           y="1047.1072">SPE OK</tspan></text>
-    </g>
-    <g
-       transform="translate(-29.145142,-4)"
-       id="g5674">
-      <rect
-         y="929.21936"
-         x="548.46423"
-         height="91.428574"
-         width="125.71429"
-         id="rect5507"
-         style="color:#000000;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text5529"
-         y="991.96014"
-         x="582.08386"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
-         xml:space="preserve"><tspan
-           y="991.96014"
-           x="582.08386"
-           id="tspan5531"
-           sodipodi:role="line">X<tspan
-   id="tspan5533"
-   style="font-size:65.00091553%;baseline-shift:super">(3)</tspan></tspan></text>
-      <text
-         sodipodi:linespacing="125%"
-         id="text5627"
-         y="1047.1072"
-         x="541.29694"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#b30b1d;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
-         xml:space="preserve"><tspan
-           y="1047.1072"
-           x="541.29694"
-           id="tspan5629"
-           sodipodi:role="line">SPE exceeded</tspan></text>
-    </g>
+   id="tspan5521">(1)</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#066606;fill-opacity:1;stroke:none"
+       x="114.12848"
+       y="1024.2096"
+       id="text5547"><tspan
+         style="font-size:20px;line-height:1.25"
+         sodipodi:role="line"
+         id="tspan5549"
+         x="114.12848"
+         y="1024.2096">SPE OK</tspan></text>
+    <rect
+       y="906.32172"
+       x="301.71692"
+       height="91.428574"
+       width="125.71429"
+       id="rect5503"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate" />
+    <text
+       id="text5523"
+       y="969.0625"
+       x="335.33655"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman,';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+       xml:space="preserve"><tspan
+         style="font-size:40px;line-height:1.25"
+         y="969.0625"
+         x="335.33655"
+         id="tspan5525"
+         sodipodi:role="line">X<tspan
+   id="tspan5527"
+   style="font-size:65.00091553%;baseline-shift:super">(2)</tspan></tspan></text>
+    <text
+       id="text5623"
+       y="1024.2096"
+       x="327.38168"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#066606;fill-opacity:1;stroke:none"
+       xml:space="preserve"><tspan
+         style="font-size:20px;line-height:1.25"
+         y="1024.2096"
+         x="327.38168"
+         id="tspan5625"
+         sodipodi:role="line">SPE OK</tspan></text>
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect5507"
+       width="125.71429"
+       height="91.428574"
+       x="519.31909"
+       y="906.32172" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman,';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+       x="552.93872"
+       y="969.0625"
+       id="text5529"><tspan
+         style="font-size:40px;line-height:1.25"
+         sodipodi:role="line"
+         id="tspan5531"
+         x="552.93872"
+         y="969.0625">X<tspan
+   style="font-size:65.00091553%;baseline-shift:super"
+   id="tspan5533">(3)</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#b30b1d;fill-opacity:1;stroke:none"
+       x="512.15179"
+       y="1024.2096"
+       id="text5627"><tspan
+         style="font-size:20px;line-height:1.25"
+         sodipodi:role="line"
+         id="tspan5629"
+         x="512.15179"
+         y="1024.2096">SPE exceeded</tspan></text>
     <path
        inkscape:connector-curvature="0"
        id="path5650"
-       d="m 223.74892,974.50507 66.89711,0"
-       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Mend)" />
+       d="m 223.74892,955.60743 h 66.89711"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Mend)"
-       d="m 437.00211,974.50507 66.89711,0"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="m 437.00211,955.60743 h 66.89711"
        id="path5652"
        inkscape:connector-curvature="0" />
     <path
        inkscape:connector-curvature="0"
        id="path5654"
-       d="m 658.95319,974.50507 66.89711,0"
-       style="stroke-linejoin:miter;marker-end:url(#Arrow1Mend9);stroke-opacity:1;stroke:#7a7a7a;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-width:2;fill:none" />
+       d="M 658.95319,955.60743 H 725.8503"
+       style="fill:none;stroke:#7a7a7a;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend9)" />
     <path
-       style="stroke-linejoin:miter;marker-end:url(#Arrow1MendA);stroke-opacity:1;stroke:#7a7a7a;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-width:2;fill:none"
-       d="m 872.20642,974.50507 66.89711,0"
+       style="fill:none;stroke:#7a7a7a;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1MendA)"
+       d="m 872.20642,955.60743 h 66.89711"
        id="path5656"
        inkscape:connector-curvature="0" />
     <g
-       transform="translate(1.2207031e-4,-4)"
+       transform="translate(1.2207031e-4,-22.897638)"
        id="g5704">
       <rect
          y="929.21936"
@@ -303,18 +291,51 @@
          height="91.428574"
          width="125.71429"
          id="rect5690"
-         style="color:#000000;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate" />
       <text
-         sodipodi:linespacing="125%"
          id="text5692"
          y="988.17584"
          x="998.6955"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman,';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
          xml:space="preserve"><tspan
            sodipodi:role="line"
            id="tspan5702"
            x="998.6955"
-           y="988.17584">Y</tspan></text>
+           y="988.17584"
+           style="font-size:40px;line-height:1.25">Y</tspan></text>
     </g>
+    <text
+       id="text3790"
+       y="1043.1072"
+       x="114.12848"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#066606;fill-opacity:1;stroke:none"
+       xml:space="preserve"><tspan
+         y="1043.1072"
+         x="114.12848"
+         id="tspan3788"
+         sodipodi:role="line"
+         style="font-size:20px;line-height:1.25">HT2 OK</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#066606;fill-opacity:1;stroke:none"
+       x="327.38168"
+       y="1043.1072"
+       id="text3825"><tspan
+         sodipodi:role="line"
+         id="tspan3823"
+         x="327.38168"
+         y="1043.1072"
+         style="font-size:20px;line-height:1.25">HT2 OK</tspan></text>
+    <text
+       id="text3856"
+       y="1043.1072"
+       x="543.3725"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#066606;fill-opacity:1;stroke:none"
+       xml:space="preserve"><tspan
+         style="font-size:20px;line-height:1.25"
+         y="1043.1072"
+         x="543.3725"
+         id="tspan3854"
+         sodipodi:role="line">HT2 OK</tspan></text>
   </g>
 </svg>
