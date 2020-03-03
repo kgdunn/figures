@@ -32,6 +32,49 @@ barchart(as.matrix(b.mod), ylab = list("Effect", cex=1.5),
 
 dev.off()
 
+# ----- Revised approach
+
+A = B = C = c(-1, +1)
+design <- expand.grid(A=A, B=B, C=C)
+A = design$A
+B = design$B
+C = design$C
+D = A*B
+E = A*C
+F = B*C
+G = A*B*C
+y = c(77.1, 68.9, 75.5, 72.5, 67.9, 68.5, 71.5, 63.7)
+
+# Rather use this form:
+demo = lm(y ~ A + B + C + D + E + F + G)
+summary(demo)
+
+# OK, now we are ready to generate the Pareto plot.
+# Let's use a library to do that for us.
+
+# library(pid) <-- best to use this! 
+# It is better to uncomment and use the line above.
+
+# But this embedded R script on this website does not have the 
+# "pid" library available. So we will load the required function 
+# from an external server instead:
+
+source('https://yint.org/paretoPlot.R')
+
+# And now we can generate the plot:
+paretoPlot(demo)
+
+# Try getting the results manually:
+X_matrix = model.matrix(demo)
+XtX <- t(X_matrix) %*% X_matrix
+Xty <- t(X_matrix) %*% y
+b = solve(XtX) %*% Xty
+# -------
+bitmap('pareto-plot-pid.png', type="png256", width=7, height=7, res=300, pointsize=14)
+par(mar=c(4.2, 4.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
+paretoPlot(demo)
+dev.off()
+
 # Half-fraction system
 # ----------------------
 # library(AlgDesign)
