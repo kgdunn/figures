@@ -41,7 +41,7 @@ abline(h=0, v=0)
 dev.off()
 
 
-A =1
+A = 1
 temps.E.A <- temps.mcuv - as.matrix(temps.T[,seq(1,A)],N,A) %*% t(temps.P[,seq(1,A)])  # if A=1: 
 SPE.A <- apply(temps.E.A ** 2, 1, sum)
 reasonable.limit.95 = quantile(c(SPE.A[1:40], SPE.A[60:120]), 0.95)
@@ -69,6 +69,14 @@ bitmap('temperatures-LV-1-scores.png', type="png256", width=10, height=3., res=3
 par(mar=c(3.0, 4.2, 3.0, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=1.3, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
 plot(-temps.T[,1], type='l', main="First latent variable: score", ylab="t1", xlab="Time order", ylim=c(-4,4))
+grid()
+dev.off()
+
+bitmap('temperatures-T2-after-1-LV.png', type="png256", width=10, height=4., res=300, pointsize=14)
+hotellings_t2_a1 = temps.T[,1] * temps.T[,1] / model.pca$sdev[1]
+par(mar=c(4.0, 4.2, 3.0, 0.5))  
+par(cex.lab=1.3, cex.main=1.5, cex.sub=1.5, cex.axis=1.5)
+plot(hotellings_t2_a1, type='l', main="Hotelling's T^2 with 1 component", ylab="T^2 [A=1]", xlab="Time order", ylim=c(0, max(hotellings_t2_a1)))
 grid()
 dev.off()
 
