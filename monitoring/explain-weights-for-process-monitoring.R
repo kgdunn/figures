@@ -20,7 +20,7 @@ MA <- numeric(N)
 MA[(N-4):N] = 0.2
 
 EWMA <- numeric(N)
-lambda <- 0.3
+lambda <- 0.6
 for (i in 1:N)
 {
     EWMA[i] = lambda*(1-lambda)^(N-i)
@@ -30,16 +30,20 @@ for (i in 1:N)
 bitmap('explain-weights-for-process-monitoring.png', type="png256", width=9, height=7, res=300, pointsize=14)
 
 par(mfrow=c(2,2))
-stick(shewhart, main=(expression(paste("Shewhart weights"))), ylim=c(0, 1), xaxt="n",  ylab="", xlab="")
+stick(shewhart, main="Shewhart weights", ylim=c(0, 1), xaxt="n",  ylab="", xlab="")
 axis(1, at=seq(1, 12), labels=c("", "", "", "", "", "...", "", "t-4", "", "t-2","", "t"), cex.lab=2)
+grid()
 
-stick(CUSUM, main=(expression(paste("CUSUM weights"))), ylim=c(0, 1), xaxt="n", xlab="", ylab="")
+stick(CUSUM, main=paste("CUSUM weights; each weight is", round(CUSUM[1], 4)), ylim=c(0, 1), xaxt="n", xlab="", ylab="")
 axis(1, at=seq(1, 12), labels=c("", "", "", "", "", "...", "", "t-4", "", "t-2","", "t"), cex.lab=2)
+grid()
 
-stick(MA, main=(expression(paste("MA weights when N=5"))), ylim=c(0, 1), xaxt="n", xlab="", ylab="")
+stick(MA, main="MA weights when N=5", ylim=c(0, 1), xaxt="n", xlab="", ylab="")
 axis(1, at=seq(1, 12), labels=c("", "", "", "", "", "...", "", "t-4", "", "t-2","", "t"), cex.lab=2)
+grid()
 
-stick(EWMA, main=(expression(paste("EWMA weights when "*lambda,' = ',0.3))), ylim=c(0, 1), xaxt="n", xlab="", ylab="")
+stick(EWMA, main=expression(bold(paste("EWMA weights when "*lambda,' = ',0.6))), ylim=c(0, 1), xaxt="n", xlab="", ylab="")
 axis(1, at=seq(1, 12), labels=c("", "", "", "", "", "...", "", "t-4", "", "t-2","", "t"), cex.lab=2)
+grid()
 
 dev.off()
