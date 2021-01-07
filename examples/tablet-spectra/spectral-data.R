@@ -79,10 +79,13 @@ par(mar=c(2.5, 5.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(m
 par(cex.lab=2, cex.main=2, cex.sub=2, cex.axis=2)
 layout(matrix(c(1,2,3), 3, 1))
 plot(seq(1,N), SPE.1, col='darkgreen', type='l', lwd=2,  ylab="SPE: A=1", ylim=c(0, max(SPE.1)))
+grid()
 plot(seq(1,N), SPE.2, col='black', type='l', lwd=2,  ylab="SPE: A=2", ylim=c(0, max(SPE.2)))
+grid()
 par(mar=c(4.5, 5.2, 0.5, 0.5))  # (bottom, left, top, right); defaults are par(mar=c(5, 4, 4, 2) + 0.1)
 par(cex.lab=2, cex.main=1.8, cex.sub=1.5, cex.axis=2)
-plot(seq(1,N), SPE.2, col='blue', type='l', lwd=2,  ylab="SPE: A=3", xlab="Tablet number", ylim=c(0, max(SPE.3)))
+plot(seq(1,N), SPE.3, col='blue', type='l', lwd=2,  ylab="SPE: A=3", xlab="Tablet number", ylim=c(0, max(SPE.3)))
+grid()
 dev.off()
 
 
