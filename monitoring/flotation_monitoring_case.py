@@ -1,14 +1,15 @@
 """
 Multivariate process monitoring case study for pid-book §7.3.
 
-Fits a 2-component PCA on the phase-1 stretch (first 479 observations,
-15 December 2004) of the openmv flotation-cell dataset, aggregated into
-2-minute subgroups (size n=4) so the multivariate analysis is on the
-same statistical object as the univariate Shewhart chart. Then monitors
-the phase-2 stretch (16 December onwards, 2443 observations / 610
-subgroups) with Hotelling's T^2 and SPE. Also produces a univariate
-Shewhart trace on the Feed rate column for comparison, and a dual-axis
-side-by-side of the Feed-rate Shewhart and the multivariate T^2.
+Discards the first 479 observations of the openmv flotation-cell dataset
+(15 December 2004; the process was unsettled here and not useful as an
+in-control reference), then takes the next 1000 observations (250
+2-minute subgroups) as phase 1 and the remaining ~1443 observations
+(~360 subgroups) as phase 2. A 2-component PCA is fit on the
+subgrouped phase 1 and used to monitor the subgrouped phase 2 with
+Hotelling's T^2, SPE, and a contribution decomposition at the first
+T^2 alarm. A univariate Shewhart chart on the Feed rate column is
+shown side by side for comparison.
 
 Generates six PNG figures referenced by
 `product-development-product-improvement/multivariate-process-monitoring.rst`,
@@ -37,7 +38,12 @@ from process_improve.multivariate import PCA, MCUVScaler
 FIGURES_DIR = pathlib.Path(__file__).resolve().parent
 DATA_URL = "https://openmv.net/file/flotation-cell.csv"
 
-N_PHASE1 = 479
+# Drop the first 479 raw observations entirely (the 15 December stretch is
+# not in-control and was already known to be a poor training set). The next
+# 1000 raw observations (250 subgroups of 4) become phase 1, and everything
+# after that is phase 2.
+N_DROP = 479
+N_PHASE1_RAW = 1000
 N_SUB = 4
 CONF_LEVEL = 0.95
 
@@ -48,7 +54,9 @@ def load_dataset() -> pd.DataFrame:
 
 def split_phases(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     num = df.drop(columns=["Date and time"])
-    return num.iloc[:N_PHASE1].copy(), num.iloc[N_PHASE1:].copy()
+    phase1 = num.iloc[N_DROP : N_DROP + N_PHASE1_RAW].reset_index(drop=True)
+    phase2 = num.iloc[N_DROP + N_PHASE1_RAW :].reset_index(drop=True)
+    return phase1, phase2
 
 
 def subgroup(x, n_sub: int) -> np.ndarray:
@@ -84,8 +92,8 @@ def figure_shewhart(phase1, phase2, out: pathlib.Path) -> None:
     fig, ax = plt.subplots(figsize=(11, 4.4))
     idx_p1 = np.arange(len(xbar_p1))
     idx_p2 = np.arange(len(xbar_p1), len(xbar_p1) + len(xbar_p2))
-    ax.plot(idx_p1, xbar_p1, "k.-", linewidth=1.0, markersize=4, label="Phase 1 (15 Dec)")
-    ax.plot(idx_p2, xbar_p2, "C0.-", linewidth=1.0, markersize=3, label="Phase 2 (16 Dec onwards)")
+    ax.plot(idx_p1, xbar_p1, "k.-", linewidth=1.0, markersize=4, label="Phase 1 (training, 250 subgroups)")
+    ax.plot(idx_p2, xbar_p2, "C0.-", linewidth=1.0, markersize=3, label="Phase 2 (monitoring)")
     ax.axhline(target, color="grey", linestyle=":", linewidth=1, label="target")
     ax.axhline(ucl, color="red", linestyle="--", linewidth=1, label="UCL / LCL (3 sigma)")
     ax.axhline(lcl, color="red", linestyle="--", linewidth=1)
@@ -114,7 +122,7 @@ def figure_score_phase1(model, n_phase1_sub, out: pathlib.Path) -> None:
     ax.axvline(0, color="grey", linewidth=0.5)
     ax.set_xlabel("$t_1$")
     ax.set_ylabel("$t_2$")
-    ax.set_title(f"Phase-1 score plot ({n_phase1_sub} subgroups, 15 Dec)")
+    ax.set_title(f"Phase-1 score plot ({n_phase1_sub} subgroups)")
     ax.set_aspect("equal", adjustable="datalim")
     ax.legend(loc="upper right", fontsize=9)
     ax.grid(True, alpha=0.3)
@@ -158,12 +166,15 @@ def figure_t2_spe(t2, spe, t2_lim, spe_lim, out: pathlib.Path) -> None:
 
 
 def figure_contribution(contribs: pd.Series, first_alarm_idx: int, out: pathlib.Path) -> None:
+    """Bar chart of T^2-style contributions at the first T^2 alarm."""
     fig, ax = plt.subplots(figsize=(8, 4.2))
-    ax.bar(contribs.index, contribs.values, color="#d62728")
-    ax.set_ylabel("$(x_k - \\hat{x}_k)^2$ in scaled units")
+    colors = ["#4c72b0" if v >= 0 else "#4c72b0" for v in contribs.values]  # neutral
+    ax.bar(contribs.index, contribs.values, color=colors)
+    ax.axhline(0, color="black", linewidth=0.6)
+    ax.set_ylabel("Contribution to $T^2$ score movement (scaled units)")
     ax.set_title(
-        f"Per-variable SPE contributions at phase-2 subgroup {first_alarm_idx} "
-        f"(16 Dec, first SPE alarm)"
+        f"Per-variable T^2 contributions at phase-2 subgroup {first_alarm_idx} "
+        f"(first T^2 alarm)"
     )
     ax.tick_params(axis="x", rotation=15)
     ax.grid(True, axis="y", alpha=0.3)
@@ -183,12 +194,10 @@ def figure_comparison(
     t2_first_alarm: int,
     out: pathlib.Path,
 ) -> None:
-    """Twin-axis overlay of phase-2 Feed-rate subgroups and the multivariate T^2,
-    so a reader can read off the timing dividend directly."""
+    """Twin-axis overlay of phase-2 Feed-rate subgroups and the multivariate T^2."""
     fig, ax1 = plt.subplots(figsize=(11, 4.6))
     x = np.arange(len(p2_feed_sub))
 
-    # Left axis: Feed-rate subgroup mean + Shewhart limits.
     ax1.plot(x, p2_feed_sub, color="#1f77b4", linewidth=1.0, marker=".", markersize=3,
              label="Feed rate (subgroup mean, left)")
     ax1.axhline(feed_target, color="#1f77b4", linestyle=":", linewidth=0.9, alpha=0.6)
@@ -200,7 +209,6 @@ def figure_comparison(
     ax1.tick_params(axis="y", labelcolor="#1f77b4")
     ax1.grid(True, alpha=0.3)
 
-    # Right axis: Hotelling's T^2 + 95 % limit.
     ax2 = ax1.twinx()
     ax2.plot(x, t2.values, color="#d62728", linewidth=1.0, marker=".", markersize=3,
              label="Hotelling's $T^2$ (right)")
@@ -209,7 +217,6 @@ def figure_comparison(
     ax2.set_ylabel("Hotelling's $T^2$", color="#d62728")
     ax2.tick_params(axis="y", labelcolor="#d62728")
 
-    # Title + a shared legend below.
     ax1.set_title(
         f"Univariate vs multivariate alarms on phase 2: feed rate alarms at subgroup "
         f"{feed_first_alarm}, T^2 alarms at subgroup {t2_first_alarm}"
@@ -265,19 +272,20 @@ def main() -> None:
     print(f"first T^2 alarm at phase-2 subgroup {first_t2_alarm}")
     print(f"first SPE alarm at phase-2 subgroup {first_spe_alarm}")
 
-    row_scaled = scaler.transform(p2_sub).loc[first_spe_alarm].values
-    row_hat = row_scaled @ model.loadings_.values @ model.loadings_.values.T
-    contribs = pd.Series(
-        (row_scaled - row_hat) ** 2,
-        index=p1_sub.columns,
-        name="SPE contribution",
-    )
+    # T^2-style contribution from the library: how each X-variable contributes
+    # to the (t_alarm - 0) movement in score space, weighted by 1/sqrt(explained
+    # variance) per component so the numbers add up to the T^2 score's "distance
+    # from the model center". This is the standard contribution decomposition;
+    # no manual residual arithmetic needed.
+    t_at_alarm = result.scores.loc[first_t2_alarm].values
+    contribs = model.score_contributions(t_at_alarm, weighted=True)
+    print("T^2 contributions at the first T^2 alarm:")
     print(contribs.round(3).to_dict())
-    figure_contribution(contribs, first_spe_alarm,
+    figure_contribution(contribs, first_t2_alarm,
                         FIGURES_DIR / "Flotation-MSPC-contributions.png")
     print("[5/6] contributions done")
 
-    # 6. Twin-axis comparison of phase-2 Feed-rate subgroups vs T^2 subgroups.
+    # 6. Twin-axis comparison of phase-2 Feed-rate subgroups vs T^2.
     feed_sub_p1 = subgroup(phase1["Feed rate"].values, N_SUB).mean(axis=1)
     feed_sub_p2 = subgroup(phase2["Feed rate"].values, N_SUB).mean(axis=1)
     feed_target, feed_lcl, feed_ucl = shewhart_limits(
