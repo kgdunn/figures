@@ -119,8 +119,7 @@ def figure_loadings(model, out: pathlib.Path) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.2), sharey=False)
     for k, ax in enumerate(axes):
         p = model.loadings_.iloc[:, k]
-        colors = ["#1f77b4" if v >= 0 else "#d62728" for v in p.values]
-        ax.bar(p.index, p.values, color=colors)
+        ax.bar(p.index, p.values, color="#4c72b0")
         ax.axhline(0, color="black", linewidth=0.6)
         ax.set_ylabel(f"$p_{k + 1}$ loading")
         ax.tick_params(axis="x", rotation=25)
