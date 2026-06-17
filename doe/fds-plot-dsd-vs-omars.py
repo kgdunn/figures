@@ -1,9 +1,14 @@
 """Generate the FDS (fraction-of-design-space) figure for the design-quality subchapter.
 
 Compares a 4-factor definitive screening design (9 runs) against a 13-run OMARS
-design on the main-effects-plus-quadratic model. Reproducible; run from this
-directory: it writes ``fds-plot-dsd-vs-omars.png`` alongside the script.
+design on the main-effects-plus-quadratic model. The uniform sample is augmented
+with the 2^4 cube vertices (the extreme corner points of the region), where the
+worst-case prediction variance can sit and which random interior sampling misses.
+Reproducible; run from this directory: it writes ``fds-plot-dsd-vs-omars.png``
+alongside the script.
 """
+import itertools
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -32,7 +37,12 @@ OM13 = np.array([
     [1, 1, 0, 1], [0, 0, 0, -1], [0, 0, -1, 0], [0, -1, 1, 1], [-1, 1, 1, 0],
     [-1, 0, -1, 1], [-1, -1, 0, -1], [0, 0, 0, 0]], float)
 
-pts = rng.uniform(-1, 1, size=(80000, 4))
+# Augment the interior sample with the cube vertices: the worst-case (G) value can
+# sit exactly at a corner, which interior sampling under-finds. Here it lifts the
+# DSD's worst case from 8.98 to 9.00; the OMARS worst case is interior, so it is
+# unchanged. The change is for methodological form, not substance.
+vertices = np.array(list(itertools.product([-1, 1], repeat=4)), float)
+pts = np.vstack([rng.uniform(-1, 1, size=(80000, 4)), vertices])
 Xm = expand(pts)
 fracs = np.linspace(0, 1, 200)
 
