@@ -78,6 +78,7 @@ def main() -> None:
         ("avg scaled pred var (SPV)", "avg_spv", "{:.2f}"),
         ("max scaled pred var (SPV)", "max_spv", "{:.2f}"),
         ("A, summed coefficient variance", "A", "{:.2f}"),
+        ("E-optimality, min eig(X'X)", "e_opt", "{:.2f}"),
         ("max |r| among model terms", "max_r", "{:.2f}"),
         ("max VIF", "max_vif", "{:.2f}"),
         ("information |X'X|^(1/p)", "information", "{:.2f}"),
