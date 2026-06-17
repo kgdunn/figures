@@ -158,6 +158,7 @@ def evaluate(design, eval_interior=None, eval_vertices=None):
     _, logdet = np.linalg.slogdet(xtx)
     d_eff = 100.0 * np.exp(logdet / p) / n  # per-run D-efficiency (favours small N)
     information = np.exp(logdet / p)  # |X'X|^(1/p): unscaled information content
+    e_opt = float(np.linalg.eigvalsh(xtx).min())  # E-optimality: min eigenvalue of X'X (scales with N)
 
     xi = main_quadratic_model(eval_interior)
     xv = main_quadratic_model(eval_vertices)
@@ -184,6 +185,7 @@ def evaluate(design, eval_interior=None, eval_vertices=None):
         "residual_df": nu,
         "d_eff": d_eff,
         "information": information,
+        "e_opt": e_opt,
         "A": float(np.trace(xtx_inv)),
         "avg_pv": float(avg_pv),
         "max_pv": float(max_pv),
