@@ -1,2 +1,4 @@
 **/.Rhistory
 **/screenshots/*
+**/__pycache__/
+*.pyc
