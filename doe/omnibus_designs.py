@@ -111,8 +111,9 @@ def build_designs():
 
 
 # Display metadata for the four response-surface-capable designs (the factorials cannot
-# fit the quadratic model, so they are excluded from the quality comparison).
-RSM_DESIGNS = ["ccd", "bbd", "dsd", "omars"]
+# fit the quadratic model, so they are excluded from the quality comparison). Ordered
+# largest-to-smallest by run count, matching the comparison table in the chapter.
+RSM_DESIGNS = ["bbd", "ccd", "omars", "dsd"]
 LABELS = {
     "full": "full factorial, 2^5 + 2c",
     "frac": "fractional, 2^(5-1) + 2c",
