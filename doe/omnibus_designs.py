@@ -8,11 +8,11 @@ factorials, the Box-Behnken design and the definitive screening design, and
 Two pieces are computed by hand because the library does not expose them on this model:
 the prediction variance integrated over the whole region (used for the FDS curves and
 the average/maximum prediction-variance rows) and the alias matrix of the omitted
-two-factor interactions. Two designs are also built by hand: the central composite
-design uses a resolution-V half-fraction cube (the standard k=5 CCD) rather than the
-full-factorial cube ``process_improve`` would build, and there is no OMARS generator in
+two-factor interactions. One design is also built by hand: there is no OMARS generator in
 the library, so the 25-run OMARS design is built as two permuted conference-matrix
-foldovers.
+foldovers. The central composite design uses ``process_improve``'s ``cube="fractional"``
+option (v1.42.0+) to build its cube as a resolution-V half-fraction (the standard k=5 CCD)
+rather than the full-factorial cube the library builds by default.
 
 The model throughout is the main-effects-plus-quadratics model in five factors
 (1 intercept + 5 linear + 5 pure quadratic = 11 terms, no two-factor interactions),
@@ -124,20 +124,15 @@ def build_designs():
     bbd = _coded(generate_design(FACTORS, "box_behnken", center_points=6))
     dsd = _coded(generate_design(FACTORS, "dsd"))
 
-    # Face-centred central composite design on a resolution-V half-fraction cube.
-    # process_improve's CCD uses a full-factorial cube (48 runs for five factors); the
-    # standard five-factor CCD uses the 16-run res-V fraction, so the cube is taken from
-    # the library's fractional_factorial generator and the face (axial, alpha = 1) and
-    # centre runs are added. Face-centred keeps every run inside [-1, 1]; a rotatable CCD
-    # would place the axial runs at +/-2, i.e. on a 2x wider range, which is not a
-    # like-for-like design on a fixed [-1, 1] region.
-    cube = _coded(
-        generate_design(FACTORS, "fractional_factorial", generators=["E=ABCD"], center_points=0)
+    # Face-centred central composite design on a resolution-V half-fraction cube. The
+    # standard five-factor CCD uses the 16-run res-V fraction (not the full 32-run cube),
+    # which process_improve builds directly with cube="fractional" (v1.42.0+): a 16-run
+    # res-V cube + 10 face (axial, alpha = 1) runs + 6 centre = 32 runs. Face-centred keeps
+    # every run inside [-1, 1]; a rotatable CCD would place the axial runs at +/-2, i.e. on
+    # a 2x wider range, which is not a like-for-like design on a fixed [-1, 1] region.
+    ccd = _coded(
+        generate_design(FACTORS, "ccd", cube="fractional", alpha="face_centered", center_points=6)
     )
-    faces = np.array(
-        [[s if i == m else 0 for i in range(K)] for m in range(K) for s in (-1, 1)], float
-    )
-    ccd = np.vstack([cube, faces, np.tile(centre, (6, 1))])
 
     # OMARS: process_improve has no OMARS generator, so the 25-run design is built by
     # hand as two conference-matrix foldovers, the second with its columns permuted so
