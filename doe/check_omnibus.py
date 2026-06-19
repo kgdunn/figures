@@ -81,6 +81,8 @@ def main() -> None:
         ("E-optimality, min eig(X'X)", "e_opt", "{:.2f}"),
         ("max |r| among model terms", "max_r", "{:.2f}"),
         ("max VIF", "max_vif", "{:.2f}"),
+        ("max alias |A| (omitted 2fi)", "max_alias", "{:.2f}"),
+        ("max alias on main effects", "max_alias_main", "{:.2f}"),
         ("information |X'X|^(1/p)", "information", "{:.2f}"),
         ("D-efficiency, per run (%)", "d_eff", "{:.1f}"),
     ]

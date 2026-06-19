@@ -11,6 +11,7 @@ import itertools
 
 import numpy as np
 import matplotlib.pyplot as plt
+from process_improve.experiments import Factor, generate_design
 
 rng = np.random.default_rng(1)
 
@@ -28,9 +29,11 @@ def expand(P):
     return np.column_stack(cols)
 
 
-# 4-factor DSD: foldover of a conference matrix + centre run
-C4 = np.array([[0, 1, 1, 1], [1, 0, 1, -1], [1, -1, 0, 1], [1, 1, -1, 0]], float)
-DSD = np.vstack([C4, -C4, np.zeros(4)])
+# 4-factor DSD (9 runs) built with process_improve: a conference-matrix foldover plus a
+# centre run. The library has no OMARS generator, so the 13-run OMARS design below is
+# built by hand.
+_dsd = generate_design([Factor(name=c, low=-1, high=1) for c in "ABCD"], design_type="dsd")
+DSD = np.asarray(_dsd.design[["A", "B", "C", "D"]], float)
 # 13-run OMARS design (balanced foldover member, 2 estimable interactions)
 OM13 = np.array([
     [0, 0, 0, 1], [0, 0, 1, 0], [0, 1, -1, -1], [1, -1, -1, 0], [1, 0, 1, -1],
