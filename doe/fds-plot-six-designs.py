@@ -34,7 +34,7 @@ fig, (ax_s, ax_u) = plt.subplots(1, 2, figsize=(10.2, 4.6), sharex=True)
 for name in RSM_DESIGNS:
     pv = np.sort(results[name]["pv_interior"])
     n = results[name]["N"]
-    label = f"{LABELS[name].split('(')[0].strip()} ({n} runs)"
+    label = f"{LABELS[name].split('(')[0].strip()} [{n} runs]"
     ax_s.plot(fracs, np.quantile(pv * n, fracs), label=label, **styles[name])
     ax_u.plot(fracs, np.quantile(pv, fracs), label=label, **styles[name])
 
