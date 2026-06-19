@@ -16,7 +16,7 @@ from omnibus_designs import LABELS, RSM_DESIGNS, build_designs, evaluate
 designs = build_designs()
 results = {name: evaluate(designs[name]) for name in RSM_DESIGNS}
 
-labels = [f"{LABELS[n].split('(')[0].strip()}\n({results[n]['N']} runs)" for n in RSM_DESIGNS]
+labels = [f"{LABELS[n].split('(')[0].strip()}\n[{results[n]['N']} runs]" for n in RSM_DESIGNS]
 power_main = [results[n]["power_main"] for n in RSM_DESIGNS]
 power_quad = [results[n]["power_quad"] for n in RSM_DESIGNS]
 
@@ -36,7 +36,7 @@ ax.set_xticks(x)
 ax.set_xticklabels(labels)
 ax.axhline(0.8, color="0.5", lw=0.8, ls=":")
 ax.text(len(RSM_DESIGNS) - 0.5, 0.81, "0.80", color="0.4", fontsize=8, va="bottom", ha="right")
-ax.legend(frameon=False, loc="center", bbox_to_anchor=(0.62, 0.60))
+ax.legend(frameon=False, loc="upper right", bbox_to_anchor=(1.0, 1.0))
 ax.grid(axis="y", alpha=0.25)
 fig.tight_layout()
 fig.savefig("power-comparison-six-designs.png", dpi=300, facecolor="w", edgecolor="w",
