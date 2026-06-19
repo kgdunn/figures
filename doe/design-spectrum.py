@@ -19,18 +19,18 @@ families = [
     (8.5, "Central composite /\nBox-Behnken", "#c0392b"),
 ]
 for x, label, colour in families:
-    ax.plot(x, 0, marker="o", ms=11, color=colour, zorder=5)
-    ax.text(x, 0.32, label, ha="center", va="bottom", fontsize=10, color=colour)
+    ax.plot(x, 0, marker="o", ms=12, color=colour, zorder=5)
+    ax.text(x, 0.32, label, ha="center", va="bottom", fontsize=13, color=colour)
 
 # Two labelled arrows, both pointing left to right.
 ax.annotate("", xy=(9.2, -0.7), xytext=(0.8, -0.7),
             arrowprops=dict(arrowstyle="->", color="0.3", lw=1.6))
-ax.text(5.0, -0.55, "number of runs increases", ha="center", va="bottom", fontsize=10)
+ax.text(5.0, -0.55, "number of runs increases", ha="center", va="bottom", fontsize=12)
 
 ax.annotate("", xy=(9.2, -1.25), xytext=(0.8, -1.25),
             arrowprops=dict(arrowstyle="->", color="0.3", lw=1.6))
 ax.text(5.0, -1.10, "aliasing among second-order effects decreases",
-        ha="center", va="bottom", fontsize=10)
+        ha="center", va="bottom", fontsize=12)
 
 ax.set_xlim(0, 10)
 ax.set_ylim(-1.6, 1.1)
