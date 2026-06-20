@@ -10,10 +10,12 @@ import numpy as np
 from omnibus_designs import (
     LABELS,
     RSM_DESIGNS,
+    alias_matrix,
     build_designs,
     evaluate,
     is_omars,
     main_quadratic_model,
+    secondorder_corr,
 )
 
 
@@ -46,6 +48,20 @@ def main() -> None:
     # The 5-factor DSD has 13 runs and 2 residual degrees of freedom: not saturated, unlike
     # the 4-factor DSD elsewhere in the chapter.
     assert evaluate(designs["dsd"])["residual_df"] == 2
+
+    # The two heatmap figures (heatmaps-four-designs.py) are locked to the omnibus table.
+    # Alias map: worst |A| per design matches the "Maximum alias |A|" row (0, 0, 1.00, 1.09).
+    expected_alias = {"bbd": 0.00, "ccd": 0.00, "omars": 1.00, "dsd": 1.09}
+    for name, want in expected_alias.items():
+        got = float(np.abs(alias_matrix(designs[name])).max())
+        assert abs(got - want) < 0.005, f"{name}: alias |A| max {got:.3f} != {want}"
+    # Correlation colour map: worst off-diagonal of the residualised second-order correlation
+    # (a different quantity from the table's "Maximum |r|" row, which is among fitted terms).
+    expected_corr = {"bbd": 0.15, "ccd": 0.75, "omars": 0.50, "dsd": 0.50}
+    for name, want in expected_corr.items():
+        c = secondorder_corr(designs[name])
+        got = float(c[~np.eye(c.shape[0], dtype=bool)].max())
+        assert abs(got - want) < 0.005, f"{name}: second-order |r| max {got:.3f} != {want}"
 
     print("All structural assertions passed.\n")
 

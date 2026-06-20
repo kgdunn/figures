@@ -81,6 +81,33 @@ def alias_matrix(design):
     return np.linalg.solve(x1.T @ x1, x1.T @ x2)
 
 
+def secondorder_corr(design):
+    """Absolute correlation among the fifteen second-order effects (the five pure quadratics
+    and the ten two-factor interactions), each residualised against the intercept and the
+    five main effects.
+
+    Residualising removes the part of each second-order column explained by the intercept and
+    the main effects, leaving the genuine entanglement between the second-order terms. This
+    differs from ``evaluate``'s ``max_r`` (which is the correlation among the fitted linear and
+    quadratic columns); it includes the omitted interactions, so it is the entanglement the
+    correlation colour map shows. Columns that residualise to (near) zero contribute no
+    correlation and stay at zero; the diagonal is one.
+    """
+    d = np.asarray(design, float)
+    n = len(d)
+    base = np.column_stack([np.ones(n)] + [d[:, i] for i in range(K)])
+    quad = [d[:, i] ** 2 for i in range(K)]
+    inter = [d[:, i] * d[:, j] for i in range(K) for j in range(i + 1, K)]
+    second = np.column_stack(quad + inter)
+    resid = second - base @ (np.linalg.pinv(base) @ second)
+    keep = np.linalg.norm(resid, axis=0) > 1e-9
+    corr = np.eye(second.shape[1])
+    if keep.sum() > 1:
+        idx = np.where(keep)[0]
+        corr[np.ix_(idx, idx)] = np.corrcoef(resid[:, keep], rowvar=False)
+    return np.abs(corr)
+
+
 def _conference_order6():
     """Symmetric Paley conference matrix of order 6 (C @ C.T = 5 I).
 
