@@ -15,7 +15,6 @@ Reproducible; run from this directory: writes ``fds-plot-six-designs.png``.
 """
 
 import matplotlib.pyplot as plt
-import numpy as np
 
 from omnibus_designs import LABELS, RSM_DESIGNS, build_designs, evaluate
 
@@ -28,15 +27,13 @@ styles = {
     "dsd": dict(color="#c0392b", lw=2.0, ls="--"),
     "omars": dict(color="#8e44ad", lw=2.0, ls=":"),
 }
-fracs = np.linspace(0, 1, 200)
-
 fig, (ax_s, ax_u) = plt.subplots(1, 2, figsize=(10.2, 4.6), sharex=True)
 for name in RSM_DESIGNS:
-    pv = np.sort(results[name]["pv_interior"])
+    curve = results[name]["curve"]
     n = results[name]["N"]
     label = f"{LABELS[name].split('(')[0].strip()} [{n} runs]"
-    ax_s.plot(fracs, np.quantile(pv * n, fracs), label=label, **styles[name])
-    ax_u.plot(fracs, np.quantile(pv, fracs), label=label, **styles[name])
+    ax_s.plot(curve["fraction"], curve["scaled_prediction_variance"], label=label, **styles[name])
+    ax_u.plot(curve["fraction"], curve["prediction_variance"], label=label, **styles[name])
 
 ax_s.set_title("Scaled (SPV = N x'(X'X)$^{-1}$x): per-run view")
 ax_s.set_ylabel("Scaled prediction variance, SPV")
