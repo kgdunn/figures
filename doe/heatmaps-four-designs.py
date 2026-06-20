@@ -45,7 +45,8 @@ def worst_offdiagonal(square):
     return float(np.abs(square)[~np.eye(square.shape[0], dtype=bool)].max())
 
 
-def _panel(ax, matrix, row_labels, col_labels, title, vmax, annotate, separators):
+def _panel(ax, matrix, row_labels, col_labels, title, vmax, annotate, separators,
+           annotate_top=False):
     im = ax.imshow(matrix, cmap=CMAP, vmin=0.0, vmax=vmax, aspect="equal")
     ax.set_title(title, fontsize=11, pad=6)
     ax.set_xticks(range(len(col_labels)))
@@ -56,13 +57,16 @@ def _panel(ax, matrix, row_labels, col_labels, title, vmax, annotate, separators
     for b in separators:  # block-separating lines between main effects, quadratics, interactions
         ax.axvline(b - 0.5, color="0.62", lw=0.9)
         ax.axhline(b - 0.5, color="0.62", lw=0.9)
-    ax.text(0.97, 0.04, annotate, transform=ax.transAxes, ha="right", va="bottom",
+    # Top-right corner (main effects x interactions) is white for every design, so the correlation
+    # map's annotation goes there; the alias map keeps it bottom-right where it began.
+    y, va = (0.97, "top") if annotate_top else (0.04, "bottom")
+    ax.text(0.97, y, annotate, transform=ax.transAxes, ha="right", va=va,
             fontsize=8, color="0.25")
     return im
 
 
 def make_figure(matrices, row_labels, col_labels, vmax, annotate_fmt, cbar_label, outfile,
-                separators=()):
+                separators=(), annotate_top=False):
     fig, axes = plt.subplots(2, 2, figsize=(10.6, 9.8))
     im = None
     for ax, name in zip(axes.flat, RSM_DESIGNS):
@@ -70,7 +74,7 @@ def make_figure(matrices, row_labels, col_labels, vmax, annotate_fmt, cbar_label
         worst = worst_offdiagonal(m) if row_labels is col_labels else float(np.abs(m).max())
         im = _panel(ax, m, row_labels, col_labels,
                     LABELS[name].split("(")[0].strip(), vmax, annotate_fmt.format(worst),
-                    separators)
+                    separators, annotate_top=annotate_top)
     fig.subplots_adjust(left=0.07, right=0.88, top=0.94, bottom=0.10, hspace=0.30, wspace=0.25)
     cax = fig.add_axes([0.91, 0.12, 0.02, 0.76])
     fig.colorbar(im, cax=cax, label=cbar_label)
@@ -93,7 +97,7 @@ def main():
                 annotate_fmt="max |r| = {:.2f}",
                 cbar_label="Absolute correlation among model-effect columns, |r|",
                 outfile="correlation-colormap-four-designs.png",
-                separators=MODEL_TERM_BLOCKS)
+                separators=MODEL_TERM_BLOCKS, annotate_top=True)
 
 
 if __name__ == "__main__":
