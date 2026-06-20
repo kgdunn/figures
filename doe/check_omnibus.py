@@ -15,7 +15,7 @@ from omnibus_designs import (
     evaluate,
     is_omars,
     main_quadratic_model,
-    secondorder_corr,
+    model_term_corr,
 )
 
 
@@ -55,13 +55,20 @@ def main() -> None:
     for name, want in expected_alias.items():
         got = float(np.abs(alias_matrix(designs[name])).max())
         assert abs(got - want) < 0.005, f"{name}: alias |A| max {got:.3f} != {want}"
-    # Correlation colour map: worst off-diagonal of the residualised second-order correlation
-    # (a different quantity from the table's "Maximum |r|" row, which is among fitted terms).
+    # Correlation colour map (model_term_corr, 20 columns: main effects, quadratics,
+    # interactions). The worst off-diagonal over the whole map:
     expected_corr = {"bbd": 0.15, "ccd": 0.75, "omars": 0.50, "dsd": 0.50}
-    for name, want in expected_corr.items():
-        c = secondorder_corr(designs[name])
-        got = float(c[~np.eye(c.shape[0], dtype=bool)].max())
-        assert abs(got - want) < 0.005, f"{name}: second-order |r| max {got:.3f} != {want}"
+    # ...and over the fitted-terms block only (main effects + quadratics, the first 10 columns),
+    # which must equal the table's "Maximum |r|" row:
+    expected_fitted = {"bbd": 0.15, "ccd": 0.75, "omars": 0.00, "dsd": 0.13}
+    for name in RSM_DESIGNS:
+        c = model_term_corr(designs[name])
+        full = float(c[~np.eye(c.shape[0], dtype=bool)].max())
+        fitted = c[:10, :10]
+        fitted_max = float(fitted[~np.eye(10, dtype=bool)].max())
+        assert abs(full - expected_corr[name]) < 0.005, f"{name}: |r| max {full:.3f}"
+        assert abs(fitted_max - expected_fitted[name]) < 0.005, f"{name}: fitted |r| {fitted_max:.3f}"
+        assert abs(fitted_max - evaluate(designs[name])["max_r"]) < 0.005, f"{name}: max_r mismatch"
 
     print("All structural assertions passed.\n")
 

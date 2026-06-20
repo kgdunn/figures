@@ -8,11 +8,12 @@ Both figures visualise the entanglement that the omnibus table only summarises:
   zero on this model; the OMARS and definitive screening designs keep the main-effect rows
   at zero but push the bias onto the quadratic rows (worst entry 1.00 and 1.09).
 
-- ``correlation-colormap-four-designs.png``: the absolute correlation among all fifteen
-  second-order effects (the five pure quadratics and the ten two-factor interactions), each
-  residualised against the intercept and the main effects. This is the entanglement among
-  the second-order terms, including the interactions the model omits, so it is a different
-  quantity from the table's "Maximum |r|" row (which is among the fitted terms only).
+- ``correlation-colormap-four-designs.png``: the absolute correlation among the twenty
+  model-effect columns, in three blocks separated by lines, the five main effects, the five
+  pure quadratics, and the ten two-factor interactions. The main-effect and quadratic blocks
+  are the fitted terms (their worst off-diagonal is the table's "Maximum |r|" row); the
+  interaction block and its cross-blocks show the entanglement with the interactions the
+  model omits.
 
 Reproducible; run from this directory. The numbers are locked to the omnibus table by
 asserts in ``check_omnibus.py``.
@@ -23,10 +24,11 @@ import numpy as np
 
 from omnibus_designs import (
     LABELS,
+    MODEL_TERM_BLOCKS,
     RSM_DESIGNS,
     alias_matrix,
     build_designs,
-    secondorder_corr,
+    model_term_corr,
 )
 
 CMAP = "Blues"  # 0 = white (no entanglement), dark = strong; matches the journal colour-map look
@@ -34,8 +36,8 @@ CMAP = "Blues"  # 0 = white (no entanglement), dark = strong; matches the journa
 # Fitted-term (row) and omitted-interaction (column) labels for the alias matrix.
 FITTED_LABELS = ["1", "A", "B", "C", "D", "E"] + [rf"${c}^2$" for c in "ABCDE"]
 INTERACTION_LABELS = [f"{a}{b}" for i, a in enumerate("ABCDE") for b in "ABCDE"[i + 1:]]
-# Second-order labels (quadratics then interactions) for the correlation colour map.
-SECOND_ORDER_LABELS = [rf"${c}^2$" for c in "ABCDE"] + INTERACTION_LABELS
+# Twenty model-effect labels (main effects, quadratics, interactions) for the correlation map.
+MODEL_LABELS = list("ABCDE") + [rf"${c}^2$" for c in "ABCDE"] + INTERACTION_LABELS
 
 
 def worst_offdiagonal(square):
@@ -43,28 +45,33 @@ def worst_offdiagonal(square):
     return float(np.abs(square)[~np.eye(square.shape[0], dtype=bool)].max())
 
 
-def _panel(ax, matrix, row_labels, col_labels, title, vmax, annotate):
+def _panel(ax, matrix, row_labels, col_labels, title, vmax, annotate, separators):
     im = ax.imshow(matrix, cmap=CMAP, vmin=0.0, vmax=vmax, aspect="equal")
     ax.set_title(title, fontsize=11, pad=6)
     ax.set_xticks(range(len(col_labels)))
-    ax.set_xticklabels(col_labels, fontsize=7, rotation=45, ha="right")
+    ax.set_xticklabels(col_labels, fontsize=6.5, rotation=90)
     ax.set_yticks(range(len(row_labels)))
-    ax.set_yticklabels(row_labels, fontsize=7)
+    ax.set_yticklabels(row_labels, fontsize=6.5)
     ax.tick_params(length=0)
+    for b in separators:  # block-separating lines between main effects, quadratics, interactions
+        ax.axvline(b - 0.5, color="0.62", lw=0.9)
+        ax.axhline(b - 0.5, color="0.62", lw=0.9)
     ax.text(0.97, 0.04, annotate, transform=ax.transAxes, ha="right", va="bottom",
             fontsize=8, color="0.25")
     return im
 
 
-def make_figure(matrices, row_labels, col_labels, vmax, annotate_fmt, cbar_label, outfile):
-    fig, axes = plt.subplots(2, 2, figsize=(10.2, 9.4))
+def make_figure(matrices, row_labels, col_labels, vmax, annotate_fmt, cbar_label, outfile,
+                separators=()):
+    fig, axes = plt.subplots(2, 2, figsize=(10.6, 9.8))
     im = None
     for ax, name in zip(axes.flat, RSM_DESIGNS):
         m = matrices[name]
         worst = worst_offdiagonal(m) if row_labels is col_labels else float(np.abs(m).max())
         im = _panel(ax, m, row_labels, col_labels,
-                    LABELS[name].split("(")[0].strip(), vmax, annotate_fmt.format(worst))
-    fig.subplots_adjust(left=0.07, right=0.88, top=0.94, bottom=0.10, hspace=0.35, wspace=0.30)
+                    LABELS[name].split("(")[0].strip(), vmax, annotate_fmt.format(worst),
+                    separators)
+    fig.subplots_adjust(left=0.07, right=0.88, top=0.94, bottom=0.10, hspace=0.30, wspace=0.25)
     cax = fig.add_axes([0.91, 0.12, 0.02, 0.76])
     fig.colorbar(im, cax=cax, label=cbar_label)
     fig.savefig(outfile, dpi=300, facecolor="w", edgecolor="w",
@@ -81,11 +88,12 @@ def main():
                 annotate_fmt="max |A| = {:.2f}", cbar_label="Absolute alias coefficient, |A|",
                 outfile="alias-matrix-heatmaps-four-designs.png")
 
-    corr = {name: secondorder_corr(designs[name]) for name in RSM_DESIGNS}
-    make_figure(corr, SECOND_ORDER_LABELS, SECOND_ORDER_LABELS, 1.0,
+    corr = {name: model_term_corr(designs[name]) for name in RSM_DESIGNS}
+    make_figure(corr, MODEL_LABELS, MODEL_LABELS, 1.0,
                 annotate_fmt="max |r| = {:.2f}",
-                cbar_label="Absolute correlation among second-order effects, |r|",
-                outfile="correlation-colormap-four-designs.png")
+                cbar_label="Absolute correlation among model-effect columns, |r|",
+                outfile="correlation-colormap-four-designs.png",
+                separators=MODEL_TERM_BLOCKS)
 
 
 if __name__ == "__main__":
