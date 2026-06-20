@@ -81,6 +81,36 @@ def alias_matrix(design):
     return np.linalg.solve(x1.T @ x1, x1.T @ x2)
 
 
+def model_term_corr(design):
+    """Absolute Pearson correlation among the twenty model-effect columns, in three blocks:
+    the five main effects, the five pure quadratics, and the ten two-factor interactions
+    (column order ``[A..E, A^2..E^2, AB..DE]``).
+
+    Pearson correlation centres each column, so the quadratics' positive mean does not inflate
+    the values. The main-effect and quadratic columns are the terms the model fits: their worst
+    off-diagonal correlation is the table's ``max_r`` (the "Maximum |r|" row). The interaction
+    columns are the two-factor interactions the model omits, so the cross-blocks against them
+    (and the interaction block itself) show the entanglement that the alias matrix also measures.
+    Constant columns, which have no correlation, are left at zero off the diagonal.
+    """
+    d = np.asarray(design, float)
+    main = [d[:, i] for i in range(K)]
+    quad = [d[:, i] ** 2 for i in range(K)]
+    inter = [d[:, i] * d[:, j] for i in range(K) for j in range(i + 1, K)]
+    terms = np.column_stack(main + quad + inter)
+    with np.errstate(invalid="ignore"):
+        corr = np.corrcoef(terms, rowvar=False)
+    corr = np.nan_to_num(corr)
+    np.fill_diagonal(corr, 1.0)
+    return np.abs(corr)
+
+
+# Column index where each block of model_term_corr ends: 5 main effects, then 5 quadratics,
+# then the 10 two-factor interactions. The interior boundaries (5 and 10) are where the
+# correlation colour map draws its separating lines.
+MODEL_TERM_BLOCKS = (K, 2 * K)
+
+
 def _conference_order6():
     """Symmetric Paley conference matrix of order 6 (C @ C.T = 5 I).
 

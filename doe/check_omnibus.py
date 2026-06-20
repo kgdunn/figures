@@ -10,10 +10,12 @@ import numpy as np
 from omnibus_designs import (
     LABELS,
     RSM_DESIGNS,
+    alias_matrix,
     build_designs,
     evaluate,
     is_omars,
     main_quadratic_model,
+    model_term_corr,
 )
 
 
@@ -46,6 +48,27 @@ def main() -> None:
     # The 5-factor DSD has 13 runs and 2 residual degrees of freedom: not saturated, unlike
     # the 4-factor DSD elsewhere in the chapter.
     assert evaluate(designs["dsd"])["residual_df"] == 2
+
+    # The two heatmap figures (heatmaps-four-designs.py) are locked to the omnibus table.
+    # Alias map: worst |A| per design matches the "Maximum alias |A|" row (0, 0, 1.00, 1.09).
+    expected_alias = {"bbd": 0.00, "ccd": 0.00, "omars": 1.00, "dsd": 1.09}
+    for name, want in expected_alias.items():
+        got = float(np.abs(alias_matrix(designs[name])).max())
+        assert abs(got - want) < 0.005, f"{name}: alias |A| max {got:.3f} != {want}"
+    # Correlation colour map (model_term_corr, 20 columns: main effects, quadratics,
+    # interactions). The worst off-diagonal over the whole map:
+    expected_corr = {"bbd": 0.15, "ccd": 0.75, "omars": 0.50, "dsd": 0.50}
+    # ...and over the fitted-terms block only (main effects + quadratics, the first 10 columns),
+    # which must equal the table's "Maximum |r|" row:
+    expected_fitted = {"bbd": 0.15, "ccd": 0.75, "omars": 0.00, "dsd": 0.13}
+    for name in RSM_DESIGNS:
+        c = model_term_corr(designs[name])
+        full = float(c[~np.eye(c.shape[0], dtype=bool)].max())
+        fitted = c[:10, :10]
+        fitted_max = float(fitted[~np.eye(10, dtype=bool)].max())
+        assert abs(full - expected_corr[name]) < 0.005, f"{name}: |r| max {full:.3f}"
+        assert abs(fitted_max - expected_fitted[name]) < 0.005, f"{name}: fitted |r| {fitted_max:.3f}"
+        assert abs(fitted_max - evaluate(designs[name])["max_r"]) < 0.005, f"{name}: max_r mismatch"
 
     print("All structural assertions passed.\n")
 
