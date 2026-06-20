@@ -4,11 +4,12 @@ design-quality subchapter (``judging-and-comparing-designs.rst``).
 The designs and their quality metrics are built with Kevin Dunn's ``process_improve``
 library (``pip install 'process-improve[expt]'``): ``generate_design`` constructs the
 factorials, the Box-Behnken design and the definitive screening design, and
-``evaluate_design`` scores D-efficiency, the variance inflation factors and the power.
-Two pieces are computed by hand because the library does not expose them on this model:
-the prediction variance integrated over the whole region (used for the FDS curves and
-the average/maximum prediction-variance rows) and the alias matrix of the omitted
-two-factor interactions. One design is also built by hand: there is no OMARS generator in
+``evaluate_design`` scores D-efficiency, the variance inflation factors, the power and the
+prediction variance integrated over the whole region (used for the FDS curves and the
+average/maximum prediction-variance rows; v1.44.0+ exposes the configurable region sampling
+and the dense FDS curve). One piece is computed by hand because the library does not expose
+it on this model: the alias matrix of the omitted two-factor interactions. One design is
+also built by hand: there is no OMARS generator in
 the library, so the 25-run OMARS design is built as two permuted conference-matrix
 foldovers. The central composite design uses ``process_improve``'s ``cube="fractional"``
 option (v1.42.0+) to build its cube as a resolution-V half-fraction (the standard k=5 CCD)
@@ -34,8 +35,6 @@ like on a fixed experimental region):
 - DSD                 order-6 conference foldover + c    (13 runs, smallest OMARS member)
 - OMARS               two conference foldover blocks + c (25 runs)
 """
-
-import itertools
 
 import numpy as np
 import pandas as pd
@@ -167,41 +166,36 @@ LABELS = {
 }
 
 
-def _eval_points():
-    """Uniform interior points augmented with all 2^5 cube vertices.
-
-    The maximum prediction variance over [-1, 1]^5 sits at a vertex, which random interior
-    sampling misses, so the vertices must be included explicitly (Goos and Nunez Ares,
-    2025). The same augmented set anchors the right-hand tail of every FDS curve.
-    """
-    rng = np.random.default_rng(EVAL_SEED)
-    interior = rng.uniform(-1, 1, size=(N_EVAL, K))
-    vertices = np.array(list(itertools.product([-1, 1], repeat=K)), float)
-    return interior, vertices
-
-
 def _library_metrics(design):
-    """D-efficiency, VIFs, power and residual df from process_improve on the 11-term
-    model. A plain DataFrame of the coded factor columns is enough for evaluate_design."""
+    """D-efficiency, VIFs, power, residual df and the region prediction variance from
+    process_improve on the 11-term model. A plain DataFrame of the coded factor columns
+    is enough for evaluate_design. The prediction variance is integrated over the cube
+    with the same sample size and seed used elsewhere in the chapter, and with the 2^5
+    vertices added (include_vertices=True) so the worst-case (G) value at a corner is
+    represented; fds_resolution=200 returns the dense FDS curve for the figure."""
     df = pd.DataFrame(np.asarray(design, float), columns=FACTOR_NAMES)
     return evaluate_design(
         df,
         model=MODEL_FORMULA,
-        metric=["d_efficiency", "vif", "power", "degrees_of_freedom"],
+        metric=["d_efficiency", "vif", "power", "degrees_of_freedom", "fds"],
         effect_size=1.0,  # delta = sigma
         sigma=1.0,
+        n_samples=N_EVAL,
+        random_seed=EVAL_SEED,
+        include_vertices=True,
+        fds_resolution=200,
     )
 
 
-def evaluate(design, eval_interior=None, eval_vertices=None):
+def evaluate(design):
     """Return every quality metric for one design on the 11-term quadratic model.
 
-    D-efficiency, the variance inflation factors, power and the residual degrees of
-    freedom come from process_improve's ``evaluate_design``. The prediction variances
-    (reported unscaled, in sigma^2 units, and scaled by the run count), the summed
-    coefficient variance A, the smallest eigenvalue, the pairwise correlations and the
-    alias matrix are computed here. Power assumes an effect of one noise standard
-    deviation (delta = sigma) at alpha = 0.05.
+    D-efficiency, the variance inflation factors, power, the residual degrees of freedom
+    and the prediction variance (integrated over the region, reported unscaled in sigma^2
+    units and scaled by the run count, with the dense FDS curve for the figure) all come
+    from process_improve's ``evaluate_design``. The summed coefficient variance A, the
+    smallest eigenvalue, the pairwise correlations and the alias matrix are computed here.
+    Power assumes an effect of one noise standard deviation (delta = sigma) at alpha = 0.05.
     """
     m = main_quadratic_model(design)
     n, p = m.shape
@@ -211,18 +205,8 @@ def evaluate(design, eval_interior=None, eval_vertices=None):
         # two factor levels, so they collapse to a single curvature indicator.
         return {"N": n, "fits": False, "rank": rank, "reduced_df": n - rank}
 
-    if eval_interior is None:
-        eval_interior, eval_vertices = _eval_points()
-
     xtx = m.T @ m
     xtx_inv = np.linalg.inv(xtx)
-
-    xi = main_quadratic_model(eval_interior)
-    xv = main_quadratic_model(eval_vertices)
-    pv_interior = np.einsum("ij,jk,ik->i", xi, xtx_inv, xi)
-    pv_vertices = np.einsum("ij,jk,ik->i", xv, xtx_inv, xv)
-    avg_pv = pv_interior.mean()
-    max_pv = max(pv_interior.max(), pv_vertices.max())
 
     terms = m[:, 1:]  # drop the intercept for the correlation summaries
     corr = np.corrcoef(terms, rowvar=False)
@@ -235,6 +219,9 @@ def evaluate(design, eval_interior=None, eval_vertices=None):
     vif = lib["vif"]
     power = lib["power"]
     d_eff = lib["d_efficiency"]
+    fds = lib["fds"]
+    avg_pv = fds["average_prediction_variance"]
+    max_pv = fds["max_prediction_variance"]
 
     return {
         "N": n,
@@ -257,7 +244,7 @@ def evaluate(design, eval_interior=None, eval_vertices=None):
         "max_alias": float(np.abs(alias).max()),  # worst bias from an omitted interaction
         "max_alias_main": float(np.abs(main_rows).max()),  # bias on the main effects
         "alias_fro": float(np.linalg.norm(alias)),  # overall level of aliasing
-        "pv_interior": pv_interior,  # retained for the FDS figure
+        "curve": fds["curve"],  # dense FDS curve (fraction, prediction_variance, scaled) for the figure
     }
 
 
