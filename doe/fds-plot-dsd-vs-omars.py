@@ -46,9 +46,9 @@ OM13 = np.array([
     [-1, 0, -1, 1], [-1, -1, 0, -1], [0, 0, 0, 0]], float)
 
 fig, ax = plt.subplots(figsize=(7.2, 4.6))
-styles = {"DSD (9 runs)": dict(color="#1f5fa8", lw=2.0),
-          "OMARS (13 runs)": dict(color="#c0392b", lw=2.0, ls="--")}
-for name, D in [("DSD (9 runs)", DSD), ("OMARS (13 runs)", OM13)]:
+styles = {"DSD [n=9]": dict(color="#1f5fa8", lw=2.0),
+          "OMARS [n=13]": dict(color="#c0392b", lw=2.0, ls="--")}
+for name, D in [("DSD [n=9]", DSD), ("OMARS [n=13]", OM13)]:
     fraction, spv = scaled_fds_curve(D)
     ax.plot(fraction, spv, label=name, **styles[name])
 

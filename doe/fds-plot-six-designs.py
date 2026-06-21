@@ -31,7 +31,7 @@ fig, (ax_s, ax_u) = plt.subplots(1, 2, figsize=(10.2, 4.6), sharex=True)
 for name in RSM_DESIGNS:
     curve = results[name]["curve"]
     n = results[name]["N"]
-    label = f"{LABELS[name].split('(')[0].strip()} [{n} runs]"
+    label = f"{LABELS[name].split('(')[0].strip()} [n={n}]"
     ax_s.plot(curve["fraction"], curve["scaled_prediction_variance"], label=label, **styles[name])
     ax_u.plot(curve["fraction"], curve["prediction_variance"], label=label, **styles[name])
 
