@@ -60,7 +60,7 @@ def _panel(ax, matrix, row_labels, col_labels, title, vmax, annotate, separators
     # Top-right corner is white for every design (main effects x interactions in the correlation
     # map; the intercept and main-effect rows in the alias map), so both maps place the annotation
     # there.
-    y, va = (0.90, "top") if annotate_top else (0.04, "bottom")
+    y, va = (0.85, "top") if annotate_top else (0.04, "bottom")
     ax.text(0.97, y, annotate, transform=ax.transAxes, ha="right", va=va,
             fontsize=8, color="0.25")
     return im
