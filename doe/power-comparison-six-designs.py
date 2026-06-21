@@ -16,7 +16,7 @@ from omnibus_designs import LABELS, RSM_DESIGNS, build_designs, evaluate
 designs = build_designs()
 results = {name: evaluate(designs[name]) for name in RSM_DESIGNS}
 
-labels = [f"{LABELS[n].split('(')[0].strip()}\n[{results[n]['N']} runs]" for n in RSM_DESIGNS]
+labels = [f"{LABELS[n].split('(')[0].strip()}\n[n={results[n]['N']}]" for n in RSM_DESIGNS]
 power_main = [results[n]["power_main"] for n in RSM_DESIGNS]
 power_quad = [results[n]["power_quad"] for n in RSM_DESIGNS]
 
