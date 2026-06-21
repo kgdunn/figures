@@ -57,8 +57,9 @@ def _panel(ax, matrix, row_labels, col_labels, title, vmax, annotate, separators
     for b in separators:  # block-separating lines between main effects, quadratics, interactions
         ax.axvline(b - 0.5, color="0.62", lw=0.9)
         ax.axhline(b - 0.5, color="0.62", lw=0.9)
-    # Top-right corner (main effects x interactions) is white for every design, so the correlation
-    # map's annotation goes there; the alias map keeps it bottom-right where it began.
+    # Top-right corner is white for every design (main effects x interactions in the correlation
+    # map; the intercept and main-effect rows in the alias map), so both maps place the annotation
+    # there.
     y, va = (0.97, "top") if annotate_top else (0.04, "bottom")
     ax.text(0.97, y, annotate, transform=ax.transAxes, ha="right", va=va,
             fontsize=8, color="0.25")
@@ -90,7 +91,7 @@ def main():
     alias_vmax = max(m.max() for m in alias.values())
     make_figure(alias, FITTED_LABELS, INTERACTION_LABELS, alias_vmax,
                 annotate_fmt="max |A| = {:.2f}", cbar_label="Absolute alias coefficient, |A|",
-                outfile="alias-matrix-heatmaps-four-designs.png")
+                outfile="alias-matrix-heatmaps-four-designs.png", annotate_top=True)
 
     corr = {name: model_term_corr(designs[name]) for name in RSM_DESIGNS}
     make_figure(corr, MODEL_LABELS, MODEL_LABELS, 1.0,
