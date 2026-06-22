@@ -9,9 +9,11 @@ prediction variance integrated over the whole region (used for the FDS curves an
 average/maximum prediction-variance rows; v1.44.0+ exposes the configurable region sampling
 and the dense FDS curve). One piece is computed by hand because the library does not expose
 it on this model: the alias matrix of the omitted two-factor interactions. One design is
-also built by hand: there is no OMARS generator in
-the library, so the 25-run OMARS design is built as two permuted conference-matrix
-foldovers. The central composite design uses ``process_improve``'s ``cube="fractional"``
+given explicitly: the library generates OMARS designs (``generate_omars``, with the
+definitive screening design as the minimal member), but its foldover ILP does not reproduce
+this particular minimally-aliased 25-run member, so it is built directly as two permuted
+conference-matrix foldovers and confirmed with the library's ``is_omars`` verifier. The
+central composite design uses ``process_improve``'s ``cube="fractional"``
 option (v1.42.0+) to build its cube as a resolution-V half-fraction (the standard k=5 CCD)
 rather than the full-factorial cube the library builds by default.
 
@@ -38,7 +40,7 @@ like on a fixed experimental region):
 
 import numpy as np
 import pandas as pd
-from process_improve.experiments import Factor, evaluate_design, generate_design
+from process_improve.experiments import Factor, evaluate_design, generate_design, is_omars
 
 K = 5  # number of factors
 N_EVAL = 120_000  # uniform points for prediction-variance integration
@@ -163,11 +165,12 @@ def build_designs():
         generate_design(FACTORS, "ccd", cube="fractional", alpha="face_centered", center_points=6)
     )
 
-    # OMARS: process_improve has no OMARS generator, so the 25-run design is built by
-    # hand as two conference-matrix foldovers, the second with its columns permuted so
+    # OMARS: the library generates OMARS designs (generate_omars), but its foldover ILP
+    # does not reproduce this particular minimally-aliased 25-run member, so it is built
+    # directly as two conference-matrix foldovers, the second with its columns permuted so
     # the design is genuinely distinct from a replicated DSD (23 distinct rows) while
     # keeping the OMARS property (main effects orthogonal to every second-order term).
-    # Verified in check_omnibus.py.
+    # Confirmed with the library's is_omars in check_omnibus.py.
     cm = _conference_order6()[:, :K]
     cm2 = cm[:, [2, 4, 1, 3, 0]]
     omars = np.vstack([cm, -cm, cm2, -cm2, centre])
@@ -278,21 +281,8 @@ def evaluate(design):
     }
 
 
-def is_omars(design):
-    """True if every main effect is orthogonal to the intercept and to all second-order
-    terms (pure quadratics and two-factor interactions): the defining OMARS property."""
-    design = np.asarray(design, float)
-    n, k = design.shape
-    main = np.column_stack([design[:, i] for i in range(k)])
-    second = np.column_stack(
-        [design[:, i] ** 2 for i in range(k)]
-        + [design[:, i] * design[:, j] for i in range(k) for j in range(i + 1, k)]
-    )
-    ones = np.ones((n, 1))
-    cross = main.T @ main
-    off = cross - np.diag(np.diag(cross))
-    return (
-        np.allclose(off, 0)
-        and np.allclose(main.T @ ones, 0, atol=1e-9)
-        and np.allclose(main.T @ second, 0, atol=1e-9)
-    )
+# ``is_omars`` is imported from process_improve (above) and re-exported here so the
+# validation in check_omnibus.py uses the library's own verifier: every main effect
+# orthogonal to the intercept and to all second-order terms (pure quadratics and
+# two-factor interactions), the defining OMARS property.
+__all__ = ["RSM_DESIGNS", "LABELS", "MODEL_TERM_BLOCKS", "build_designs", "evaluate", "alias_matrix", "is_omars"]
