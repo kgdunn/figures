@@ -10,9 +10,10 @@ average/maximum prediction-variance rows; v1.44.0+ exposes the configurable regi
 and the dense FDS curve). One piece is computed by hand because the library does not expose
 it on this model: the alias matrix of the omitted two-factor interactions. One design is
 given explicitly: the library generates OMARS designs (``generate_omars``, with the
-definitive screening design as the minimal member), but its foldover ILP does not reproduce
-this particular minimally-aliased 25-run member, so it is built directly as two permuted
-conference-matrix foldovers and confirmed with the library's ``is_omars`` verifier. The
+definitive screening design as the minimal member), but its foldover ILP does not enumerate
+this larger 25-run member, so it is built directly as two permuted conference-matrix
+foldovers and confirmed with the library's ``is_omars`` verifier. Its 24-run core (without
+the centre run) is the catalogue OMARS basic design ``bd-5-24-4-8-53``. The
 central composite design uses ``process_improve``'s ``cube="fractional"``
 option (v1.42.0+) to build its cube as a resolution-V half-fraction (the standard k=5 CCD)
 rather than the full-factorial cube the library builds by default.
@@ -35,7 +36,7 @@ like on a fixed experimental region):
 - CCD, face-centred   res-V half-fraction cube + faces  (32 runs)
 - Box-Behnken         all C(5,2) pairs + 6 centre       (46 runs)
 - DSD                 order-6 conference foldover + c    (13 runs, smallest OMARS member)
-- OMARS               two conference foldover blocks + c (25 runs)
+- OMARS               two conference foldover blocks + c (25 runs; core = bd-5-24-4-8-53)
 """
 
 import numpy as np
@@ -166,13 +167,15 @@ def build_designs():
     )
 
     # OMARS: the library generates OMARS designs (generate_omars), but its foldover ILP
-    # does not reproduce this particular minimally-aliased 25-run member, so it is built
-    # directly as two conference-matrix foldovers, the second with its columns permuted so
-    # the design is genuinely distinct from a replicated DSD (23 distinct rows) while
-    # keeping the OMARS property (main effects orthogonal to every second-order term).
-    # Confirmed with the library's is_omars in check_omnibus.py.
+    # does not enumerate this larger 25-run member, so it is built directly as two
+    # conference-matrix foldovers, the second with its columns permuted (cyclic shift
+    # [1, 2, 3, 4, 0]) so the design has 25 distinct runs rather than collapsing to a
+    # replicated DSD, while keeping the OMARS property (main effects orthogonal to every
+    # second-order term). The 24-run core (the design without the centre run) reproduces
+    # the catalogue OMARS basic design bd-5-24-4-8-53 exactly, up to factor relabeling and
+    # run order. Confirmed with the library's is_omars in check_omnibus.py.
     cm = _conference_order6()[:, :K]
-    cm2 = cm[:, [2, 4, 1, 3, 0]]
+    cm2 = cm[:, [1, 2, 3, 4, 0]]
     omars = np.vstack([cm, -cm, cm2, -cm2, centre])
 
     return {

@@ -38,12 +38,13 @@ def main() -> None:
         m = main_quadratic_model(designs[name])
         assert np.linalg.matrix_rank(m) == 11, f"{name} should be full rank"
 
-    # DSD and the larger OMARS both satisfy the OMARS orthogonality property; the OMARS is
-    # genuinely distinct from a replicated DSD (more than 13 distinct rows).
+    # DSD and the larger OMARS both satisfy the OMARS orthogonality property. The OMARS has
+    # 25 distinct runs (it does not collapse to a replicated DSD); its 24-run core is the
+    # catalogue OMARS basic design bd-5-24-4-8-53.
     assert is_omars(designs["dsd"]), "DSD must be an OMARS design"
     assert is_omars(designs["omars"]), "OMARS construction must satisfy the OMARS property"
     distinct = len({tuple(np.round(r, 6)) for r in designs["omars"]})
-    assert distinct > 13, f"OMARS should not be a replicated DSD (got {distinct} distinct rows)"
+    assert distinct == 25, f"OMARS should have 25 distinct runs (got {distinct})"
 
     # The 5-factor DSD has 13 runs and 2 residual degrees of freedom: not saturated, unlike
     # the 4-factor DSD elsewhere in the chapter.
