@@ -7,12 +7,11 @@ over the cube [-1, 1]^4 by process_improve's ``evaluate_design`` (v1.44.0+): its
 the worst-case prediction variance can sit and which random interior sampling misses)
 to the uniform sample, and ``fds_resolution=200`` returns the dense curve plotted here.
 
-The library generates OMARS designs (``generate_omars``; the definitive screening
-design is the minimal member). The ILP enumerator selects among foldover members by a
-criterion, but the specific precision-optimal thirteen-run member used here is given
-explicitly so the figure reproduces exactly; ``is_omars`` (also from the library)
-confirms it is a genuine OMARS design. ``generate_omars(..., model="main_quadratic",
-selection_criterion="a_optimal")`` produces a design of the same A-optimal family.
+The thirteen-run OMARS design is built directly by the library: ``generate_omars(...,
+n_runs=13, model="main_quadratic", selection_criterion="a_optimal")`` returns the
+precision-optimal member of the foldover family (the definitive screening design is the
+minimal member). ``is_omars`` (also from the library) confirms it is a genuine OMARS
+design.
 
 Reproducible; run from this directory: it writes ``fds-plot-dsd-vs-omars.png``
 alongside the script.
@@ -20,7 +19,7 @@ alongside the script.
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from process_improve.experiments import Factor, evaluate_design, generate_design, is_omars
+from process_improve.experiments import Factor, evaluate_design, generate_design, generate_omars, is_omars
 
 N_EVAL = 80_000  # uniform points for the prediction-variance integration
 EVAL_SEED = 1
@@ -48,13 +47,11 @@ _dsd = generate_design([Factor(name=c, low=-1, high=1) for c in "ABCD"], design_
 DSD = np.asarray(_dsd.design[NAMES], float)
 # 13-run OMARS design: the precision-optimal (A-optimal) member of the foldover family on
 # the main-effects-plus-quadratic model, with two estimable two-factor interactions. It is
-# given explicitly so the numbers below reproduce exactly; the same family is produced by
-# generate_omars(..., model="main_quadratic", selection_criterion="a_optimal").
-OM13 = np.array([
-    [0, 0, 0, 1], [0, 0, 1, 0], [0, 1, -1, -1], [1, -1, -1, 0], [1, 0, 1, -1],
-    [1, 1, 0, 1], [0, 0, 0, -1], [0, 0, -1, 0], [0, -1, 1, 1], [-1, 1, 1, 0],
-    [-1, 0, -1, 1], [-1, -1, 0, -1], [0, 0, 0, 0]], float)
-assert is_omars(OM13), "the explicit 13-run design must be a genuine OMARS design"
+# built directly by the library's generate_omars on the same four factors.
+_om13 = generate_omars([Factor(name=c, low=-1, high=1) for c in "ABCD"], n_runs=13,
+                       model="main_quadratic", selection_criterion="a_optimal")
+OM13 = np.asarray(_om13.design[NAMES], float)
+assert is_omars(OM13), "generate_omars must return a genuine OMARS design"
 
 fig, ax = plt.subplots(figsize=(7.2, 4.6))
 styles = {"DSD [n=9]": dict(color="#1f5fa8", lw=2.0),
