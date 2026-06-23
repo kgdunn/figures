@@ -11,7 +11,7 @@ fig, ax = plt.subplots(figsize=(9.2, 3.4))
 
 # The main axis.
 ax.annotate("", xy=(9.6, 0), xytext=(0.4, 0),
-            arrowprops=dict(arrowstyle="-", color="0.4", lw=1.4))
+            arrowprops=dict(arrowstyle="-", color="0.4", lw=2.2))
 
 families = [
     (1.5, "Definitive screening\ndesign", "#1f5fa8"),
@@ -19,18 +19,18 @@ families = [
     (8.5, "Central composite /\nBox-Behnken", "#c0392b"),
 ]
 for x, label, colour in families:
-    ax.plot(x, 0, marker="o", ms=12, color=colour, zorder=5)
-    ax.text(x, 0.32, label, ha="center", va="bottom", fontsize=13, color=colour)
+    ax.plot(x, 0, marker="o", ms=14, color=colour, zorder=5)
+    ax.text(x, 0.32, label, ha="center", va="bottom", fontsize=16, color=colour)
 
 # Two labelled arrows: number of runs increases to the right, aliasing increases to the left.
 ax.annotate("", xy=(9.2, -0.7), xytext=(0.8, -0.7),
-            arrowprops=dict(arrowstyle="->", color="0.3", lw=1.6))
-ax.text(5.0, -0.55, "number of runs increases", ha="center", va="bottom", fontsize=12)
+            arrowprops=dict(arrowstyle="->", color="0.3", lw=2.4))
+ax.text(5.0, -0.55, "number of runs increases", ha="center", va="bottom", fontsize=14)
 
 ax.annotate("", xy=(0.8, -1.25), xytext=(9.2, -1.25),
-            arrowprops=dict(arrowstyle="->", color="0.3", lw=1.6))
+            arrowprops=dict(arrowstyle="->", color="0.3", lw=2.4))
 ax.text(5.0, -1.10, "aliasing among second-order effects increases",
-        ha="center", va="bottom", fontsize=12)
+        ha="center", va="bottom", fontsize=14)
 
 ax.set_xlim(0, 10)
 ax.set_ylim(-1.6, 1.1)
