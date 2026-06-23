@@ -6,7 +6,7 @@ Both figures visualise the entanglement that the omnibus table only summarises:
   A = (X1' X1)^-1 X1' X2 maps the ten omitted two-factor interactions (columns) onto the
   eleven fitted terms (rows). The Box-Behnken and composite designs hold every entry at
   zero on this model; the OMARS and definitive screening designs keep the main-effect rows
-  at zero but push the bias onto the quadratic rows (worst entry 1.00 and 1.09).
+  at zero but push the bias onto the quadratic rows (worst entry 0.77 and 1.09).
 
 - ``correlation-colormap-four-designs.png``: the absolute correlation among the twenty
   model-effect columns, in three blocks separated by lines, the five main effects, the five

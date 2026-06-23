@@ -7,13 +7,11 @@ factorials, the Box-Behnken design and the definitive screening design, and
 ``evaluate_design`` scores D-efficiency, the variance inflation factors, the power and the
 prediction variance integrated over the whole region (used for the FDS curves and the
 average/maximum prediction-variance rows; v1.44.0+ exposes the configurable region sampling
-and the dense FDS curve). One piece is computed by hand because the library does not expose
-it on this model: the alias matrix of the omitted two-factor interactions. One design is
-given explicitly: the library generates OMARS designs (``generate_omars``, with the
-definitive screening design as the minimal member), but its foldover ILP does not enumerate
-this larger 25-run member, so it is built directly as two permuted conference-matrix
-foldovers and confirmed with the library's ``is_omars`` verifier. Its 24-run core (without
-the centre run) is the catalogue OMARS basic design ``bd-5-24-4-8-53``. The
+and the dense FDS curve). The alias matrix of the omitted two-factor interactions also
+comes from ``evaluate_design`` (its ``"alias_matrix"`` metric). Every design, the larger
+OMARS member included, is built by the library: ``generate_omars`` produces a 25-run,
+five-factor OMARS member of the foldover family (the definitive screening design is the
+minimal member of that family), confirmed with the library's ``is_omars`` verifier. The
 central composite design uses ``process_improve``'s ``cube="fractional"``
 option (v1.42.0+) to build its cube as a resolution-V half-fraction (the standard k=5 CCD)
 rather than the full-factorial cube the library builds by default.
@@ -36,12 +34,12 @@ like on a fixed experimental region):
 - CCD, face-centred   res-V half-fraction cube + faces  (32 runs)
 - Box-Behnken         all C(5,2) pairs + 6 centre       (46 runs)
 - DSD                 order-6 conference foldover + c    (13 runs, smallest OMARS member)
-- OMARS               two conference foldover blocks + c (25 runs; core = bd-5-24-4-8-53)
+- OMARS               generate_omars foldover member     (25 runs, A-optimal selection)
 """
 
 import numpy as np
 import pandas as pd
-from process_improve.experiments import Factor, evaluate_design, generate_design, is_omars
+from process_improve.experiments import Factor, evaluate_design, generate_design, generate_omars, is_omars
 
 K = 5  # number of factors
 N_EVAL = 120_000  # uniform points for prediction-variance integration
@@ -64,24 +62,20 @@ def main_quadratic_model(design):
     return np.column_stack(cols)
 
 
-def _two_factor_interactions(design):
-    """Return the 10-column matrix of two-factor interaction terms x_i * x_j."""
-    design = np.asarray(design, float)
-    return np.column_stack([design[:, i] * design[:, j] for i in range(K) for j in range(i + 1, K)])
-
-
 def alias_matrix(design):
     """Alias (bias) matrix for the two-factor interactions left out of the model.
 
     With the fitted model matrix X1 (the 11 main-effect-plus-quadratic terms) and the
     omitted-term matrix X2 (the ten two-factor interactions), the least-squares estimates
     satisfy E[b1] = beta1 + A @ beta2 with A = (X1' X1)^-1 X1' X2. Each entry of A is the
-    bias an omitted interaction imposes on a fitted coefficient. process_improve does not
-    expose this, so it is computed directly here.
+    bias an omitted interaction imposes on a fitted coefficient. This is exactly
+    process_improve's ``evaluate_design(metric="alias_matrix")``: the returned ``matrix``
+    has rows [intercept, the five main effects, the five pure quadratics] and columns the
+    ten omitted two-factor interactions (AB, AC, ..., DE).
     """
-    x1 = main_quadratic_model(design)
-    x2 = _two_factor_interactions(design)
-    return np.linalg.solve(x1.T @ x1, x1.T @ x2)
+    df = pd.DataFrame(np.asarray(design, float), columns=FACTOR_NAMES)
+    out = evaluate_design(df, model=MODEL_FORMULA, metric="alias_matrix")
+    return np.asarray(out["alias_matrix"]["matrix"], float)
 
 
 def model_term_corr(design):
@@ -114,26 +108,6 @@ def model_term_corr(design):
 MODEL_TERM_BLOCKS = (K, 2 * K)
 
 
-def _conference_order6():
-    """Symmetric Paley conference matrix of order 6 (C @ C.T = 5 I).
-
-    Built from the quadratic-residue character over GF(5). Conference matrices are the
-    backbone of definitive screening designs: the foldover of a conference matrix makes
-    every main effect orthogonal to every quadratic term.
-    """
-    q = 5
-    residues = {(x * x) % q for x in range(1, q)}
-    chi = [0] + [1 if a in residues else -1 for a in range(1, q)]
-    c = np.zeros((6, 6))
-    for i in range(1, 6):
-        c[0, i] = c[i, 0] = 1
-    for i in range(q):
-        for j in range(q):
-            if i != j:
-                c[1 + i, 1 + j] = chi[(j - i) % q]
-    return c
-
-
 def _coded(design_result):
     """Strip the RunOrder column from a process_improve DesignResult, returning the
     (N x 5) coded factor array in A..E order."""
@@ -143,8 +117,6 @@ def _coded(design_result):
 
 def build_designs():
     """Construct all six design families. Returns a dict name -> (N x 5) coded array."""
-    centre = np.zeros((1, K))
-
     # process_improve builds the factorials, Box-Behnken design and DSD directly. The
     # two-level factorials carry 2 centre runs so sigma^2 and a one-degree-of-freedom
     # curvature check are available even though the individual quadratics are not
@@ -166,17 +138,15 @@ def build_designs():
         generate_design(FACTORS, "ccd", cube="fractional", alpha="face_centered", center_points=6)
     )
 
-    # OMARS: the library generates OMARS designs (generate_omars), but its foldover ILP
-    # does not enumerate this larger 25-run member, so it is built directly as two
-    # conference-matrix foldovers, the second with its columns permuted (cyclic shift
-    # [1, 2, 3, 4, 0]) so the design has 25 distinct runs rather than collapsing to a
-    # replicated DSD, while keeping the OMARS property (main effects orthogonal to every
-    # second-order term). The 24-run core (the design without the centre run) reproduces
-    # the catalogue OMARS basic design bd-5-24-4-8-53 exactly, up to factor relabeling and
-    # run order. Confirmed with the library's is_omars in check_omnibus.py.
-    cm = _conference_order6()[:, :K]
-    cm2 = cm[:, [1, 2, 3, 4, 0]]
-    omars = np.vstack([cm, -cm, cm2, -cm2, centre])
+    # OMARS: process_improve generates the larger response-surface OMARS members directly
+    # with generate_omars (the definitive screening design is the minimal member of the same
+    # foldover family). We ask for a 25-run, five-factor member on the
+    # main-effects-plus-quadratics model, selected for precision (A-optimality). It keeps the
+    # defining OMARS property, every main effect orthogonal to every second-order term, which
+    # check_omnibus.py confirms with the library's is_omars verifier.
+    omars = _coded(
+        generate_omars(FACTORS, n_runs=25, model="main_quadratic", selection_criterion="a_optimal")
+    )
 
     return {
         "full": full,

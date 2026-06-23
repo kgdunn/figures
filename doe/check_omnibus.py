@@ -38,11 +38,11 @@ def main() -> None:
         m = main_quadratic_model(designs[name])
         assert np.linalg.matrix_rank(m) == 11, f"{name} should be full rank"
 
-    # DSD and the larger OMARS both satisfy the OMARS orthogonality property. The OMARS has
-    # 25 distinct runs (it does not collapse to a replicated DSD); its 24-run core is the
-    # catalogue OMARS basic design bd-5-24-4-8-53.
+    # DSD and the larger OMARS both satisfy the OMARS orthogonality property. The 25-run
+    # member generate_omars returns has 25 distinct runs (it does not collapse to a
+    # replicated DSD).
     assert is_omars(designs["dsd"]), "DSD must be an OMARS design"
-    assert is_omars(designs["omars"]), "OMARS construction must satisfy the OMARS property"
+    assert is_omars(designs["omars"]), "generate_omars must return a genuine OMARS design"
     distinct = len({tuple(np.round(r, 6)) for r in designs["omars"]})
     assert distinct == 25, f"OMARS should have 25 distinct runs (got {distinct})"
 
@@ -51,17 +51,17 @@ def main() -> None:
     assert evaluate(designs["dsd"])["residual_df"] == 2
 
     # The two heatmap figures (heatmaps-four-designs.py) are locked to the omnibus table.
-    # Alias map: worst |A| per design matches the "Maximum alias |A|" row (0, 0, 1.00, 1.09).
-    expected_alias = {"bbd": 0.00, "ccd": 0.00, "omars": 1.00, "dsd": 1.09}
+    # Alias map: worst |A| per design matches the "Maximum alias |A|" row (0, 0, 0.77, 1.09).
+    expected_alias = {"bbd": 0.00, "ccd": 0.00, "omars": 0.77, "dsd": 1.09}
     for name, want in expected_alias.items():
         got = float(np.abs(alias_matrix(designs[name])).max())
         assert abs(got - want) < 0.005, f"{name}: alias |A| max {got:.3f} != {want}"
     # Correlation colour map (model_term_corr, 20 columns: main effects, quadratics,
     # interactions). The worst off-diagonal over the whole map:
-    expected_corr = {"bbd": 0.15, "ccd": 0.75, "omars": 0.50, "dsd": 0.50}
+    expected_corr = {"bbd": 0.15, "ccd": 0.75, "omars": 0.83, "dsd": 0.50}
     # ...and over the fitted-terms block only (main effects + quadratics, the first 10 columns),
     # which must equal the table's "Maximum |r|" row:
-    expected_fitted = {"bbd": 0.15, "ccd": 0.75, "omars": 0.00, "dsd": 0.13}
+    expected_fitted = {"bbd": 0.15, "ccd": 0.75, "omars": 0.31, "dsd": 0.13}
     for name in RSM_DESIGNS:
         c = model_term_corr(designs[name])
         full = float(c[~np.eye(c.shape[0], dtype=bool)].max())
