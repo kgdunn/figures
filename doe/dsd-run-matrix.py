@@ -29,8 +29,9 @@ centre = [i for i, r in enumerate(levels) if not r.any()]
 order = top + mirror + centre
 matrix = levels[order]
 
-# Three discrete colours for the coded levels -1 / 0 / +1.
-cmap = ListedColormap(["#1f5fa8", "#f2f2f2", "#c0392b"])
+# Three discrete colours for the coded levels -1 / 0 / +1, using the colourblind-safe
+# Okabe-Ito blue / vermillion pair with a neutral grey centre.
+cmap = ListedColormap(["#0072B2", "#EDEDED", "#D55E00"])
 norm = BoundaryNorm([-1.5, -0.5, 0.5, 1.5], cmap.N)
 
 fig, ax = plt.subplots(figsize=(5.6, 6.4))
@@ -66,9 +67,9 @@ for lo, hi, label in spans:
 ax.set_xlim(-0.5, matrix.shape[1] + 1.1)
 
 # Legend mapping the three colours to the coded factor levels.
-handles = [Patch(facecolor="#1f5fa8", edgecolor="0.6", label="$-1$"),
-           Patch(facecolor="#f2f2f2", edgecolor="0.6", label="$0$"),
-           Patch(facecolor="#c0392b", edgecolor="0.6", label="$+1$")]
+handles = [Patch(facecolor="#0072B2", edgecolor="0.6", label="$-1$"),
+           Patch(facecolor="#EDEDED", edgecolor="0.6", label="$0$"),
+           Patch(facecolor="#D55E00", edgecolor="0.6", label="$+1$")]
 ax.legend(handles=handles, title="Coded level", loc="upper center",
           bbox_to_anchor=(0.5, -0.08), ncol=3, frameon=False)
 
