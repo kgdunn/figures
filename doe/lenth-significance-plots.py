@@ -18,10 +18,15 @@ import itertools
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
 from scipy import stats
 
-# Okabe-Ito colourblind-safe palette
-BLUE, ORANGE, VERMILLION = "#0072B2", "#E69F00", "#D55E00"
+# Okabe-Ito colourblind-safe palette. Bars/points are coloured by the SIGN of
+# the effect (positive = orange, negative = blue); the Lenth margin-of-error
+# and simultaneous-margin-of-error lines, not the colour, mark significance.
+BLUE, ORANGE = "#0072B2", "#E69F00"
+ME_COLOUR, SME_COLOUR = "#000000", "#666666"
 
 
 def lenth(coeffs, alpha=0.05):
@@ -53,19 +58,30 @@ def effects_from(y, k):
     return dict(zip(terms.keys(), b[1:]))
 
 
+def _sign_legend(me, sme=None):
+    """Legend handles: sign colours plus the ME/SME cutoff lines."""
+    handles = [Patch(color=ORANGE, label="positive effect"),
+               Patch(color=BLUE, label="negative effect"),
+               Line2D([0], [0], color=ME_COLOUR, linestyle="--", label=f"ME = {me:.2f}")]
+    if sme is not None:
+        handles.append(Line2D([0], [0], color=SME_COLOUR, linestyle=":", label=f"SME = {sme:.2f}"))
+    return handles
+
+
 def pareto(effects, me, sme, filename, title):
     ordered = sorted(effects, key=lambda k: abs(effects[k]))
     vals = [abs(effects[k]) for k in ordered]
+    # Colour each bar by the SIGN of its effect, not by significance.
+    colours = [ORANGE if effects[k] > 0 else BLUE for k in ordered]
     fig, ax = plt.subplots(figsize=(6.5, max(3.5, 0.32 * len(ordered) + 1)))
-    colours = [ORANGE if v > me else BLUE for v in vals]
     ax.barh(ordered, vals, color=colours)
-    ax.axvline(me, color=VERMILLION, linestyle="--", linewidth=1.6, label=f"ME = {me:.2f}")
+    ax.axvline(me, color=ME_COLOUR, linestyle="--", linewidth=1.6)
     if sme is not None:
-        ax.axvline(sme, color="#000000", linestyle=":", linewidth=1.6, label=f"SME = {sme:.2f}")
+        ax.axvline(sme, color=SME_COLOUR, linestyle=":", linewidth=1.6)
     ax.set_xlabel("|effect|  (coefficient scale)")
     ax.set_ylabel("Term")
     ax.set_title(title)
-    ax.legend(loc="lower right", frameon=False)
+    ax.legend(handles=_sign_legend(me, sme), loc="lower right", frameon=False)
     fig.tight_layout()
     fig.savefig(filename, dpi=200)
     plt.close(fig)
@@ -74,24 +90,27 @@ def pareto(effects, me, sme, filename, title):
 def half_normal(effects, me, filename, title):
     ordered = sorted(effects, key=lambda k: abs(effects[k]))
     vals = np.array([abs(effects[k]) for k in ordered])
+    positive = np.array([effects[k] > 0 for k in ordered])
     m = len(vals)
     q = stats.halfnorm.ppf((np.arange(1, m + 1) - 0.5) / m)
     active = vals > me
     fig, ax = plt.subplots(figsize=(6.5, 5.0))
-    ax.scatter(q[~active], vals[~active], color=BLUE, zorder=3, label="noise")
-    ax.scatter(q[active], vals[active], color=ORANGE, zorder=3, label="active")
+    # Colour points by sign; significance is read from the ME line and the labels.
+    ax.scatter(q[positive], vals[positive], color=ORANGE, zorder=3)
+    ax.scatter(q[~positive], vals[~positive], color=BLUE, zorder=3)
     # reference line through the origin fitted to the inactive (noise) effects
     if active.sum() < m:
         slope = np.sum(q[~active] * vals[~active]) / np.sum(q[~active] ** 2)
         xs = np.linspace(0, q.max() * 1.05, 50)
-        ax.plot(xs, slope * xs, color="#666666", linewidth=1.0, zorder=1)
+        ax.plot(xs, slope * xs, color="#999999", linewidth=1.0, zorder=1)
+    ax.axhline(me, color=ME_COLOUR, linestyle="--", linewidth=1.2, zorder=2)
     for xi, yi, name in zip(q, vals, ordered):
         if yi > me:
             ax.annotate(name, (xi, yi), textcoords="offset points", xytext=(-10, 3), fontsize=9)
     ax.set_xlabel("Half-normal quantile")
     ax.set_ylabel("|effect|  (coefficient scale)")
     ax.set_title(title)
-    ax.legend(loc="upper left", frameon=False)
+    ax.legend(handles=_sign_legend(me), loc="upper left", frameon=False)
     fig.tight_layout()
     fig.savefig(filename, dpi=200)
     plt.close(fig)
