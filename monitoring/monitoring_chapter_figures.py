@@ -12,6 +12,9 @@ reproduced by readers working in Python:
 - ``explain-EWMA.png``: five stacked panels; the shifted raw data as a
   Shewhart chart of individual values, EWMA charts with lambda = 0.8, 0.4
   and 0.1, and a CUSUM chart, for a 1 sigma shift at t = 150.
+- ``explain-moving-average-data-source.png``: a schematic of the moving
+  window, each width-n average labelled at its most recent point so it
+  matches the chapter's moving-average equation.
 
 The data are seeded (``SEED_EXPLAIN`` and ``SEED_DEMO``) and match the
 inline Plotly code blocks in the chapter, so a reader running the chapter
@@ -268,8 +271,51 @@ def figure_demo(out: pathlib.Path) -> None:
     plt.close(fig)
 
 
+def figure_moving_average(out: pathlib.Path, n: int = 5, n_ticks: int = 20, n_labelled: int = 7) -> None:
+    """Write ``explain-moving-average-data-source.png``: the MA window schematic.
+
+    A number line of raw samples ``x_1, x_2, ...`` with four moving-average
+    windows of width ``n`` drawn above it. Each window is labelled at its most
+    recent (right-hand) end and reaches back over the ``n`` most recent points,
+    so it matches the chapter equation
+    ``x-bar_t = (1/n) (x_t + x_{t-1} + ... + x_{t-n+1})``: the average of the
+    first ``n`` samples is ``x-bar_n`` (here ``x-bar_5``), not ``x-bar_1``.
+
+    Parameters
+    ----------
+    out : pathlib.Path
+        Directory the PNG is written into.
+    n : int
+        The moving-window width; the first computable average is at ``t = n``.
+    n_ticks : int
+        How many tick marks to draw on the number line.
+    n_labelled : int
+        How many raw samples to label individually before the trailing dots.
+    """
+    fig, ax = plt.subplots(figsize=(12, 3.35))
+    ax.plot([1, n_ticks], [0, 0], color="black", lw=1.2)
+    for i in range(1, n_ticks + 1):
+        ax.plot([i, i], [-0.14, 0.14], color="black", lw=1.2)
+    for i in range(1, n_labelled + 1):
+        ax.text(i, -0.5, f"$x_{{{i}}}$", ha="center", va="top", fontsize=15)
+    ax.text(n_labelled + 1, -0.5, r"$x_{\ldots}$", ha="center", va="top", fontsize=15)
+    # Four windows, labelled at the most recent end (x-bar_n ... x-bar_{n+3}).
+    for k, t in enumerate(range(n, n + 4)):
+        y = 0.55 + 0.5 * k
+        ax.annotate("", xy=(t - n + 1, y), xytext=(t, y),
+                    arrowprops=dict(arrowstyle="<->", color="black", lw=1.4))
+        ax.text(t + 0.15, y + 0.12, rf"$\overline{{x}}_{{{t}}}$", ha="left", va="center", fontsize=16)
+    ax.text(n + 6.5, 1.9, f"For the case of\n$n = {n}$", fontsize=17, va="center")
+    ax.set_xlim(0.3, n_ticks + 0.7)
+    ax.set_ylim(-0.9, 2.5)
+    ax.axis("off")
+    fig.tight_layout()
+    fig.savefig(out / "explain-moving-average-data-source.png", dpi=DPI)
+    plt.close(fig)
+
+
 def main() -> None:
-    """Generate all three chapter figures into the output directory."""
+    """Generate all four chapter figures into the output directory."""
     default_dir = pathlib.Path(__file__).resolve().parent
     out = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else default_dir
     out.mkdir(parents=True, exist_ok=True)
@@ -277,6 +323,7 @@ def main() -> None:
     figure_cusum(base, data_cusum, out)
     figure_ewma(data_ewma, out)
     figure_demo(out)
+    figure_moving_average(out)
 
 
 if __name__ == "__main__":
