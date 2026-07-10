@@ -23,8 +23,8 @@ adf = design.design[["compound"] + cont].copy()
 adf["compound"] = adf["compound"].astype(str)
 adf["peak"] = curves.max(axis=1).to_numpy()
 
-rhs = ("C(compound, Treatment)*co_solvent + C(compound, Treatment)*pH "
-       "+ C(compound, Treatment)*temperature + concentration")
+rhs = ("C(compound, Sum)*co_solvent + C(compound, Sum)*pH "
+       "+ C(compound, Sum)*temperature + concentration")
 ols = analyze_experiment(adf, response_column="peak", model="peak ~ " + rhs,
                          analysis_type=["coefficients"])["coefficients"]
 ols = {c["term"]: c["coefficient"] for c in ols}
@@ -35,7 +35,7 @@ beta = np.asarray(pls.beta_coefficients_).ravel()
 
 
 def short(term):
-    return term.replace("C(compound, Treatment)[T.", "cmp").replace("]", "")
+    return term.replace("C(compound, Sum)[S.", "cmp").replace("]", "")
 
 
 coef = pd.DataFrame({"term": [short(c) for c in X_int.columns],
