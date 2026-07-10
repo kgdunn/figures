@@ -25,9 +25,10 @@ adf["peak"] = curves.max(axis=1).to_numpy()
 
 rhs = ("C(compound, Sum)*co_solvent + C(compound, Sum)*pH "
        "+ C(compound, Sum)*temperature + concentration")
-ols = analyze_experiment(adf, response_column="peak", model="peak ~ " + rhs,
-                         analysis_type=["coefficients"])["coefficients"]
-ols = {c["term"]: c["coefficient"] for c in ols}
+ols_coef = analyze_experiment(adf, response_column="peak", model="peak ~ " + rhs,
+                              analysis_type=["coefficients"])["coefficients"]
+ols = {c["term"]: c["coefficient"] for c in ols_coef}
+se = {c["term"]: c["std_error"] for c in ols_coef}
 
 X_int = dmatrix(rhs, adf, return_type="dataframe").drop(columns=["Intercept"])
 pls = PLS(n_components=3, scale=True).fit(X_int, adf[["peak"]])
@@ -39,12 +40,17 @@ def short(term):
 
 
 coef = pd.DataFrame({"term": [short(c) for c in X_int.columns],
-                     "OLS": [ols[c] for c in X_int.columns], "PLS": beta}).sort_values("OLS")
+                     "OLS": [ols[c] for c in X_int.columns], "SE": [se[c] for c in X_int.columns],
+                     "PLS": beta}).sort_values("OLS")
 y = np.arange(len(coef))
 
 fig, ax = plt.subplots(figsize=(7.4, 8.2))
-ax.hlines(y, coef["OLS"], coef["PLS"], color="0.7", lw=1.0, zorder=1)
-ax.scatter(coef["OLS"], y, s=46, color="#1f5fa8", marker="o", label="least squares", zorder=3)
+# +/- 1 standard error on the least-squares estimate; the PLS point sits inside it for all but
+# two of the terms, so the shrinkage is small next to the estimation uncertainty.
+ax.errorbar(coef["OLS"], y, xerr=coef["SE"], fmt="none", ecolor="#9dbbe0", elinewidth=6,
+            capsize=0, zorder=1, alpha=0.9)
+ax.scatter(coef["OLS"], y, s=46, color="#1f5fa8", marker="o", label="least squares (+/- 1 s.e.)",
+           zorder=3)
 ax.scatter(coef["PLS"], y, s=40, color="#c0392b", marker="X", label="PLS (3 components)", zorder=3)
 ax.axvline(0, color="0.5", lw=0.8)
 ax.set_yticks(y)
