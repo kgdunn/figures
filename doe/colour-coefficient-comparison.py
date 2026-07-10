@@ -30,7 +30,7 @@ ols = analyze_experiment(adf, response_column="peak", model="peak ~ " + rhs,
 ols = {c["term"]: c["coefficient"] for c in ols}
 
 X_int = dmatrix(rhs, adf, return_type="dataframe").drop(columns=["Intercept"])
-pls = PLS(n_components=5, scale=True).fit(X_int, adf[["peak"]])
+pls = PLS(n_components=3, scale=True).fit(X_int, adf[["peak"]])
 beta = np.asarray(pls.beta_coefficients_).ravel()
 
 
@@ -45,7 +45,7 @@ y = np.arange(len(coef))
 fig, ax = plt.subplots(figsize=(7.4, 8.2))
 ax.hlines(y, coef["OLS"], coef["PLS"], color="0.7", lw=1.0, zorder=1)
 ax.scatter(coef["OLS"], y, s=46, color="#1f5fa8", marker="o", label="least squares", zorder=3)
-ax.scatter(coef["PLS"], y, s=40, color="#c0392b", marker="X", label="PLS (5 components)", zorder=3)
+ax.scatter(coef["PLS"], y, s=40, color="#c0392b", marker="X", label="PLS (3 components)", zorder=3)
 ax.axvline(0, color="0.5", lw=0.8)
 ax.set_yticks(y)
 ax.set_yticklabels(coef["term"], fontsize=8)
