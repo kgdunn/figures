@@ -5,7 +5,7 @@ closest attainable emulation, the best amplitude for that compound's fixed shape
 continuous factors move only amplitude and each compound carries a fixed late-time drift, the
 candidates separate at the tail: B and F track the reference, C is close, D and E lift away. Right:
 the emulation error (RMSE to the reference) per candidate against the measurement-noise scale; the
-open marker is each compound's shape floor (best at any amplitude), the filled marker is what the
+open marker is each compound's best attainable match (best at any amplitude), the filled marker is what the
 coding-invariant curve-match inversion actually reaches when its real-unit settings are pushed back
 through the simulator. Ordered by late-time drift. Regenerates ``colour-inversion-validation.png``.
 """
@@ -64,7 +64,7 @@ axR.set_xlim(0, 0.16)
 axR.set_xlabel("RMSE of emulated curve vs the reference")
 axR.set_title("Emulation error against the noise scale", fontsize=10, loc="left")
 axR.grid(axis="x", alpha=0.2)
-legend = [Line2D([], [], marker="o", ls="", mfc="w", mec="0.35", mew=1.6, label="shape floor (best at any amplitude)"),
+legend = [Line2D([], [], marker="o", ls="", mfc="w", mec="0.35", mew=1.6, label="best attainable match (any amplitude)"),
           Line2D([], [], marker="o", ls="", color="0.35", label="curve-match inversion (validated)")]
 axR.legend(handles=legend, frameon=False, fontsize=7.5, loc="lower right")
 
