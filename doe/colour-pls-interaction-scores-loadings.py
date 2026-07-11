@@ -50,19 +50,19 @@ fig, (axS, axL) = plt.subplots(1, 2, figsize=(11.6, 5.4))
 
 # --- Panel A: scores, four encodings ---
 # colour = compound; shape = pH (down triangle low, circle high); marker area grows with the coded
-# concentration; temperature is open (outline-only) markers at the low setting and filled at the
-# high setting. The size and temperature keys are stated as text in the lower-right legend.
-temp = adf["temperature"].to_numpy(float)
+# concentration; co-solvent is open (outline-only) markers at the low setting and filled at the
+# high setting. The size and co-solvent keys are stated as text in the lower-right legend.
+cosolv = adf["co_solvent"].to_numpy(float)
 size = 22 + 78 * (conc + 1) / 2          # coded concentration in [-1, 1] -> marker area
 for c, colour in zip(COMPOUND_LEVELS, palette):
     for lo_pH, marker in ((True, "v"), (False, "o")):
-        lo_t = (compound == c) & ((pH < 0) == lo_pH) & (temp < 0)
-        hi_t = (compound == c) & ((pH < 0) == lo_pH) & (temp >= 0)
-        if lo_t.any():                     # low temperature: open marker, coloured outline
-            axS.scatter(scores[lo_t, 0], scores[lo_t, 1], s=size[lo_t], facecolors="none",
+        lo_s = (compound == c) & ((pH < 0) == lo_pH) & (cosolv < 0)
+        hi_s = (compound == c) & ((pH < 0) == lo_pH) & (cosolv >= 0)
+        if lo_s.any():                     # low co-solvent: open marker, coloured outline
+            axS.scatter(scores[lo_s, 0], scores[lo_s, 1], s=size[lo_s], facecolors="none",
                         edgecolors=colour, marker=marker, linewidth=1.3)
-        if hi_t.any():                     # high temperature: filled marker
-            axS.scatter(scores[hi_t, 0], scores[hi_t, 1], s=size[hi_t], color=colour, marker=marker,
+        if hi_s.any():                     # high co-solvent: filled marker
+            axS.scatter(scores[hi_s, 0], scores[hi_s, 1], s=size[hi_s], color=colour, marker=marker,
                         edgecolor="w", linewidth=0.5)
 axS.axhline(0, color="0.7", lw=0.7)
 axS.axvline(0, color="0.7", lw=0.7)
@@ -77,8 +77,8 @@ enc_handles = [
     Line2D([], [], marker="v", ls="", color="0.35", markeredgecolor="w", label="low pH"),
     Line2D([], [], marker="o", ls="", color="0.35", markeredgecolor="w", label="high pH"),
     Line2D([], [], marker="None", ls="", label=r"size $\propto$ concentration"),
-    Line2D([], [], marker="None", ls="", label="open marker = low temperature"),
-    Line2D([], [], marker="None", ls="", label="filled marker = high temperature"),
+    Line2D([], [], marker="None", ls="", label="open marker = low co-solvent"),
+    Line2D([], [], marker="None", ls="", label="filled marker = high co-solvent"),
 ]
 leg1 = axS.legend(handles=colour_handles, frameon=False, fontsize=8, ncol=2, loc="lower left",
                   title="chromogen")
@@ -111,8 +111,12 @@ axL.set_ylim(allxy[:, 1].min() - pady, allxy[:, 1].max() + pady)
 # The 24 term labels overlap badly where the interaction terms cluster. Place each label with a
 # leader line and push the labels apart with a small deterministic repulsion pass (a light-weight
 # stand-in for adjustText: no randomness, so the layout is reproducible).
-anns = [axL.annotate(short(name), xy=(a, b), xytext=(a, b), textcoords="data", fontsize=6.3,
-                     color="0.15", zorder=4,
+# Start each label a little up and to the right of its marker (not centred on it), so even an
+# isolated label with nothing to repel it still sits clear of the point.
+_xr, _yr = axL.get_xlim(), axL.get_ylim()
+_ox, _oy = 0.03 * (_xr[1] - _xr[0]), 0.035 * (_yr[1] - _yr[0])
+anns = [axL.annotate(short(name), xy=(a, b), xytext=(a + _ox, b + _oy), textcoords="data",
+                     fontsize=6.3, color="0.15", zorder=4,
                      arrowprops=dict(arrowstyle="-", lw=0.4, color="0.55", shrinkA=0, shrinkB=3))
         for name, (a, b) in zip(wstar.index, wstar.iloc[:, :2].to_numpy())]
 
@@ -142,10 +146,10 @@ def repel_labels(ax, annotations, anchor_disp, iterations=600, step=1.3, spring=
             for px, py in anchor_disp:                       # keep labels off the markers
                 ox, oy = cix - px, ciy - py
                 d2 = ox * ox + oy * oy
-                if d2 < 13 ** 2:
+                if d2 < 18 ** 2:
                     norm = d2 ** 0.5 or 1.0
-                    rx += 0.3 * ox / norm
-                    ry += 0.3 * oy / norm
+                    rx += 0.6 * ox / norm
+                    ry += 0.6 * oy / norm
             rnorm = (rx * rx + ry * ry) ** 0.5
             mx = (step * rx / rnorm if rnorm else 0.0) + spring * (ax_ - cix)
             my = (step * ry / rnorm if rnorm else 0.0) + spring * (ay_ - ciy)
