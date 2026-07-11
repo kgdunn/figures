@@ -20,7 +20,9 @@ from colour_case_study import (
     shape_distance_to_reference,
     simulate_curves,
 )
+from colour_case_study import goal_projection, interaction_matrix, invert_to_factors
 from process_improve.experiments import analyze_experiment
+from process_improve.multivariate.methods import PLS
 
 
 def n_changes(s: pd.Series) -> int:
@@ -80,3 +82,21 @@ dist = shape_distance_to_reference(design, curves)
 for cmp_, dd in dist.items():
     tag = " <- reference" if cmp_ == "A" else (" <- closest analog" if cmp_ == dist.index[1] else "")
     print(f"    {cmp_}: {dd:.4f}   |drift|_truth={abs(GROUND_TRUTH[cmp_]['drift']):.2f}{tag}")
+
+print("=" * 70)
+print("STEP 6  diagnostics + model inversion (interaction PLS, 3 components)")
+X_int, design_info = interaction_matrix(design)
+pls_full = PLS(n_components=3, scale=True).fit(X_int, curves)
+g = goal_projection(pls_full, design_info)
+t2_run = pls_full.hotellings_t2_.iloc[:, -1].to_numpy()
+spe_run = pls_full.spe_.iloc[:, -1].to_numpy()
+print(f"  limits: T2_95={g['t2_limit']:.1f}  SPE_95={g['spe_limit']:.1f}")
+print(f"  goal (A at centre): SPE={g['spe']:.2f}  T2={g['t2']:.3f}  "
+      f"(inside: {g['spe'] < g['spe_limit'] and g['t2'] < g['t2_limit']})")
+print(f"  runs over T2: {int((t2_run > g['t2_limit']).sum())}  over SPE: {int((spe_run > g['spe_limit']).sum())}  "
+      f"max T2={t2_run.max():.1f}")
+tab = invert_to_factors(pls_full, design_info, g["score"])
+for cmp_ in ["B", "C", "D", "E", "F"]:
+    real = {n: f"{tab.loc[cmp_, n]:.1f}" for n in CONT}
+    flag = "within ranges" if tab.loc[cmp_, "in_range"] else "OUT of range"
+    print(f"    {cmp_}: {real}  resid={tab.loc[cmp_, 'resid']:.1e}  {flag}")

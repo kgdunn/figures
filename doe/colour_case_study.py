@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from patsy import build_design_matrices, dmatrix
 from process_improve.experiments import Factor, evaluate_design, generate_design
 from process_improve.multivariate.methods import PLS
 
@@ -165,3 +166,124 @@ def shape_distance_to_reference(design, curves) -> pd.Series:
     shapes = m.div(m.max(axis=1), axis=0)
     ref = shapes.loc["A"]
     return (((shapes - ref) ** 2).sum(axis=1) ** 0.5).sort_values()
+
+
+# ---------------------------------------------------------------------------
+# Interaction model, goal projection, and model inversion (objective 4 revisited).
+# The compound-by-factor interaction PLS is the model used for the scores/loadings,
+# the SPE/T2 diagnostics, and the inversion that finds the continuous-factor settings
+# which make each candidate reproduce the reference chromogen's goal profile.
+# ---------------------------------------------------------------------------
+
+#: Right-hand side shared by the interaction analysis, its PLS twin, and the inversion.
+RHS = ("C(compound, Sum)*co_solvent + C(compound, Sum)*pH "
+       "+ C(compound, Sum)*temperature + concentration")
+
+
+def _analysis_frame(design) -> pd.DataFrame:
+    """design.design reduced to compound (fixed-level categorical) + the four continuous factors."""
+    adf = design.design[["compound"] + list(CONT)].copy()
+    adf["compound"] = pd.Categorical(adf["compound"].astype(str), categories=COMPOUND_LEVELS)
+    return adf
+
+
+def interaction_matrix(design):
+    """Return (X_int, design_info): the 24-term interaction model matrix (Intercept dropped) and
+    the patsy design_info, so new rows are encoded with the same contrasts and column order."""
+    full = dmatrix(RHS, _analysis_frame(design), return_type="dataframe")
+    return full.drop(columns=["Intercept"]), full.design_info
+
+
+def encode_row(design_info, compound: str, coded) -> pd.DataFrame:
+    """One X_int row for ``compound`` at coded continuous settings [concentration, co_solvent,
+    pH, temperature], using the fitted design_info so the coding matches the training matrix."""
+    row = pd.DataFrame({
+        "compound": pd.Categorical([compound], categories=COMPOUND_LEVELS),
+        "concentration": [coded[0]], "co_solvent": [coded[1]], "pH": [coded[2]], "temperature": [coded[3]],
+    })
+    return build_design_matrices([design_info], row, return_type="dataframe")[0].drop(columns=["Intercept"])
+
+
+def coded_to_real(coded) -> dict:
+    """Map coded [-1, 1] continuous settings to real units using the CONT low/high ranges."""
+    out = {}
+    for name, val in zip(CONT, coded):
+        lo, hi, _ = CONT[name]
+        out[name] = (lo + hi) / 2 + (hi - lo) / 2 * val
+    return out
+
+
+def project_point(pls, x_row: pd.DataFrame) -> dict:
+    """Score, SPE, and Hotelling's T2 for a single new observation ``x_row`` (an X_int row).
+
+    SPE and T2 are computed directly from the fitted loadings and score scaling rather than through
+    ``pls.diagnose``: as of the version used here ``diagnose().spe`` returns 0 for every row, so it
+    cannot be trusted for the goal check (verified against the fitted ``spe_``). The score and T2
+    match ``transform``/``diagnose``; only SPE is recomputed. SPE uses the same reconstruction as the
+    fitted ``spe_`` (``sqrt`` of the summed squared residual of the standardized X).
+    """
+    cols = list(pls.direct_weights_.index)
+    center = pls._x_scaler.center_.reindex(cols).to_numpy()
+    scale = pls._x_scaler.scale_.reindex(cols).to_numpy()
+    weights = pls.direct_weights_.to_numpy()
+    loadings = pls.x_loadings_.to_numpy()
+    scaling = np.asarray(pls.scaling_factor_for_scores_).ravel()
+    xs = (x_row.reindex(columns=cols, fill_value=0.0).to_numpy().ravel() - center) / scale
+    score = xs @ weights
+    resid = xs - score @ loadings.T
+    return {
+        "score": score,
+        "spe": float(np.sqrt((resid ** 2).sum())),
+        "t2": float(((score / scaling) ** 2).sum()),
+    }
+
+
+def goal_projection(pls, design_info) -> dict:
+    """Project chromogen A at the centre point (all continuous at coded 0) onto the fitted PLS.
+
+    Returns the goal score, its SPE and Hotelling's T2, and the 95% limits, so the caller can
+    confirm the goal sits inside the model before using the prediction as an inversion target.
+    """
+    goal_x = encode_row(design_info, "A", [0.0, 0.0, 0.0, 0.0])
+    p = project_point(pls, goal_x)
+    return {
+        "score": p["score"],
+        "spe": p["spe"],
+        "t2": p["t2"],
+        "spe_limit": float(pls.spe_limit(0.95)),
+        "t2_limit": float(pls.hotellings_t2_limit(0.95)),
+    }
+
+
+def invert_to_factors(pls, design_info, target_score, compounds=("B", "C", "D", "E", "F")) -> pd.DataFrame:
+    """Minimum-adjustment inversion: for each compound, the coded continuous settings whose score
+    matches ``target_score``.
+
+    With sum coding and the compound fixed, the score map is affine in the four continuous factors,
+    so ``score(c) = t0 + M c`` (M is n_components x 4). Matching a 3-component target leaves one
+    free direction (the operating window); ``lstsq`` returns the minimum-norm (least-adjustment)
+    solution. Columns: the four coded settings, the four real-unit settings, the score residual,
+    and ``in_range`` (all coded settings within [-1, 1]).
+    """
+    cols = list(pls.direct_weights_.index)
+    center = pls._x_scaler.center_.reindex(cols).to_numpy()
+    scale = pls._x_scaler.scale_.reindex(cols).to_numpy()
+    weights = pls.direct_weights_.to_numpy()
+    target = np.asarray(target_score)
+
+    def score_of(compound, coded):
+        x = encode_row(design_info, compound, coded).reindex(columns=cols, fill_value=0.0).to_numpy().ravel()
+        return ((x - center) / scale) @ weights
+
+    recs = {}
+    for cmp in compounds:
+        t0 = score_of(cmp, [0.0, 0.0, 0.0, 0.0])
+        jac = np.column_stack([score_of(cmp, [float(k == j) for k in range(4)]) - t0 for j in range(4)])
+        c_sol, *_ = np.linalg.lstsq(jac, target - t0, rcond=None)
+        real = coded_to_real(c_sol)
+        rec = {f"{n}_coded": float(c_sol[i]) for i, n in enumerate(CONT)}
+        rec.update({n: float(real[n]) for n in CONT})
+        rec["resid"] = float(np.linalg.norm(jac @ c_sol - (target - t0)))
+        rec["in_range"] = bool(np.all(np.abs(c_sol) <= 1.0 + 1e-9))
+        recs[cmp] = rec
+    return pd.DataFrame(recs).T
