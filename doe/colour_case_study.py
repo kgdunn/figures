@@ -196,12 +196,95 @@ def interaction_matrix(design):
 
 def encode_row(design_info, compound: str, coded) -> pd.DataFrame:
     """One X_int row for ``compound`` at coded continuous settings [concentration, co_solvent,
-    pH, temperature], using the fitted design_info so the coding matches the training matrix."""
+    pH, temperature], using the fitted design_info so the coding matches the training matrix.
+
+    The ``Intercept`` column (present for sum/treatment coding, absent for cell-means) is dropped,
+    to match the fitted matrices, which drop it because ``PLS`` centres the columns."""
     row = pd.DataFrame({
         "compound": pd.Categorical([compound], categories=COMPOUND_LEVELS),
         "concentration": [coded[0]], "co_solvent": [coded[1]], "pH": [coded[2]], "temperature": [coded[3]],
     })
-    return build_design_matrices([design_info], row, return_type="dataframe")[0].drop(columns=["Intercept"])
+    full = build_design_matrices([design_info], row, return_type="dataframe")[0]
+    return full.drop(columns=["Intercept"], errors="ignore")
+
+
+# ---------------------------------------------------------------------------
+# Coding the categorical factor (the coding-sensitivity subsection).
+# The six-level chromogen can be written with three contrast codings that span the
+# same model space. Ordinary least squares (a full-rank fit) is invariant to the choice;
+# a truncated, scaled PLS is not, which shows up in the SPE/T2 diagnostics and in the
+# score-matching model inversion. Only a full-rank curve match is coding-invariant.
+# ---------------------------------------------------------------------------
+
+#: The three codings, as interaction right-hand sides. ``sum`` writes each compound as a
+#: departure from the average (the last level is dropped and carried as the negative sum of
+#: the rest); ``treatment`` measures each compound against a reference level (all-zero row);
+#: ``cell_means`` gives every compound its own indicator (no intercept, no dropped level).
+CODINGS = {
+    "sum": ("C(compound, Sum)*co_solvent + C(compound, Sum)*pH "
+            "+ C(compound, Sum)*temperature + concentration"),
+    "treatment": ("C(compound, Treatment)*co_solvent + C(compound, Treatment)*pH "
+                  "+ C(compound, Treatment)*temperature + concentration"),
+    "cell_means": ("0 + C(compound)*co_solvent + C(compound)*pH "
+                   "+ C(compound)*temperature + concentration"),
+}
+
+
+def coded_matrix(design, coding: str = "sum", *, order=None):
+    """Return (X, design_info) for a chosen categorical ``coding`` ("sum", "treatment",
+    "cell_means"). ``order`` overrides the level order (e.g. reversed, to drop A instead of F
+    under sum coding); the ``Intercept`` column, when present, is dropped as in ``interaction_matrix``."""
+    adf = _analysis_frame(design)
+    if order is not None:
+        adf["compound"] = pd.Categorical(adf["compound"].astype(str), categories=list(order))
+    full = dmatrix(CODINGS[coding], adf, return_type="dataframe")
+    return full.drop(columns=["Intercept"], errors="ignore"), full.design_info
+
+
+def fit_coding(design, curves, coding: str = "sum", *, order=None, n_components: int = 3):
+    """Fit the 3-component interaction PLS under one coding; return (pls, design_info)."""
+    X, design_info = coded_matrix(design, coding, order=order)
+    return PLS(n_components=n_components, scale=True).fit(X, curves), design_info
+
+
+def curve_match_inversion(design, curves, coding: str = "sum",
+                          compounds=("B", "C", "D", "E", "F")) -> pd.DataFrame:
+    """Coding-invariant inversion: for each compound, the continuous settings whose *predicted
+    ten-point curve* is closest (least squares) to the reference goal curve (chromogen A at the
+    centre point).
+
+    Uses the full-rank ordinary-least-squares fit of the interaction model, so the predicted curve,
+    and therefore this inversion, does not depend on the categorical coding (verify by passing a
+    different ``coding``: the coded settings agree to ~1e-13). The curve match is over-determined
+    (ten time points, four factors), so it returns the least-squares closest curve rather than an
+    exact score match. Columns match :func:`invert_to_factors`.
+    """
+    adf = _analysis_frame(design)
+    full = dmatrix(CODINGS[coding], adf, return_type="dataframe")   # keep the intercept: full rank
+    design_info = full.design_info
+    beta = np.linalg.lstsq(full.to_numpy(), curves.to_numpy(), rcond=None)[0]
+
+    def curve_of(compound, coded):
+        row = pd.DataFrame({
+            "compound": pd.Categorical([compound], categories=COMPOUND_LEVELS),
+            "concentration": [coded[0]], "co_solvent": [coded[1]], "pH": [coded[2]], "temperature": [coded[3]],
+        })
+        x = build_design_matrices([design_info], row, return_type="dataframe")[0].to_numpy().ravel()
+        return x @ beta
+
+    y_goal = curve_of("A", [0.0, 0.0, 0.0, 0.0])
+    recs = {}
+    for cmp in compounds:
+        y0 = curve_of(cmp, [0.0, 0.0, 0.0, 0.0])
+        jac = np.column_stack([curve_of(cmp, [float(k == j) for k in range(4)]) - y0 for j in range(4)])
+        c_sol, *_ = np.linalg.lstsq(jac, y_goal - y0, rcond=None)
+        real = coded_to_real(c_sol)
+        rec = {f"{n}_coded": float(c_sol[i]) for i, n in enumerate(CONT)}
+        rec.update({n: float(real[n]) for n in CONT})
+        rec["resid"] = float(np.linalg.norm(jac @ c_sol - (y_goal - y0)))
+        rec["in_range"] = bool(np.all(np.abs(c_sol) <= 1.0 + 1e-9))
+        recs[cmp] = rec
+    return pd.DataFrame(recs).T
 
 
 def coded_to_real(coded) -> dict:
