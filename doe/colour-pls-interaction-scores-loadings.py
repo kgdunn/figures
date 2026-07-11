@@ -50,17 +50,20 @@ fig, (axS, axL) = plt.subplots(1, 2, figsize=(11.6, 5.4))
 
 # --- Panel A: scores, four encodings ---
 # colour = compound; shape = pH (down triangle low, circle high); marker area grows with the coded
-# concentration; fill opacity shows temperature (faint low, solid high). The size and temperature
-# keys are stated as text in the lower-right legend rather than with extra sample markers.
+# concentration; temperature is open (outline-only) markers at the low setting and filled at the
+# high setting. The size and temperature keys are stated as text in the lower-right legend.
 temp = adf["temperature"].to_numpy(float)
 size = 22 + 78 * (conc + 1) / 2          # coded concentration in [-1, 1] -> marker area
 for c, colour in zip(COMPOUND_LEVELS, palette):
     for lo_pH, marker in ((True, "v"), (False, "o")):
-        for lo_temp, alpha in ((True, 0.45), (False, 1.0)):
-            m = (compound == c) & ((pH < 0) == lo_pH) & ((temp < 0) == lo_temp)
-            if m.any():
-                axS.scatter(scores[m, 0], scores[m, 1], s=size[m], color=colour, marker=marker,
-                            alpha=alpha, edgecolor="w", linewidth=0.5)
+        lo_t = (compound == c) & ((pH < 0) == lo_pH) & (temp < 0)
+        hi_t = (compound == c) & ((pH < 0) == lo_pH) & (temp >= 0)
+        if lo_t.any():                     # low temperature: open marker, coloured outline
+            axS.scatter(scores[lo_t, 0], scores[lo_t, 1], s=size[lo_t], facecolors="none",
+                        edgecolors=colour, marker=marker, linewidth=1.3)
+        if hi_t.any():                     # high temperature: filled marker
+            axS.scatter(scores[hi_t, 0], scores[hi_t, 1], s=size[hi_t], color=colour, marker=marker,
+                        edgecolor="w", linewidth=0.5)
 axS.axhline(0, color="0.7", lw=0.7)
 axS.axvline(0, color="0.7", lw=0.7)
 axS.set_xlabel(f"PLS score t1 (R2Y cumulative = {r2_1:.2f})")
@@ -74,8 +77,8 @@ enc_handles = [
     Line2D([], [], marker="v", ls="", color="0.35", markeredgecolor="w", label="low pH"),
     Line2D([], [], marker="o", ls="", color="0.35", markeredgecolor="w", label="high pH"),
     Line2D([], [], marker="None", ls="", label=r"size $\propto$ concentration"),
-    Line2D([], [], marker="None", ls="", label="faint fill = low temperature"),
-    Line2D([], [], marker="None", ls="", label="solid fill = high temperature"),
+    Line2D([], [], marker="None", ls="", label="open marker = low temperature"),
+    Line2D([], [], marker="None", ls="", label="filled marker = high temperature"),
 ]
 leg1 = axS.legend(handles=colour_handles, frameon=False, fontsize=8, ncol=2, loc="lower left",
                   title="chromogen")
