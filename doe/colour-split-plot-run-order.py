@@ -15,7 +15,7 @@ design = build_design("i_optimal", budget=60)
 run = design.design.sort_values("RunOrder").reset_index(drop=True)
 x = np.arange(len(run))
 
-fig, axes = plt.subplots(2, 1, figsize=(7.6, 5.4), sharex=True)
+fig, axes = plt.subplots(2, 1, figsize=(7.6, 4.8), sharex=True)
 hard = HARD_TO_CHANGE
 easy = [n for n in CONT if n not in hard]
 palette = {"co_solvent": "#1f5fa8", "temperature": "#c0392b",
@@ -33,14 +33,12 @@ for ax, group, title in [(axes[0], hard, "Hard-to-change factors: held over whol
         ax.step(x, v, where="post", color=palette[name], lw=1.6,
                 label=f"{name} ({n_changes(v)} changes)")
     ax.set_ylabel("coded level")
-    # Headroom above the +1 line so the legend sits in clear space, not over the steps.
-    ax.set_ylim(-1.3, 2.3)
+    # A little headroom above the +1 line so the legend clears the step traces.
+    ax.set_ylim(-1.25, 1.9)
     ax.set_yticks([-1, 0, 1])
     ax.grid(axis="y", alpha=0.25)
     ax.set_title(title, fontsize=10, loc="left")
-    # Opaque frame so a step line cannot show through the legend text.
-    ax.legend(loc="upper center", ncol=2, fontsize=9, frameon=True, facecolor="white",
-              edgecolor="0.8", framealpha=1.0)
+    ax.legend(frameon=False, fontsize=8, loc="upper right", ncol=2)
 
 axes[1].set_xlabel("run order")
 fig.tight_layout()
