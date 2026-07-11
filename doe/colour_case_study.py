@@ -47,6 +47,7 @@ COMPOUND_NAMES = {
     "D": "4-(2-pyridylazo)-6-chlorobenzene-1,3-diol",
     "E": "4-(5-methyl-2-pyridylazo)benzene-1,3-diol",
     "F": "4-(2-quinolylazo)benzene-1,3-diol",
+    "G": "4-(2-pyridylazo)-6-bromobenzene-1,3-diol",  # hypothetical seventh chromogen (see GROUND_TRUTH)
 }
 
 #: Continuous factors: name -> (low, high, units).
@@ -86,6 +87,10 @@ GROUND_TRUTH = {
     "D": {"drift": 0.30, "co_solvent": -0.25, "pH": -0.30, "temperature": +0.14},
     "E": {"drift": 0.35, "co_solvent": -0.10, "pH": -0.08, "temperature": +0.05},
     "F": {"drift": -0.10, "co_solvent": -0.15, "pH": -0.22, "temperature": -0.10},
+    # G is a hypothetical seventh chromogen, kept for the "adding a new chromogen" discussion. It is
+    # NOT one of the six levels in COMPOUND_LEVELS and takes no part in the 60-run design; its ground
+    # truth is defined here so a small block of G runs can be simulated when the augmentation is done.
+    "G": {"drift": 0.12, "co_solvent": -0.16, "pH": -0.24, "temperature": +0.08},
 }
 _BASE_AMP = 1.0        # baseline colour amplitude at the centre point
 _CONC_SLOPE = 0.35     # concentration raises amplitude for every compound
