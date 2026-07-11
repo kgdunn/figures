@@ -19,8 +19,10 @@ fig, ax = plt.subplots(figsize=(7.2, 4.6))
 for compound, colour in zip(COMPOUND_LEVELS, palette):
     label = "A (reference)" if compound == "A" else compound
     lw = 2.4 if compound == "A" else 1.5
-    ax.plot(TIME_POINTS, m.loc[compound].to_numpy(), color=colour, lw=lw, marker="o", ms=4,
-            label=label)
+    # D, E and F dashed (keeping their colours) so the six curves separate more clearly.
+    style = "--" if compound in ("D", "E", "F") else "-"
+    ax.plot(TIME_POINTS, m.loc[compound].to_numpy(), color=colour, lw=lw, ls=style, marker="o",
+            ms=4, label=label)
 
 ax.set_xlabel("Time point (mixing to plateau)")
 ax.set_ylabel("Mean absorbance (colour intensity)")
