@@ -48,33 +48,29 @@ conc = adf["concentration"].to_numpy(float)
 
 fig, (axS, axL) = plt.subplots(1, 2, figsize=(11.6, 5.4))
 
-# --- Panel A: scores, colour = compound, shape = pH level, size = concentration level ---
-# Circle for low pH (acidic), up triangle for high pH; small marker at low concentration, large
-# marker at high concentration. Colour stays the chromogen so all three read at once.
+# --- Panel A: scores, colour = compound, shape = pH level, size proportional to concentration ---
+# Down triangle for low pH (acidic), circle for high pH. Marker area grows with the coded
+# concentration, so a bigger marker is a higher concentration. Colour stays the chromogen.
+size = 22 + 78 * (conc + 1) / 2          # coded concentration in [-1, 1] -> marker area
 for c, colour in zip(COMPOUND_LEVELS, palette):
-    for lo_pH, marker in ((True, "o"), (False, "^")):
-        for lo_conc, size in ((True, 34), (False, 96)):
-            m = (compound == c) & ((pH < 0) == lo_pH) & ((conc < 0) == lo_conc)
-            if m.any():
-                axS.scatter(scores[m, 0], scores[m, 1], s=size, color=colour, marker=marker,
-                            edgecolor="w", linewidth=0.5)
+    for lo_pH, marker in ((True, "v"), (False, "o")):
+        m = (compound == c) & ((pH < 0) == lo_pH)
+        if m.any():
+            axS.scatter(scores[m, 0], scores[m, 1], s=size[m], color=colour, marker=marker,
+                        edgecolor="w", linewidth=0.5)
 axS.axhline(0, color="0.7", lw=0.7)
 axS.axvline(0, color="0.7", lw=0.7)
 axS.set_xlabel(f"PLS score t1 (R2Y cumulative = {r2_1:.2f})")
 axS.set_ylabel(f"PLS score t2 (+{r2_2:.2f})")
-axS.set_title("(a) Score plot: colour = chromogen, shape = pH, size = concentration",
+axS.set_title("(a) Score plot: colour = chromogen, shape = pH, size proportional to concentration",
               fontsize=9.5, loc="left")
 
 colour_handles = [Line2D([], [], marker="o", ls="", color=colour, markeredgecolor="w",
                          label="A (ref)" if c == "A" else c)
                   for c, colour in zip(COMPOUND_LEVELS, palette)]
 enc_handles = [
-    Line2D([], [], marker="o", ls="", color="0.35", markeredgecolor="w", label="low pH"),
-    Line2D([], [], marker="^", ls="", color="0.35", markeredgecolor="w", label="high pH"),
-    Line2D([], [], marker="o", ls="", color="0.35", markeredgecolor="w", markersize=5,
-           label="low concentration"),
-    Line2D([], [], marker="o", ls="", color="0.35", markeredgecolor="w", markersize=10,
-           label="high concentration"),
+    Line2D([], [], marker="v", ls="", color="0.35", markeredgecolor="w", label="low pH"),
+    Line2D([], [], marker="o", ls="", color="0.35", markeredgecolor="w", label="high pH"),
 ]
 leg1 = axS.legend(handles=colour_handles, frameon=False, fontsize=8, ncol=2, loc="lower left",
                   title="chromogen")
@@ -95,9 +91,67 @@ def term_compound(name):
 wcolours = [compound_colour[term_compound(n)] if term_compound(n) else "black" for n in wstar.index]
 axL.scatter(wstar.iloc[:, 0], wstar.iloc[:, 1], s=44, c=wcolours, marker="o",
             edgecolor="w", linewidth=0.5, zorder=3)
-for name, (a, b) in zip(wstar.index, wstar.iloc[:, :2].to_numpy()):
-    axL.annotate(short(name), (a, b), fontsize=6.5, color="0.2",
-                 xytext=(3, 2), textcoords="offset points")
+
+# Fix the axis extent (over both point clouds, with padding) before the label repulsion, so the
+# transforms stay stable while labels move and none is pushed off the panel.
+allxy = np.vstack([wstar.iloc[:, :2].to_numpy(), cweights.iloc[:, :2].to_numpy()])
+padx = 0.12 * (allxy[:, 0].max() - allxy[:, 0].min())
+pady = 0.10 * (allxy[:, 1].max() - allxy[:, 1].min())
+axL.set_xlim(allxy[:, 0].min() - padx, allxy[:, 0].max() + padx)
+axL.set_ylim(allxy[:, 1].min() - pady, allxy[:, 1].max() + pady)
+
+# The 24 term labels overlap badly where the interaction terms cluster. Place each label with a
+# leader line and push the labels apart with a small deterministic repulsion pass (a light-weight
+# stand-in for adjustText: no randomness, so the layout is reproducible).
+anns = [axL.annotate(short(name), xy=(a, b), xytext=(a, b), textcoords="data", fontsize=6.3,
+                     color="0.15", zorder=4,
+                     arrowprops=dict(arrowstyle="-", lw=0.4, color="0.55", shrinkA=0, shrinkB=3))
+        for name, (a, b) in zip(wstar.index, wstar.iloc[:, :2].to_numpy())]
+
+
+def repel_labels(ax, annotations, anchor_disp, iterations=600, step=1.3, spring=0.02):
+    """Separate overlapping labels by repelling them, with a spring back to each anchor so the
+    leader lines stay short, and a clamp keeping every label inside the axes. Deterministic."""
+    fig.canvas.draw()
+    rend = fig.canvas.get_renderer()
+    inv = ax.transData.inverted()
+    axbb = ax.get_window_extent(rend)
+    for _ in range(iterations):
+        boxes = [a.get_window_extent(rend) for a in annotations]
+        any_move = False
+        for i, a in enumerate(annotations):
+            bi = boxes[i]
+            cix, ciy = (bi.x0 + bi.x1) / 2, (bi.y0 + bi.y1) / 2
+            hw, hh = (bi.x1 - bi.x0) / 2, (bi.y1 - bi.y0) / 2
+            rx = ry = 0.0
+            for j, bj in enumerate(boxes):
+                if i != j and bi.overlaps(bj):
+                    ox, oy = cix - (bj.x0 + bj.x1) / 2, ciy - (bj.y0 + bj.y1) / 2
+                    norm = (ox * ox + oy * oy) ** 0.5 or 1.0
+                    rx += ox / norm
+                    ry += oy / norm
+            ax_, ay_ = anchor_disp[i]
+            for px, py in anchor_disp:                       # keep labels off the markers
+                ox, oy = cix - px, ciy - py
+                d2 = ox * ox + oy * oy
+                if d2 < 13 ** 2:
+                    norm = d2 ** 0.5 or 1.0
+                    rx += 0.3 * ox / norm
+                    ry += 0.3 * oy / norm
+            rnorm = (rx * rx + ry * ry) ** 0.5
+            mx = (step * rx / rnorm if rnorm else 0.0) + spring * (ax_ - cix)
+            my = (step * ry / rnorm if rnorm else 0.0) + spring * (ay_ - ciy)
+            if abs(mx) > 0.05 or abs(my) > 0.05:
+                nx = min(max(cix + mx, axbb.x0 + hw), axbb.x1 - hw)
+                ny = min(max(ciy + my, axbb.y0 + hh), axbb.y1 - hh)
+                px0, py0 = ax.transData.transform(a.get_position())
+                a.set_position(inv.transform((px0 + (nx - cix), py0 + (ny - ciy))))
+                any_move = True
+        if not any_move:
+            break
+
+
+repel_labels(axL, anns, axL.transData.transform(wstar.iloc[:, :2].to_numpy()))
 
 # Time points t0 -> t9: red circles, joined by a faint trajectory line.
 tvals = cweights.iloc[:, :2].to_numpy()
