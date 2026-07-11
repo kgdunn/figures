@@ -165,9 +165,8 @@ def repel_labels(ax, annotations, anchor_disp, iterations=600, step=1.3, spring=
 
 repel_labels(axL, anns, axL.transData.transform(wstar.iloc[:, :2].to_numpy()))
 
-# Time points t0 -> t9: red circles, joined by a faint trajectory line.
+# Time points t0 -> t9: red circles (no connecting line; it clashed with the label leader lines).
 tvals = cweights.iloc[:, :2].to_numpy()
-axL.plot(tvals[:, 0], tvals[:, 1], color="#c0392b", lw=1.0, alpha=0.5, zorder=2)
 axL.scatter(tvals[:, 0], tvals[:, 1], s=40, color="#c0392b", marker="o", edgecolor="w",
             linewidth=0.5, zorder=3)
 for lbl in ("t0", "t4", "t9"):
