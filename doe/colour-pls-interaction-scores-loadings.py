@@ -48,22 +48,24 @@ conc = adf["concentration"].to_numpy(float)
 
 fig, (axS, axL) = plt.subplots(1, 2, figsize=(11.6, 5.4))
 
-# --- Panel A: scores, colour = compound, shape = pH level, size proportional to concentration ---
-# Down triangle for low pH (acidic), circle for high pH. Marker area grows with the coded
-# concentration, so a bigger marker is a higher concentration. Colour stays the chromogen.
+# --- Panel A: scores, four encodings ---
+# colour = compound; shape = pH (down triangle low, circle high); marker area grows with the coded
+# concentration; fill opacity shows temperature (faint low, solid high). The size and temperature
+# keys are stated as text in the lower-right legend rather than with extra sample markers.
+temp = adf["temperature"].to_numpy(float)
 size = 22 + 78 * (conc + 1) / 2          # coded concentration in [-1, 1] -> marker area
 for c, colour in zip(COMPOUND_LEVELS, palette):
     for lo_pH, marker in ((True, "v"), (False, "o")):
-        m = (compound == c) & ((pH < 0) == lo_pH)
-        if m.any():
-            axS.scatter(scores[m, 0], scores[m, 1], s=size[m], color=colour, marker=marker,
-                        edgecolor="w", linewidth=0.5)
+        for lo_temp, alpha in ((True, 0.45), (False, 1.0)):
+            m = (compound == c) & ((pH < 0) == lo_pH) & ((temp < 0) == lo_temp)
+            if m.any():
+                axS.scatter(scores[m, 0], scores[m, 1], s=size[m], color=colour, marker=marker,
+                            alpha=alpha, edgecolor="w", linewidth=0.5)
 axS.axhline(0, color="0.7", lw=0.7)
 axS.axvline(0, color="0.7", lw=0.7)
 axS.set_xlabel(f"PLS score t1 (R2Y cumulative = {r2_1:.2f})")
 axS.set_ylabel(f"PLS score t2 (+{r2_2:.2f})")
-axS.set_title("(a) Score plot: colour = chromogen, shape = pH, size proportional to concentration",
-              fontsize=9.5, loc="left")
+axS.set_title("(a) Score plot: colour = chromogen, shape = pH", fontsize=9.5, loc="left")
 
 colour_handles = [Line2D([], [], marker="o", ls="", color=colour, markeredgecolor="w",
                          label="A (ref)" if c == "A" else c)
@@ -71,11 +73,14 @@ colour_handles = [Line2D([], [], marker="o", ls="", color=colour, markeredgecolo
 enc_handles = [
     Line2D([], [], marker="v", ls="", color="0.35", markeredgecolor="w", label="low pH"),
     Line2D([], [], marker="o", ls="", color="0.35", markeredgecolor="w", label="high pH"),
+    Line2D([], [], marker="None", ls="", label=r"size $\propto$ concentration"),
+    Line2D([], [], marker="None", ls="", label="faint fill = low temperature"),
+    Line2D([], [], marker="None", ls="", label="solid fill = high temperature"),
 ]
 leg1 = axS.legend(handles=colour_handles, frameon=False, fontsize=8, ncol=2, loc="lower left",
                   title="chromogen")
 axS.add_artist(leg1)
-axS.legend(handles=enc_handles, frameon=False, fontsize=8, loc="lower right")
+axS.legend(handles=enc_handles, frameon=False, fontsize=8, loc="lower right", handletextpad=0.6)
 axS.grid(alpha=0.2)
 
 
