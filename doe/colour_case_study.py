@@ -247,6 +247,37 @@ def fit_coding(design, curves, coding: str = "sum", *, order=None, n_components:
     return PLS(n_components=n_components, scale=True).fit(X, curves), design_info
 
 
+def ground_truth_curve(compound: str, coded, *, noise_sd: float = 0.0, rng=None) -> np.ndarray:
+    """The withheld ground-truth colour curve for ``compound`` at coded continuous settings
+    [concentration, co_solvent, pH, temperature].
+
+    The amplitude model is linear by construction, so this extrapolates smoothly for ``|coded| > 1``:
+    that is the point of validating an inversion that steps outside the studied window (a designed
+    experiment establishes the factor effects, so mild extrapolation is a testable next-run
+    hypothesis, as in RSM steepest-ascent exploration). ``noise_sd = 0`` gives the clean curve for a
+    like-for-like comparison against the reference.
+    """
+    g = GROUND_TRUTH[compound]
+    amp = (_BASE_AMP + _CONC_SLOPE * coded[0] + g["co_solvent"] * coded[1]
+           + g["pH"] * coded[2] + g["temperature"] * coded[3])
+    amp = max(amp, 0.05)
+    curve = amp * np.clip(REF_SHAPE + g["drift"] * TAIL_BASIS, 0.0, None)
+    if noise_sd and rng is not None:
+        curve = curve + rng.normal(0.0, noise_sd, curve.size)
+    return curve
+
+
+def shape_floor(compound: str, reference: str = "A") -> tuple[float, float]:
+    """Smallest RMSE to the ``reference`` (at its centre point) that ``compound`` can reach at ANY
+    amplitude: the limit set by its fixed late-time shape (drift), which no continuous-factor setting
+    can move. Returns (rmse, best_amplitude). This is the floor an inversion can approach but not beat.
+    """
+    goal = np.clip(REF_SHAPE + GROUND_TRUTH[reference]["drift"] * TAIL_BASIS, 0.0, None)
+    shp = np.clip(REF_SHAPE + GROUND_TRUTH[compound]["drift"] * TAIL_BASIS, 0.0, None)
+    a = float(shp @ goal / (shp @ shp))
+    return float(np.sqrt(np.mean((a * shp - goal) ** 2))), a
+
+
 def curve_match_inversion(design, curves, coding: str = "sum",
                           compounds=("B", "C", "D", "E", "F")) -> pd.DataFrame:
     """Coding-invariant inversion: for each compound, the continuous settings whose *predicted
