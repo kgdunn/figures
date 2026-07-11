@@ -169,10 +169,14 @@ repel_labels(axL, anns, axL.transData.transform(wstar.iloc[:, :2].to_numpy()))
 tvals = cweights.iloc[:, :2].to_numpy()
 axL.scatter(tvals[:, 0], tvals[:, 1], s=40, color="#c0392b", marker="o", edgecolor="w",
             linewidth=0.5, zorder=3)
-for lbl in ("t0", "t4", "t9"):
+# Label only t2, t5, t9; pull them out to the right and fan them by height, each with a leader line
+# in the same style as the model-term labels, since the time points sit in a tight cluster.
+tp_offsets = {"t2": (20, -16), "t5": (24, 0), "t9": (20, 16)}
+for lbl, off in tp_offsets.items():
     i = list(cweights.index).index(lbl)
-    axL.annotate(lbl, tvals[i], fontsize=8, color="#7a2318", xytext=(4, -9),
-                 textcoords="offset points")
+    axL.annotate(lbl, tvals[i], fontsize=8, color="#7a2318", ha="left", va="center",
+                 xytext=off, textcoords="offset points",
+                 arrowprops=dict(arrowstyle="-", lw=0.4, color="0.55", shrinkA=0, shrinkB=3))
 
 axL.axhline(0, color="0.7", lw=0.7)
 axL.axvline(0, color="0.7", lw=0.7)
