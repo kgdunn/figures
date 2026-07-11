@@ -33,7 +33,8 @@ for ax, group, title in [(axes[0], hard, "Hard-to-change factors: held over whol
         ax.step(x, v, where="post", color=palette[name], lw=1.6,
                 label=f"{name} ({n_changes(v)} changes)")
     ax.set_ylabel("coded level")
-    ax.set_ylim(-1.25, 1.25)
+    # A little headroom above the +1 line so the legend clears the step traces.
+    ax.set_ylim(-1.25, 1.9)
     ax.set_yticks([-1, 0, 1])
     ax.grid(axis="y", alpha=0.25)
     ax.set_title(title, fontsize=10, loc="left")
