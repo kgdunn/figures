@@ -38,7 +38,10 @@ def main():
     curves = simulate_curves(design)
     goal = ground_truth_curve("A", [0, 0, 0, 0])   # reference: A at centre, noiseless
 
+    # Closeness is measured on the developed curve (t1 onward); t0 is near-zero, noise-dominated.
+    dev = slice(1, None)
     print(f"reference = A at centre; peak ~ {goal.max():.2f}; measurement noise SD = {NOISE}")
+    print("Closeness measured on the developed curve (t1 onward).")
     print("\nShape floor (best RMSE to A at any amplitude; set by drift alone):")
     for c in ["B", "C", "D", "E", "F"]:
         rmse, amp = shape_floor(c)
@@ -48,7 +51,7 @@ def main():
     cm = curve_match_inversion(design, curves, "treatment")
     for c in ["B", "C", "D", "E", "F"]:
         cd = [float(cm.loc[c, f"{n}_coded"]) for n in CONT]
-        rmse = float(np.sqrt(np.mean((ground_truth_curve(c, cd) - goal) ** 2)))
+        rmse = float(np.sqrt(np.mean((ground_truth_curve(c, cd)[dev] - goal[dev]) ** 2)))
         real = coded_to_real(cd)
         outside = [n for i, n in enumerate(CONT) if abs(cd[i]) > 1 + 1e-9]
         rl = f"conc {real['concentration']:.1f}, co-solv {real['co_solvent']:.1f}, pH {real['pH']:.1f}, T {real['temperature']:.0f}"
@@ -60,7 +63,7 @@ def main():
     tbl = invert_to_factors(pls_c, di_c, goal_projection(pls_c, di_c)["score"])
     for c in ["B", "C", "D", "E", "F"]:
         cd = [float(tbl.loc[c, f"{n}_coded"]) for n in CONT]
-        rmse = float(np.sqrt(np.mean((ground_truth_curve(c, cd) - goal) ** 2)))
+        rmse = float(np.sqrt(np.mean((ground_truth_curve(c, cd)[dev] - goal[dev]) ** 2)))
         inr = bool(np.all(np.abs(cd) <= 1 + 1e-9))
         print(f"  {c}: RMSE {rmse:.4f} ({rmse / NOISE:.1f}x noise)  in_range={inr}")
 
