@@ -51,9 +51,9 @@ axR.axvline(2 * NOISE, color="0.6", lw=1.0, ls=":", zorder=1)
 axR.text(NOISE, len(order) - 0.45, " 1x noise", color="#2e8b57", fontsize=8, va="top", ha="left")
 axR.text(2 * NOISE, len(order) - 0.45, " 2x noise", color="0.5", fontsize=8, va="top", ha="left")
 for c in order:
-    floor_rmse, _ = shape_floor(c)
+    floor_rmse, _ = shape_floor(c)                     # developed curve (t1 onward) by default
     cd = [float(cm.loc[c, f"{n}_coded"]) for n in CONT]
-    got = float(np.sqrt(np.mean((ground_truth_curve(c, cd) - goal) ** 2)))
+    got = float(np.sqrt(np.mean((ground_truth_curve(c, cd)[1:] - goal[1:]) ** 2)))   # t1 onward
     axR.plot([floor_rmse], [y[c]], marker="o", ms=9, mfc="w", mec=palette[c], mew=1.6, zorder=4)
     axR.plot([got], [y[c]], marker="o", ms=8, color=palette[c], zorder=4)
     axR.plot([floor_rmse, got], [y[c], y[c]], color=palette[c], lw=1.0, alpha=0.5, zorder=3)
