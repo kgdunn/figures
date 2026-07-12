@@ -272,15 +272,19 @@ def ground_truth_curve(compound: str, coded, *, noise_sd: float = 0.0, rng=None)
     return curve
 
 
-def shape_floor(compound: str, reference: str = "A") -> tuple[float, float]:
+def shape_floor(compound: str, reference: str = "A", include_t0: bool = False) -> tuple[float, float]:
     """Smallest RMSE to the ``reference`` (at its centre point) that ``compound`` can reach at ANY
     amplitude: the limit set by its fixed late-time shape (drift), which no continuous-factor setting
     can move. Returns (rmse, best_amplitude). This is the floor an inversion can approach but not beat.
+
+    Closeness is measured on the developed curve (``t1`` onward) by default: ``t0`` is near zero and
+    noise-dominated, so it carries no shape information. Pass ``include_t0=True`` for the full curve.
     """
     goal = np.clip(REF_SHAPE + GROUND_TRUTH[reference]["drift"] * TAIL_BASIS, 0.0, None)
     shp = np.clip(REF_SHAPE + GROUND_TRUTH[compound]["drift"] * TAIL_BASIS, 0.0, None)
-    a = float(shp @ goal / (shp @ shp))
-    return float(np.sqrt(np.mean((a * shp - goal) ** 2))), a
+    sl = slice(None) if include_t0 else slice(1, None)
+    a = float(shp[sl] @ goal[sl] / (shp[sl] @ shp[sl]))
+    return float(np.sqrt(np.mean((a * shp[sl] - goal[sl]) ** 2))), a
 
 
 def curve_match_inversion(design, curves, coding: str = "sum",

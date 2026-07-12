@@ -44,6 +44,10 @@ ax.axvline(0, color="0.75", lw=0.9, zorder=1)
 for xline in (-1, 1):
     ax.axvline(xline, color="0.55", ls="--", lw=1.0, zorder=1)
 
+# Light dashed separators between the factor rows, so each factor reads as its own lane.
+for ysep in np.arange(len(factors) - 1) + 0.5:
+    ax.axhline(ysep, color="0.8", ls="--", lw=0.7, zorder=1)
+
 for f in factors:
     y = yrows[f]
     for c in candidates:
