@@ -205,6 +205,58 @@ def evaluate(design: np.ndarray, *, fds_resolution: int = 200) -> dict:
     }
 
 
+def ball_fds_curve(
+    design: np.ndarray, *, radius: float = 1.0, n_samples: int = N_EVAL, random_seed: int = EVAL_SEED,
+) -> dict[str, list[float]]:
+    """FDS curve of the scaled prediction variance over the ball of the given radius.
+
+    ``process_improve``'s ``evaluate_design`` samples the "spherical" region on the sphere
+    that circumscribes the cube (radius sqrt(k)); to show the shell designs (Doehlert, the
+    inscribed CCD) on the region they are actually built for, this samples the ball of a
+    chosen ``radius`` directly. Points are drawn uniformly inside the ball, with an extra
+    fifth on the bounding sphere so the worst-case (boundary) prediction variance is
+    represented, and scored as SPV = N * x'(X'X)^-1 x on the same second-order model.
+
+    Parameters
+    ----------
+    design : numpy.ndarray
+        Coded design matrix, one column per factor.
+    radius : float
+        Radius of the ball to integrate over. ``1.0`` is the unit ball, the natural region
+        for the uniform-shell designs.
+    n_samples : int
+        Number of interior points sampled.
+    random_seed : int
+        Seed for reproducibility.
+
+    Returns
+    -------
+    dict
+        ``{"fraction": [...], "scaled_prediction_variance": [...]}``, matching the curve
+        dict ``evaluate`` returns for the cube region.
+    """
+    d = np.asarray(design, float)
+    n, k = d.shape
+    x_model = _model_matrix(d)
+    xtx = x_model.T @ x_model
+    xtx_inv = np.linalg.pinv(xtx) if np.linalg.matrix_rank(xtx) < xtx.shape[0] else np.linalg.inv(xtx)
+
+    rng = np.random.default_rng(random_seed)
+    directions = rng.normal(size=(n_samples, k))
+    directions /= np.linalg.norm(directions, axis=1, keepdims=True)
+    radii = radius * rng.uniform(0.0, 1.0, size=(n_samples, 1)) ** (1.0 / k)
+    interior = directions * radii
+    boundary = rng.normal(size=(n_samples // 5, k))
+    boundary = radius * boundary / np.linalg.norm(boundary, axis=1, keepdims=True)
+    points = np.vstack([interior, boundary])
+
+    x_pts = _model_matrix(points)
+    spv = np.sort(n * np.sum((x_pts @ xtx_inv) * x_pts, axis=1))
+    total = len(spv)
+    fraction = [(i + 1) / total for i in range(total)]
+    return {"fraction": fraction, "scaled_prediction_variance": spv.tolist()}
+
+
 def _model_matrix(design: np.ndarray) -> np.ndarray:
     """Return the 10-column second-order model matrix [1 | x_i | x_i x_j | x_i^2]."""
     d = np.asarray(design, float)
@@ -223,6 +275,7 @@ __all__ = [
     "LABELS",
     "MODEL_FORMULA",
     "STYLES",
+    "ball_fds_curve",
     "build_designs",
     "ccd_matrix",
     "doehlert_matrix",
