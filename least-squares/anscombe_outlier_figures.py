@@ -194,7 +194,8 @@ def outlier_figures(outdir: pathlib.Path) -> None:
         ax.set_xlabel("x", fontsize=17)
         ax.set_ylabel("y", fontsize=17)
         ax.tick_params(labelsize=15)
-        ax.legend(loc="upper left", frameon=False, fontsize=12)
+        ax.margins(y=0.15)
+        ax.legend(loc="lower right", frameon=False, fontsize=12)
     save(fig, outdir, "influence-of-outliers.png")
 
     # Hat values: models B and C share the same x values.
@@ -220,11 +221,13 @@ def outlier_figures(outdir: pathlib.Path) -> None:
     axes[0].set_ylabel("Hat value, $h_i$", fontsize=17)
     save(fig, outdir, "hatvalue-of-outliers.png")
 
+    # Each panel keeps its own y-axis, as the originals did: the huge
+    # values in one model must not flatten the other panels.
     for name, index, ylabel in (
-        ("studentized-residuals.png", 3, "Studentized residual, $e_i^*$"),
-        ("cooks-distance.png", 4, "Cook's D, $D_i$"),
+        ("studentized-residuals.png", 3, "Studentized residuals"),
+        ("cooks-distance.png", 4, "Cook's distance"),
     ):
-        fig, axes = plt.subplots(1, 3, figsize=(16, 5.3), sharey=True)
+        fig, axes = plt.subplots(1, 3, figsize=(16, 5.3), sharey=False)
         for ax, (xm, ym), title in zip(axes, models, titles):
             values = _diagnostics(xm, ym)[index]
             ax.grid(color=GRID, linewidth=0.8)
@@ -232,11 +235,18 @@ def outlier_figures(outdir: pathlib.Path) -> None:
                     markersize=7, alpha=0.8)
             ax.plot(len(xm), values[-1], "s", color=VERMILLION, markersize=10,
                     markerfacecolor="none", markeredgewidth=2.5)
-            ax.axhline(0, color="black", linewidth=1)
+            if index == 3:
+                ax.axhline(0, color="black", linewidth=1)
+            else:
+                cutoff = 4 / (len(xm) - 2)
+                ax.axhline(cutoff, color=VERMILLION, linestyle="--", linewidth=2)
+                ax.text(0.03, cutoff, "Cutoff", fontsize=13, va="bottom",
+                        transform=ax.get_yaxis_transform())
+            ax.margins(y=0.12)
             ax.set_title(title, fontsize=18)
-            ax.set_xlabel("Order of the x-data", fontsize=17)
+            ax.set_xlabel("Order of the data", fontsize=17)
+            ax.set_ylabel(ylabel, fontsize=17)
             ax.tick_params(labelsize=15)
-        axes[0].set_ylabel(ylabel, fontsize=17)
         save(fig, outdir, name)
 
 

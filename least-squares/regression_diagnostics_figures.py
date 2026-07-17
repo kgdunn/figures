@@ -122,22 +122,31 @@ def _qq_axes(ax, values, title):
 
 
 def correlation_calculation(outdir: pathlib.Path) -> None:
-    rng = np.random.default_rng(6)
+    # Seed chosen so the four r values land where the captions need
+    # them: strongly negative, near zero, moderate, and near zero for
+    # the quadratic relationship.
+    rng = np.random.default_rng(15)
     N = 30
     x1 = rng.normal(12, 4, N)
+    y1 = -4.2 * x1 + rng.normal(0, 8, N)
+    x2 = rng.normal(12, 4, N)
+    y2 = rng.normal(0, 8, N)
+    x3 = rng.normal(0, 9, N)
+    y3 = 0.28 * x3 + rng.normal(50, 4, N)
+    x4 = rng.normal(0, 9, N)
+    y4 = x4 ** 2 + rng.normal(50, 20, N)
     panels = [
-        (x1, -4.2 * x1 + rng.normal(0, 8, N), "A strong negative correlation"),
-        (rng.normal(12, 4, N), rng.normal(0, 8, N), "Essentially no correlation"),
-        (rng.normal(0, 9, N), None, "A moderate, positive correlation"),
-        (rng.normal(0, 9, N), None, "A relationship, but no correlation"),
+        (x1, y1, "A strong negative correlation"),
+        (x2, y2, "Essentially no correlation"),
+        (x3, y3, "A moderate, positive correlation"),
+        (x4, y4, "A relationship, but no correlation"),
     ]
-    x3 = panels[2][0]
-    panels[2] = (x3, 0.28 * x3 + rng.normal(50, 4, N), panels[2][2])
-    x4 = panels[3][0]
-    panels[3] = (x4, x4 ** 2 + rng.normal(50, 20, N), panels[3][2])
 
+    # Text positions chosen per panel so the annotation sits in the
+    # empty region of that panel's point cloud.
+    positions = [(0.72, 0.90), (0.50, 0.03), (0.26, 0.90), (0.50, 0.88)]
     fig, axes = plt.subplots(2, 2, figsize=(14, 14))
-    for ax, (x, y, title) in zip(axes.flat, panels):
+    for ax, (x, y, title), pos in zip(axes.flat, panels, positions):
         r = np.corrcoef(x, y)[0, 1]
         ax.grid(color=GRID, linewidth=0.8)
         ax.plot(x, y, "o", color=BLUE, markersize=8, alpha=0.8)
@@ -145,8 +154,9 @@ def correlation_calculation(outdir: pathlib.Path) -> None:
         ax.set_xlabel("x")
         ax.set_ylabel("y")
         ax.text(
-            0.5, 0.06 if r > 0.3 else 0.9, f"r(x, y) = {r:.3f}",
+            *pos, f"r(x, y) = {r:.3f}",
             transform=ax.transAxes, ha="center", fontsize=22,
+            bbox=dict(facecolor="white", edgecolor="none", alpha=0.85, pad=2),
         )
     save(fig, outdir, "correlation-calculation.png")
 
@@ -225,49 +235,53 @@ def _acf(series, nlags):
 
 
 def demonstrate_autocorrelation(outdir: pathlib.Path) -> None:
-    # Seed and AR coefficient chosen so the leading run of significant
-    # lags is exactly 16, 1 and 1: the gaps the chapter prose quotes.
-    rng = np.random.default_rng(31)
-    n, nlags = 500, 25
-    e = rng.normal(0, 1, (3, n + 1))
-    slow = np.zeros(n)
-    for k in range(1, n):
-        slow[k] = 0.86 * slow[k - 1] + e[0, k]
-    ma_pos = e[1, 1:] + 0.9 * e[1, :-1]
-    ma_neg = e[2, 1:] - 0.9 * e[2, :-1]
+    # Same design as the original figure: three AR(1) processes with
+    # phi = 0.95, 0.3 and -0.6, the autocorrelation function on top and
+    # the series itself below. The seed is chosen so the leading run of
+    # significant lags is exactly 16, 1 and 1: the sub-sampling gaps
+    # the chapter prose quotes.
+    rng = np.random.default_rng(153)
+    n, nlags = 100, 20
+    e = rng.normal(0, 1, (3, n))
+    cases = []
+    for i, (phi, title) in enumerate((
+        (0.95, r"Long autocorrelation: $\phi = 0.95$"),
+        (0.3, r"Medium autocorrelation: $\phi = 0.3$"),
+        (-0.6, r"Negative autocorrelation: $\phi = -0.6$"),
+    )):
+        series = np.zeros(n)
+        for k in range(1, n):
+            series[k] = phi * series[k - 1] + e[i, k]
+        cases.append((series, title))
 
-    cases = [
-        (slow, "Slowly drifting process"),
-        (ma_pos, "Correlated with the\nprevious value only"),
-        (ma_neg, "Negatively correlated\nwith the previous value"),
-    ]
     bound = 1.96 / np.sqrt(n)
     fig, axes = plt.subplots(2, 3, figsize=(14, 9.3))
     for col, (series, title) in enumerate(cases):
         ax = axes[0, col]
         ax.grid(color=GRID, linewidth=0.6)
-        ax.plot(series[:200], color=BLUE, linewidth=0.9)
+        acf = _acf(series, nlags)
+        markers, stems, base = ax.stem(np.arange(nlags + 1), acf, basefmt="k-")
+        plt.setp(stems, color=BLUE, linewidth=1.8)
+        plt.setp(markers, color=BLUE, markersize=5)
+        for b in (-bound, bound):
+            ax.axhline(b, color=VERMILLION, linewidth=1.2, linestyle="--")
+        run = 1
+        while run <= nlags and abs(acf[run]) > bound:
+            run += 1
+        ax.text(0.97, 0.85, f"Significant\nto lag {run - 1}",
+                transform=ax.transAxes, ha="right", fontsize=13)
         ax.set_title(title, fontsize=15)
-        ax.set_xlabel("Time order", fontsize=14)
+        ax.set_xlabel("Lag", fontsize=14)
         ax.tick_params(labelsize=13)
 
         ax = axes[1, col]
         ax.grid(color=GRID, linewidth=0.6)
-        acf = _acf(series, nlags)
-        markers, stems, base = ax.stem(np.arange(nlags + 1), acf, basefmt="k-")
-        plt.setp(stems, color=BLUE, linewidth=1.5)
-        plt.setp(markers, color=BLUE, markersize=4)
-        for b in (-bound, bound):
-            ax.axhline(b, color=VERMILLION, linewidth=1.2, linestyle="--")
-        ax.set_xlabel("Lag", fontsize=14)
-        ax.set_ylim(-1.05, 1.05)
+        ax.plot(series, "o-", color=BLUE, markersize=3.5, linewidth=0.9)
+        ax.axhline(0, color=GREY, linewidth=1, linestyle="--")
+        ax.set_xlabel("Index", fontsize=14)
         ax.tick_params(labelsize=13)
-        run = 1
-        while run <= nlags and abs(acf[run]) > bound:
-            run += 1
-        ax.set_title(f"Significant to lag {run - 1}", fontsize=15)
-    axes[0, 0].set_ylabel("Value", fontsize=14)
-    axes[1, 0].set_ylabel("Autocorrelation", fontsize=14)
+    axes[0, 0].set_ylabel("Autocorrelation", fontsize=14)
+    axes[1, 0].set_ylabel("Value", fontsize=14)
     save(fig, outdir, "demonstrate-autocorrelation.png")
 
 
@@ -297,10 +311,12 @@ def nonlinear_linear_region(outdir: pathlib.Path) -> None:
             linestyle="--")
     grid, fitted = _lowess(x, y, frac=0.4)
     ax.plot(grid, fitted, color=GREY, linewidth=1.5, linestyle=":")
-    ytext = y.max() * 0.95
+    # Placed in the empty band above the model-region points, below
+    # the legend.
+    ytext = y.max() * 0.66
     ax.annotate("", xy=(hi, ytext), xytext=(lo, ytext),
                 arrowprops=dict(arrowstyle="<->", color="black", linewidth=1.5))
-    ax.text((lo + hi) / 2, ytext * 0.955, "Model region", ha="center",
+    ax.text((lo + hi) / 2, ytext + y.max() * 0.02, "Model region", ha="center",
             fontsize=16)
     ax.set_xlabel("x", fontsize=17)
     ax.set_ylabel("y", fontsize=17)

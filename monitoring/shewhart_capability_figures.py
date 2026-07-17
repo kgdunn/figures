@@ -143,11 +143,13 @@ def explain_pcr(outdir: pathlib.Path, cp: float, name: str) -> None:
     ax.grid(color=GRID, linewidth=0.8)
     ax.plot(x, stats.norm.pdf(x, mean, sd), color=BLUE, linewidth=2.5)
     ax.axvline(mean, color=GREY, linewidth=1, linestyle=":")
-    for v, label in ((lsl, "LSL = 65"), (usl, "USL = 95")):
+    top = stats.norm.pdf(mean, mean, sd)
+    for v, label, ha in ((lsl, "LSL = 65", "right"), (usl, "USL = 95", "left")):
         ax.axvline(v, color=VERMILLION, linewidth=2)
-        ax.text(v, ax.get_ylim()[1] * 0.97, label, ha="center", va="bottom",
-                color=VERMILLION, fontsize=18)
-    ax.set_title(f"Process capability ratio = {cp:g}", fontsize=20)
+        ax.text(v - 2 if ha == "right" else v + 2, top * 0.94, label,
+                ha=ha, va="top", color=VERMILLION, fontsize=18)
+    ax.set_ylim(0, top * 1.08)
+    ax.set_title(f"Process capability ratio = {cp:g}", fontsize=20, pad=12)
     ax.set_xlabel("Viscosity [cP]")
     ax.set_ylabel("Probability density")
     ax.set_xlim(20, 140)
