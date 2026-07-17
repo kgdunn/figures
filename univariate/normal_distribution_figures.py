@@ -120,6 +120,10 @@ def standardized_normal(outdir: pathlib.Path) -> None:
     x = np.linspace(-3.8, 3.8, 761)
     px = stats.norm.pdf(x)
     fig, ax = plt.subplots(figsize=(14, 7))
+    # Detach the axes from the plotting area, as the base-R original
+    # did: it keeps the 3-sigma arrow clear of the x-axis line.
+    ax.spines["left"].set_position(("outward", 20))
+    ax.spines["bottom"].set_position(("outward", 20))
     ax.plot(x, px, color=BLUE, linewidth=2.5)
     ax.axvline(0, color="black", linewidth=1)
     for k in (1, 2, 3):
@@ -240,6 +244,9 @@ def qq_basic_and_envelope(outdir: pathlib.Path) -> None:
     axes[1].plot(theo, lower, color=VERMILLION, linestyle="--", linewidth=1.5)
     axes[1].plot(theo, upper, color=VERMILLION, linestyle="--", linewidth=1.5)
     axes[1].set_title("With a 95% confidence envelope")
+    # Keep the y-axis spanning just the data, as R drew it; the wide
+    # confidence envelope is clipped rather than stretching the axis.
+    axes[0].set_ylim(66, 98)
     save(fig, outdir, "qqplot-from-R.png")
 
 
@@ -278,7 +285,8 @@ def qq_comparison(outdir: pathlib.Path) -> None:
     save(fig, outdir, "qqplot-comparison.png")
 
 
-def _two_distributions(ax, x, base_mean, base_sd, n, legend_loc="upper left"):
+def _two_distributions(ax, x, base_mean, base_sd, n, legend_loc="upper left",
+                       legend_pad=None):
     raw = stats.norm.pdf(x, loc=base_mean, scale=base_sd)
     sample = stats.norm.pdf(x, loc=base_mean, scale=base_sd / np.sqrt(n))
     ax.grid(color=GRID, linewidth=0.8)
@@ -286,7 +294,8 @@ def _two_distributions(ax, x, base_mean, base_sd, n, legend_loc="upper left"):
             label="Sample mean's distribution")
     ax.plot(x, raw, color=GREY, linewidth=1.5, label="Raw data's distribution")
     ax.axvline(base_mean, color="black", linewidth=1)
-    ax.legend(loc=legend_loc, frameon=False, fontsize=16)
+    kwargs = {} if legend_pad is None else {"borderaxespad": legend_pad}
+    ax.legend(loc=legend_loc, frameon=False, fontsize=16, **kwargs)
 
 
 def explain_confidence_interval(outdir: pathlib.Path) -> None:
@@ -306,7 +315,8 @@ def explain_confidence_interval(outdir: pathlib.Path) -> None:
     # Standardized version, with the 95% area between the critical values.
     fig, ax = plt.subplots(figsize=(10, 7))
     x = np.linspace(-3.5, 3.5, 701)
-    _two_distributions(ax, x, 0, 1, n, legend_loc="center right")
+    _two_distributions(ax, x, 0, 1, n, legend_loc="center right",
+                       legend_pad=0)
     ax.text(-2.2, 0.4, f"Sample size, n = {n}", ha="center")
     upper = stats.norm.ppf(0.975) / np.sqrt(n)
     for v in (-upper, upper):
