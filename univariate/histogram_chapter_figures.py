@@ -47,13 +47,17 @@ GRID = "#DDDDDD"
 
 DPI = 300
 
+# Font sizes match the pixel height of the labels in the base-R
+# originals (pointsize 14 with cex 1.5-2 at the same DPI).
 mpl.rcParams.update(
     {
-        "font.size": 13,
+        "font.size": 18,
         "axes.spines.top": False,
         "axes.spines.right": False,
-        "axes.titlesize": 14,
-        "axes.labelsize": 13,
+        "axes.titlesize": 21,
+        "axes.labelsize": 21,
+        "xtick.labelsize": 19,
+        "ytick.labelsize": 19,
         "axes.axisbelow": True,
     }
 )
@@ -81,6 +85,7 @@ def children_by_gender(outdir: pathlib.Path) -> None:
     ax.set_ylabel(f"Number of children (N = {sum(counts.values())})")
     ax.set_xlabel("Children born in Hamilton, April 2009, by gender")
     ax.set_ylim(0, 1500)
+    ax.set_yticks([0, 500, 1000, 1500])
     save(fig, outdir, "histogram-children-by-gender.png")
 
 
@@ -125,6 +130,7 @@ def histogram_70_30(outdir: pathlib.Path) -> None:
     ax.bar_label(bars, fmt="%.0f%%", padding=4)
     ax.set_ylabel("Percentage of tablets")
     ax.set_ylim(0, 100)
+    ax.set_yticks([0, 25, 50, 75, 100])
     save(fig, outdir, "histogram-70-30.png")
 
 
@@ -138,6 +144,7 @@ def histogram_4_cuts(outdir: pathlib.Path) -> None:
     ax.set_xlabel("Defect type")
     ax.set_ylabel(f"Number of defects (N = {N})")
     ax.set_ylim(0, 0.3 * N)
+    ax.set_yticks([0, 100, 200, 300])
     save(fig, outdir, "histogram-4-cuts.png")
 
 

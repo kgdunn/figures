@@ -37,13 +37,18 @@ GRID = "#DDDDDD"
 
 DPI = 300
 
+# Font sizes match the pixel height of the labels in the base-R
+# originals (pointsize 12-14 at the same DPI), slightly boosted.
 mpl.rcParams.update(
     {
-        "font.size": 13,
+        "font.size": 16,
         "axes.spines.top": False,
         "axes.spines.right": False,
-        "axes.titlesize": 14,
-        "axes.labelsize": 13,
+        "axes.titlesize": 19,
+        "axes.labelsize": 18,
+        "xtick.labelsize": 16,
+        "ytick.labelsize": 16,
+        "legend.fontsize": 14,
         "axes.axisbelow": True,
     }
 )

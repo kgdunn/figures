@@ -52,13 +52,18 @@ GRID = "#DDDDDD"
 DPI = 250
 HERE = pathlib.Path(__file__).parent
 
+# Font sizes match the pixel height of the labels in the base-R
+# originals (pointsize 14 with cex 1.8 at the same DPI).
 mpl.rcParams.update(
     {
-        "font.size": 13,
+        "font.size": 18,
         "axes.spines.top": False,
         "axes.spines.right": False,
-        "axes.titlesize": 14,
-        "axes.labelsize": 13,
+        "axes.titlesize": 22,
+        "axes.labelsize": 24,
+        "xtick.labelsize": 20,
+        "ytick.labelsize": 20,
+        "legend.fontsize": 18,
         "axes.axisbelow": True,
     }
 )
@@ -142,16 +147,21 @@ def dotplot_grouped(A, B, historical, outdir: pathlib.Path) -> None:
     top = ax.get_ylim()[1]
     ax.annotate(
         f"{difference:.2f}", xy=(difference, top * 0.97),
-        xytext=(difference + 1.3, top * 0.97),
-        arrowprops=dict(arrowstyle="<-", color="black"), va="center",
+        xytext=(difference + 1.6, top * 0.97),
+        arrowprops=dict(arrowstyle="<-", color="black", linewidth=1.8),
+        va="center", fontsize=20,
     )
     ax.text(
-        6.2, top * 0.75,
-        f"{beyond} of {len(diffs)} differences\nare at 3.04 or beyond (11%)",
-        ha="center", fontsize=11,
+        6.6, top * 0.68,
+        f"{beyond} of {len(diffs)} differences are\nat 3.04 or beyond (11%)",
+        ha="center", fontsize=16,
     )
     ax.set_xlim(-10, 10)
-    ax.set_xlabel("Difference between means of 2 adjacent groups (10 batches per group)")
+    ax.set_xticks([-10, -5, 0, 5, 10])
+    ax.set_xlabel(
+        "Difference between means of 2 adjacent groups (10 batches per group)",
+        fontsize=20,
+    )
     ax.set_yticks([])
     ax.spines["left"].set_visible(False)
     save(fig, outdir, "system-comparison-dotplot-grouped.png")
@@ -184,13 +194,16 @@ def autocorrelation_scatter(historical, outdir: pathlib.Path) -> None:
     ax.plot(x_k, x_next, "o", color=BLUE, markersize=5, alpha=0.65)
     grid, fitted = _lowess(x_k, x_next)
     ax.plot(grid, fitted, color=VERMILLION, linewidth=2.5, label="LOWESS trend")
-    ax.set_xlabel("Yield of batch $k$ [%]")
-    ax.set_ylabel("Yield of batch $k+1$ [%]")
-    ax.set_title("Autocorrelation between successive batch yields")
+    ax.set_xlabel("Yield of batch $k$ [%]", fontsize=19)
+    ax.set_ylabel("Yield of batch $k+1$ [%]", fontsize=19)
+    ax.set_title("Autocorrelation between successive batch yields", fontsize=18)
     ax.set_xlim(60, 100)
     ax.set_ylim(60, 100)
+    ax.set_xticks([60, 70, 80, 90, 100])
+    ax.set_yticks([60, 70, 80, 90, 100])
+    ax.tick_params(labelsize=17)
     ax.set_aspect("equal")
-    ax.legend(loc="upper right", frameon=False)
+    ax.legend(loc="upper right", frameon=False, fontsize=16)
     save(fig, outdir, "system-comparison-autocorrelation-scatterplot.png")
 
 

@@ -11,8 +11,10 @@ screenshot of R's ``car::scatterplot`` output):
   simulated number of white scalp hairs against bone mineral density,
   a correlation driven by the lurking variable age.
 - ``scatterplot-figures-with-regression-lines.png``: the same two
-  panels with least-squares regression lines added, and the axis
-  frames trimmed to the extent of the data, as the prose suggests.
+  panels with least-squares regression lines added, marginal box plots
+  along each axis (as R's ``car::scatterplot`` drew in the original
+  screenshot this replaces), and the axis frames trimmed to the extent
+  of the data, as the prose suggests.
 
 The white-hair data are seeded so the committed images regenerate
 exactly; the distillation data are fetched from openmv.net with a local
@@ -46,12 +48,16 @@ GRID = "#DDDDDD"
 DPI = 300
 HERE = pathlib.Path(__file__).parent
 
+# Font sizes match the pixel height of the labels in the base-R
+# originals (pointsize 14 at the same DPI), slightly boosted.
 mpl.rcParams.update(
     {
-        "font.size": 12,
+        "font.size": 15,
         "axes.spines.top": False,
         "axes.spines.right": False,
-        "axes.labelsize": 12,
+        "axes.labelsize": 16,
+        "xtick.labelsize": 14,
+        "ytick.labelsize": 14,
         "axes.axisbelow": True,
     }
 )
@@ -92,9 +98,31 @@ def draw(outdir: pathlib.Path, with_regression: bool, name: str) -> None:
             # Frames only as far as the data extend.
             ax.spines["left"].set_bounds(y.min(), y.max())
             ax.spines["bottom"].set_bounds(x.min(), x.max())
+            # Marginal box plots, as car::scatterplot drew them: the
+            # x-variable above the plot, the y-variable to its right.
+            boxprops = dict(
+                widths=0.6, patch_artist=True, showcaps=True,
+                medianprops=dict(color="black", linewidth=1.5),
+                boxprops=dict(facecolor="#B3D4EA", edgecolor=BLUE, linewidth=1.2),
+                whiskerprops=dict(color=BLUE, linewidth=1.2),
+                capprops=dict(color=BLUE, linewidth=1.2),
+                flierprops=dict(marker="o", markersize=3.5,
+                                markerfacecolor="none", markeredgecolor=BLUE),
+            )
+            top = ax.inset_axes([0, 1.02, 1, 0.10])
+            top.boxplot([x], orientation="horizontal", **boxprops)
+            top.set_xlim(ax.get_xlim())
+            right = ax.inset_axes([1.02, 0, 0.10, 1])
+            right.boxplot([y], orientation="vertical", **boxprops)
+            right.set_ylim(ax.get_ylim())
+            for marginal in (top, right):
+                marginal.set_xticks([])
+                marginal.set_yticks([])
+                for spine in marginal.spines.values():
+                    spine.set_visible(False)
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
-    fig.tight_layout()
+    fig.tight_layout(w_pad=3.5)
     fig.savefig(outdir / name, dpi=DPI)
     plt.close(fig)
     print(f"wrote {outdir / name}")

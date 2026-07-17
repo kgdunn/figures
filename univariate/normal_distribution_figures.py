@@ -64,13 +64,20 @@ DPI = 300
 # The ten batch yields quoted in the chapter (mean 80.0, std dev 8.35).
 YIELDS = np.array([86.2, 85.7, 71.9, 95.3, 77.1, 71.4, 68.9, 78.9, 86.9, 78.4])
 
+# Font sizes match the pixel height of the labels in the base-R
+# originals (pointsize 14 with cex 1.5-1.8 at the same DPI). The
+# six-panel CLT figure overrides these with smaller per-panel sizes,
+# because its original used the un-scaled R default.
 mpl.rcParams.update(
     {
-        "font.size": 13,
+        "font.size": 18,
         "axes.spines.top": False,
         "axes.spines.right": False,
-        "axes.titlesize": 14,
-        "axes.labelsize": 13,
+        "axes.titlesize": 22,
+        "axes.labelsize": 22,
+        "xtick.labelsize": 19,
+        "ytick.labelsize": 19,
+        "legend.fontsize": 18,
         "axes.axisbelow": True,
     }
 )
@@ -100,11 +107,12 @@ def simulate_clt(outdir: pathlib.Path) -> None:
         averages = throws[:m].mean(axis=0)
         ax.grid(axis="y", color=GRID, linewidth=0.8)
         ax.hist(averages, bins=bins, color=BLUE, edgecolor="white")
-        ax.set_xlabel(label)
+        ax.set_xlabel(label, fontsize=15)
         ax.set_xlim(0.5, 6.5)
         ax.set_xticks([1, 2, 3, 4, 5, 6])
+        ax.tick_params(labelsize=13)
     for ax in axes[:, 0]:
-        ax.set_ylabel(f"Frequency (N = {N})")
+        ax.set_ylabel(f"Frequency (N = {N})", fontsize=15)
     save(fig, outdir, "simulate-CLT.png")
 
 
@@ -122,11 +130,12 @@ def standardized_normal(outdir: pathlib.Path) -> None:
             arrowprops=dict(arrowstyle="<->", color=GREY, linewidth=1.5),
         )
         ax.text(k / 2, y + 0.012, rf"${k if k > 1 else ''}\sigma$",
-                ha="center", fontsize=15)
+                ha="center", fontsize=24)
     ax.set_xlabel("$x$")
     ax.set_ylabel("$p(x)$")
     ax.set_title(r"Normal distribution when $\mu=0$ and $\sigma=1$")
     ax.set_ylim(0, 0.42)
+    ax.set_yticks([0, 0.1, 0.2, 0.3, 0.4])
     save(fig, outdir, "normal-distribution-standardized.png")
 
 
@@ -145,9 +154,9 @@ def show_pnorm_and_qnorm(outdir: pathlib.Path) -> None:
         "", xy=(-4, a1), xytext=(z1, a1),
         arrowprops=dict(arrowstyle="->", color=VERMILLION, linewidth=2),
     )
-    ax.plot(z1, a1, "o", color=VERMILLION, markersize=7)
-    ax.text(-2.6, a1 + 0.05, "start with $z$, read off the area:\npnorm(...) or norm.cdf(...)",
-            color=VERMILLION, ha="center")
+    ax.plot(z1, a1, "o", color=VERMILLION, markersize=9)
+    ax.text(-2.35, a1 + 0.06, "start with $z$, read off the\narea: pnorm(...)\nor norm.cdf(...)",
+            color=VERMILLION, ha="center", fontsize=17)
 
     # Cumulative area -> z: qnorm(...) in R, norm.ppf(...) in Python.
     a2 = 0.8413
@@ -157,14 +166,15 @@ def show_pnorm_and_qnorm(outdir: pathlib.Path) -> None:
         "", xy=(z2, 0), xytext=(z2, a2),
         arrowprops=dict(arrowstyle="->", color=ORANGE, linewidth=2),
     )
-    ax.plot(z2, a2, "o", color=ORANGE, markersize=7)
-    ax.text(2.45, 0.55, "start with the area,\nread off $z$:\nqnorm(...) or norm.ppf(...)",
-            color="#9A6A00", ha="center")
+    ax.plot(z2, a2, "o", color=ORANGE, markersize=9)
+    ax.text(2.35, 0.42, "start with the area,\nread off $z$: qnorm(...)\nor norm.ppf(...)",
+            color="#9A6A00", ha="center", fontsize=17)
 
     ax.set_xlabel("$z$")
-    ax.set_ylabel("Cumulative area under normal distribution")
+    ax.set_ylabel("Cumulative area under normal distribution", fontsize=18)
     ax.set_ylim(0, 1.0)
     ax.set_xlim(-4, 4)
+    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
     save(fig, outdir, "show-pnorm-and-qnorm.png")
 
 
@@ -268,7 +278,7 @@ def qq_comparison(outdir: pathlib.Path) -> None:
     save(fig, outdir, "qqplot-comparison.png")
 
 
-def _two_distributions(ax, x, base_mean, base_sd, n):
+def _two_distributions(ax, x, base_mean, base_sd, n, legend_loc="upper left"):
     raw = stats.norm.pdf(x, loc=base_mean, scale=base_sd)
     sample = stats.norm.pdf(x, loc=base_mean, scale=base_sd / np.sqrt(n))
     ax.grid(color=GRID, linewidth=0.8)
@@ -276,7 +286,7 @@ def _two_distributions(ax, x, base_mean, base_sd, n):
             label="Sample mean's distribution")
     ax.plot(x, raw, color=GREY, linewidth=1.5, label="Raw data's distribution")
     ax.axvline(base_mean, color="black", linewidth=1)
-    ax.legend(loc="upper left", frameon=False)
+    ax.legend(loc=legend_loc, frameon=False, fontsize=16)
 
 
 def explain_confidence_interval(outdir: pathlib.Path) -> None:
@@ -290,13 +300,14 @@ def explain_confidence_interval(outdir: pathlib.Path) -> None:
     ax.set_xlabel(r"$x$ (thin), or $\bar{x}$ (thick)")
     ax.set_ylabel("Probability density")
     ax.set_title("Raw data distribution, and sample mean distribution")
+    ax.set_yticks([0, 0.005, 0.010, 0.015])
     save(fig, outdir, "explain-confidence-interval.png")
 
     # Standardized version, with the 95% area between the critical values.
     fig, ax = plt.subplots(figsize=(10, 7))
     x = np.linspace(-3.5, 3.5, 701)
-    _two_distributions(ax, x, 0, 1, n)
-    ax.text(-2, 0.4, f"Sample size, n = {n}", ha="center")
+    _two_distributions(ax, x, 0, 1, n, legend_loc="center right")
+    ax.text(-2.2, 0.4, f"Sample size, n = {n}", ha="center")
     upper = stats.norm.ppf(0.975) / np.sqrt(n)
     for v in (-upper, upper):
         ax.axvline(v, color=VERMILLION, linestyle="--", linewidth=2)
@@ -308,6 +319,7 @@ def explain_confidence_interval(outdir: pathlib.Path) -> None:
     ax.text(0, 0.95, "95% area", ha="center", fontweight="bold",
             bbox=dict(facecolor="white", edgecolor="none", pad=2))
     ax.set_ylim(0, 1.0)
+    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
     ax.set_xlabel("$z$")
     ax.set_ylabel("Probability density")
     ax.set_title("Raw data distribution, and sample mean distribution")

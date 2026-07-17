@@ -41,13 +41,19 @@ GRID = "#DDDDDD"
 
 DPI = 250
 
+# Font sizes are chosen to match the pixel height of the labels in the
+# base-R originals these figures replace (pointsize 14 with cex 1.5-1.8,
+# about 25 pt at the same DPI).
 mpl.rcParams.update(
     {
-        "font.size": 13,
+        "font.size": 20,
         "axes.spines.top": False,
         "axes.spines.right": False,
-        "axes.titlesize": 14,
-        "axes.labelsize": 13,
+        "axes.titlesize": 24,
+        "axes.labelsize": 24,
+        "xtick.labelsize": 20,
+        "ytick.labelsize": 20,
+        "legend.fontsize": 20,
         "axes.axisbelow": True,
     }
 )
@@ -64,16 +70,21 @@ def t_comparison(outdir: pathlib.Path, dof: int = 8) -> None:
     ax.axvline(0, color="black", linewidth=0.8)
     ax.set_xlabel("$z$")
     ax.set_ylabel("$p(z)$")
+    ax.set_yticks([0, 0.1, 0.2, 0.3, 0.4])
     ax.legend(loc="upper left", frameon=False)
 
     # Inset: zoom into the right tail, where the t-distribution sits
     # above the normal distribution.
-    inset = ax.inset_axes([0.66, 0.35, 0.32, 0.42])
+    # High enough that the tail of the main curve passes under, not
+    # behind, the inset.
+    inset = ax.inset_axes([0.63, 0.56, 0.35, 0.40])
     xt = np.linspace(2, 4, 201)
     inset.plot(xt, stats.norm.pdf(xt), color=BLUE, linewidth=2.5)
     inset.plot(xt, stats.t.pdf(xt, df=dof), color=ORANGE, linewidth=2)
-    inset.set_title("Zoom of the right tail", fontsize=11)
-    inset.tick_params(labelsize=10)
+    inset.set_title("Zoom of the right tail", fontsize=17)
+    inset.set_xticks([2, 3, 4])
+    inset.set_yticks([0, 0.03, 0.06])
+    inset.tick_params(labelsize=15)
     inset.grid(color=GRID, linewidth=0.6)
     save(fig, outdir, "t-distribution-comparison.png")
 
@@ -91,6 +102,8 @@ def poisson(outdir: pathlib.Path, eta: float = 4) -> None:
     ax.set_ylabel("$p(x)$")
     ax.set_title(rf"$\eta = {eta:.0f}$")
     ax.set_ylim(0, 0.21)
+    ax.set_yticks([0, 0.05, 0.10, 0.15, 0.20])
+    ax.set_xticks([0, 3, 6, 9, 12, 15])
     save(fig, outdir, "poisson-distribution.png", dpi=200)
 
 

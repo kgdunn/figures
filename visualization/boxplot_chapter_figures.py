@@ -40,12 +40,16 @@ GRID = "#DDDDDD"
 DPI = 300
 HERE = pathlib.Path(__file__).parent
 
+# Font sizes match the pixel height of the labels in the base-R
+# originals (pointsize 14 at the same DPI), slightly boosted.
 mpl.rcParams.update(
     {
-        "font.size": 12,
+        "font.size": 15,
         "axes.spines.top": False,
         "axes.spines.right": False,
-        "axes.labelsize": 12,
+        "axes.labelsize": 17,
+        "xtick.labelsize": 15,
+        "ytick.labelsize": 15,
         "axes.axisbelow": True,
     }
 )
