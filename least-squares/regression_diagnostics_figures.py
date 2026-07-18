@@ -108,19 +108,21 @@ def _lowess(x, y, frac=0.5, gridsize=60):
     return grid, fitted
 
 
-def _qq_axes(ax, values, title):
-    """A normal q-q plot with the quartile reference line and the 95%
-    pointwise confidence envelope, as R's car::qqPlot draws it."""
+def _qq_axes(ax, values, title, dist=stats.norm):
+    """A q-q plot with the quartile reference line and the 95%
+    pointwise confidence envelope, as R's car::qqPlot draws it.
+    ``dist`` is the reference distribution (normal by default; pass a
+    frozen t-distribution for studentized residuals)."""
     n = len(values)
     P = (np.arange(1, n + 1) - 0.5) / n
-    theo = stats.norm.ppf(P)
+    theo = dist.ppf(P)
     ordered = np.sort(values)
     x25, x75 = np.percentile(theo, [25, 75])
     y25, y75 = np.percentile(ordered, [25, 75])
     slope = (y75 - y25) / (x75 - x25)
     intercept = y25 - slope * x25
     fit = intercept + slope * theo
-    se = (slope / stats.norm.pdf(theo)) * np.sqrt(P * (1 - P) / n)
+    se = (slope / dist.pdf(theo)) * np.sqrt(P * (1 - P) / n)
     zc = stats.norm.ppf(0.975)
     ax.grid(color=GRID, linewidth=0.8)
     ax.plot(theo, fit, color=GREY, linewidth=1.5)
@@ -424,19 +426,36 @@ def non_normal_errors(outdir: pathlib.Path) -> None:
     save(fig, outdir, "non-normal-errors-outliers.png")
 
 
-def transformation_required(outdir: pathlib.Path) -> None:
-    rng = np.random.default_rng(7)
-    n = 60
-    x = rng.normal(7, 1.6, n)
-    y = (2 * x + rng.normal(0, 1.1, n)) ** 2
-    _, _, _, resid_raw = _fit(x, y)
-    _, _, _, resid_sqrt = _fit(x, np.sqrt(y))
+def _studentized(x, y):
+    """Externally studentized residuals of the straight-line fit."""
+    n, k = len(x), 2
+    _, _, _, e = _fit(x, y)
+    h = 1 / n + (x - x.mean()) ** 2 / np.sum((x - x.mean()) ** 2)
+    rss = np.sum(e ** 2)
+    return e * np.sqrt((n - k - 1) / (rss * (1 - h) - e ** 2))
 
+
+def transformation_required(outdir: pathlib.Path) -> None:
+    # Same data recipe as the original R script: x from a scaled
+    # t-distribution, y = (2x + 3/x - noise)^2. As in the original
+    # (car::qq.plot on the model object), both panels show studentized
+    # residuals against t-distribution quantiles, so the two are on
+    # the same dimensionless scale.
+    rng = np.random.default_rng(7)
+    n = 100
+    x = stats.t.rvs(df=6, size=n, random_state=rng) * 2 + 7
+    base = 2 * x + 3 / x - rng.normal(0, 8, n)
+    y = base ** 2
+
+    tdist = stats.t(df=n - 3)
     fig, axes = plt.subplots(1, 2, figsize=(14, 8))
-    _qq_axes(axes[0], resid_raw, "Original data: y ~ x")
-    _qq_axes(axes[1], resid_sqrt,
-             r"After a square root transformation: $\sqrt{y}$ ~ x")
-    axes[0].set_ylabel("Residuals", fontsize=18)
+    _qq_axes(axes[0], _studentized(x, y), "Original data: y ~ x", dist=tdist)
+    _qq_axes(axes[1], _studentized(x, np.sqrt(y)),
+             r"After a square root transformation: $\sqrt{y}$ ~ x", dist=tdist)
+    axes[0].set_ylabel("Studentized residuals: y ~ x", fontsize=18)
+    axes[1].set_ylabel(r"Studentized residuals: $\sqrt{y}$ ~ x", fontsize=18)
+    for ax in axes:
+        ax.set_xlabel("t-distribution quantile", fontsize=18)
     save(fig, outdir, "non-normal-errors-transformation-required.png")
 
 
