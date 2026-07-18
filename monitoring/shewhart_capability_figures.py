@@ -93,8 +93,8 @@ def explain_shewhart(outdir: pathlib.Path) -> None:
     ax.annotate("", xy=(mean + sd, y), xytext=(mean, y),
                 arrowprops=dict(arrowstyle="->", color="black", linewidth=1.5))
     ax.text(mean + 0.5 * sd, y + 0.008, r"$\sigma$", ha="center", fontsize=20)
-    ax.text(1.4, 0.16, "Subgroup size, n = 5", ha="center", fontsize=17)
-    ax.text(8.6, 0.23, r"$\sigma_{\bar{x}} = 2/\sqrt{5}$", fontsize=20)
+    ax.text(1.4, 0.16, "Subgroup size,\nn = 5", ha="center", fontsize=17)
+    ax.text(9.3, 0.23, r"$\sigma_{\bar{x}} = 2/\sqrt{5}$", fontsize=20)
 
     ax.set_xlabel("$x$")
     ax.set_ylabel("Probability density")
@@ -180,8 +180,8 @@ def show_shift_beta_error(outdir: pathlib.Path) -> None:
     ax.text(mean, top * 1.15, "From LCL to UCL", ha="center", fontsize=17)
     ax.annotate("", xy=(mean + delta, top * 1.02), xytext=(mean, top * 1.02),
                 arrowprops=dict(arrowstyle="->", color="black", linewidth=1.5))
-    ax.text(mean + delta / 2, top * 1.045, r"Shift $= \Delta\sigma$",
-            ha="center", fontsize=17)
+    ax.text(mean + delta + 0.15, top * 1.02, r"Shift $= \Delta\sigma$",
+            ha="left", va="center", fontsize=17)
     ax.set_xlabel(r"$\bar{x}$")
     ax.set_ylabel("Probability density")
     ax.set_ylim(0, top * 1.25)
