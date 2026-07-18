@@ -107,15 +107,23 @@ def _lowess(x, y, frac=0.5, gridsize=60):
 
 
 def _qq_axes(ax, values, title):
-    """A normal q-q plot of `values` with the quartile reference line."""
+    """A normal q-q plot with the quartile reference line and the 95%
+    pointwise confidence envelope, as R's car::qqPlot draws it."""
     n = len(values)
-    theo = stats.norm.ppf((np.arange(1, n + 1) - 0.5) / n)
+    P = (np.arange(1, n + 1) - 0.5) / n
+    theo = stats.norm.ppf(P)
     ordered = np.sort(values)
     x25, x75 = np.percentile(theo, [25, 75])
     y25, y75 = np.percentile(ordered, [25, 75])
     slope = (y75 - y25) / (x75 - x25)
+    intercept = y25 - slope * x25
+    fit = intercept + slope * theo
+    se = (slope / stats.norm.pdf(theo)) * np.sqrt(P * (1 - P) / n)
+    zc = stats.norm.ppf(0.975)
     ax.grid(color=GRID, linewidth=0.8)
-    ax.plot(theo, y25 - slope * x25 + slope * theo, color=GREY, linewidth=1.5)
+    ax.plot(theo, fit, color=GREY, linewidth=1.5)
+    ax.plot(theo, fit - zc * se, color=VERMILLION, linestyle="--", linewidth=1.5)
+    ax.plot(theo, fit + zc * se, color=VERMILLION, linestyle="--", linewidth=1.5)
     ax.plot(theo, ordered, "o", color=BLUE, markersize=6, alpha=0.75)
     ax.set_title(title)
     ax.set_xlabel("Theoretical quantile")
@@ -162,15 +170,27 @@ def correlation_calculation(outdir: pathlib.Path) -> None:
 
 
 def residual_histogram(outdir: pathlib.Path) -> None:
-    rng = np.random.default_rng(15)
-    residuals = rng.normal(0, 1, 500)
-    fig, ax = plt.subplots(figsize=(14, 7))
+    # As in the original (example-distillation.R): residuals of a
+    # vapour-pressure model on the distillation-tower dataset, shown as
+    # a histogram next to their q-q plot with a confidence envelope.
+    import pandas as pd
+
+    try:
+        tower = pd.read_csv("http://openmv.net/file/distillation-tower.csv")
+    except Exception:
+        tower = pd.read_csv(pathlib.Path(__file__).parent / "distillation-tower.csv")
+    inv_temp = 1.0 / tower["TempC2"].to_numpy()
+    log_vp = np.log(tower["VapourPressure"].to_numpy())
+    _, _, _, residuals = _fit(inv_temp, log_vp)
+
+    fig, axes = plt.subplots(1, 2, figsize=(14, 7))
+    ax = axes[0]
     ax.grid(axis="y", color=GRID, linewidth=0.8)
-    ax.hist(residuals, bins=np.arange(-3.25, 3.3, 0.5), color=BLUE,
-            edgecolor="white")
-    ax.axvline(0, color="black", linewidth=1)
-    ax.set_xlabel("Residual value, in units of standard error, $S_E$")
-    ax.set_ylabel("Frequency (N = 500 residuals)")
+    ax.hist(residuals, bins=12, color=BLUE, edgecolor="white")
+    ax.set_xlabel("Model residuals")
+    ax.set_ylabel(f"Frequency count (N = {len(residuals)})")
+    _qq_axes(axes[1], residuals, "")
+    axes[1].set_ylabel("Model residuals")
     save(fig, outdir, "residual-plots.png")
 
 
@@ -200,28 +220,46 @@ def non_constant_error(outdir: pathlib.Path) -> None:
 
 
 def unmodelled_dynamics(outdir: pathlib.Path) -> None:
-    rng = np.random.default_rng(4)
-    n = 120
-    t = np.arange(n)
-    drift = np.zeros(n)
+    # Same design and data recipe as the original
+    # (detecting-autocorrelation.R): x ~ N(10, 2), an AR(1) disturbance
+    # (phi = 0.86, sd = 3), y = -3x + 50 + e; then y in time order, the
+    # least squares fit, and the residuals in time order.
+    rng = np.random.default_rng(8)
+    n = 100
+    e = np.zeros(n)
     for k in range(1, n):
-        drift[k] = 0.92 * drift[k - 1] + rng.normal(0, 0.5)
-    crisscross = np.zeros(n)
-    for k in range(1, n):
-        crisscross[k] = -0.8 * crisscross[k - 1] + rng.normal(0, 0.8)
+        e[k] = 0.86 * e[k - 1] + rng.normal(0, 3)
+    x = rng.normal(10, 2, n)
+    y = -3 * x + 50 + e
+    slope, intercept, fitted, residuals = _fit(x, y)
 
-    fig, axes = plt.subplots(1, 2, figsize=(14, 4.7))
-    for ax, series, title in (
-        (axes[0], drift, "Residuals with a slow drift"),
-        (axes[1], crisscross, "Residuals criss-crossing the zero axis"),
-    ):
-        ax.grid(color=GRID, linewidth=0.8)
-        ax.plot(t, series, "o-", color=BLUE, markersize=4, linewidth=1)
-        ax.axhline(0, color="black", linewidth=1)
-        ax.set_title(title, fontsize=17)
-        ax.set_xlabel("Time order of the residuals", fontsize=17)
-        ax.tick_params(labelsize=15)
-    axes[0].set_ylabel("Residuals", fontsize=17)
+    fig, axes = plt.subplots(1, 3, figsize=(14, 4.7))
+    ax = axes[0]
+    ax.grid(color=GRID, linewidth=0.8)
+    ax.plot(y, "o-", color=BLUE, markersize=4, linewidth=1)
+    ax.set_title("Time order of the y-variable", fontsize=15)
+    ax.set_xlabel("Time order", fontsize=15)
+    ax.set_ylabel("y", fontsize=15)
+
+    ax = axes[1]
+    ax.grid(color=GRID, linewidth=0.8)
+    ax.plot(x, y, "o", color=BLUE, markersize=5, alpha=0.8)
+    xr = np.array([x.min(), x.max()])
+    ax.plot(xr, intercept + slope * xr, color=VERMILLION, linewidth=2)
+    ax.set_title("Raw data with the least squares model", fontsize=15)
+    ax.set_xlabel("x", fontsize=15)
+    ax.set_ylabel("y", fontsize=15)
+
+    ax = axes[2]
+    ax.grid(color=GRID, linewidth=0.8)
+    ax.plot(residuals, "o-", color=BLUE, markersize=4, linewidth=1)
+    ax.axhline(0, color="black", linewidth=1)
+    ax.set_title("Residuals in time order", fontsize=15)
+    ax.set_xlabel("Time order", fontsize=15)
+    ax.set_ylabel("Residuals", fontsize=15)
+
+    for ax in axes:
+        ax.tick_params(labelsize=13)
     save(fig, outdir, "residual-pattern-unmodelled-dynamics.png")
 
 
