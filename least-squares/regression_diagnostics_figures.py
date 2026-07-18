@@ -23,10 +23,12 @@ scripts (``correlation-calculation.R``, ``show-residual-patterns.R``,
   nonlinear system with a locally linear model region, and the
   residual plots that reveal the nonlinearity when the whole range is
   fit with a straight line.
-- ``non-normal-errors-outliers.png``: q-q plots of residuals from a
-  price-mileage model, before and after removing a handful of
-  collector cars (illustrative simulated stand-in for the original
-  cars dataset).
+- ``non-normal-errors-outliers.png``: q-q plots of the residuals from
+  the price-mileage model of the 804-vehicle Kuiper dataset
+  (``kuiper.csv``, in this directory), before and after removing the
+  ten Cadillac convertibles. The slope and standard error printed on
+  each run match the numbers quoted in the chapter (b1 = -0.173 and
+  SE = $9789 before; b1 = -0.155 and SE = $8655 after).
 - ``non-normal-errors-transformation-required.png``: residual q-q
   plots before and after a square-root transformation of y.
 - ``logistic-regression-function.png``: an S-shaped link function
@@ -388,23 +390,37 @@ def nonlinear_detection(outdir: pathlib.Path) -> None:
 
 
 def non_normal_errors(outdir: pathlib.Path) -> None:
-    rng = np.random.default_rng(9)
-    n = 90
-    mileage = rng.uniform(20, 120, n)  # thousands of km
-    price = 25.0 - 0.12 * mileage + rng.normal(0, 1.6, n)  # thousands
-    collectors = rng.choice(n, 4, replace=False)
-    price[collectors] += rng.uniform(6, 12, 4)
+    # The real dataset the original used (kuiper.csv, in this
+    # directory): 804 used GM vehicles, price against mileage. Rows
+    # 151 to 160 are the Cadillac convertibles the prose discusses.
+    import pandas as pd
 
-    _, _, _, resid_all = _fit(mileage, price)
-    keep = np.ones(n, dtype=bool)
-    keep[collectors] = False
-    _, _, _, resid_clean = _fit(mileage[keep], price[keep])
+    cars = pd.read_csv(pathlib.Path(__file__).parent / "kuiper.csv")
+    mileage = cars["Mileage"].to_numpy(dtype=float)
+    price = cars["Price"].to_numpy(dtype=float)
+    slope_all, _, _, resid_all = _fit(mileage, price)
+
+    keep = np.ones(len(cars), dtype=bool)
+    keep[150:160] = False
+    slope_rm, _, _, resid_clean = _fit(mileage[keep], price[keep])
+    for label, slope, resid, k in (
+        ("all data", slope_all, resid_all, 2),
+        ("Cadillacs removed", slope_rm, resid_clean, 2),
+    ):
+        se = np.sqrt(np.sum(resid ** 2) / (len(resid) - k))
+        print(f"price ~ mileage, {label}: b1 = {slope:.4f}, SE = {se:.0f}")
 
     fig, axes = plt.subplots(1, 2, figsize=(14, 9))
     _qq_axes(axes[0], resid_all, "All data")
     _qq_axes(axes[1], resid_clean, "After removing the 'outlier' cars")
+    axes[0].annotate(
+        "Cadillac convertibles",
+        xy=(2.15, 40000), xytext=(-3.2, 40000),
+        arrowprops=dict(arrowstyle="->", color=BLUE, linewidth=2),
+        color=BLUE, fontsize=18, va="center",
+    )
     for ax in axes:
-        ax.set_ylabel("Residuals: price ~ mileage", fontsize=18)
+        ax.set_ylabel("Residuals: price ~ mileage [$]", fontsize=18)
     save(fig, outdir, "non-normal-errors-outliers.png")
 
 
