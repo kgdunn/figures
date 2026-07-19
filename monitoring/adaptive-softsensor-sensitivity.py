@@ -152,7 +152,7 @@ def main(out_dir: Path) -> None:  # noqa: PLR0915, C901
     ax.plot(month, d_ok, lw=0.9, color=DARK_BLUE, label=f"forgetting_factor = 0.01 (chosen, roughness {r_ok:.4f})")
     ax.set_xlabel("Time since start [months]")
     ax.set_ylabel("Subspace overlap [components]")
-    ax.legend(loc="lower left", fontsize=8, framealpha=0.9)
+    ax.legend(loc="upper right", fontsize=8, framealpha=0.9)
     fig.tight_layout()
     fig.savefig(out_dir / "adaptive-softsensor-distance-roughness.png")
     plt.close(fig)

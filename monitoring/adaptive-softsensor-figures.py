@@ -172,7 +172,9 @@ def main(out_dir: Path) -> None:  # noqa: PLR0915
     a1.set_ylim(0, 3 * t2_lim)
     a1.set_ylabel("Hotelling's $T^2$")
     a1.set_title("99% limits", fontsize=10)
-    a1.legend(loc="upper right", fontsize=8)
+    # lift the single-entry legend just above the panel so it clears the lab-sample asterisks
+    a1.legend(loc="lower right", bbox_to_anchor=(1.0, 1.0), borderaxespad=0.2,
+              fontsize=8, framealpha=0.9)
     a2.plot(month, static_spe, lw=0.5, color=DARK_BLUE)
     a2.axhline(spe_lim, color="k", lw=1)
     a2.plot(lab_month, np.full_like(lab_month, 20.0), "*", ms=5, color=ORANGE)
