@@ -16,9 +16,14 @@ runs the chapter reproduces these figures.
   too-large one (jagged), validating that a jagged trace means the factor is too
   high.
 
+Requires the ``process_improve`` package (``pip install process-improve``) for
+``AdaptivePLS``.
+
 Usage::
 
-    python scripts/adaptive-softsensor-sensitivity.py [output_dir]
+    python monitoring/adaptive-softsensor-sensitivity.py [output_dir]
+
+``output_dir`` defaults to this script's own directory (``monitoring/``).
 """
 
 from __future__ import annotations
@@ -156,5 +161,5 @@ def main(out_dir: Path) -> None:  # noqa: PLR0915, C901
 
 
 if __name__ == "__main__":
-    default = Path(__file__).resolve().parents[1] / "figures" / "monitoring"
+    default = Path(__file__).resolve().parent
     main(Path(sys.argv[1]) if len(sys.argv) > 1 else default)
