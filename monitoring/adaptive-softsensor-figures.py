@@ -189,7 +189,6 @@ def main(out_dir: Path) -> None:  # noqa: PLR0915
 
     # Fig 3: payoff (static = dark-green squares, adaptive = blue circles)
     fig, ax = plt.subplots(figsize=(8.2, 3.3))
-    ax.axhspan(-3, 3, color="0.85", alpha=0.6)
     ax.axhline(0, color="0.6", lw=0.8)
     ax.plot(lab_month, err_static, "s", ms=4.5, color=GREEN, alpha=0.7, label="Static PLS")
     ax.plot(lab_month, err_adaptive, "o", ms=4.5, color=DARK_BLUE, alpha=0.7, label="Adaptive PLS")
