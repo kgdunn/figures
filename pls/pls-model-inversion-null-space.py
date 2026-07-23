@@ -104,25 +104,17 @@ def build_figure(out_dir: Path) -> None:
     scores = pls.scores_.to_numpy()
 
     fig, ax = plt.subplots(figsize=(6.4, 5.2))
-    ax.scatter(scores[:, 0], scores[:, 1], color=DARK_BLUE, s=30, label="Calibration cheeses")
-    ax.plot(ns_line[:, 0], ns_line[:, 1], color=ORANGE, lw=2, label=f"Null space (taste {TARGET_TASTE})")
-    ax.plot(
-        ns_line2[:, 0],
-        ns_line2[:, 1],
-        color=RED,
-        lw=2,
-        linestyle="--",
-        label=f"Null space (taste {SECOND_TASTE})",
+    cal = ax.scatter(scores[:, 0], scores[:, 1], color=DARK_BLUE, s=30, label="Calibration cheeses")
+    (line3,) = ax.plot(
+        ns_line3[:, 0], ns_line3[:, 1], color=PURPLE, lw=2, linestyle=":", label=f"Null space (taste {THIRD_TASTE})"
     )
-    ax.plot(
-        ns_line3[:, 0],
-        ns_line3[:, 1],
-        color=PURPLE,
-        lw=2,
-        linestyle=":",
-        label=f"Null space (taste {THIRD_TASTE})",
+    (line1,) = ax.plot(
+        ns_line[:, 0], ns_line[:, 1], color=ORANGE, lw=2, label=f"Null space (taste {TARGET_TASTE})"
     )
-    ax.scatter(
+    (line2,) = ax.plot(
+        ns_line2[:, 0], ns_line2[:, 1], color=RED, lw=2, linestyle="--", label=f"Null space (taste {SECOND_TASTE})"
+    )
+    os_circles = ax.scatter(
         os_points[:, 0],
         os_points[:, 1],
         facecolors="none",
@@ -131,7 +123,7 @@ def build_figure(out_dir: Path) -> None:
         linewidths=1.8,
         label="Orthogonal space (O-PLS), projected",
     )
-    ax.scatter(
+    di = ax.scatter(
         tau[0], tau[1], color=BLACK, marker="s", s=70, zorder=5, label="Direct-inversion solution"
     )
     ax.axhline(0, color="0.7", lw=0.8)
@@ -139,17 +131,14 @@ def build_figure(out_dir: Path) -> None:
     ax.set_xlabel("$t_1$")
     ax.set_ylabel("$t_2$")
     ax.set_title(f"Cheddar cheese: designing toward a taste of {TARGET_TASTE}")
-    # Reorder the legend so the lines (null spaces) come first, then the markers
-    # (calibration cheeses, orthogonal space, direct-inversion solution).
-    handles, labels = ax.get_legend_handles_labels()
-    order = [1, 2, 3, 0, 4, 5]
-    ax.legend(
-        [handles[i] for i in order],
-        [labels[i] for i in order],
-        loc="upper right",
-        framealpha=0.9,
-        fontsize=9,
+
+    # Two legends: the null-space lines (lowest to highest taste) at top left, and
+    # the markers at bottom right.
+    lines_legend = ax.legend(
+        handles=[line3, line1, line2], loc="upper left", framealpha=0.9, fontsize=9, title="Null spaces"
     )
+    ax.add_artist(lines_legend)
+    ax.legend(handles=[cal, os_circles, di], loc="lower right", framealpha=0.9, fontsize=9)
     fig.tight_layout()
     fig.savefig(out_dir / "pls-model-inversion-null-space.png")
     plt.close(fig)
