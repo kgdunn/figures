@@ -39,10 +39,12 @@ from process_improve.multivariate import OPLS, PLS
 
 DATA_URL = "https://openmv.net/file/cheddar-cheese.csv"
 X_COLUMNS = ["Acetic", "H2S", "Lactic"]
-TARGET_TASTE = 20.9
+TARGET_TASTE = 20.9   # the main inversion, drawn as the orange null space
+SECOND_TASTE = 47.9   # a second inversion (held-out cheese 4), drawn red dashed
 
 DARK_BLUE = "#1f3d7a"  # calibration cheeses
-PURPLE = "#6a3d9a"     # the null space (PLS)
+ORANGE = "#e6820a"     # the null space (PLS) for the main target
+RED = "#d62728"        # the null space for the second target
 GREEN = "#2e6f3e"      # the orthogonal space (O-PLS), projected into PLS space
 BLACK = "#111111"      # the direct-inversion solution
 plt.rcParams.update(
@@ -73,6 +75,13 @@ def build_figure(out_dir: Path) -> None:
     steps = np.linspace(-4.0, 4.0, 60)
     ns_line = np.array([tau + s * g_ns for s in steps])
 
+    # A second inversion, toward a different target taste. In a single-response
+    # model every target shares the same null-space direction, so this line is
+    # parallel to the first, just shifted to pass through its own solution.
+    result2 = pls.invert(y_desired=SECOND_TASTE)
+    tau2 = result2.scores.to_numpy()
+    ns_line2 = np.array([tau2 + s * g_ns for s in steps])
+
     # O-PLS orthogonal space: walk along the orthogonal loading in the input
     # space (scaled), starting from the O-PLS design, then project into the PLS
     # score space with the direct weights. These points should land on the NS.
@@ -90,13 +99,22 @@ def build_figure(out_dir: Path) -> None:
 
     fig, ax = plt.subplots(figsize=(6.4, 5.2))
     ax.scatter(scores[:, 0], scores[:, 1], color=DARK_BLUE, s=30, label="Calibration cheeses")
-    ax.plot(ns_line[:, 0], ns_line[:, 1], color=PURPLE, lw=2, label="Null space (PLS inversion)")
+    ax.plot(ns_line[:, 0], ns_line[:, 1], color=ORANGE, lw=2, label=f"Null space (taste {TARGET_TASTE})")
+    ax.plot(
+        ns_line2[:, 0],
+        ns_line2[:, 1],
+        color=RED,
+        lw=2,
+        linestyle="--",
+        label=f"Null space (taste {SECOND_TASTE})",
+    )
     ax.scatter(
         os_points[:, 0],
         os_points[:, 1],
         facecolors="none",
         edgecolors=GREEN,
-        s=42,
+        s=70,
+        linewidths=1.8,
         label="Orthogonal space (O-PLS), projected",
     )
     ax.scatter(
