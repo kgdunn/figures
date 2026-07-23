@@ -139,7 +139,17 @@ def build_figure(out_dir: Path) -> None:
     ax.set_xlabel("$t_1$")
     ax.set_ylabel("$t_2$")
     ax.set_title(f"Cheddar cheese: designing toward a taste of {TARGET_TASTE}")
-    ax.legend(loc="best", framealpha=0.9, fontsize=9)
+    # Reorder the legend so the lines (null spaces) come first, then the markers
+    # (calibration cheeses, orthogonal space, direct-inversion solution).
+    handles, labels = ax.get_legend_handles_labels()
+    order = [1, 2, 3, 0, 4, 5]
+    ax.legend(
+        [handles[i] for i in order],
+        [labels[i] for i in order],
+        loc="upper right",
+        framealpha=0.9,
+        fontsize=9,
+    )
     fig.tight_layout()
     fig.savefig(out_dir / "pls-model-inversion-null-space.png")
     plt.close(fig)
