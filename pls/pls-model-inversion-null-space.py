@@ -126,6 +126,19 @@ def build_figure(out_dir: Path) -> None:
     di = ax.scatter(
         tau[0], tau[1], color=BLACK, marker="s", s=70, zorder=5, label="Direct-inversion solution"
     )
+    # The two null-space moves from the text: a -1 and a +1 step along the
+    # null-space direction from the direct-inversion solution. Both sit on the
+    # orange (taste 20.9) line and predict the same taste.
+    step_minus = tau + (-1.0) * g_ns
+    step_plus = tau + (1.0) * g_ns
+    step_down = ax.scatter(
+        step_minus[0], step_minus[1], color=ORANGE, marker="v", s=120,
+        edgecolors=BLACK, linewidths=0.8, zorder=6, label="Null-space step (-1)",
+    )
+    step_up = ax.scatter(
+        step_plus[0], step_plus[1], color=ORANGE, marker="^", s=120,
+        edgecolors=BLACK, linewidths=0.8, zorder=6, label="Null-space step (+1)",
+    )
     ax.axhline(0, color="0.7", lw=0.8)
     ax.axvline(0, color="0.7", lw=0.8)
     ax.set_xlabel("$t_1$")
@@ -138,7 +151,9 @@ def build_figure(out_dir: Path) -> None:
         handles=[line3, line1, line2], loc="upper left", framealpha=0.9, fontsize=9, title="Null spaces"
     )
     ax.add_artist(lines_legend)
-    ax.legend(handles=[cal, os_circles, di], loc="lower right", framealpha=0.9, fontsize=9)
+    ax.legend(
+        handles=[cal, os_circles, di, step_down, step_up], loc="lower right", framealpha=0.9, fontsize=9
+    )
     fig.tight_layout()
     fig.savefig(out_dir / "pls-model-inversion-null-space.png")
     plt.close(fig)
