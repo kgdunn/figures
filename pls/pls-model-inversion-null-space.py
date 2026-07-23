@@ -41,10 +41,12 @@ DATA_URL = "https://openmv.net/file/cheddar-cheese.csv"
 X_COLUMNS = ["Acetic", "H2S", "Lactic"]
 TARGET_TASTE = 20.9   # the main inversion, drawn as the orange null space
 SECOND_TASTE = 47.9   # a second inversion (held-out cheese 4), drawn red dashed
+THIRD_TASTE = 12.3    # the lowest held-out taste (cheese 1), drawn purple dotted
 
 DARK_BLUE = "#1f3d7a"  # calibration cheeses
 ORANGE = "#e6820a"     # the null space (PLS) for the main target
 RED = "#d62728"        # the null space for the second target
+PURPLE = "#7b3fa0"     # the null space for the lowest target (a cool contrast)
 GREEN = "#2e6f3e"      # the orthogonal space (O-PLS), projected into PLS space
 BLACK = "#111111"      # the direct-inversion solution
 plt.rcParams.update(
@@ -82,6 +84,10 @@ def build_figure(out_dir: Path) -> None:
     tau2 = result2.scores.to_numpy()
     ns_line2 = np.array([tau2 + s * g_ns for s in steps])
 
+    result3 = pls.invert(y_desired=THIRD_TASTE)
+    tau3 = result3.scores.to_numpy()
+    ns_line3 = np.array([tau3 + s * g_ns for s in steps])
+
     # O-PLS orthogonal space: walk along the orthogonal loading in the input
     # space (scaled), starting from the O-PLS design, then project into the PLS
     # score space with the direct weights. These points should land on the NS.
@@ -107,6 +113,14 @@ def build_figure(out_dir: Path) -> None:
         lw=2,
         linestyle="--",
         label=f"Null space (taste {SECOND_TASTE})",
+    )
+    ax.plot(
+        ns_line3[:, 0],
+        ns_line3[:, 1],
+        color=PURPLE,
+        lw=2,
+        linestyle=":",
+        label=f"Null space (taste {THIRD_TASTE})",
     )
     ax.scatter(
         os_points[:, 0],
