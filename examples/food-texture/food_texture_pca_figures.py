@@ -34,9 +34,11 @@ Defects in the originals corrected here:
   are now coloured by sign.
 - Points in the score plot overlapped their own numbers. Labels are placed
   to the side and the axes carry the percentage of variance explained.
-- The scatterplot matrix had no axis labels along its diagonal beyond the
-  variable name, and drew all 25 panels including the redundant upper
-  triangle; the redundant half now carries the correlation instead.
+- The scatterplot matrix drew the same cloud twice, once in each triangle,
+  and left the diagonal empty apart from the variable name. The chapter
+  itself recommends histograms on the diagonal and a measure of
+  correlation off it, so the diagonal now carries the histogram of each
+  variable and the upper triangle its correlation.
 
 Every number the chapter quotes is printed when this script runs.
 
@@ -132,12 +134,14 @@ def scatterplot_matrix(data: pd.DataFrame, outdir: pathlib.Path) -> None:
             ax = axes[row, column]
             ax.tick_params(labelsize=11)
             if row == column:
-                ax.text(0.5, 0.5, VARIABLES[row], ha="center", va="center",
-                        fontsize=17, transform=ax.transAxes)
+                # The chapter recommends a histogram on the diagonal.
+                counts, _, _ = ax.hist(data[VARIABLES[row]], bins=12, color=BLUE_FILL,
+                                       edgecolor=BLUE, linewidth=1.0)
+                ax.set_ylim(0, counts.max() * 1.45)
+                ax.text(0.5, 0.97, VARIABLES[row], ha="center", va="top",
+                        fontsize=16, transform=ax.transAxes)
                 ax.set_xticks([])
                 ax.set_yticks([])
-                for side in ax.spines.values():
-                    side.set_visible(False)
                 continue
             if row < column:
                 # The upper triangle repeats the lower one, so use it for the
