@@ -86,10 +86,15 @@ GRID = "#DDDDDD"
 DPI = 300
 HERE = pathlib.Path(__file__).parent
 
-# Lattice's default viewpoint, expressed for matplotlib: the near corner is
-# (low temperature, low substrate), temperature runs to the lower right and
+# Lattice's default viewpoint, expressed for matplotlib. Neither R script
+# passes `screen`, so both use the lattice default, `list(z = 40, x = -60)`:
+# rotate about z by 40 degrees, then about x by -60. Applying those to the
+# camera axis gives the direction (-0.557, -0.663, 0.500), and matplotlib
+# writes that direction as (cos(elev)cos(azim), cos(elev)sin(azim),
+# sin(elev)), so elev = 30 and azim = -130. The near corner is then (low
+# temperature, low substrate), temperature runs to the lower right and
 # substrate to the lower left, with the response on the left-hand axis.
-ELEV, AZIM = 30, -160
+ELEV, AZIM = 30, -130
 # aspect = c(0.9, 0.5) in the R: y is 0.9 of x, z is half of x.
 BOX_ASPECT = (1.0, 0.9, 0.5)
 
