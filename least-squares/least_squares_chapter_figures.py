@@ -49,6 +49,7 @@ mpl.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy import stats
 
 BLUE = "#0072B2"
@@ -86,6 +87,40 @@ def save(fig, outdir: pathlib.Path, name: str) -> None:
     fig.savefig(outdir / name, dpi=DPI)
     plt.close(fig)
     print(f"wrote {outdir / name}")
+
+
+def marginal_boxplots(ax, x, y) -> None:
+    """Box plots down the left and along the bottom, as R's
+    ``car::scatterplot`` draws them."""
+    divider = make_axes_locatable(ax)
+    left = divider.append_axes("left", size="7%", pad=0.5, sharey=ax)
+    bottom = divider.append_axes("bottom", size="7%", pad=0.5, sharex=ax)
+    style = dict(
+        widths=0.5, patch_artist=True,
+        boxprops=dict(facecolor="white", color=GREY, linewidth=1.2),
+        medianprops=dict(color=GREY, linewidth=1.6),
+        whiskerprops=dict(color=GREY, linewidth=1.2),
+        capprops=dict(color=GREY, linewidth=1.2),
+        flierprops=dict(marker="o", markersize=3, markerfacecolor="none",
+                        markeredgecolor=GREY),
+    )
+    left.boxplot(np.asarray(y, dtype=float), orientation="vertical", **style)
+    bottom.boxplot(np.asarray(x, dtype=float), orientation="horizontal", **style)
+    for extra in (left, bottom):
+        # Hide the labels with tick_params, not set_xticks: these axes
+        # share their scale with the main one, so clearing the ticks
+        # would clear them on the scatter plot too.
+        extra.tick_params(left=False, labelleft=False,
+                          bottom=False, labelbottom=False)
+        for spine in extra.spines.values():
+            spine.set_visible(False)
+    # The axis labels belong outside the box plots, not under them.
+    if ax.get_xlabel():
+        bottom.set_xlabel(ax.get_xlabel())
+        ax.set_xlabel("")
+    if ax.get_ylabel():
+        left.set_ylabel(ax.get_ylabel())
+        ax.set_ylabel("")
 
 
 def lowess(x, y, frac: float = 0.5, gridsize: int = 100):
@@ -130,6 +165,10 @@ def nonparametric(outdir: pathlib.Path) -> None:
         ax.set_xlabel("Average income ($)")
         ax.set_title("With a smoother" if with_smoother else "The raw data")
     axes[0].set_ylabel("Prestige")
+    # car::scatterplot puts a box plot on each margin of the right-hand
+    # panel. They carry the univariate spread, which the scatter plot on
+    # its own does not show.
+    marginal_boxplots(axes[1], income, score)
     save(fig, outdir, "nonparametric-plots.png")
 
 
@@ -184,10 +223,25 @@ def bootstrap(outdir: pathlib.Path) -> None:
 
     ax = axes[1]
     ax.grid(axis="y", color=GRID, linewidth=0.8)
-    ax.hist(slopes, bins=40, color=BLUE, edgecolor="white")
-    for bound in (low, high):
-        ax.axvline(bound, color=VERMILLION, linewidth=2)
-    ax.axvline(slope_all, color=GREEN, linewidth=2)
+    counts, edges, _ = ax.hist(slopes, bins=40, color=BLUE, edgecolor="white")
+    # A density curve over the bars, as the original drew, so the shape
+    # of the distribution reads independently of the bin boundaries.
+    curve = np.linspace(slopes.min(), slopes.max(), 400)
+    density = stats.gaussian_kde(slopes)(curve)
+    ax.plot(curve, density * draws * np.diff(edges).mean(), color=GREY,
+            linewidth=2)
+    # Label the bounds: an unlabelled vertical line does not say which
+    # of the three quantities it marks.
+    marks = (
+        (low, VERMILLION, "CI: lower bound"),
+        (slope_rm, GREEN, "Except point 13"),
+        (high, VERMILLION, "CI: upper bound"),
+    )
+    for value, colour, label in marks:
+        ax.axvline(value, color=colour, linewidth=2)
+        ax.annotate(label, xy=(value, ax.get_ylim()[1]), xytext=(0, -4),
+                    textcoords="offset points", rotation=90, ha="right",
+                    va="top", color=colour, fontsize=13)
     ax.set_xlabel("Bootstrapped slope coefficient")
     ax.set_ylabel(f"Frequency (N = {draws})")
     ax.set_title("The slope has a distribution of its own")
@@ -196,7 +250,11 @@ def bootstrap(outdir: pathlib.Path) -> None:
 
 def cylinder_objective(outdir: pathlib.Path) -> None:
     # Model without an intercept: p_hat = beta * T, swept over beta.
-    beta = np.arange(5.3, 6.401, 0.005)
+    # The original evaluated the objective on a coarse grid and plotted
+    # the points, which is what the surrounding text describes: you try
+    # a value of the slope, you get a number, you try another. A
+    # continuous curve would suggest it came out in closed form.
+    beta = np.arange(5.3, 6.401, 0.06)
     ssq = np.array([float((((CYLINDER_T * b) - CYLINDER_P) ** 2).sum())
                     for b in beta])
     best = beta[np.argmin(ssq)]
@@ -206,7 +264,8 @@ def cylinder_objective(outdir: pathlib.Path) -> None:
 
     fig, ax = plt.subplots(figsize=(8, 7))
     ax.grid(color=GRID, linewidth=0.8)
-    ax.plot(beta, ssq, color=BLUE, linewidth=2.5)
+    ax.plot(beta, ssq, "o", color=BLUE, markersize=8, markerfacecolor="none",
+            markeredgewidth=1.6)
     ax.plot([analytic], [((CYLINDER_T * analytic - CYLINDER_P) ** 2).sum()], "o",
             color=VERMILLION, markersize=10)
     ax.annotate(rf"minimum at $\beta$ = {analytic:.2f}",

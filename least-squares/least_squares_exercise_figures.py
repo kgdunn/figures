@@ -57,6 +57,7 @@ mpl.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy import stats
 
 BLUE = "#0072B2"
@@ -122,6 +123,21 @@ class Fit:
         critical = stats.t.ppf(0.5 + level / 2, df=self.dof)
         return fit, fit - critical * spread, fit + critical * spread
 
+    def confidence_interval(self, x_new, level: float = 0.95):
+        """The interval on the *fitted line*, not on a new observation.
+
+        Narrower than the prediction interval by the one under the root:
+        it covers where the mean response lies, not where the next
+        measurement will fall. The original figure drew both bands
+        together, which is what makes the difference between them
+        visible.
+        """
+        x_new = np.asarray(x_new, float)
+        fit = self.intercept + self.slope * x_new
+        spread = self.se * np.sqrt(1 / self.n + (x_new - self.x.mean()) ** 2 / self.sxx)
+        critical = stats.t.ppf(0.5 + level / 2, df=self.dof)
+        return fit, fit - critical * spread, fit + critical * spread
+
     @property
     def studentized(self):
         internal = self.residuals / (self.se * np.sqrt(1 - self.hat))
@@ -133,49 +149,121 @@ class Fit:
         return internal ** 2 / 2 * self.hat / (1 - self.hat)
 
 
-def qq_panel(ax, values, label: str) -> None:
-    ordered = np.sort(values)
+def qq_panel(ax, values, label: str, dist=stats.norm,
+             xlabel: str = "Normal quantiles") -> None:
+    """A q-q plot as ``car::qqPlot`` draws it.
+
+    The reference line is fitted through the first and third quartiles,
+    not forced through the origin at 45 degrees, and it is flanked by
+    the 95% pointwise confidence envelope. The envelope is the point of
+    the plot: it says how far a point may stray before it is worth
+    remarking on, and several of the exercise solutions read the tails
+    against it. ``dist`` is the reference distribution; the solutions
+    that plot studentized residuals pass a frozen t-distribution, which
+    is what the R original used.
+    """
+    ordered = np.sort(np.asarray(values, dtype=float))
     n = len(ordered)
-    quantiles = stats.norm.ppf((np.arange(1, n + 1) - 0.375) / (n + 0.25))
-    q_data = np.percentile(values, [25, 75])
-    q_norm = stats.norm.ppf([0.25, 0.75])
-    slope = (q_data[1] - q_data[0]) / (q_norm[1] - q_norm[0])
-    intercept = q_data[0] - slope * q_norm[0]
+    probability = (np.arange(1, n + 1) - 0.5) / n
+    quantiles = dist.ppf(probability)
+    x25, x75 = np.percentile(quantiles, [25, 75])
+    y25, y75 = np.percentile(ordered, [25, 75])
+    slope = (y75 - y25) / (x75 - x25)
+    intercept = y25 - slope * x25
+    reference = intercept + slope * quantiles
+    # Standard error of the order statistic, as car::qqPlot computes it.
+    se = (slope / dist.pdf(quantiles)) * np.sqrt(
+        probability * (1 - probability) / n)
+    half_width = stats.norm.ppf(0.975) * se
     ax.grid(color=GRID, linewidth=0.8)
+    ax.plot(quantiles, reference, color=VERMILLION, linewidth=2.5)
+    ax.plot(quantiles, reference - half_width, color=VERMILLION,
+            linestyle="--", linewidth=1.5)
+    ax.plot(quantiles, reference + half_width, color=VERMILLION,
+            linestyle="--", linewidth=1.5)
     ax.plot(quantiles, ordered, "o", color=BLUE, markersize=5,
             markerfacecolor="none", markeredgewidth=1.3)
-    ax.plot(quantiles, intercept + slope * quantiles, color=VERMILLION,
-            linewidth=2.5)
-    ax.set_xlabel("Normal quantiles")
+    # The envelope widens without bound in the tails. Scale to the data,
+    # as the R original did, so the points rather than the envelope set
+    # the frame.
+    pad = 0.08 * np.ptp(ordered)
+    ax.set_ylim(ordered.min() - pad, ordered.max() + pad)
+    ax.set_xlabel(xlabel)
     ax.set_ylabel(label)
 
 
 def pairs_plot(frame: pd.DataFrame, outdir: pathlib.Path, name: str,
                size: float = 12) -> None:
+    """A scatter-plot matrix in the layout of R's ``pairs()``.
+
+    The diagonal carries the variable's name, which is what ``pairs()``
+    draws and what the surrounding text refers to. (The food-texture
+    matrix in the data-visualization chapter came from
+    ``car::scatterplotMatrix`` instead, whose diagonal is a density
+    curve; the two functions differ, so the two figures do too.)
+    """
     columns = list(frame.columns)
     n = len(columns)
     fig, axes = plt.subplots(n, n, figsize=(size, size))
     for row, y_name in enumerate(columns):
         for col, x_name in enumerate(columns):
             ax = axes[row, col]
-            ax.grid(color=GRID, linewidth=0.6)
             if row == col:
-                ax.hist(frame[x_name], bins=12, color=BLUE_FILL,
-                        edgecolor=BLUE, linewidth=1.0)
-            else:
-                ax.plot(frame[x_name], frame[y_name], "o", color=BLUE,
-                        markersize=3.5, markerfacecolor="none",
-                        markeredgewidth=0.9)
-            if row == 0:
-                ax.set_title(x_name)
-            if col == 0:
-                ax.set_ylabel(y_name)
+                ax.text(0.5, 0.5, x_name, transform=ax.transAxes,
+                        ha="center", va="center", fontsize=17)
+                ax.set_xticks([])
+                ax.set_yticks([])
+                continue
+            ax.grid(color=GRID, linewidth=0.6)
+            ax.plot(frame[x_name], frame[y_name], "o", color=BLUE,
+                    markersize=3.5, markerfacecolor="none",
+                    markeredgewidth=0.9)
+            # Ticks go on the outer edge only, as pairs() does.
             if row != n - 1:
                 ax.set_xticklabels([])
-            if col != 0 or row == col:
+            if col != 0:
                 ax.set_yticklabels([])
             ax.tick_params(labelsize=11)
     save(fig, outdir, name)
+
+
+def marginal_boxplots(ax, x, y) -> None:
+    """Box plots down the left and along the bottom, as R's
+    ``car::scatterplot`` draws them.
+
+    They carry the univariate spread of each variable, which the scatter
+    plot on its own does not show, and the solutions refer to them.
+    """
+    divider = make_axes_locatable(ax)
+    left = divider.append_axes("left", size="7%", pad=0.5, sharey=ax)
+    bottom = divider.append_axes("bottom", size="7%", pad=0.5, sharex=ax)
+    style = dict(
+        widths=0.5, patch_artist=True,
+        boxprops=dict(facecolor="white", color=GREY, linewidth=1.2),
+        medianprops=dict(color=GREY, linewidth=1.6),
+        whiskerprops=dict(color=GREY, linewidth=1.2),
+        capprops=dict(color=GREY, linewidth=1.2),
+        flierprops=dict(marker="o", markersize=3, markerfacecolor="none",
+                        markeredgecolor=GREY),
+    )
+    left.boxplot(np.asarray(y, dtype=float), orientation="vertical", **style)
+    bottom.boxplot(np.asarray(x, dtype=float), orientation="horizontal", **style)
+    for extra in (left, bottom):
+        # Hide the labels with tick_params, not set_xticks: these axes
+        # share their scale with the main one, so clearing the ticks
+        # would clear them on the scatter plot too.
+        extra.tick_params(left=False, labelleft=False,
+                          bottom=False, labelbottom=False)
+        for spine in extra.spines.values():
+            spine.set_visible(False)
+    # The axis labels belong outside the box plots, not under them.
+    if ax.get_xlabel():
+        bottom.set_xlabel(ax.get_xlabel())
+        ax.set_xlabel("")
+    if ax.get_ylabel():
+        left.set_ylabel(ax.get_ylabel())
+        ax.set_ylabel("")
+    return left, bottom
 
 
 def lowess(x, y, frac: float = 0.5, gridsize: int = 80):
@@ -211,10 +299,14 @@ def distillation(outdir: pathlib.Path) -> None:
     ax.grid(color=GRID, linewidth=0.8)
     ax.plot(temperature, pressure, "o", color=BLUE, markersize=5,
             markerfacecolor="none", markeredgewidth=1.2)
+    _, ci_low, ci_high = model.confidence_interval(grid, level=0.99)
     ax.plot(grid, fit, color=VERMILLION, linewidth=2.5, label="Least squares fit")
-    ax.plot(grid, low, "--", color=VERMILLION, linewidth=1.8,
+    ax.plot(grid, ci_low, "--", color=VERMILLION, linewidth=1.8,
+            label="99% confidence interval on the line")
+    ax.plot(grid, ci_high, "--", color=VERMILLION, linewidth=1.8)
+    ax.plot(grid, low, ":", color=GREY, linewidth=1.8,
             label="99% prediction interval")
-    ax.plot(grid, high, "--", color=VERMILLION, linewidth=1.8)
+    ax.plot(grid, high, ":", color=GREY, linewidth=1.8)
     ax.set_xlabel("Tray temperature [°F]")
     ax.set_ylabel("Vapour pressure [kPa]")
     ax.legend(loc="upper right", frameon=False)
@@ -261,10 +353,15 @@ def distillation(outdir: pathlib.Path) -> None:
     save(fig, outdir, "distillation-prediction-inverted-temperature.png")
 
     # 4. The two q-q plots side by side.
+    # Studentized residuals follow a t-distribution, so that is what the
+    # reference distribution has to be; the R original used t quantiles.
+    tdist = stats.t(df=model.dof - 1)
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
-    qq_panel(axes[0], model.studentized, "Studentized residuals")
+    qq_panel(axes[0], model.studentized, "Studentized residuals",
+             dist=tdist, xlabel="t quantiles")
     axes[0].set_title("Model with temperature")
-    qq_panel(axes[1], model_inv.studentized, "Studentized residuals")
+    qq_panel(axes[1], model_inv.studentized, "Studentized residuals",
+             dist=stats.t(df=model_inv.dof - 1), xlabel="t quantiles")
     axes[1].set_title("Model with inverted temperature")
     save(fig, outdir, "distillation-prediction-qqplots.png")
 
@@ -282,12 +379,21 @@ def distillation(outdir: pathlib.Path) -> None:
         ax.axhline(-level, color=colour, linestyle="--", linewidth=1.5)
     ax.axvline(2 * 2 / model_sub.n, color=GREEN, linestyle="--", linewidth=1.5)
     ax.axvline(3 * 2 / model_sub.n, color=VERMILLION, linestyle="--", linewidth=1.5)
-    # Name the observations the solution removes.
-    for index in (38, 53, 84, 101):
-        i = index - 1
-        ax.annotate(f"{index}", xy=(model_sub.hat[i], model_sub.studentized[i]),
+    # The observations named in the original figure. car::influencePlot
+    # labels points interactively, so the set was chosen by clicking on
+    # them; it is listed here so the redraw carries the same labels
+    # rather than a different rule's answer. They are the points in the
+    # upper region: large positive residual, large leverage, or both.
+    named = (25, 38, 39, 41, 53, 84, 93, 101)
+    flagged = np.zeros(model_sub.n, dtype=bool)
+    flagged[[i - 1 for i in named]] = True
+    ax.scatter(model_sub.hat[flagged], model_sub.studentized[flagged],
+               s=area[flagged], facecolors="none", edgecolors=VERMILLION,
+               linewidths=1.8, zorder=4)
+    for i in np.flatnonzero(flagged):
+        ax.annotate(f"{i + 1}", xy=(model_sub.hat[i], model_sub.studentized[i]),
                     xytext=(model_sub.hat[i], model_sub.studentized[i] + 0.28),
-                    ha="center", color=VERMILLION, fontsize=14)
+                    ha="center", color=VERMILLION, fontsize=13)
     ax.set_title("Marker area is proportional to Cook's distance")
     ax.set_xlabel("Hat value (leverage)")
     ax.set_ylabel("Studentized residuals")
@@ -385,14 +491,27 @@ def gas_furnace(outdir: pathlib.Path) -> None:
             linewidth=2.5, label="Least squares fit")
     grid, fitted = lowess(rate, co2, frac=0.4)
     ax.plot(grid, fitted, "--", color=GREEN, linewidth=2.2, label="LOESS smoother")
-    ax.set_title("Scatter plot with a smoother and the least squares line")
+    # The spread lines: the smoother applied to the absolute residuals
+    # around the smoother, above and below it. They show how the scatter
+    # about the trend changes across the x-range, which is the point the
+    # solution makes about these data.
+    spread_at_point = np.interp(rate, grid, fitted)
+    deviation = co2 - spread_at_point
+    spread_grid, spread = lowess(rate, np.abs(deviation), frac=0.4)
+    for sign, label in ((1, "Spread: smoother $\\pm$ mean |deviation|"), (-1, None)):
+        ax.plot(spread_grid, np.interp(spread_grid, grid, fitted) + sign * spread,
+                ":", color=GREEN, linewidth=1.8, label=label)
+    ax.set_title("Scatter plot with smoother, spread, and L/S line",
+                 fontsize=16)
     ax.set_xlabel("Gas flow rate")
     ax.set_ylabel("CO$_2$")
-    ax.legend(loc="upper right", frameon=False)
+    ax.legend(loc="upper right", frameon=False, fontsize=13)
+    marginal_boxplots(ax, rate, co2)
     save(fig, outdir, "CO2-gas-furnace-raw-data.png")
 
     fig, ax = plt.subplots(figsize=(8, 7))
-    qq_panel(ax, model.studentized, "Studentized residuals")
+    qq_panel(ax, model.studentized, "Studentized residuals",
+             dist=stats.t(df=model.dof - 1), xlabel="t quantiles")
     save(fig, outdir, "CO2-gas-furnace-residuals.png")
 
 

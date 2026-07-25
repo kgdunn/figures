@@ -183,10 +183,17 @@ def aeration(outdir: pathlib.Path) -> None:
     ax.grid(color=GRID, linewidth=0.8)
     ax.plot(order, xbar, "-s", color=BLUE, markersize=4, linewidth=0.9)
     draw_limits(ax, lcl, centre, ucl)
+    # Leave room above and below the control limits. Autoscaling on the
+    # data alone puts the limits hard against the frame, which reads as
+    # though the chart has been cropped, and leaves the annotation
+    # sitting on top of the upper limit.
+    span = ucl - lcl
+    ax.set_ylim(min(lcl, xbar.min()) - 0.35 * span,
+                max(ucl, xbar.max()) + 0.35 * span)
     ax.axvline(275, color=ORANGE, linewidth=2)
-    ax.annotate("CUSUM detected the problem at t = 275",
-                xy=(275, ax.get_ylim()[1]), xytext=(290, ax.get_ylim()[1]),
-                ha="left", va="top", color=ORANGE, fontsize=15)
+    ax.annotate("CUSUM detected the problem at t = 275", xy=(290, ucl),
+                xytext=(0, 12), textcoords="offset points",
+                ha="left", va="bottom", color=ORANGE, fontsize=15)
     ax.set_xlabel("Time order")
     ax.set_ylabel("Phase II subgroups")
     save(fig, outdir, "aeration-Shewhart-chart.png")

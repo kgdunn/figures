@@ -70,7 +70,13 @@ HERE = pathlib.Path(__file__).parent
 COLUMNS = ["Tmax1", "Tmax2", "z1", "z2", "SCB"]
 # Observations the R script's identify() calls picked out, one-based.
 FLAGGED = [51, 52, 53, 54]
-FLAGGED_AFTER = [27]
+# The three the original names once 51 to 54 are gone: 27 stands above
+# 3h-bar, and 38 and 41 are the next two along.
+FLAGGED_AFTER = [27, 38, 41]
+# The points the original named on the raw-data plot. R's identify()
+# labels whatever is clicked, so the set is recorded here rather than
+# recomputed; it is the ring of points furthest from the fitted line.
+IDENTIFIED_RAW = [4, 7, 8, 16, 19, 21, 26, 33, 35, 36, 49, 52, 53, 54]
 
 mpl.rcParams.update(
     {
@@ -148,41 +154,58 @@ def scatterplot_matrix(frame: pd.DataFrame, outdir: pathlib.Path) -> None:
     for row, y_name in enumerate(COLUMNS):
         for col, x_name in enumerate(COLUMNS):
             ax = axes[row, col]
-            ax.grid(color=GRID, linewidth=0.6)
             if row == col:
-                ax.hist(frame[x_name], bins=12, color=BLUE_FILL,
-                        edgecolor=BLUE, linewidth=1.0)
-            else:
-                ax.plot(frame[x_name], frame[y_name], "o", color=BLUE,
-                        markersize=3.5, markerfacecolor="none",
-                        markeredgewidth=0.9)
-            if row == 0:
-                ax.set_title(x_name)
-            if col == 0:
-                ax.set_ylabel(y_name)
+                # R's pairs() puts the variable's name on the diagonal.
+                ax.text(0.5, 0.5, x_name, transform=ax.transAxes,
+                        ha="center", va="center", fontsize=20)
+                ax.set_xticks([])
+                ax.set_yticks([])
+                continue
+            ax.grid(color=GRID, linewidth=0.6)
+            ax.plot(frame[x_name], frame[y_name], "o", color=BLUE,
+                    markersize=3.5, markerfacecolor="none",
+                    markeredgewidth=0.9)
             if row != n - 1:
                 ax.set_xticklabels([])
-            if col != 0 or row == col:
+            if col != 0:
                 ax.set_yticklabels([])
             ax.tick_params(labelsize=11)
     save(fig, outdir, "ldpe-scatterplot-matrix.png")
 
 
 def influence_index_plot(model: SimpleModel, flagged, outdir, name, title):
+    """The four panels of ``car::influenceIndexPlot``, in its order.
+
+    Cook's distance, studentized residual, Bonferroni p-value, hat
+    value. The Bonferroni panel is the outlier test: the two-sided
+    p-value for each studentized residual, multiplied by the number of
+    observations, since every point is being tested. It is included
+    because the exercise text tells the reader they may ignore it, which
+    only makes sense if it is on the page.
+
+    Each panel is drawn as a stem, a vertical drop to the baseline under
+    every observation, which is how the original reads the index off the
+    x-axis.
+    """
     index = np.arange(1, model.n + 1)
+    outlier_p = 2 * stats.t.sf(np.abs(model.studentized), df=model.n - 3)
+    bonferroni = np.minimum(1.0, model.n * outlier_p)
     panels = [
-        (model.studentized, "Studentized residuals"),
-        (model.hat, "hat-values"),
-        (model.cooks, "Cook's distance"),
+        (model.cooks, "Cook's distance", 0.0),
+        (model.studentized, "Studentized residuals", 0.0),
+        (bonferroni, "Bonferroni p-value", 1.0),
+        (model.hat, "hat-values", 0.0),
     ]
-    fig, axes = plt.subplots(3, 1, figsize=(10, 10), sharex=True)
-    for ax, (values, label) in zip(axes, panels):
+    fig, axes = plt.subplots(4, 1, figsize=(10, 12), sharex=True)
+    for ax, (values, label, baseline) in zip(axes, panels):
         ax.grid(color=GRID, linewidth=0.8)
-        ax.plot(index, values, "-o", color=BLUE, markersize=5, linewidth=0.9)
-        ax.set_ylabel(label)
+        ax.vlines(index, baseline, values, color=BLUE, linewidth=1.0)
+        ax.plot(index, values, "o", color=BLUE, markersize=5,
+                markerfacecolor="none", markeredgewidth=1.2)
+        ax.axhline(baseline, color=GREY, linewidth=1)
+        ax.set_ylabel(label, fontsize=15)
         label_points(ax, index, values, flagged,
-                     dy=0.03 * (np.nanmax(values) - np.nanmin(values)))
-    axes[0].axhline(0, color=GREY, linewidth=1)
+                     dy=0.05 * (np.nanmax(values) - np.nanmin(values)))
     axes[0].set_title(title)
     axes[-1].set_xlabel("Observation number")
     save(fig, outdir, name)
@@ -209,27 +232,39 @@ def main(outdir: pathlib.Path) -> None:
     edge = np.array([z2.min(), z2.max()])
     ax.plot(edge, model.intercept + model.slope * edge, color=VERMILLION,
             linewidth=2.5)
-    label_points(ax, z2, scb, FLAGGED, dy=0.02 * np.ptp(scb))
+    label_points(ax, z2, scb, IDENTIFIED_RAW, dy=0.02 * np.ptp(scb))
     ax.set_xlabel("Conversion in zone 2, z2")
     ax.set_ylabel("Short-chain branching, SCB")
     save(fig, outdir, "ldpe-z2-SCB-raw-data-identify.png")
 
     # 2. Normal q-q plot. The solution text calls these the studentized
     # residuals, which is also what car::qqPlot draws for a model object.
+    # car::qqPlot draws studentized residuals against t quantiles, with
+    # a reference line through the quartiles and the 95% pointwise
+    # envelope around it. The envelope is what says whether the tails
+    # have strayed far enough to matter.
     studentized = model.studentized
     ordered = np.sort(studentized)
-    quantiles = stats.norm.ppf((np.arange(1, model.n + 1) - 0.375) / (model.n + 0.25))
-    q_data = np.percentile(studentized, [25, 75])
-    q_norm = stats.norm.ppf([0.25, 0.75])
-    slope = (q_data[1] - q_data[0]) / (q_norm[1] - q_norm[0])
-    intercept = q_data[0] - slope * q_norm[0]
+    tdist = stats.t(df=model.n - 3)
+    probability = (np.arange(1, model.n + 1) - 0.5) / model.n
+    quantiles = tdist.ppf(probability)
+    x25, x75 = np.percentile(quantiles, [25, 75])
+    y25, y75 = np.percentile(ordered, [25, 75])
+    slope = (y75 - y25) / (x75 - x25)
+    intercept = y25 - slope * x25
+    reference = intercept + slope * quantiles
+    half_width = stats.norm.ppf(0.975) * (slope / tdist.pdf(quantiles)) * np.sqrt(
+        probability * (1 - probability) / model.n)
     fig, ax = plt.subplots(figsize=(8, 7))
     ax.grid(color=GRID, linewidth=0.8)
+    ax.plot(quantiles, reference, color=VERMILLION, linewidth=2.5)
+    ax.plot(quantiles, reference - half_width, "--", color=VERMILLION, linewidth=1.5)
+    ax.plot(quantiles, reference + half_width, "--", color=VERMILLION, linewidth=1.5)
     ax.plot(quantiles, ordered, "o", color=BLUE, markersize=6,
             markerfacecolor="none", markeredgewidth=1.4)
-    ax.plot(quantiles, intercept + slope * quantiles, color=VERMILLION,
-            linewidth=2.5)
-    ax.set_xlabel("Normal quantiles")
+    pad = 0.08 * np.ptp(ordered)
+    ax.set_ylim(ordered.min() - pad, ordered.max() + pad)
+    ax.set_xlabel("t quantiles")
     ax.set_ylabel("Studentized residuals")
     save(fig, outdir, "ldpe-z2-SCB-resids-qqplot.png")
 
