@@ -117,12 +117,27 @@ def main(outdir: pathlib.Path) -> None:
     time = np.arange(1, N + 1)
     only_joint = joint & ~univariate
 
-    fig = plt.figure(figsize=(13, 9))
     # The scatter plot sits in the top left; x1 runs down the left-hand
-    # panel and x2 runs across the top panel, so each point can be traced.
-    scatter = fig.add_axes([0.08, 0.42, 0.30, 0.44])
-    across = fig.add_axes([0.42, 0.42, 0.52, 0.44])
-    down = fig.add_axes([0.08, 0.05, 0.30, 0.30])
+    # panel and x2 runs across the top panel, so each point can be traced
+    # from the joint plot into the chart for its own variable.
+    #
+    # Two constraints fix the geometry, and the figure is square because of
+    # them. The scatter panel is square, so that a standard deviation of x1
+    # and one of x2 occupy the same distance: the axis limits are a common
+    # multiple of each variable's own sigma, so the ellipse then shows the
+    # correlation rather than a shape the panel imposed on it. And the
+    # sequence axis is the same length in both marginal charts, the width of
+    # the top panel matching the height of the left one, so the fifty
+    # observations are drawn at one scale instead of spread across the top
+    # and crowded down the side.
+    panel = 0.335   # scatter: square, and the width and height the marginals share
+    run = 0.475     # the sequence axis, the same length across and down
+    left, bottom, gap = 0.085, 0.075, 0.045
+
+    fig = plt.figure(figsize=(11.5, 11.5))
+    scatter = fig.add_axes([left, bottom + run + gap, panel, panel])
+    across = fig.add_axes([left + panel + gap, bottom + run + gap, run, panel])
+    down = fig.add_axes([left, bottom, panel, run])
 
     scatter.grid(color=GRID, linewidth=0.8)
     scatter.axhline(0, color="black", linewidth=1.0)
@@ -191,11 +206,14 @@ def main(outdir: pathlib.Path) -> None:
                       textcoords="offset points", xytext=(6, 12),
                       color=VERMILLION, fontsize=15)
 
-    fig.text(0.42, 0.30,
-             "Every point is inside the $3\\sigma$ limits of both charts.\n"
-             "The marked point breaks the correlation between\n"
-             "the two variables, and only the joint plot shows it.",
-             fontsize=16, va="top", color=GREY)
+    # The quarter opposite the scatter plot is the one place no axis can
+    # reach, so the reading of the figure goes there.
+    fig.text(left + panel + gap + run / 2, bottom + run / 2,
+             "Every point is inside the $3\\sigma$ limits\n"
+             "of both charts. The marked point breaks\n"
+             "the correlation between the two variables,\n"
+             "and only the joint plot shows it.",
+             fontsize=17, ha="center", va="center", color=GREY)
 
     fig.savefig(outdir / "two-axis-monitoring-plot.png", dpi=DPI, bbox_inches="tight")
     plt.close(fig)
