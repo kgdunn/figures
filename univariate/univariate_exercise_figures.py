@@ -124,35 +124,61 @@ def fetch(name: str) -> pd.DataFrame:
         return pd.read_csv(HERE / name)
 
 
-def spread_labels_apart(fig, ax, texts) -> None:
-    """Nudge annotation text upwards until no two labels overlap.
+def marker_boxes(fig, ax, points, radius_points: float) -> list:
+    """The area each marker occupies, in display coordinates."""
+    radius = radius_points * fig.dpi / 72.0
+    boxes = []
+    for x, y in ax.transData.transform(points):
+        boxes.append(
+            mpl.transforms.Bbox([[x - radius, y - radius], [x + radius, y + radius]])
+        )
+    return boxes
 
-    Several of the raw-material properties flag points that sit at
-    almost the same height, so labels placed beside their markers would
-    otherwise run into each other.
+
+def lift_labels_clear(fig, ax, texts, obstacles) -> None:
+    """Raise each label until it clears the markers and the other labels.
+
+    Each label starts just above the point it names, which is where it
+    is easiest to read. Several of the raw-material properties flag
+    points that sit close together, so a label can start on top of a
+    neighbouring marker or another label; those are lifted, a few points
+    at a time, until they are clear. Lifting is the only move made, so a
+    label never drifts sideways away from the point it belongs to.
     """
     fig.canvas.draw()
     renderer = fig.canvas.get_renderer()
-    inverse = ax.transData.inverted()
-    (_, base), (_, one_pixel_up) = inverse.transform([(0, 0), (0, 1)])
-    step = 4 * (one_pixel_up - base)
-
-    placed: list = []
-    for text in sorted(texts, key=lambda t: -t.get_position()[1]):
+    placed = list(obstacles)
+    # Highest first, so a label that has to move does not have to move
+    # past one that has not been placed yet.
+    for text in sorted(texts, key=lambda t: -t.xy[1]):
         for _ in range(60):
             box = text.get_window_extent(renderer)
             if not any(box.overlaps(other) for other in placed):
                 break
-            x, y = text.get_position()
-            text.set_position((x, y + step))
+            offset_x, offset_y = text.xyann
+            text.xyann = (offset_x, offset_y + 3)
             fig.canvas.draw()
         placed.append(text.get_window_extent(renderer))
 
-    # Make room for any label that was pushed above the data.
-    top = max(t.get_position()[1] for t in texts) if texts else None
-    if top is not None:
-        low, high = ax.get_ylim()
-        ax.set_ylim(low, max(high, top + 1.5 * step))
+
+def make_room_for_labels(fig, ax, texts, margin_points: float = 6.0) -> None:
+    """Widen the axes so no label runs off the edge of the plot."""
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    inverse = ax.transData.inverted()
+    margin = margin_points * fig.dpi / 72.0
+
+    left, right = ax.get_xlim()
+    low, high = ax.get_ylim()
+    for text in texts:
+        box = text.get_window_extent(renderer).expanded(1.0, 1.0)
+        (x0, y0), (x1, y1) = inverse.transform(
+            [(box.x0 - margin, box.y0 - margin), (box.x1 + margin, box.y1 + margin)]
+        )
+        left, right = min(left, x0), max(right, x1)
+        low, high = min(low, y0), max(high, y1)
+    ax.set_xlim(left, right)
+    ax.set_ylim(low, high)
 
 
 def styled_boxplot(ax, data, labels):
@@ -209,27 +235,29 @@ def raw_material_index_plots(outdir: pathlib.Path) -> None:
                 markersize=8, markerfacecolor="none", markeredgewidth=1.6)
         ax.plot(index[flagged], values[flagged], "o", color=VERMILLION,
                 markersize=9, markerfacecolor="none", markeredgewidth=2.2)
-        # Label the flagged points, nudging the text away from the plot
-        # edge so it does not run off the right-hand side. Several of
-        # the six properties have missing values, so the span has to
-        # ignore them.
-        span = np.nanmax(values) - np.nanmin(values)
-        texts = []
-        for i, value, name in zip(index[flagged], values[flagged],
-                                  raw.loc[flagged, "Sample"]):
-            right = i < 0.72 * len(values)
-            texts.append(
-                ax.annotate(
-                    name,
-                    xy=(i, value),
-                    xytext=(i + (1.4 if right else -1.4), value + 0.02 * span),
-                    ha="left" if right else "right",
-                    va="bottom",
-                    color=VERMILLION,
-                    fontsize=15,
-                )
+        # Label each flagged point directly above its own marker, so
+        # there is no doubt which label belongs to which point.
+        texts = [
+            ax.annotate(
+                name,
+                xy=(i, value),
+                xytext=(0, 7),
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+                color=VERMILLION,
+                fontsize=15,
             )
-        spread_labels_apart(fig, ax, texts)
+            for i, value, name in zip(index[flagged], values[flagged],
+                                      raw.loc[flagged, "Sample"])
+        ]
+        # Several of the six properties have missing values, so the
+        # markers have to be collected from the finite points only.
+        drawn = np.isfinite(values)
+        obstacles = marker_boxes(fig, ax, np.column_stack(
+            [index[drawn], values[drawn]]), radius_points=6.0)
+        lift_labels_clear(fig, ax, texts, obstacles)
+        make_room_for_labels(fig, ax, texts)
         ax.set_xlabel("Index")
         ax.set_ylabel(labels[column])
         save(fig, outdir, f"{column}.png")

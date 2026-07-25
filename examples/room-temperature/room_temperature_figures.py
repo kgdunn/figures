@@ -43,18 +43,24 @@ import pandas as pd
 
 BLUE = "#0072B2"
 ORANGE = "#E69F00"
-VERMILLION = "#D55E00"
-GREY = "#666666"
+GREEN = "#009E73"
+BLACK = "#333333"
 GRID = "#DDDDDD"
 
 DPI = 300
 HERE = pathlib.Path(__file__).parent
 
+# The four series overlap for most of the record, so each one carries a
+# dash pattern as well as a colour: where two traces cross, or where a
+# reader is working from a greyscale print, the pattern is what tells
+# them apart. The colours are four widely separated hues from the
+# Okabe-Ito set, which stay distinct under the common forms of colour
+# blindness.
 SERIES = {
-    "FrontLeft": ("Front left", BLUE),
-    "FrontRight": ("Front right", ORANGE),
-    "BackLeft": ("Back left", VERMILLION),
-    "BackRight": ("Back right", GREY),
+    "FrontLeft": ("Front left", BLUE, "solid"),
+    "FrontRight": ("Front right", ORANGE, (0, (6, 2))),
+    "BackLeft": ("Back left", GREEN, (0, (7, 2, 1.5, 2))),
+    "BackRight": ("Back right", BLACK, (0, (1.5, 1.6))),
 }
 
 mpl.rcParams.update(
@@ -79,9 +85,9 @@ def all_on_one_axis(temperatures: pd.DataFrame, outdir: pathlib.Path) -> None:
     order = np.arange(1, len(temperatures) + 1)
     fig, ax = plt.subplots(figsize=(14, 7))
     ax.grid(color=GRID, linewidth=0.8)
-    for column, (label, colour) in SERIES.items():
+    for column, (label, colour, dashes) in SERIES.items():
         ax.plot(order, temperatures[column], color=colour, linewidth=1.5,
-                label=label)
+                linestyle=dashes, label=label)
     ax.set_xlabel("Sequence order")
     ax.set_ylabel("Room temperature [K]")
     ax.set_xlim(0, len(temperatures) + 1)
@@ -96,7 +102,10 @@ def all_on_one_axis(temperatures: pd.DataFrame, outdir: pathlib.Path) -> None:
 def sparklines(temperatures: pd.DataFrame, outdir: pathlib.Path) -> None:
     order = np.arange(1, len(temperatures) + 1)
     fig, axes = plt.subplots(len(SERIES), 1, figsize=(11, 3.4), sharex=True)
-    for ax, (column, (label, colour)) in zip(axes, SERIES.items()):
+    for ax, (column, (label, colour, _)) in zip(axes, SERIES.items()):
+        # Each strip stands alone here, so the dash patterns used on the
+        # combined axis are not needed; the colours carry over so the
+        # two figures can be read against each other.
         ax.plot(order, temperatures[column], color=colour, linewidth=1.1)
         ax.set_ylim(290, 300)
         ax.set_xlim(0, len(temperatures) + 1)

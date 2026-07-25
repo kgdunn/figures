@@ -84,11 +84,14 @@ def save(fig, outdir: pathlib.Path, name: str) -> None:
 def children_by_gender(outdir: pathlib.Path) -> None:
     # Counts quoted in the chapter: 2739 births, 1420 male and 1319 female.
     counts = {"Male": 1420, "Female": 1319}
-    fig, ax = new_axes((7, 7))
+    # Wide enough for the axis label: at this font size the label is
+    # longer than a square panel, and would otherwise run off the edge.
+    fig, ax = new_axes((8.5, 7))
     bars = ax.bar(list(counts), list(counts.values()), width=0.6, color=BLUE)
     ax.bar_label(bars, padding=4)
     ax.set_ylabel(f"Number of children (N = {sum(counts.values())})")
-    ax.set_xlabel("Children born in Hamilton, April 2009, by sex")
+    # The two tick labels already say the split is by sex.
+    ax.set_xlabel("Children born in Hamilton, April 2009")
     ax.set_ylim(0, 1500)
     ax.set_yticks([0, 500, 1000, 1500])
     save(fig, outdir, "histogram-children-by-gender.png")
