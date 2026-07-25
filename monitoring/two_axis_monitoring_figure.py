@@ -56,7 +56,19 @@ GREEN = "#009E73"
 GREY = "#666666"
 GRID = "#DDDDDD"
 
+# Computer Modern for the maths, so x_1 and x_2 are set the way the book sets
+# them. This is matplotlib's own bundled font, not a TeX installation:
+# text.usetex=True would render through real LaTeX, but it needs TeX on the
+# machine, which would stop a reader without one from running this script.
+# The surrounding words stay in the sans face the other figures use.
+mpl.rcParams["mathtext.fontset"] = "cm"
+mpl.rcParams["font.size"] = 15
+
 DPI = 300
+# The variable names carry the figure: they say which panel belongs to which
+# measurement, and the whole arrangement rests on that.
+VARIABLE_LABEL = 30
+AXIS_LABEL = 18
 HERE = pathlib.Path(__file__).parent
 
 N = 50
@@ -151,13 +163,18 @@ def main(outdir: pathlib.Path) -> None:
     # the top panel matching the height of the left one, so the fifty
     # observations are drawn at one scale instead of spread across the top
     # and crowded down the side.
-    panel = 0.335   # scatter: square, and the width and height the marginals share
-    run = 0.475     # the sequence axis, the same length across and down
-    left, bottom, gap = 0.085, 0.075, 0.045
+    panel = 0.31    # scatter: square, and the width and height the marginals share
+    run = 0.44      # the sequence axis, the same length across and down
+    left, bottom = 0.085, 0.07
+    # The vertical gap is the wider of the two: the scatter plot's x1 label
+    # hangs into it, above the panel below, and at this size it needs the
+    # room. Nothing hangs into the horizontal gap, since the top chart keeps
+    # its axis on its right-hand side.
+    vgap, hgap = 0.10, 0.05
 
     fig = plt.figure(figsize=(11.5, 11.5))
-    scatter = fig.add_axes([left, bottom + run + gap, panel, panel])
-    across = fig.add_axes([left + panel + gap, bottom + run + gap, run, panel])
+    scatter = fig.add_axes([left, bottom + run + vgap, panel, panel])
+    across = fig.add_axes([left + panel + hgap, bottom + run + vgap, run, panel])
     down = fig.add_axes([left, bottom, panel, run])
 
     scatter.grid(color=GRID, linewidth=0.8)
@@ -174,8 +191,8 @@ def main(outdir: pathlib.Path) -> None:
         scatter.axhline(value, color=VERMILLION, linestyle="--", linewidth=1.4)
     scatter.set_xlim(-span[0], span[0])
     scatter.set_ylim(-span[1], span[1])
-    scatter.set_xlabel("$x_1$")
-    scatter.set_ylabel("$x_2$")
+    scatter.set_xlabel("$x_1$", fontsize=VARIABLE_LABEL)
+    scatter.set_ylabel("$x_2$", fontsize=VARIABLE_LABEL)
     scatter.annotate(f"{100 * confidence:.1f}% $T^2$ limit",
                      (ellipse[:, 0].min(), ellipse[:, 1].max()), color=ORANGE,
                      fontsize=14, ha="left", va="bottom")
@@ -198,8 +215,8 @@ def main(outdir: pathlib.Path) -> None:
                     textcoords="offset points", xytext=(0, -5))
     across.set_xlim(0, N + 1)
     across.set_ylim(-span[1], span[1])
-    across.set_xlabel("Sequence order")
-    across.set_ylabel("$x_2$")
+    across.set_xlabel("Sequence order", fontsize=AXIS_LABEL)
+    across.set_ylabel("$x_2$", fontsize=VARIABLE_LABEL)
     # Its y label would otherwise sit against the scatter plot.
     across.yaxis.set_label_position("right")
     across.spines["right"].set_visible(True)
@@ -221,8 +238,8 @@ def main(outdir: pathlib.Path) -> None:
                   textcoords="offset points", xytext=(5, 0))
     down.set_xlim(-span[0], span[0])
     down.set_ylim(N + 1, 0)
-    down.set_xlabel("$x_1$")
-    down.set_ylabel("Sequence order")
+    down.set_xlabel("$x_1$", fontsize=VARIABLE_LABEL)
+    down.set_ylabel("Sequence order", fontsize=AXIS_LABEL)
 
     for marked, colour in ((only_joint, VERMILLION), (only_univariate, GREEN)):
         for index in np.flatnonzero(marked):
@@ -239,7 +256,7 @@ def main(outdir: pathlib.Path) -> None:
     # The quarter opposite the scatter plot is the one place no axis can
     # reach, so the reading of the figure goes there. Each paragraph is in
     # the colour of the observation it describes.
-    middle = left + panel + gap + run / 2
+    middle = left + panel + hgap + run / 2
     fig.text(middle, bottom + run * 0.74,
              "Observation 11 lies inside the $3\\sigma$ limits of\n"
              "both charts, and outside the ellipse. It breaks\n"
