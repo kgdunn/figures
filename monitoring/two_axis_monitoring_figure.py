@@ -23,7 +23,10 @@ Beyond redrawing, the figure now:
 - marks, in all three panels, the one observation that no univariate
   chart flags but that falls outside the ellipse, which is the comparison
   being made;
-- labels both charts, and states the confidence level of the ellipse.
+- labels both charts, signs the limits so the reader can tell the upper
+  from the lower without reading the words, and puts each pair of limit
+  labels at the far end of its panel, away from the joint plot;
+- states the confidence level of the ellipse.
 
 Usage
 -----
@@ -95,7 +98,15 @@ def hotelling(data: np.ndarray, confidence: float):
 
 def main(outdir: pathlib.Path) -> None:
     data = simulated_data()
-    confidence = float(scipy.stats.norm.cdf(SIGMA))
+    # The ellipse was previously drawn at norm.cdf(3) = 99.87%, tying it to
+    # the 3-sigma charts so neither could be accused of having the easier
+    # limit. 99% is a rounder number, closer to the 95% used later in the
+    # chapter, and still leaves observation 11 as the only one outside:
+    # its T2 is 19.67 against a limit of 10.57, and the next largest is
+    # 6.85. Going down to 95% would not do, since that limit of 6.64 also
+    # catches observation 10, and the text describes a single sample.
+    CONFIDENCE = 0.99
+    confidence = CONFIDENCE
     upper = data.mean(axis=0) + SIGMA * data.std(axis=0, ddof=1)
     lower = data.mean(axis=0) - SIGMA * data.std(axis=0, ddof=1)
 
@@ -166,10 +177,12 @@ def main(outdir: pathlib.Path) -> None:
     across.axhline(0, color="black", linewidth=1.0)
     for value in (lower[1], upper[1]):
         across.axhline(value, color=VERMILLION, linestyle="--", linewidth=1.6)
-    across.annotate(f"{SIGMA}$\\sigma$ UCL", (N * 0.72, upper[1]), color=VERMILLION,
-                    fontsize=14, va="bottom")
-    across.annotate(f"{SIGMA}$\\sigma$ LCL", (N * 0.72, lower[1]), color=VERMILLION,
-                    fontsize=14, va="top")
+    across.annotate(f"$+{SIGMA}\\sigma$ UCL", (N + 0.5, upper[1]), color=VERMILLION,
+                    fontsize=14, ha="right", va="bottom",
+                    textcoords="offset points", xytext=(0, 5))
+    across.annotate(f"$-{SIGMA}\\sigma$ LCL", (N + 0.5, lower[1]), color=VERMILLION,
+                    fontsize=14, ha="right", va="top",
+                    textcoords="offset points", xytext=(0, -5))
     across.set_xlim(0, N + 1)
     across.set_ylim(-span[1], span[1])
     across.set_xlabel("Sequence order")
@@ -186,10 +199,12 @@ def main(outdir: pathlib.Path) -> None:
     down.axvline(0, color="black", linewidth=1.0)
     for value in (lower[0], upper[0]):
         down.axvline(value, color=VERMILLION, linestyle="--", linewidth=1.6)
-    down.annotate(f"{SIGMA}$\\sigma$ LCL", (lower[0], N * 0.12), color=VERMILLION,
-                  fontsize=14, ha="right", va="center", rotation=90)
-    down.annotate(f"{SIGMA}$\\sigma$ UCL", (upper[0], N * 0.12), color=VERMILLION,
-                  fontsize=14, ha="left", va="center", rotation=90)
+    down.annotate(f"$-{SIGMA}\\sigma$ LCL", (lower[0], N * 0.88), color=VERMILLION,
+                  fontsize=14, ha="right", va="center", rotation=90,
+                  textcoords="offset points", xytext=(-5, 0))
+    down.annotate(f"$+{SIGMA}\\sigma$ UCL", (upper[0], N * 0.88), color=VERMILLION,
+                  fontsize=14, ha="left", va="center", rotation=90,
+                  textcoords="offset points", xytext=(5, 0))
     down.set_xlim(-span[0], span[0])
     down.set_ylim(N + 1, 0)
     down.set_xlabel("$x_1$")
