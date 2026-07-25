@@ -135,16 +135,19 @@ def scree_plots(fraction: np.ndarray, outdir: pathlib.Path) -> None:
         save(fig, outdir, name)
 
 
-def r2_q2_plot(package: str, outdir: pathlib.Path, name: str) -> None:
-    q2 = Q2[package]
-    components = np.arange(1, len(R2) + 1)
+def r2_q2_plot(package: str, outdir: pathlib.Path, name: str, shown: int = 11) -> None:
+    """One R-squared / Q-squared pair. ``shown`` is how many components
+    to plot, of the eleven each package reported."""
+    q2 = Q2[package][:shown]
+    r2 = R2[:shown]
+    components = np.arange(1, shown + 1)
     stop = STOP_AFTER[package]
     print(f"{package}: R² goes {100 * R2[2]:.0f}% to {100 * R2[3]:.0f}% "
           f"on the 4th component, while Q² goes {100 * q2[2]:.0f}% to {100 * q2[3]:.0f}%")
 
     fig, axes = plt.subplots(1, 2, figsize=(13, 4.5), sharey=True)
     for ax, values, label, fill, edge in (
-        (axes[0], R2, "Cumulative $R^2$", BLUE_FILL, BLUE),
+        (axes[0], r2, "Cumulative $R^2$", BLUE_FILL, BLUE),
         (axes[1], q2, "Cumulative $Q^2$", ORANGE_FILL, ORANGE),
     ):
         ax.grid(axis="y", color=GRID, linewidth=0.8)
@@ -171,8 +174,17 @@ def r2_q2_plot(package: str, outdir: pathlib.Path, name: str) -> None:
 def main(outdir: pathlib.Path) -> None:
     scree_plots(eigenvalues(distillation_tower()), outdir)
     # The chapter embeds the unsuffixed name; it is the Simca pair, whose
-    # numbers the surrounding prose quotes.
-    r2_q2_plot("Simca-P 11.5", outdir, "barplot-for-R2-and-Q2.png")
+    # numbers the surrounding prose quotes. That committed image stops at
+    # eight components, where the two package-specific images run to
+    # eleven, and the difference is not cosmetic: Simca's Q-squared for
+    # components 9 to 11 is 0.77, 0.96 and 0.99. The distillation data has
+    # eleven variables, so by the ninth component the model is fitting
+    # what little is left and cross-validation predicts it almost exactly.
+    # Those three bars tower over the rest and bury the point the figure
+    # is making, that Q-squared stops rewarding components after the
+    # second. The two package images keep all eleven, as their originals
+    # do.
+    r2_q2_plot("Simca-P 11.5", outdir, "barplot-for-R2-and-Q2.png", shown=8)
     r2_q2_plot("Simca-P 11.5", outdir, "barplot-for-R2-and-Q2-Simca.png")
     r2_q2_plot("ProSensus 11.08", outdir, "barplot-for-R2-and-Q2-ProSensus.png")
 
