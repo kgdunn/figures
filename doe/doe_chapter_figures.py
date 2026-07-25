@@ -289,11 +289,59 @@ def interaction_contours(outdir: pathlib.Path) -> None:
               f"surface {interaction_surface(temperature, substrate):.2f}, reported {value}")
 
     fig, ax = plt.subplots(figsize=(7.5, 6))
-    contours = ax.contour(grid_t, grid_s, conversion, levels=np.arange(48, 96, 6),
+    levels = np.arange(48, 96, 6)
+    contours = ax.contour(grid_t, grid_s, conversion, levels=levels,
                           colors=GREY, linestyles="dotted", linewidths=1.1)
-    ax.clabel(contours, inline=True, fontsize=13, fmt="%g")
     ax.set_xlim(380, 409)
     ax.set_ylim(0, 1.95)
+
+    # The surface is computed on a wider grid than is shown, so that the
+    # contours run to the edges rather than stopping short. Left to
+    # itself, clabel then puts most labels on the parts of the contours
+    # that fall outside the axes, and clips the rest against the frame.
+    # Placing them explicitly puts one on every contour, where the
+    # original had them: a row along the top, and the low-value contours
+    # labelled again along the bottom where they re-enter the plot.
+    # Three sweeps: along the top, along the lower right where the
+    # low-value contours come back into the plot, and down the right-hand
+    # edge, which is the only place the closed 90 contour is reachable.
+    # The band along the bottom is shallow in value, so a single row
+    # there crosses only one contour; two rows pick up the pair the
+    # original labels down there.
+    sweeps = (
+        ("row", 1.82, (381, 406)),
+        ("row", 0.30, (381, 406)),
+        ("row", 0.12, (381, 406)),
+        ("column", 405.0, (1.0, 1.9)),
+    )
+    found: dict[float, list[tuple[float, float]]] = {level: [] for level in levels}
+    for kind, fixed, (start, stop) in sweeps:
+        along = np.linspace(start, stop, 2000)
+        if kind == "row":
+            points = [(float(v), fixed) for v in along]
+        else:
+            points = [(fixed, float(v)) for v in along]
+        values = np.array([interaction_surface(t_, s_) for t_, s_ in points])
+        for level in levels:
+            for index in np.flatnonzero(np.diff(np.sign(values - level))):
+                found[level].append(points[index])
+    # At most two labels per contour, and only where the two would be
+    # well apart, so a contour that a sweep crosses twice nearby is not
+    # labelled twice in the same place. The low-value contours are the
+    # ones that earn a second label, since they leave the top of the plot
+    # and come back in along the bottom, which is what the original shows.
+    spots = []
+    for level in levels:
+        kept: list[tuple[float, float]] = []
+        for point in found[level]:
+            if any(abs(point[0] - x) < 5 and abs(point[1] - y) < 0.6 for x, y in kept):
+                continue
+            kept.append(point)
+            if len(kept) == 2:
+                break
+        spots.extend(kept)
+    ax.clabel(contours, inline=True, fontsize=13, fmt="%g", manual=spots)
+    print(f"interaction contour: {len(spots)} contour labels placed")
     ax.set_xlabel("Temperature [K]")
     ax.set_ylabel("Substrate concentration [g/L]")
 
