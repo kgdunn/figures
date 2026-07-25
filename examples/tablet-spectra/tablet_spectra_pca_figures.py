@@ -39,6 +39,10 @@ Defects in the originals corrected here:
 - The score plot's ellipses were drawn dotted in red and green, a pairing
   that is hard to tell apart for a colourblind reader; they are now
   distinguished by colour and dash pattern from a colourblind-safe pair.
+- The three SPE panels had no limit drawn on them, so there was nothing to
+  read a tablet's residual distance against, even though the neighbouring
+  T-squared plot carried two limits. Each panel now shows its own 95%
+  limit, computed from the SPE values for that number of components.
 
 Usage
 -----
@@ -156,12 +160,42 @@ def r2_per_wavelength(r2: dict, outdir: pathlib.Path) -> None:
     save(fig, outdir, "spectral-data-R2-per-variable.png")
 
 
+def spe_limit(distances: np.ndarray, confidence: float = 0.95) -> float:
+    """Confidence limit on the residual distance, as a distance.
+
+    The sum of squared residuals of a row is not chi-squared distributed,
+    because the residuals are neither independent nor of equal variance.
+    Nomikos and MacGregor (1995) match a scaled chi-squared, g * chi2(h),
+    to the mean and variance of the observed sums of squares, and read the
+    limit off that. This is the calculation ``process_improve`` uses in
+    ``multivariate/_limits.py``; it is repeated here so the script needs
+    only numpy and scipy.
+
+    The input and the returned limit are distances (square roots), which is
+    what the rest of this script plots, so the values are squared going in
+    and the limit square-rooted coming out.
+    """
+    squared = np.asarray(distances, dtype=float) ** 2
+    centre = float(squared.mean())
+    variance = float(squared.var(ddof=1))
+    g = variance / (2 * centre)
+    h = 2 * centre**2 / variance
+    return float(np.sqrt(scipy.stats.chi2.ppf(confidence, h) * g))
+
+
 def spe_per_tablet(spe: dict, outdir: pathlib.Path) -> None:
     tablets = np.arange(1, len(spe[1]) + 1)
     fig, axes = plt.subplots(3, 1, figsize=(12, 8), sharex=True)
     for ax, a in zip(axes, COMPONENTS):
+        limit = spe_limit(spe[a])
+        above = int((spe[a] > limit).sum())
+        print(f"A = {a}: 95% SPE limit {limit:.2f}, {above} of {len(tablets)} tablets above it")
         ax.grid(color=GRID, linewidth=0.8)
         ax.plot(tablets, spe[a], color=COLOURS[a], linewidth=1.0)
+        ax.axhline(limit, color=GREY, linestyle="--", linewidth=1.6)
+        ax.annotate(f"95% limit = {limit:.1f}", (2, limit),
+                    xytext=(0, 5), textcoords="offset points", ha="left",
+                    va="bottom", color=GREY, fontsize=14)
         ax.set_ylabel(f"SPE: A = {a}")
         ax.set_ylim(0, spe[1].max() * 1.05)
     axes[-1].set_xlabel("Tablet number")
