@@ -13,7 +13,9 @@ serve ``data-visualization/data-visualization-exercises.rst``:
   ``car::scatterplotMatrix``, which printed each variable name over the
   middle of its density curve and drew the regression lines in bright
   green; the names are now panel titles and the lines follow the
-  chapter's palette.
+  chapter's palette. The diagonal keeps the original's kernel density
+  curve and rug rather than a histogram: the rug shows the ties in
+  Crispy and Fracture, which are recorded as whole numbers.
 - ``website-traffic-boxplot.png``: visits by day of the week, in the
   Saturday-first order the solution text uses.
 - ``website-traffic-timeseries.png``: the same visits against a real
@@ -160,6 +162,31 @@ def course_website_visits(outdir: pathlib.Path) -> None:
     save(fig, outdir, "course-website-visits.png")
 
 
+def kernel_density(values: np.ndarray, cut: float = 3.0, points: int = 512):
+    """A Gaussian kernel density estimate, bandwidth as R chooses it.
+
+    R's ``density()`` defaults to the ``bw.nrd0`` rule of thumb,
+    :math:`0.9 \\min(s, \\text{IQR}/1.349) n^{-1/5}`, and that is what
+    ``car::scatterplotMatrix`` drew on the diagonal of the original
+    figure. Reproducing the rule here keeps the curve the same shape as
+    the one the exercise was written against, without taking a
+    dependency for nine lines of arithmetic.
+    """
+    x = np.asarray(values, dtype=float)
+    x = x[np.isfinite(x)]
+    n = x.size
+    spread = x.std(ddof=1)
+    iqr = float(np.subtract(*np.percentile(x, [75, 25])))
+    if iqr > 0:
+        spread = min(spread, iqr / 1.349)
+    bandwidth = 0.9 * spread * n ** (-0.2)
+
+    grid = np.linspace(x.min() - cut * bandwidth, x.max() + cut * bandwidth, points)
+    z = (grid[:, None] - x[None, :]) / bandwidth
+    density = np.exp(-0.5 * z**2).sum(axis=1) / (n * bandwidth * np.sqrt(2 * np.pi))
+    return grid, density
+
+
 def food_texture_matrix(outdir: pathlib.Path) -> None:
     food = fetch("food-texture.csv")
     columns = ["Oil", "Density", "Crispy", "Fracture", "Hardness"]
@@ -173,8 +200,17 @@ def food_texture_matrix(outdir: pathlib.Path) -> None:
             ax = axes[row, col]
             ax.grid(color=GRID, linewidth=0.6)
             if row == col:
-                ax.hist(food[x_name], bins=12, color=BLUE_FILL,
-                        edgecolor=BLUE, linewidth=1.0)
+                # The diagonal carries a density curve over a rug of the
+                # individual readings, as the R original did. The rug
+                # shows where the data actually sit, including the ties
+                # in Crispy and Fracture that a smooth curve hides.
+                values = food[x_name].to_numpy(dtype=float)
+                grid, density = kernel_density(values)
+                ax.plot(grid, density, color=BLUE, linewidth=1.8)
+                ax.vlines(values, 0, 0.08 * density.max(), color=BLUE,
+                          linewidth=1.0)
+                ax.set_xlim(values.min(), values.max())
+                ax.set_ylim(0, 1.1 * density.max())
             else:
                 x = food[x_name].to_numpy(dtype=float)
                 y = food[y_name].to_numpy(dtype=float)
