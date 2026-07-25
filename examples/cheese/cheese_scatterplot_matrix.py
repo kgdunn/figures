@@ -1,21 +1,28 @@
 """Scatterplot matrix for the cheddar-cheese exercise.
 
-Writes two committed PNGs, replacing the base-R output of
+Writes three committed PNGs, replacing the base-R output of
 ``cheese-plots.R``:
 
-- ``cheese-plots.png``: the four measured variables (acetic acid, H2S,
-  lactic acid and taste) plotted against each other, which is what the
-  exercise's own code produces.
-- ``cheese-plots-with-random.png``: the same four with a column of random
-  numbers added, for showing what a variable unrelated to the others looks
-  like in the same display.
+- ``cheese-plots.png`` and ``cheese-plots-with-random.png``: acetic acid,
+  H2S, lactic acid, taste, and a fifth column of random numbers.
+- ``cheese-plots-no-random.png``: the same four measured variables without
+  that fifth column.
 
-The exercise prints ``scatterplotMatrix(cheese[, 2:5])``, four columns, but
-the committed ``cheese-plots.png`` showed five, the fifth being a "Random"
-variable that the exercise never introduces and its code never creates. A
-reader running the printed code got a different figure from the one beside
-it. The four-column version now carries that name; the five-column version
-keeps its own.
+The random column is deliberate, and it is the reason the figure earns its
+place. ``cheese-plots.R`` creates it on its line 5, ``cheese$Random <-
+rnorm(N, 1)``, and plots columns 2 to 6 for ``cheese-plots.png`` and
+columns 2 to 5 for ``cheese-plots-no-random.png``. Having a variable that
+is known to be unrelated to the rest gives the reader a reference for what
+"no relationship" looks like in this display, against which the real
+correlations can be read. The same column carries through the chapter into
+the regression and the neural-net models further down that script, where
+the point is that a variable of pure noise should earn no coefficient.
+
+Its values are not regenerated here. The R script writes them out to
+``cheese-with-random-data.csv`` in this directory, with the comment "to
+double check calculations in other software packages", so the recorded
+values are read from there and the figure reproduces the original exactly
+rather than approximately.
 
 The diagonal carries each variable's histogram and the upper triangle its
 correlation with the other variable, which is the same layout used for the
@@ -46,9 +53,11 @@ GRID = "#DDDDDD"
 
 DPI = 300
 HERE = pathlib.Path(__file__).parent
-URL = "https://openmv.net/file/cheddar-cheese.csv"
+# The random column exists only in the committed copy: the dataset on
+# openmv.net carries the four measured variables alone.
+RECORDED = "cheese-with-random-data.csv"
 MEASURED = ["Acetic", "H2S", "Lactic", "Taste"]
-SEED = 2
+WITH_RANDOM = [*MEASURED, "Random"]
 
 mpl.rcParams.update(
     {
@@ -64,11 +73,8 @@ mpl.rcParams.update(
 
 
 def cheese() -> pd.DataFrame:
-    try:
-        data = pd.read_csv(URL)
-    except Exception:  # noqa: BLE001
-        data = pd.read_csv(HERE / "cheese-with-random-data.csv", index_col=0)
-    return data[MEASURED]
+    """The five columns, random one included, as the R script recorded them."""
+    return pd.read_csv(HERE / RECORDED, index_col=0)[WITH_RANDOM]
 
 
 def scatterplot_matrix(data: pd.DataFrame, outdir: pathlib.Path, name: str) -> None:
@@ -120,16 +126,14 @@ def scatterplot_matrix(data: pd.DataFrame, outdir: pathlib.Path, name: str) -> N
 
 def main(outdir: pathlib.Path) -> None:
     data = cheese()
-    print(f"{len(data)} cheeses, {data.shape[1]} measured variables")
+    print(f"{len(data)} cheeses, {data.shape[1]} columns")
     print(data.corr().round(3).to_string())
-
-    with_random = data.copy()
-    with_random["Random"] = np.random.RandomState(SEED).normal(loc=1.0, size=len(data))
     print("correlation of the random column with taste: "
-          f"{with_random['Random'].corr(with_random['Taste']):+.3f}")
+          f"{data['Random'].corr(data['Taste']):+.3f}")
 
     scatterplot_matrix(data, outdir, "cheese-plots.png")
-    scatterplot_matrix(with_random, outdir, "cheese-plots-with-random.png")
+    scatterplot_matrix(data, outdir, "cheese-plots-with-random.png")
+    scatterplot_matrix(data[MEASURED], outdir, "cheese-plots-no-random.png")
 
 
 if __name__ == "__main__":
