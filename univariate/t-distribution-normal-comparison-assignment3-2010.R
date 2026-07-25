@@ -9,7 +9,7 @@ layout(matrix(c(1,2), 1, 2))
 plot(z, norm, type="p", pch=".", cex=5, main="Normal and t-distribution (df=6)", 
    ylab="Cumulative probability")
 lines(z, pt(z, df=6), type="l", lwd=2)
-legend(0.5, y=0.35, legend=c("Normal distribution", "t-distribution (df=8)"), 
+legend(0.5, y=0.35, legend=c("Normal distribution", "t-distribution (df=6)"), 
    pch=c(".", "-"), pt.cex=c(5, 2))
 
 plot(z, norm, type="p", pch=".", cex=5, main="Normal and t-distribution (df=35)", 
