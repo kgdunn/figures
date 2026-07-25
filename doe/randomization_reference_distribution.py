@@ -129,10 +129,20 @@ def main(outdir: pathlib.Path) -> None:
 
     ax.set_xlabel(r"Difference in averages, $\overline{y}_B - \overline{y}_A$")
     ax.set_ylabel(f"Number of the {len(differences):,} splits")
-    ax.legend(frameon=False, loc="upper left")
+
+    # Headroom above the peak, so the legend and the note sit in clear
+    # space instead of over the bars and the curve.
+    ax.set_ylim(0, counts.max() * 1.42)
+
+    ax.legend(frameon=False, loc="upper left", fontsize=13,
+              borderaxespad=0.6, handlelength=1.8)
+    # The note belongs to the region right of the line, so it sits on
+    # that side, in the headroom, and right-aligned to the axes rather
+    # than running off the edge.
     ax.annotate(
         f"{greater} splits ({100 * greater / len(differences):.1f}%)\nexceed the observed value",
-        xy=(observed + 4, counts.max() * 0.42), color=VERMILLION, fontsize=15, va="center",
+        xy=(edges[-1], counts.max() * 1.30), color=VERMILLION, fontsize=13,
+        ha="right", va="top",
     )
     fig.tight_layout()
     fig.savefig(outdir / "single-experiment-randomization.png", dpi=DPI)
