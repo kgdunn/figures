@@ -226,9 +226,12 @@ def kappa(outdir: pathlib.Path) -> None:
             markersize=2, alpha=0.6)
     ax.axvline(n_phase1, color=GREY, linewidth=1.5)
     low = ax.get_ylim()[0]
-    ax.text(n_phase1 / 2, low + 1, "Phase I data", ha="center", color=ORANGE)
+    # Near-black, for the same reason as the CUSUM label: orange text is
+    # too light to read against white. Blue, which the original used,
+    # would be lost among the data points here.
+    ax.text(n_phase1 / 2, low + 1, "Phase I data", ha="center", color=NEAR_BLACK)
     ax.text(n_phase1 + (len(values) - n_phase1) / 2, low + 1, "Phase II data",
-            ha="center", color=ORANGE)
+            ha="center", color=NEAR_BLACK)
     ax.set_xlabel("Sequence order")
     ax.set_ylabel("Kappa number: raw data")
     save(fig, outdir, "Kappa-raw-data.png")
