@@ -1,8 +1,8 @@
 """Room-temperature figures for the latent variable chapter.
 
 Four committed PNGs, replacing the base-R output of ``temperature-data.R``,
-the lattice cube it drew, and the Python 2 scripts that pasted panels
-together (``temperature-data-combine.py``,
+the lattice cube it drew, ``room-temperature-plots.py``, and the Python 2
+scripts that pasted panels together (``temperature-data-combine.py``,
 ``room-temperature-plots-combine.py``):
 
 - ``room-temperature-plots.png``: the four thermometers over three days,
@@ -15,7 +15,9 @@ together (``temperature-data-combine.py``,
   each observation against a one-component model, with a 95% limit.
 
 All four are computed from the published dataset rather than regenerated
-from a random seed, so the figures and the reader's own download agree.
+from a random seed, which is what ``room-temperature-plots.py`` did, so the
+figures and the reader's own download agree.
+
 The PCA is on autoscaled data by singular value decomposition, which is
 what ``prcomp(temps, scale=TRUE)`` did.
 
