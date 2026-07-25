@@ -405,6 +405,23 @@ def monitoring_chart_cycling(outdir: pathlib.Path) -> None:
     question describes: 100 consecutive measurements one minute apart,
     cycling in a saw-tooth between roughly 1 and 3 kg/s about a target of
     2 kg/s. Substitute the recorded data here if it turns up.
+
+    The control limits are computed from the series actually plotted,
+    and are not tuned to reproduce the ones in the original image (which
+    measure at 0.96, 1.94 and 2.91 against the 0.99, 1.91 and 2.83 here).
+    Matching the picture would mean choosing the amplitude and noise to
+    hit numbers read off a bitmap, which would make the chart agree with
+    a figure whose data no longer exists while disagreeing with its own.
+    The values are printed on the chart so a reader can check them
+    against a run of this script.
+
+    Subgroups are the twenty consecutive, non-overlapping groups of five
+    that the solution text describes. For each, the mean and the standard
+    deviation with one degree of freedom removed. The centre line is the
+    mean of the twenty subgroup means; the limits are three standard
+    errors either side, using the mean within-subgroup standard deviation
+    corrected for bias, ``3 * mean(s) / (a_n * sqrt(n))``, with
+    ``a_n = 0.9400`` at ``n = 5``.
     """
     rng = np.random.default_rng(4)
     n = 100
@@ -439,8 +456,14 @@ def monitoring_chart_cycling(outdir: pathlib.Path) -> None:
     ax.plot(np.arange(1, len(xbar) + 1), xbar, "-s", color=BLUE, markersize=6,
             linewidth=1)
     draw_limits(ax, lcl, centre, ucl)
-    ax.text(0.6, ucl, " UCL", color=VERMILLION, va="bottom", fontsize=15)
-    ax.text(0.6, lcl, " LCL", color=VERMILLION, va="top", fontsize=15)
+    # Show the values, not just the names: they come out of the data
+    # plotted above, so a reader can reproduce them.
+    ax.text(0.6, ucl, f" UCL = {ucl:.2f}", color=VERMILLION, va="bottom",
+            fontsize=15)
+    ax.text(0.6, lcl, f" LCL = {lcl:.2f}", color=VERMILLION, va="top",
+            fontsize=15)
+    ax.text(len(xbar) + 0.4, centre, f" {centre:.2f}", color=GREEN,
+            va="center", fontsize=15)
     ax.set_title("Shewhart chart: weight of feed entering")
     ax.set_xlabel("Time order")
     ax.set_ylabel("Subgroup mean")
