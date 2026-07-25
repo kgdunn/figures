@@ -230,6 +230,11 @@ def bootstrap(outdir: pathlib.Path) -> None:
     density = stats.gaussian_kde(slopes)(curve)
     ax.plot(curve, density * draws * np.diff(edges).mean(), color=GREY,
             linewidth=2)
+    # Headroom above the bars for the interval arrow and the three
+    # labels, so neither sits on top of the distribution.
+    top = float(counts.max())
+    ax.set_ylim(0, 1.45 * top)
+
     # Label the bounds: an unlabelled vertical line does not say which
     # of the three quantities it marks.
     marks = (
@@ -239,12 +244,27 @@ def bootstrap(outdir: pathlib.Path) -> None:
     )
     for value, colour, label in marks:
         ax.axvline(value, color=colour, linewidth=2)
-        ax.annotate(label, xy=(value, ax.get_ylim()[1]), xytext=(0, -4),
+        ax.annotate(label, xy=(value, 1.24 * top), xytext=(-4, 0),
                     textcoords="offset points", rotation=90, ha="right",
                     va="top", color=colour, fontsize=13)
+
+    # The width of the interval, drawn as a width. Two vertical lines
+    # say where the bounds are; the arrow between them is what shows
+    # how wide the interval is, which is the quantity under discussion.
+    ax.annotate("", xy=(high, 1.33 * top), xytext=(low, 1.33 * top),
+                arrowprops=dict(arrowstyle="<->", color=VERMILLION,
+                                linewidth=2, shrinkA=0, shrinkB=0))
+    ax.annotate(f"95% confidence interval: {high - low:.4f} wide",
+                xy=((low + high) / 2, 1.35 * top), ha="center", va="bottom",
+                color=VERMILLION, fontsize=13)
+
     ax.set_xlabel("Bootstrapped slope coefficient")
     ax.set_ylabel(f"Frequency (N = {draws})")
     ax.set_title("The slope has a distribution of its own")
+    # One label every 0.002. The default put nine on this axis and they
+    # ran into each other, reading as a single string of digits.
+    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(0.002))
+    ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter("%.3f"))
     save(fig, outdir, "bootstrap-example.png")
 
 
