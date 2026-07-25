@@ -161,14 +161,12 @@ def main(outdir: pathlib.Path) -> None:
     # the top panel matching the height of the left one, so the fifty
     # observations are drawn at one scale instead of spread across the top
     # and crowded down the side.
-    panel = 0.33    # scatter: square, and the width and height the marginals share
+    panel = 0.335   # scatter: square, and the width and height the marginals share
     run = 0.465     # the sequence axis, the same length across and down
     left, bottom = 0.085, 0.075
-    # The vertical gap is the wider of the two: the scatter plot's x1 label
-    # hangs into it, above the panel below, and at this size it needs the
-    # room. Nothing hangs into the horizontal gap, since the top chart keeps
-    # its axis on its right-hand side.
-    vgap, hgap = 0.075, 0.045
+    # Nothing hangs into either gap now that the joint plot carries no axis
+    # labels, so the two are the same and as tight as the tick labels allow.
+    vgap = hgap = 0.045
 
     fig = plt.figure(figsize=(11.5, 11.5))
     scatter = fig.add_axes([left, bottom + run + vgap, panel, panel])
@@ -189,8 +187,11 @@ def main(outdir: pathlib.Path) -> None:
         scatter.axhline(value, color=VERMILLION, linestyle="--", linewidth=1.4)
     scatter.set_xlim(-span[0], span[0])
     scatter.set_ylim(-span[1], span[1])
-    scatter.set_xlabel("$x_1$", fontsize=VARIABLE_LABEL)
-    scatter.set_ylabel("$x_2$", fontsize=VARIABLE_LABEL)
+    # No axis labels on the joint plot. Its horizontal axis is the same as
+    # the panel below, which is labelled x1, and its vertical axis the same
+    # as the panel to the right, which is labelled x2. Repeating them here
+    # would say nothing the alignment does not already say, and the labels
+    # would take the space between the panels.
     scatter.annotate(f"{100 * confidence:.1f}% $T^2$ limit",
                      (ellipse[:, 0].min(), ellipse[:, 1].max()), color=ORANGE,
                      fontsize=14, ha="left", va="bottom")
