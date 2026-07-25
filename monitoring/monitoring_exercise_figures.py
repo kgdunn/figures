@@ -462,8 +462,9 @@ def monitoring_chart_cycling(outdir: pathlib.Path) -> None:
             fontsize=15)
     ax.text(0.6, lcl, f" LCL = {lcl:.2f}", color=VERMILLION, va="top",
             fontsize=15)
-    ax.text(len(xbar) + 0.4, centre, f" {centre:.2f}", color=GREEN,
-            va="center", fontsize=15)
+    ax.annotate(f" {centre:.2f}", xy=(len(xbar) + 0.4, centre),
+                xytext=(0, 5), textcoords="offset points", color=GREEN,
+                va="bottom", fontsize=15)
     ax.set_title("Shewhart chart: weight of feed entering")
     ax.set_xlabel("Time order")
     ax.set_ylabel("Subgroup mean")
