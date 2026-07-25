@@ -149,27 +149,51 @@ class Fit:
         return internal ** 2 / 2 * self.hat / (1 - self.hat)
 
 
+def robust_line(x: np.ndarray, y: np.ndarray, tuning: float = 1.345,
+                iterations: int = 50) -> tuple[float, float]:
+    """Huber M-estimate of intercept and slope, as ``MASS::rlm`` gives.
+
+    ``car::qqPlot`` applied to a fitted model draws its reference line
+    this way (``line = "robust"``), not through the quartiles, which is
+    the default only when ``qqPlot`` is handed a bare vector. The
+    difference is not cosmetic: the quartiles of a studentized-residual
+    sample sit wider than the reference distribution's, so a quartile
+    line comes out steeper, and the confidence envelope, which is scaled
+    by that slope, comes out wider with it.
+    """
+    slope, intercept = np.polyfit(x, y, 1)
+    for _ in range(iterations):
+        residual = y - (intercept + slope * x)
+        spread = np.median(np.abs(residual - np.median(residual))) / 0.6745
+        if spread <= 0:
+            break
+        scaled = residual / spread
+        weight = np.where(np.abs(scaled) <= tuning, 1.0,
+                          tuning / np.maximum(np.abs(scaled), 1e-12))
+        design = np.column_stack([np.ones_like(x), x])
+        weighted = design * weight[:, None]
+        intercept, slope = np.linalg.solve(design.T @ weighted, weighted.T @ y)
+    return float(intercept), float(slope)
+
+
 def qq_panel(ax, values, label: str, dist=stats.norm,
              xlabel: str = "Normal quantiles") -> None:
-    """A q-q plot as ``car::qqPlot`` draws it.
+    """A q-q plot as ``car::qqPlot`` draws it for a fitted model.
 
-    The reference line is fitted through the first and third quartiles,
-    not forced through the origin at 45 degrees, and it is flanked by
-    the 95% pointwise confidence envelope. The envelope is the point of
-    the plot: it says how far a point may stray before it is worth
-    remarking on, and several of the exercise solutions read the tails
-    against it. ``dist`` is the reference distribution; the solutions
-    that plot studentized residuals pass a frozen t-distribution, which
-    is what the R original used.
+    The reference line is the robust fit of the ordered values on the
+    theoretical quantiles, and it is flanked by the 95% pointwise
+    confidence envelope. The envelope is the point of the plot: it says
+    how far a point may stray before it is worth remarking on, and
+    several of the exercise solutions read the tails against it.
+    ``dist`` is the reference distribution; the solutions that plot
+    studentized residuals pass a frozen t-distribution, which is what
+    the R original used.
     """
     ordered = np.sort(np.asarray(values, dtype=float))
     n = len(ordered)
     probability = (np.arange(1, n + 1) - 0.5) / n
     quantiles = dist.ppf(probability)
-    x25, x75 = np.percentile(quantiles, [25, 75])
-    y25, y75 = np.percentile(ordered, [25, 75])
-    slope = (y75 - y25) / (x75 - x25)
-    intercept = y25 - slope * x25
+    intercept, slope = robust_line(quantiles, ordered)
     reference = intercept + slope * quantiles
     # Standard error of the order statistic, as car::qqPlot computes it.
     se = (slope / dist.pdf(quantiles)) * np.sqrt(

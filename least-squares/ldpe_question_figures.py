@@ -139,6 +139,33 @@ class SimpleModel:
               f"{self.slope:.3f} z2, R2 {self.r2:.3f}, S_E {self.se:.4f}")
 
 
+def robust_line(x: np.ndarray, y: np.ndarray, tuning: float = 1.345,
+                iterations: int = 50) -> tuple[float, float]:
+    """Huber M-estimate of intercept and slope, as ``MASS::rlm`` gives.
+
+    ``car::qqPlot`` applied to a fitted model draws its reference line
+    this way (``line = "robust"``), not through the quartiles, which is
+    the default only when ``qqPlot`` is handed a bare vector. The
+    difference is not cosmetic: the quartiles of a studentized-residual
+    sample sit wider than the reference distribution's, so a quartile
+    line comes out steeper, and the confidence envelope, which is scaled
+    by that slope, comes out wider with it.
+    """
+    slope, intercept = np.polyfit(x, y, 1)
+    for _ in range(iterations):
+        residual = y - (intercept + slope * x)
+        spread = np.median(np.abs(residual - np.median(residual))) / 0.6745
+        if spread <= 0:
+            break
+        scaled = residual / spread
+        weight = np.where(np.abs(scaled) <= tuning, 1.0,
+                          tuning / np.maximum(np.abs(scaled), 1e-12))
+        design = np.column_stack([np.ones_like(x), x])
+        weighted = design * weight[:, None]
+        intercept, slope = np.linalg.solve(design.T @ weighted, weighted.T @ y)
+    return float(intercept), float(slope)
+
+
 def label_points(ax, x, y, which, colour=VERMILLION, dy=0.0):
     for index in which:
         i = index - 1
@@ -243,15 +270,18 @@ def main(outdir: pathlib.Path) -> None:
     # a reference line through the quartiles and the 95% pointwise
     # envelope around it. The envelope is what says whether the tails
     # have strayed far enough to matter.
+    # The reference line is the robust fit, which is what
+    # ``car::qqPlot`` uses on a model object. Fitting it through the
+    # quartiles instead gives a slope of 1.155 here rather than 1.014,
+    # and since the envelope is scaled by the slope, it comes out wider
+    # with it.
     studentized = model.studentized
     ordered = np.sort(studentized)
     tdist = stats.t(df=model.n - 3)
     probability = (np.arange(1, model.n + 1) - 0.5) / model.n
     quantiles = tdist.ppf(probability)
-    x25, x75 = np.percentile(quantiles, [25, 75])
-    y25, y75 = np.percentile(ordered, [25, 75])
-    slope = (y75 - y25) / (x75 - x25)
-    intercept = y25 - slope * x25
+    intercept, slope = robust_line(quantiles, ordered)
+    print(f"  q-q reference line: slope {slope:.3f}, intercept {intercept:+.3f}")
     reference = intercept + slope * quantiles
     half_width = stats.norm.ppf(0.975) * (slope / tdist.pdf(quantiles)) * np.sqrt(
         probability * (1 - probability) / model.n)
