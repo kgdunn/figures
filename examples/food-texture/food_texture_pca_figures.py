@@ -14,7 +14,13 @@ Seven committed PNGs, replacing the base-R output of
 - ``pca-on-food-texture-pc1-scores.png``: the first component's scores in
   sequence order.
 - ``pca-on-food-texture-score-t1-contribution-for-obs-33.png``: what each
-  variable contributes to the score of the most extreme pastry.
+  variable contributes to the score of the most extreme pastry. The bars are
+  the K terms of Miller, Swanson and Heckler (1994), each variable's
+  autoscaled value times its loading, so they sum to the score itself. The
+  chapter reaches the same five numbers through
+  ``PCA.score_contributions(food_mcuv, component=1)``; the script computes
+  them directly so that it needs only numpy, pandas and matplotlib, and
+  checks the sum against the score to keep the two in step.
 - ``pca-on-food-texture-scores-and-loadings.png``: the score plot and the
   loading plot side by side, which the chapter reads as a pair.
 
@@ -263,7 +269,7 @@ def score_sequence(scores: np.ndarray, outdir: pathlib.Path) -> None:
     save(fig, outdir, "pca-on-food-texture-pc1-scores.png")
 
 
-def contribution_plot(scaled: pd.DataFrame, loadings: np.ndarray,
+def contribution_plot(scaled: pd.DataFrame, scores: np.ndarray, loadings: np.ndarray,
                       outdir: pathlib.Path, sample: int = 33) -> None:
     contributions = scaled.iloc[sample - 1].to_numpy() * loadings[:, 0]
     print(f"observation {sample} autoscaled: "
@@ -271,6 +277,13 @@ def contribution_plot(scaled: pd.DataFrame, loadings: np.ndarray,
     print(f"observation {sample} contributions to t1: "
           + ", ".join(f"{n} {v:+.3f}" for n, v in zip(VARIABLES, contributions))
           + f"; sum {contributions.sum():+.3f}")
+    # The defining property: the terms add up to the score they decompose. If
+    # this ever fails, the figure and the chapter's code have drifted apart.
+    score = scores[sample - 1, 0]
+    if abs(contributions.sum() - score) > 1e-10:
+        raise ValueError(
+            f"contributions sum to {contributions.sum():.6f}, but t1 = {score:.6f}"
+        )
 
     fig, ax = plt.subplots(figsize=(9, 4.5))
     ax.grid(axis="y", color=GRID, linewidth=0.8)
@@ -332,7 +345,7 @@ def main(outdir: pathlib.Path) -> None:
     loading_bars(loadings[:, 0], 0, 0.7, outdir, "pca-on-food-texture-pc1-loadings.png")
     loading_bars(loadings[:, 1], 1, 1.0, outdir, "pca-on-food-texture-pc2-loadings.png")
     score_sequence(scores, outdir)
-    contribution_plot(scaled, loadings, outdir)
+    contribution_plot(scaled, scores, loadings, outdir)
     scores_and_loadings(scores, loadings, explained, outdir)
 
 
