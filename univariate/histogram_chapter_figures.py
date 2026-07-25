@@ -17,6 +17,11 @@ scripts (``histogram-children-by-gender.R``, ``histogram-package-mass.R``,
   (used in the binary-distribution section).
 - ``histogram-4-cuts.png``: counts of four roughly equally likely
   defect types (used in the uniform-distribution section).
+- ``frequency-distribution-four-cases.png``: the four worked examples
+  A, B, C and D from the "steps to creating a frequency distribution"
+  recipe, showing how the resolution chosen for the measurement axis
+  changes the plot: two categories, four ordered grades, integer
+  percentages, and 5 K bins of a continuous measurement.
 
 All random data are seeded so the committed images regenerate exactly.
 
@@ -24,7 +29,7 @@ Usage
 -----
     uv run --with numpy --with matplotlib python histogram_chapter_figures.py [output_dir]
 
-Writes the five PNGs into ``output_dir`` (default: this script's own
+Writes the six PNGs into ``output_dir`` (default: this script's own
 directory), refreshing the committed images in place.
 """
 
@@ -79,11 +84,14 @@ def save(fig, outdir: pathlib.Path, name: str) -> None:
 def children_by_gender(outdir: pathlib.Path) -> None:
     # Counts quoted in the chapter: 2739 births, 1420 male and 1319 female.
     counts = {"Male": 1420, "Female": 1319}
-    fig, ax = new_axes((7, 7))
+    # Wide enough for the axis label: at this font size the label is
+    # longer than a square panel, and would otherwise run off the edge.
+    fig, ax = new_axes((8.5, 7))
     bars = ax.bar(list(counts), list(counts.values()), width=0.6, color=BLUE)
     ax.bar_label(bars, padding=4)
     ax.set_ylabel(f"Number of children (N = {sum(counts.values())})")
-    ax.set_xlabel("Children born in Hamilton, April 2009, by gender")
+    # The two tick labels already say the split is by sex.
+    ax.set_xlabel("Children born in Hamilton, April 2009")
     ax.set_ylim(0, 1500)
     ax.set_yticks([0, 500, 1000, 1500])
     save(fig, outdir, "histogram-children-by-gender.png")
@@ -148,6 +156,61 @@ def histogram_4_cuts(outdir: pathlib.Path) -> None:
     save(fig, outdir, "histogram-4-cuts.png")
 
 
+def frequency_distribution_four_cases(outdir: pathlib.Path) -> None:
+    """The four worked examples in the frequency-distribution recipe.
+
+    Each panel uses a different resolution on the measurement axis,
+    which is the point the recipe makes: A is a yes/no code, B is a
+    four-level grade, C is quantized to whole percent, and D is a
+    continuous measurement collected into 5 K bins.
+    """
+    rng = np.random.default_rng(19)
+
+    fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+    for ax in axes.flat:
+        ax.grid(axis="y", color=GRID, linewidth=0.8)
+
+    # A: acceptable or unacceptable metal appearance, coded 1 or 0.
+    appearance = rng.random(400) < 0.86
+    counts = [int((~appearance).sum()), int(appearance.sum())]
+    bars = axes[0, 0].bar(["Unacceptable (0)", "Acceptable (1)"], counts,
+                          width=0.55, color=BLUE)
+    axes[0, 0].bar_label(bars, padding=4)
+    axes[0, 0].set_title("A: metal appearance, yes or no")
+    axes[0, 0].set_xlabel("Appearance code")
+    axes[0, 0].set_ylabel(f"Number of pieces (N = {len(appearance)})")
+    axes[0, 0].set_ylim(0, 420)
+
+    # B: number of defects on a metal sheet, graded 1 to 4.
+    grade = rng.choice([1, 2, 3, 4], size=400, p=[0.46, 0.30, 0.17, 0.07])
+    counts = np.bincount(grade, minlength=5)[1:]
+    bars = axes[0, 1].bar(["1\nnone", "2\nlow", "3\nmedium", "4\nhigh"], counts,
+                          width=0.55, color=BLUE)
+    axes[0, 1].bar_label(bars, padding=4)
+    axes[0, 1].set_title("B: defects on a metal sheet, four grades")
+    axes[0, 1].set_xlabel("Defect grade")
+    axes[0, 1].set_ylabel(f"Number of sheets (N = {len(grade)})")
+    axes[0, 1].set_ylim(0, 220)
+
+    # C: batch yield, reported to the nearest whole percent.
+    yields = np.round(rng.normal(loc=80, scale=4.5, size=300)).astype(int)
+    edges = np.arange(yields.min() - 0.5, yields.max() + 1.5, 1.0)
+    axes[1, 0].hist(yields, bins=edges, color=BLUE, edgecolor="white")
+    axes[1, 0].set_title("C: batch yield, rounded to 1%")
+    axes[1, 0].set_xlabel("Yield [%]")
+    axes[1, 0].set_ylabel(f"Number of batches (N = {len(yields)})")
+
+    # D: ambient temperature, measured to 0.05 K but binned every 5 K.
+    temperature = rng.normal(loc=284, scale=9, size=365)
+    edges = np.arange(255, 316, 5)
+    axes[1, 1].hist(temperature, bins=edges, color=BLUE, edgecolor="white")
+    axes[1, 1].set_title("D: daily temperature, binned every 5 K")
+    axes[1, 1].set_xlabel("Ambient temperature [K]")
+    axes[1, 1].set_ylabel(f"Number of days (N = {len(temperature)})")
+
+    save(fig, outdir, "frequency-distribution-four-cases.png")
+
+
 if __name__ == "__main__":
     outdir = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else pathlib.Path(__file__).parent
     children_by_gender(outdir)
@@ -155,3 +218,4 @@ if __name__ == "__main__":
     frequency_histogram(outdir)
     histogram_70_30(outdir)
     histogram_4_cuts(outdir)
+    frequency_distribution_four_cases(outdir)
