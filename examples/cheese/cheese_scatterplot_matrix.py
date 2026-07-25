@@ -77,6 +77,47 @@ def cheese() -> pd.DataFrame:
     return pd.read_csv(HERE / RECORDED, index_col=0)[WITH_RANDOM]
 
 
+def kernel_density(values, cut: float = 3.0, points: int = 512):
+    """Gaussian kernel density estimate, bandwidth as R chooses it.
+
+    R's ``density()`` defaults to the ``bw.nrd0`` rule of thumb,
+    0.9 * min(s, IQR/1.349) * n**(-1/5), which is what
+    ``car::scatterplotMatrix`` used on the diagonal of the original
+    figure.
+    """
+    x = np.asarray(values, dtype=float)
+    x = x[np.isfinite(x)]
+    n = x.size
+    spread = x.std(ddof=1)
+    iqr = float(np.subtract(*np.percentile(x, [75, 25])))
+    if iqr > 0:
+        spread = min(spread, iqr / 1.349)
+    bandwidth = 0.9 * spread * n ** (-0.2)
+    grid = np.linspace(x.min() - cut * bandwidth, x.max() + cut * bandwidth, points)
+    z = (grid[:, None] - x[None, :]) / bandwidth
+    density = np.exp(-0.5 * z**2).sum(axis=1) / (n * bandwidth * np.sqrt(2 * np.pi))
+    return grid, density
+
+
+def diagonal_panel(ax, values, label: str, fontsize: int) -> None:
+    """A density curve over a rug, with the variable's name above both.
+
+    The y-axis is scaled so the curve never reaches more than two thirds
+    of the panel height, which leaves the top third clear for the name
+    whatever shape the distribution takes.
+    """
+    x = np.asarray(values, dtype=float)
+    grid, density = kernel_density(x)
+    ax.plot(grid, density, color=BLUE, linewidth=1.8)
+    ax.vlines(x, 0, 0.08 * density.max(), color=BLUE, linewidth=1.0)
+    ax.set_xlim(x.min(), x.max())
+    ax.set_ylim(0, density.max() * 1.5)
+    ax.text(0.5, 0.97, label, ha="center", va="top", fontsize=fontsize,
+            transform=ax.transAxes)
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+
 def scatterplot_matrix(data: pd.DataFrame, outdir: pathlib.Path, name: str) -> None:
     names = list(data.columns)
     n = len(names)
@@ -87,13 +128,8 @@ def scatterplot_matrix(data: pd.DataFrame, outdir: pathlib.Path, name: str) -> N
             ax = axes[row, column]
             ax.tick_params(labelsize=11)
             if row == column:
-                counts, _, _ = ax.hist(data[names[row]], bins=10, color=BLUE_FILL,
-                                       edgecolor=BLUE, linewidth=1.0)
-                ax.set_ylim(0, counts.max() * 1.45)
-                ax.text(0.5, 0.97, names[row], ha="center", va="top", fontsize=15,
-                        transform=ax.transAxes)
-                ax.set_xticks([])
-                ax.set_yticks([])
+                # A density curve over a rug, as car::scatterplotMatrix drew.
+                diagonal_panel(ax, data[names[row]], names[row], 15)
                 continue
             if row < column:
                 value = correlation.iloc[row, column]
