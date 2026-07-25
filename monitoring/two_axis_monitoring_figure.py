@@ -1,10 +1,12 @@
 """The two-variable monitoring figure for the multivariate monitoring chapter.
 
 Writes ``two-axis-monitoring-plot.png``: two negatively correlated variables,
-each of them inside its own 3-sigma Shewhart limits at every time point,
-shown together with their joint scatter plot and the Hotelling's T-squared
-ellipse. Observations that no univariate chart flags can still sit well
-outside the ellipse, which is the point the section makes.
+shown with their joint scatter plot and the Hotelling's T-squared ellipse.
+Two observations are marked, one for each way the univariate and joint
+views can disagree: observation 11 is inside both 3-sigma charts and
+outside the ellipse, and observation 30 is outside one chart and inside the
+ellipse. Neither view alone is sufficient, which is the point the section
+makes.
 
 The layout keeps the original arrangement: the joint scatter plot in the
 corner, with each variable's time series running away from it along the
@@ -14,15 +16,16 @@ This replaces ``two-axis-monitoring-plot.py``, which was Python 2 and used
 several matplotlib arguments that have since been removed
 (``spines.iteritems()``, ``annotate(s=...)``, ``papertype``,
 ``orientation``). The data are the same: fifty observations from the same
-seeded generator, with one point moved off the correlation line.
+seeded generator, with one point moved off the correlation line, and one
+added along it.
 
 Beyond redrawing, the figure now:
 
 - draws the flagged observations in one colour rather than cycling through
   six, so "outlier" reads as one category instead of six;
-- marks, in all three panels, the one observation that no univariate
-  chart flags but that falls outside the ellipse, which is the comparison
-  being made;
+- marks, in all three panels and in its own colour, each of the two
+  observations on which the univariate and joint readings disagree, which
+  is the comparison being made;
 - labels both charts, signs the limits so the reader can tell the upper
   from the lower without reading the words, and puts each pair of limit
   labels at the far end of its panel, away from the joint plot;
@@ -49,6 +52,7 @@ import scipy.stats
 BLUE = "#0072B2"
 VERMILLION = "#D55E00"
 ORANGE = "#E69F00"
+GREEN = "#009E73"
 GREY = "#666666"
 GRID = "#DDDDDD"
 
@@ -70,9 +74,16 @@ def simulated_data() -> np.ndarray:
     data = generator.standard_normal((N, K))
     data[:, 1] = SLOPE * data[:, 0] + NOISE * data[:, 1]
     # Move observation 11 (index 10) off the correlation line, without
-    # taking either variable outside its own limits.
+    # taking either variable outside its own limits: a joint outlier that
+    # neither univariate chart sees.
     data[10, 0] = -2.0 + generator.standard_normal(1)[0] * 0.01
     data[10, 1] = SLOPE * data[10, 0] + NOISE * data[10, 1] - 12
+    # Observation 30 (index 29) is the converse: low x1 with high x2, the
+    # direction the two variables move in together, which is where the
+    # ellipse reaches furthest. x1 lands past its own 3-sigma limit (3.81
+    # against 3.45) while x2 is unremarkable at 45% of its limit, and the
+    # pair sits at 74% of the joint limit, inside the ellipse.
+    data[29] = np.array([-3.9, 4.0])
     return data - data.mean(axis=0)
 
 
@@ -98,15 +109,11 @@ def hotelling(data: np.ndarray, confidence: float):
 
 def main(outdir: pathlib.Path) -> None:
     data = simulated_data()
-    # The ellipse was previously drawn at norm.cdf(3) = 99.87%, tying it to
-    # the 3-sigma charts so neither could be accused of having the easier
-    # limit. 99% is a rounder number, closer to the 95% used later in the
-    # chapter, and still leaves observation 11 as the only one outside:
-    # its T2 is 19.67 against a limit of 10.57, and the next largest is
-    # 6.85. Going down to 95% would not do, since that limit of 6.64 also
-    # catches observation 10, and the text describes a single sample.
-    CONFIDENCE = 0.99
-    confidence = CONFIDENCE
+    # The ellipse carries the same nominal confidence as the charts beside
+    # it: norm.cdf(3) = 99.87% is the one-sided normal tail at 3 sigma. Tying
+    # the two together is what makes the comparison in this figure fair, since
+    # neither method can then be said to have been given the easier limit.
+    confidence = float(scipy.stats.norm.cdf(SIGMA))
     upper = data.mean(axis=0) + SIGMA * data.std(axis=0, ddof=1)
     lower = data.mean(axis=0) - SIGMA * data.std(axis=0, ddof=1)
 
@@ -123,10 +130,13 @@ def main(outdir: pathlib.Path) -> None:
           + (", ".join(str(i + 1) for i in np.flatnonzero(joint)) or "none"))
     print("only the ellipse catches: "
           + (", ".join(str(i + 1) for i in np.flatnonzero(joint & ~univariate)) or "none"))
+    print("only a univariate chart catches: "
+          + (", ".join(str(i + 1) for i in np.flatnonzero(univariate & ~joint)) or "none"))
 
     span = np.max(np.abs(np.vstack([data, ellipse])), axis=0) * 1.12
     time = np.arange(1, N + 1)
-    only_joint = joint & ~univariate
+    only_joint = joint & ~univariate            # the ellipse alone flags these
+    only_univariate = univariate & ~joint       # a Shewhart chart alone flags these
 
     # The scatter plot sits in the top left; x1 runs down the left-hand
     # panel and x2 runs across the top panel, so each point can be traced
@@ -155,6 +165,8 @@ def main(outdir: pathlib.Path) -> None:
     scatter.axvline(0, color="black", linewidth=1.0)
     scatter.plot(data[:, 0], data[:, 1], "o", markersize=7, color=BLUE)
     scatter.plot(data[joint, 0], data[joint, 1], "o", markersize=10, color=VERMILLION)
+    scatter.plot(data[only_univariate, 0], data[only_univariate, 1], "o",
+                 markersize=10, color=GREEN)
     scatter.plot(ellipse[:, 0], ellipse[:, 1], color=ORANGE, linewidth=2.5)
     for value in (lower[0], upper[0]):
         scatter.axvline(value, color=VERMILLION, linestyle="--", linewidth=1.4)
@@ -174,6 +186,7 @@ def main(outdir: pathlib.Path) -> None:
     across.grid(color=GRID, linewidth=0.8)
     across.plot(time, data[:, 1], "-o", color=BLUE, markersize=6, linewidth=1.2)
     across.plot(time[joint], data[joint, 1], "o", color=VERMILLION, markersize=9)
+    across.plot(time[only_univariate], data[only_univariate, 1], "o", color=GREEN, markersize=9)
     across.axhline(0, color="black", linewidth=1.0)
     for value in (lower[1], upper[1]):
         across.axhline(value, color=VERMILLION, linestyle="--", linewidth=1.6)
@@ -196,6 +209,7 @@ def main(outdir: pathlib.Path) -> None:
     down.grid(color=GRID, linewidth=0.8)
     down.plot(data[:, 0], time, "-o", color=BLUE, markersize=6, linewidth=1.2)
     down.plot(data[joint, 0], time[joint], "o", color=VERMILLION, markersize=9)
+    down.plot(data[only_univariate, 0], time[only_univariate], "o", color=GREEN, markersize=9)
     down.axvline(0, color="black", linewidth=1.0)
     for value in (lower[0], upper[0]):
         down.axvline(value, color=VERMILLION, linestyle="--", linewidth=1.6)
@@ -210,24 +224,38 @@ def main(outdir: pathlib.Path) -> None:
     down.set_xlabel("$x_1$")
     down.set_ylabel("Sequence order")
 
-    for index in np.flatnonzero(only_joint):
-        scatter.annotate(f"{index + 1}", (data[index, 0], data[index, 1]),
-                         textcoords="offset points", xytext=(10, -4),
-                         color=VERMILLION, fontsize=15)
-        across.annotate(f"{index + 1}", (index + 1, data[index, 1]),
-                        textcoords="offset points", xytext=(8, 0),
-                        color=VERMILLION, fontsize=15)
-        down.annotate(f"{index + 1}", (data[index, 0], index + 1),
-                      textcoords="offset points", xytext=(6, 12),
-                      color=VERMILLION, fontsize=15)
+    for marked, colour in ((only_joint, VERMILLION), (only_univariate, GREEN)):
+        for index in np.flatnonzero(marked):
+            scatter.annotate(f"{index + 1}", (data[index, 0], data[index, 1]),
+                             textcoords="offset points", xytext=(10, -4),
+                             color=colour, fontsize=15)
+            across.annotate(f"{index + 1}", (index + 1, data[index, 1]),
+                            textcoords="offset points", xytext=(8, 0),
+                            color=colour, fontsize=15)
+            down.annotate(f"{index + 1}", (data[index, 0], index + 1),
+                          textcoords="offset points", xytext=(6, 12),
+                          color=colour, fontsize=15)
 
     # The quarter opposite the scatter plot is the one place no axis can
-    # reach, so the reading of the figure goes there.
-    fig.text(left + panel + gap + run / 2, bottom + run / 2,
-             "Every point is inside the $3\\sigma$ limits\n"
-             "of both charts. The marked point breaks\n"
-             "the correlation between the two variables,\n"
-             "and only the joint plot shows it.",
+    # reach, so the reading of the figure goes there. Each paragraph is in
+    # the colour of the observation it describes.
+    middle = left + panel + gap + run / 2
+    fig.text(middle, bottom + run * 0.74,
+             "Observation 11 lies inside the $3\\sigma$ limits of\n"
+             "both charts, and outside the ellipse. It breaks\n"
+             "the correlation between the two variables, and\n"
+             "only the joint plot shows it.",
+             fontsize=17, ha="center", va="center", color=VERMILLION)
+    fig.text(middle, bottom + run * 0.44,
+             "Observation 30 is the other way round. It is\n"
+             "outside the $x_1$ chart, yet inside the ellipse. A low\n"
+             "$x_1$ with a high $x_2$ is the direction these two\n"
+             "variables move in together, and the joint limit\n"
+             "reaches furthest that way, so the pair is ordinary\n"
+             "even though one measurement on its own is not.",
+             fontsize=17, ha="center", va="center", color=GREEN)
+    fig.text(middle, bottom + run * 0.14,
+             "Neither chart alone is enough.",
              fontsize=17, ha="center", va="center", color=GREY)
 
     fig.savefig(outdir / "two-axis-monitoring-plot.png", dpi=DPI, bbox_inches="tight")
