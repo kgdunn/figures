@@ -141,9 +141,19 @@ def two_and_three_dimensions(data: pd.DataFrame, outdir: pathlib.Path) -> None:
 
     ax = fig.add_subplot(1, 2, 1)
     ax.grid(color=GRID, linewidth=0.8)
-    ax.plot(data["FrontLeft"], data["BackLeft"], "o", markersize=8, color=BLUE)
+    # The original plotted front left against front right, and labelled the
+    # y-axis "Back left". Correcting the label rather than the variable: the
+    # surrounding prose asks the reader to see one definite trend and
+    # summarise it with a line, and these two thermometers sit on the same
+    # side of the room, so they track each other closely (r = 0.85). Front
+    # left against back left is opposite corners, r = 0.56, with a separate
+    # group of about thirty observations where the back ran cool; that is a
+    # real feature of the data, but it is not what this figure is for. The
+    # two variables here are also the first two of the three in the panel
+    # beside it, so the pair reads as a step towards it.
+    ax.plot(data["FrontLeft"], data["FrontRight"], "o", markersize=8, color=BLUE)
     ax.set_xlabel("Front left temperatures [K]")
-    ax.set_ylabel("Back left temperatures [K]")
+    ax.set_ylabel("Front right temperatures [K]")
     ax.set_title("K = 2 variables", fontsize=17)
 
     ax = fig.add_subplot(1, 2, 2, projection="3d")
