@@ -70,6 +70,7 @@ GREEN = "#009E73"
 ORANGE = "#E69F00"
 VERMILLION = "#D55E00"
 GREY = "#666666"
+NEAR_BLACK = "#222222"
 GRID = "#DDDDDD"
 
 DPI = 300
@@ -191,9 +192,14 @@ def aeration(outdir: pathlib.Path) -> None:
     ax.set_ylim(min(lcl, xbar.min()) - 0.35 * span,
                 max(ucl, xbar.max()) + 0.35 * span)
     ax.axvline(275, color=ORANGE, linewidth=2)
+    # The line stays orange, which separates it from the vermillion
+    # control limits and the green target. The label is near-black: the
+    # orange is light enough that text set in it is hard to read against
+    # white, and it prints poorly in greyscale. The original set this
+    # label in black too.
     ax.annotate("CUSUM detected the problem at t = 275", xy=(290, ucl),
                 xytext=(0, 12), textcoords="offset points",
-                ha="left", va="bottom", color=ORANGE, fontsize=15)
+                ha="left", va="bottom", color=NEAR_BLACK, fontsize=15)
     ax.set_xlabel("Time order")
     ax.set_ylabel("Phase II subgroups")
     save(fig, outdir, "aeration-Shewhart-chart.png")
