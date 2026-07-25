@@ -9,8 +9,8 @@ Three committed PNGs, replacing the base-R output of
 - ``barplot-for-R2-and-Q2.png``: cumulative R-squared beside cumulative
   Q-squared for the LDPE case study, showing where cross-validation stops
   rewarding extra components.
-- ``q2-across-packages.png``: the same Q-squared from all three sources,
-  the two commercial packages and ``process_improve``, on one axis.
+- ``q2-across-packages.png``: the Q-squared Simca-P reported beside the
+  element-wise one computed by ``process_improve``, on one axis.
 
 The scree plots are computed from ``distillation-tower.csv`` on openmv.net.
 The R-squared and Q-squared values are outputs of two commercial packages
@@ -18,16 +18,22 @@ The R-squared and Q-squared values are outputs of two commercial packages
 recomputed here, so they are carried as the literals the R script recorded,
 with the package and version named alongside them.
 
-The third curve is computed here, by ``process_improve``'s
+The second curve is computed here, by ``process_improve``'s
 ``PCA.select_n_components`` with ``cv_scheme="ekf"``: the element-wise
 k-fold scheme of Bro et al. (2008), which holds out scattered individual
 cells of X and predicts each from a model that never saw it. That is the
 scheme the chapter recommends over the row-wise one, so the figure shows
-what it gives on the same data the two packages were run on.
+what it gives on the same data Simca-P was run on.
+
+ProSensus Multivariate is left out of the comparison figure: that software
+is no longer available, so a reader cannot check the curve or reproduce it.
+Its recorded numbers stay in ``Q2`` below and it keeps its own
+``barplot-for-R2-and-Q2-ProSensus.png``, which is the record of what the R
+script drew.
 
 The same run reproduces the R-squared the commercial packages recorded,
 to within 4.4e-07 over all eleven components, which is what establishes
-that the three curves are computed on the same data with the same
+that the two curves are computed on the same data with the same
 preprocessing and so can be compared at all.
 
 Defects in the originals corrected here:
@@ -247,9 +253,7 @@ def q2_comparison(outdir: pathlib.Path) -> None:
     fig, ax = plt.subplots(figsize=(11, 5.5))
     ax.grid(axis="y", color=GRID, linewidth=0.8)
     ax.plot(components, Q2["Simca-P 11.5"], "-o", color=ORANGE, linewidth=2.2,
-            markersize=8, label="Simca-P 11.5 (2006)")
-    ax.plot(components, Q2["ProSensus 11.08"], "-s", color=BLUE, linewidth=2.2,
-            markersize=8, label="ProSensus 11.08 (2011)")
+            markersize=8, label="Simca-P 11.5 (2006), row-wise")
     ax.plot(components, q2, "-^", color=GREEN, linewidth=2.6, markersize=9,
             label="process_improve, element-wise k-fold")
     # The band is the spread over five fold permutations. It is narrow
@@ -257,7 +261,7 @@ def q2_comparison(outdir: pathlib.Path) -> None:
     ax.fill_between(components, q2 - q2_se, q2 + q2_se, color=GREEN, alpha=0.25,
                     linewidth=0)
     ax.axvline(2, color=GREY, linestyle="--", linewidth=1.5)
-    ax.annotate("Two components: where both\nthe element-wise curve and\nSimca-P stop rising",
+    ax.annotate("Two components: both curves\nreach their highest value here\nand neither exceeds it again",
                 (2.15, 0.93), color=GREY, fontsize=13, va="top")
     ax.set_xticks(components)
     ax.set_xlabel("Number of components")
