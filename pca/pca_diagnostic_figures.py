@@ -9,12 +9,26 @@ Three committed PNGs, replacing the base-R output of
 - ``barplot-for-R2-and-Q2.png``: cumulative R-squared beside cumulative
   Q-squared for the LDPE case study, showing where cross-validation stops
   rewarding extra components.
+- ``q2-across-packages.png``: the same Q-squared from all three sources,
+  the two commercial packages and ``process_improve``, on one axis.
 
 The scree plots are computed from ``distillation-tower.csv`` on openmv.net.
 The R-squared and Q-squared values are outputs of two commercial packages
 (Simca-P 11.5 and ProSensus 11.08) run on the LDPE data; they cannot be
 recomputed here, so they are carried as the literals the R script recorded,
 with the package and version named alongside them.
+
+The third curve is computed here, by ``process_improve``'s
+``PCA.select_n_components`` with ``cv_scheme="ekf"``: the element-wise
+k-fold scheme of Bro et al. (2008), which holds out scattered individual
+cells of X and predicts each from a model that never saw it. That is the
+scheme the chapter recommends over the row-wise one, so the figure shows
+what it gives on the same data the two packages were run on.
+
+The same run reproduces the R-squared the commercial packages recorded,
+to within 4.4e-07 over all eleven components, which is what establishes
+that the three curves are computed on the same data with the same
+preprocessing and so can be compared at all.
 
 Defects in the originals corrected here:
 
@@ -29,7 +43,12 @@ Defects in the originals corrected here:
 
 Usage
 -----
-    uv run --with numpy --with pandas --with matplotlib python pca_diagnostic_figures.py [output_dir]
+    uv run --with numpy --with pandas --with matplotlib --with process-improve \
+        python pca_diagnostic_figures.py [output_dir]
+
+Needs process_improve 1.60 or later, for ``PCA.select_n_components``. If it
+is not importable the three original figures are still written and only the
+comparison is skipped, with a message.
 """
 
 from __future__ import annotations
@@ -171,6 +190,84 @@ def r2_q2_plot(package: str, outdir: pathlib.Path, name: str, shown: int = 11) -
     save(fig, outdir, name)
 
 
+GREEN = "#009E73"
+LDPE_URL = "https://openmv.net/file/LDPE.csv"
+
+
+def process_improve_q2() -> tuple[np.ndarray, np.ndarray, int]:
+    """Cross-validated Q-squared for the LDPE data, element-wise k-fold.
+
+    Returns the Q-squared per component count, its standard error across
+    the repeated fold permutations, and the component count the library's
+    own selection rule lands on. Also checks the R-squared against the
+    values the commercial packages recorded: if those agree, the three
+    curves are being computed on the same data, the same way, and the
+    comparison means something.
+    """
+    import warnings
+
+    from process_improve.multivariate.methods import PCA, MCUVScaler
+
+    try:
+        ldpe = pd.read_csv(LDPE_URL)
+    except Exception:  # noqa: BLE001
+        ldpe = pd.read_csv(HERE / "LDPE.csv")
+    scaled = MCUVScaler().fit_transform(ldpe.iloc[:, 1:])
+
+    fitted = PCA(n_components=len(R2)).fit(scaled)
+    largest = float(np.max(np.abs(np.asarray(fitted.r2_cumulative_, dtype=float) - np.array(R2))))
+    print(f"R² against the recorded values: largest difference {largest:.2e}")
+    if largest > 1e-4:
+        raise ValueError(f"R² disagrees with the recorded values by {largest:.4f}")
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        chosen = PCA.select_n_components(
+            scaled, max_components=len(R2), cv=7, cv_scheme="ekf",
+            n_repeats=5, random_state=42,
+        )
+    return (np.asarray(chosen.q2, dtype=float),
+            np.asarray(chosen.q2_se, dtype=float),
+            int(chosen.n_components))
+
+
+def q2_comparison(outdir: pathlib.Path) -> None:
+    """The three Q-squared curves for the same data on one axis."""
+    try:
+        q2, q2_se, selected = process_improve_q2()
+    except ImportError:
+        print("process_improve not importable: skipping q2-across-packages.png")
+        return
+
+    components = np.arange(1, len(R2) + 1)
+    print("process_improve Q² (element-wise k-fold): "
+          + ", ".join(f"{v:.3f}" for v in q2))
+    print(f"  its selection rule lands on {selected} components")
+
+    fig, ax = plt.subplots(figsize=(11, 5.5))
+    ax.grid(axis="y", color=GRID, linewidth=0.8)
+    ax.plot(components, Q2["Simca-P 11.5"], "-o", color=ORANGE, linewidth=2.2,
+            markersize=8, label="Simca-P 11.5 (2006)")
+    ax.plot(components, Q2["ProSensus 11.08"], "-s", color=BLUE, linewidth=2.2,
+            markersize=8, label="ProSensus 11.08 (2011)")
+    ax.plot(components, q2, "-^", color=GREEN, linewidth=2.6, markersize=9,
+            label="process_improve, element-wise k-fold")
+    # The band is the spread over five fold permutations. It is narrow
+    # enough to be worth stating rather than leaving the reader to wonder.
+    ax.fill_between(components, q2 - q2_se, q2 + q2_se, color=GREEN, alpha=0.25,
+                    linewidth=0)
+    ax.axvline(2, color=GREY, linestyle="--", linewidth=1.5)
+    ax.annotate("Two components: where both\nthe element-wise curve and\nSimca-P stop rising",
+                (2.15, 0.93), color=GREY, fontsize=13, va="top")
+    ax.set_xticks(components)
+    ax.set_xlabel("Number of components")
+    ax.set_ylabel("Cross-validated $Q^2$")
+    ax.set_ylim(0, 1.05)
+    ax.legend(loc="lower left", frameon=False)
+    fig.tight_layout()
+    save(fig, outdir, "q2-across-packages.png")
+
+
 def main(outdir: pathlib.Path) -> None:
     scree_plots(eigenvalues(distillation_tower()), outdir)
     # The chapter embeds the unsuffixed name; it is the Simca pair, whose
@@ -187,6 +284,7 @@ def main(outdir: pathlib.Path) -> None:
     r2_q2_plot("Simca-P 11.5", outdir, "barplot-for-R2-and-Q2.png", shown=8)
     r2_q2_plot("Simca-P 11.5", outdir, "barplot-for-R2-and-Q2-Simca.png")
     r2_q2_plot("ProSensus 11.08", outdir, "barplot-for-R2-and-Q2-ProSensus.png")
+    q2_comparison(outdir)
 
 
 if __name__ == "__main__":
