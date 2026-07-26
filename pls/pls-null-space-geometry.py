@@ -11,7 +11,8 @@ Fixing a target response gives one linear equation in two unknowns, whose
 solutions form a line perpendicular to ``q``: a contour of the predicted
 response. Different targets give parallel contours. The axes are drawn on a
 common scale (``aspect="equal"``) so that the right angle between ``q`` and the
-contours is visible rather than merely asserted.
+contours is visible rather than merely asserted. The two null-space steps from the
+companion figure are marked so the same points can be found in both.
 
 Requires the ``process_improve`` package (``pip install process-improve``) for
 ``PLS``.
@@ -44,7 +45,7 @@ OTHER_TASTES = (10.0, 30.0, 40.0)       # further contours, drawn in grey
 
 DARK_BLUE = "#1f3d7a"  # calibration cheeses
 ORANGE = "#e6820a"     # the null space for the main target
-TEAL = "#0f7b8a"       # the y-loading vector q, the gradient of the prediction
+DARK_GREEN = "#1b5e20"  # the y-loading vector q, the gradient of the prediction
 GREY = "0.55"          # contours for the other targets
 BLACK = "#111111"      # marker outlines and the geometric annotations
 plt.rcParams.update(
@@ -111,18 +112,26 @@ def build_figure(out_dir: Path) -> None:
     arrow_length = 2.6
     ax.annotate(
         "", xy=tuple(q_unit * arrow_length), xytext=(0, 0),
-        arrowprops={"arrowstyle": "-|>", "color": TEAL, "lw": 2.4, "mutation_scale": 18},
+        arrowprops={"arrowstyle": "-|>", "color": DARK_GREEN, "lw": 2.4, "mutation_scale": 18},
         zorder=5,
     )
     ax.annotate(
         r"$\mathbf{q}$", xy=tuple(q_unit * arrow_length), xytext=(10, -6),
-        textcoords="offset points", color=TEAL, fontsize=13, fontweight="bold",
+        textcoords="offset points", color=DARK_GREEN, fontsize=13, fontweight="bold",
     )
 
     # The direct-inversion solution, and the perpendicular from the origin to it.
     ax.plot([0, tau[0]], [0, tau[1]], color=BLACK, lw=1.2, linestyle="--", zorder=4)
     ax.scatter(tau[0], tau[1], color=ORANGE, marker="s", s=90, zorder=6,
                edgecolors=BLACK, linewidths=0.8, label="Direct-inversion solution")
+
+    # The -1 and +1 null-space steps, drawn as in the companion score plot so the
+    # same two points can be recognised across both figures.
+    g_step = g / np.linalg.norm(g)
+    ax.scatter(*(tau - g_step), color=ORANGE, marker="v", s=110, zorder=6,
+               edgecolors=BLACK, linewidths=0.8, label="Null-space step (-1)")
+    ax.scatter(*(tau + g_step), color=ORANGE, marker="^", s=110, zorder=6,
+               edgecolors=BLACK, linewidths=0.8, label="Null-space step (+1)")
 
     # A right-angle marker at the direct-inversion solution, between q and the contour.
     size = 0.32
