@@ -46,7 +46,7 @@ DARK_BLUE = "#1f3d7a"  # calibration cheeses
 ORANGE = "#e6820a"     # the null space for the main target
 TEAL = "#0f7b8a"       # the y-loading vector q, the gradient of the prediction
 GREY = "0.55"          # contours for the other targets
-BLACK = "#111111"      # the direct-inversion solution
+BLACK = "#111111"      # marker outlines and the geometric annotations
 plt.rcParams.update(
     {
         "font.size": 11,
@@ -121,8 +121,8 @@ def build_figure(out_dir: Path) -> None:
 
     # The direct-inversion solution, and the perpendicular from the origin to it.
     ax.plot([0, tau[0]], [0, tau[1]], color=BLACK, lw=1.2, linestyle="--", zorder=4)
-    ax.scatter(tau[0], tau[1], color=BLACK, marker="s", s=70, zorder=6,
-               label="Direct-inversion solution")
+    ax.scatter(tau[0], tau[1], color=ORANGE, marker="s", s=90, zorder=6,
+               edgecolors=BLACK, linewidths=0.8, label="Direct-inversion solution")
 
     # A right-angle marker at the direct-inversion solution, between q and the contour.
     size = 0.32

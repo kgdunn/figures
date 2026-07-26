@@ -44,11 +44,11 @@ SECOND_TASTE = 47.9   # a second inversion (held-out cheese 4), drawn red dashed
 THIRD_TASTE = 12.3    # the lowest held-out taste (cheese 1), drawn purple dotted
 
 DARK_BLUE = "#1f3d7a"  # calibration cheeses
-ORANGE = "#e6820a"     # the null space (PLS) for the main target
+ORANGE = "#e6820a"     # the null space for the main target, and its solutions
 RED = "#d62728"        # the null space for the second target
 PURPLE = "#7b3fa0"     # the null space for the lowest target (a cool contrast)
 GREEN = "#2e6f3e"      # the orthogonal space (O-PLS), projected into PLS space
-BLACK = "#111111"      # the direct-inversion solution
+BLACK = "#111111"      # marker outlines
 plt.rcParams.update(
     {
         "font.size": 11,
@@ -124,7 +124,8 @@ def build_figure(out_dir: Path) -> None:
         label="Orthogonal space (O-PLS), projected",
     )
     di = ax.scatter(
-        tau[0], tau[1], color=BLACK, marker="s", s=70, zorder=5, label="Direct-inversion solution"
+        tau[0], tau[1], color=ORANGE, marker="s", s=90, zorder=5,
+        edgecolors=BLACK, linewidths=0.8, label="Direct-inversion solution",
     )
     # The two null-space moves from the text: a -1 and a +1 step along the
     # null-space direction from the direct-inversion solution. Both sit on the
