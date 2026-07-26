@@ -45,7 +45,7 @@ OTHER_TASTES = (10.0, 30.0, 40.0)       # further contours, drawn in grey
 
 DARK_BLUE = "#1f3d7a"  # calibration cheeses
 ORANGE = "#e6820a"     # the null space for the main target
-DARK_GREEN = "#1b5e20"  # the y-loading vector q, the gradient of the prediction
+PURPLE = "#6a1b9a"     # the y-loading vector q: the gradient, perpendicular to the contours
 GREY = "0.55"          # contours for the other targets
 BLACK = "#111111"      # marker outlines and the geometric annotations
 plt.rcParams.update(
@@ -112,12 +112,12 @@ def build_figure(out_dir: Path) -> None:
     arrow_length = 2.6
     ax.annotate(
         "", xy=tuple(q_unit * arrow_length), xytext=(0, 0),
-        arrowprops={"arrowstyle": "-|>", "color": DARK_GREEN, "lw": 2.4, "mutation_scale": 18},
+        arrowprops={"arrowstyle": "-|>", "color": PURPLE, "lw": 2.4, "mutation_scale": 18},
         zorder=5,
     )
     ax.annotate(
         r"$\mathbf{q}$", xy=tuple(q_unit * arrow_length), xytext=(10, -6),
-        textcoords="offset points", color=DARK_GREEN, fontsize=13, fontweight="bold",
+        textcoords="offset points", color=PURPLE, fontsize=13, fontweight="bold",
     )
 
     # The direct-inversion solution, and the perpendicular from the origin to it.
