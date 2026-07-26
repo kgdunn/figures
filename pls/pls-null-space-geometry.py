@@ -48,6 +48,8 @@ ORANGE = "#e6820a"     # the null space for the main target
 MAROON = "#7b1d2b"     # the y-loading vector q: the gradient, perpendicular to the contours
 GREY = "0.55"          # contours for the other targets
 BLACK = "#111111"      # marker outlines and the geometric annotations
+REFERENCE_AREA = 22.0            # marker area, in points^2, for a cheese of
+TASTE_AT_REFERENCE_AREA = 20.0   # this taste; area scales proportionally from there
 plt.rcParams.update(
     {
         "font.size": 11,
@@ -105,8 +107,11 @@ def build_figure(out_dir: Path) -> None:
         textcoords="offset points", color=ORANGE, fontsize=9, va="center", fontweight="bold",
     )
 
-    ax.scatter(scores[:, 0], scores[:, 1], color=DARK_BLUE, s=22, alpha=0.55,
-               label="Calibration cheeses", zorder=3)
+    # Marker area is proportional to the measured taste, as in the companion figure.
+    taste = train["Taste"].to_numpy()
+    cal = ax.scatter(scores[:, 0], scores[:, 1], color=DARK_BLUE, alpha=0.55, zorder=3,
+                     s=REFERENCE_AREA * taste / TASTE_AT_REFERENCE_AREA,
+                     label="Calibration cheeses")
 
     # The gradient q, drawn from the origin. The prediction rises fastest this way.
     arrow_length = 2.6
@@ -151,7 +156,12 @@ def build_figure(out_dir: Path) -> None:
     ax.set_xlabel("$t_1$")
     ax.set_ylabel("$t_2$")
     ax.set_title("Contours of predicted taste, perpendicular to the gradient")
-    ax.legend(loc="upper left", framealpha=0.92, fontsize=9)
+    legend = ax.legend(loc="upper left", framealpha=0.92, fontsize=9)
+    # Show the cheeses at the reference size, so the legend doubles as a size key.
+    handles = getattr(legend, "legend_handles", None) or legend.legendHandles
+    for handle, text in zip(handles, legend.get_texts()):
+        if text.get_text().startswith("Calibration"):
+            handle.set_sizes([REFERENCE_AREA])
     fig.tight_layout()
     fig.savefig(out_dir / "pls-null-space-geometry.png")
     plt.close(fig)

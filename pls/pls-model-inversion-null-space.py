@@ -49,6 +49,8 @@ RED = "#d62728"        # the null space for the second target
 PURPLE = "#7b3fa0"     # the null space for the lowest target (a cool contrast)
 GREEN = "#2e6f3e"      # the orthogonal space (O-PLS), projected into PLS space
 BLACK = "#111111"      # marker outlines
+REFERENCE_AREA = 30.0            # marker area, in points^2, for a cheese of
+TASTE_AT_REFERENCE_AREA = 20.0   # this taste; area scales proportionally from there
 plt.rcParams.update(
     {
         "font.size": 11,
@@ -104,7 +106,13 @@ def build_figure(out_dir: Path) -> None:
     scores = pls.scores_.to_numpy()
 
     fig, ax = plt.subplots(figsize=(6.4, 5.2))
-    cal = ax.scatter(scores[:, 0], scores[:, 1], color=DARK_BLUE, s=30, label="Calibration cheeses")
+    # Marker area is proportional to the measured taste, scaled so that a taste of
+    # TASTE_AT_REFERENCE_AREA occupies REFERENCE_AREA points^2.
+    taste = y_train.to_numpy().ravel()
+    cal = ax.scatter(
+        scores[:, 0], scores[:, 1], color=DARK_BLUE,
+        s=REFERENCE_AREA * taste / TASTE_AT_REFERENCE_AREA, label="Calibration cheeses",
+    )
     (line3,) = ax.plot(
         ns_line3[:, 0], ns_line3[:, 1], color=PURPLE, lw=2, linestyle=":", label=f"Null space (taste {THIRD_TASTE})"
     )
@@ -152,9 +160,12 @@ def build_figure(out_dir: Path) -> None:
         handles=[line3, line1, line2], loc="upper left", framealpha=0.9, fontsize=9, title="Null spaces"
     )
     ax.add_artist(lines_legend)
-    ax.legend(
+    markers_legend = ax.legend(
         handles=[cal, os_circles, di, step_down, step_up], loc="lower right", framealpha=0.9, fontsize=9
     )
+    # Show the cheeses at the reference size, so the legend is a size key too.
+    legend_handles = getattr(markers_legend, "legend_handles", None) or markers_legend.legendHandles
+    legend_handles[0].set_sizes([REFERENCE_AREA])
     fig.tight_layout()
     fig.savefig(out_dir / "pls-model-inversion-null-space.png")
     plt.close(fig)
