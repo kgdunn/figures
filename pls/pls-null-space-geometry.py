@@ -11,7 +11,8 @@ Fixing a target response gives one linear equation in two unknowns, whose
 solutions form a line perpendicular to ``q``: a contour of the predicted
 response. Different targets give parallel contours. The axes are drawn on a
 common scale (``aspect="equal"``) so that the right angle between ``q`` and the
-contours is visible rather than merely asserted.
+contours is visible rather than merely asserted. The two null-space steps from the
+companion figure are marked so the same points can be found in both.
 
 Requires the ``process_improve`` package (``pip install process-improve``) for
 ``PLS``.
@@ -44,9 +45,11 @@ OTHER_TASTES = (10.0, 30.0, 40.0)       # further contours, drawn in grey
 
 DARK_BLUE = "#1f3d7a"  # calibration cheeses
 ORANGE = "#e6820a"     # the null space for the main target
-TEAL = "#0f7b8a"       # the y-loading vector q, the gradient of the prediction
+MAROON = "#7b1d2b"     # the y-loading vector q: the gradient, perpendicular to the contours
 GREY = "0.55"          # contours for the other targets
 BLACK = "#111111"      # marker outlines and the geometric annotations
+REFERENCE_AREA = 22.0            # marker area, in points^2, for a cheese of
+TASTE_AT_REFERENCE_AREA = 20.0   # this taste; area scales proportionally from there
 plt.rcParams.update(
     {
         "font.size": 11,
@@ -104,25 +107,36 @@ def build_figure(out_dir: Path) -> None:
         textcoords="offset points", color=ORANGE, fontsize=9, va="center", fontweight="bold",
     )
 
-    ax.scatter(scores[:, 0], scores[:, 1], color=DARK_BLUE, s=22, alpha=0.55,
-               label="Calibration cheeses", zorder=3)
+    # Marker area is proportional to the measured taste, as in the companion figure.
+    taste = train["Taste"].to_numpy()
+    cal = ax.scatter(scores[:, 0], scores[:, 1], color=DARK_BLUE, alpha=0.55, zorder=3,
+                     s=REFERENCE_AREA * taste / TASTE_AT_REFERENCE_AREA,
+                     label="Calibration cheeses")
 
     # The gradient q, drawn from the origin. The prediction rises fastest this way.
     arrow_length = 2.6
     ax.annotate(
         "", xy=tuple(q_unit * arrow_length), xytext=(0, 0),
-        arrowprops={"arrowstyle": "-|>", "color": TEAL, "lw": 2.4, "mutation_scale": 18},
+        arrowprops={"arrowstyle": "-|>", "color": MAROON, "lw": 2.4, "mutation_scale": 18},
         zorder=5,
     )
     ax.annotate(
         r"$\mathbf{q}$", xy=tuple(q_unit * arrow_length), xytext=(10, -6),
-        textcoords="offset points", color=TEAL, fontsize=13, fontweight="bold",
+        textcoords="offset points", color=MAROON, fontsize=13, fontweight="bold",
     )
 
     # The direct-inversion solution, and the perpendicular from the origin to it.
     ax.plot([0, tau[0]], [0, tau[1]], color=BLACK, lw=1.2, linestyle="--", zorder=4)
     ax.scatter(tau[0], tau[1], color=ORANGE, marker="s", s=90, zorder=6,
                edgecolors=BLACK, linewidths=0.8, label="Direct-inversion solution")
+
+    # The -1 and +1 null-space steps, drawn as in the companion score plot so the
+    # same two points can be recognised across both figures.
+    g_step = g / np.linalg.norm(g)
+    ax.scatter(*(tau - g_step), color=ORANGE, marker="v", s=110, zorder=6,
+               edgecolors=BLACK, linewidths=0.8, label="Null-space step (-1)")
+    ax.scatter(*(tau + g_step), color=ORANGE, marker="^", s=110, zorder=6,
+               edgecolors=BLACK, linewidths=0.8, label="Null-space step (+1)")
 
     # A right-angle marker at the direct-inversion solution, between q and the contour.
     size = 0.32
@@ -142,7 +156,12 @@ def build_figure(out_dir: Path) -> None:
     ax.set_xlabel("$t_1$")
     ax.set_ylabel("$t_2$")
     ax.set_title("Contours of predicted taste, perpendicular to the gradient")
-    ax.legend(loc="upper left", framealpha=0.92, fontsize=9)
+    legend = ax.legend(loc="upper left", framealpha=0.92, fontsize=9)
+    # Show the cheeses at the reference size, so the legend doubles as a size key.
+    handles = getattr(legend, "legend_handles", None) or legend.legendHandles
+    for handle, text in zip(handles, legend.get_texts()):
+        if text.get_text().startswith("Calibration"):
+            handle.set_sizes([REFERENCE_AREA])
     fig.tight_layout()
     fig.savefig(out_dir / "pls-null-space-geometry.png")
     plt.close(fig)
