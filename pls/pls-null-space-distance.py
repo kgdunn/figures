@@ -92,7 +92,7 @@ def build_figure(out_dir: Path) -> None:
 
     # The three rows tabulated in the chapter, labelled clear of the curve and of
     # the two minimum markers, which sit close together near the origin.
-    offsets = {-1.0: (-34, 12), 0.0: (14, 30), 1.0: (10, -20)}
+    offsets = {-1.0: (18, 20), 0.0: (16, 34), 1.0: (-54, 20)}
     markers = {-1.0: "v", 0.0: "s", 1.0: "^"}
     for step, offset in offsets.items():
         value = float((((tau + step * g) / sf) ** 2).sum())
