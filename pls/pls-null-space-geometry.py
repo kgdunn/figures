@@ -163,8 +163,9 @@ def build_figure(out_dir: Path) -> None:
         Rectangle((zoom_x[0], zoom_y[0]), zoom_x[1] - zoom_x[0], zoom_y[1] - zoom_y[0],
                   fill=False, edgecolor=BLACK, lw=1.0, linestyle="--", zorder=8)
     )
-    ax.annotate("enlarged at right", xy=(zoom_x[0], zoom_y[0]), xytext=(-6, -18),
-                textcoords="offset points", fontsize=8.5, color=BLACK, ha="center")
+    ax.annotate("enlarged at right", xy=(sum(zoom_x) / 2, zoom_y[1]), xytext=(0, 4),
+                textcoords="offset points", fontsize=8.5, color=BLACK, ha="center", va="bottom",
+                zorder=9)
 
     ax.axhline(0, color="0.75", lw=0.8, zorder=0)
     ax.axvline(0, color="0.75", lw=0.8, zorder=0)
