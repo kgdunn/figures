@@ -19,7 +19,7 @@ calibration set gives. Compared without sign, since a direction and its
 negative describe the same line.
 
 Requires the ``process_improve`` package (``pip install process-improve``) for
-``PLS``. Runs roughly a minute for the default 1200 refits.
+``PLS``. Runs a couple of minutes for the default 2000 refits.
 
 Usage::
 
@@ -45,7 +45,7 @@ from process_improve.multivariate import PLS
 DATA_URL = "https://openmv.net/file/cheddar-cheese.csv"
 X_COLUMNS = ["Acetic", "H2S", "Lactic"]
 TARGET_TASTE = 20.9
-N_BOOTSTRAP = 1200
+N_BOOTSTRAP = 2000
 SEED = 0
 
 DARK_BLUE = "#1f3d7a"    # calibration cheeses
@@ -138,7 +138,7 @@ def build_figure(out_dir: Path) -> None:
     ax_hist.axvspan(45, 90, color=GREY, alpha=0.16, zorder=0)
     ax_hist.annotate(f"{beyond:.0f}% of refits land\nmore than 45° away", xy=(0.76, 0.62),
                      xycoords="axes fraction", ha="center", fontsize=9, color="0.35")
-    ax_hist.set_xlim(0, 90)
+    ax_hist.set_xlim(-1.6, 90)  # a sliver of margin so the line at zero is not under the spine
     ax_hist.set_xlabel("Angle from the reported null-space direction (degrees)")
     ax_hist.set_ylabel("Number of bootstrap refits")
     ax_hist.set_title("The same spread, measured as an angle", fontsize=11.5)
