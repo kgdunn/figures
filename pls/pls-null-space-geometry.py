@@ -14,6 +14,13 @@ common scale (``aspect="equal"``) so that the right angle between ``q`` and the
 contours is visible rather than merely asserted. The two null-space steps from the
 companion figure are marked so the same points can be found in both.
 
+The right panel enlarges the boxed region of the left, because the argument for
+the direct-inversion solution being the shortest one lives at the scale of a
+single step while the contour family spans the whole score plot. The three
+arrows there form a right triangle: from the origin to the perpendicular foot,
+from the foot along the contour, and the hypotenuse back to the origin.
+Pythagoras on that triangle is the argument.
+
 Requires the ``process_improve`` package (``pip install process-improve``) for
 ``PLS``.
 
@@ -35,6 +42,7 @@ mpl.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.patches import Rectangle
 
 from process_improve.multivariate import PLS
 
@@ -46,6 +54,7 @@ OTHER_TASTES = (10.0, 30.0, 40.0)       # further contours, drawn in grey
 DARK_BLUE = "#1f3d7a"  # calibration cheeses
 ORANGE = "#e6820a"     # the null space for the main target
 MAROON = "#7b1d2b"     # the y-loading vector q: the gradient, perpendicular to the contours
+DARK_BLUE = "#1f3d7a"  # the step and the hypotenuse in the enlarged panel
 GREY = "0.55"          # contours for the other targets
 BLACK = "#111111"      # marker outlines and the geometric annotations
 REFERENCE_AREA = 22.0            # marker area, in points^2, for a cheese of
@@ -74,7 +83,7 @@ def build_figure(out_dir: Path) -> None:
 
     steps = np.linspace(-5.0, 5.0, 50)
 
-    fig, ax = plt.subplots(figsize=(6.6, 6.0))
+    fig, (ax, ax_zoom) = plt.subplots(1, 2, figsize=(12.6, 6.2))
 
     # Fix the drawing area first, so every label can be placed inside it.
     x_limits, y_limits = (-3.6, 3.6), (-4.4, 4.4)
@@ -148,6 +157,15 @@ def build_figure(out_dir: Path) -> None:
     ])
     ax.plot(corner[:, 0], corner[:, 1], color=BLACK, lw=1.1, zorder=6)
 
+    # The region the right panel enlarges.
+    zoom_x, zoom_y = (-1.05, 0.85), (-0.60, 1.55)
+    ax.add_patch(
+        Rectangle((zoom_x[0], zoom_y[0]), zoom_x[1] - zoom_x[0], zoom_y[1] - zoom_y[0],
+                  fill=False, edgecolor=BLACK, lw=1.0, linestyle="--", zorder=8)
+    )
+    ax.annotate("enlarged at right", xy=(zoom_x[0], zoom_y[0]), xytext=(-6, -18),
+                textcoords="offset points", fontsize=8.5, color=BLACK, ha="center")
+
     ax.axhline(0, color="0.75", lw=0.8, zorder=0)
     ax.axvline(0, color="0.75", lw=0.8, zorder=0)
     ax.set_xlim(*x_limits)
@@ -155,13 +173,63 @@ def build_figure(out_dir: Path) -> None:
     ax.set_aspect("equal")  # so the right angle is a right angle on the page
     ax.set_xlabel("$t_1$")
     ax.set_ylabel("$t_2$")
-    ax.set_title("Contours of predicted taste, perpendicular to the gradient")
-    legend = ax.legend(loc="upper left", framealpha=0.92, fontsize=9)
+    ax.set_title("Contours of predicted taste, perpendicular to the gradient", fontsize=11.5)
+    legend = ax.legend(loc="upper left", framealpha=0.92, fontsize=8.5)
     # Show the cheeses at the reference size, so the legend doubles as a size key.
     handles = getattr(legend, "legend_handles", None) or legend.legendHandles
     for handle, text in zip(handles, legend.get_texts()):
         if text.get_text().startswith("Calibration"):
             handle.set_sizes([REFERENCE_AREA])
+    # --- right panel: why the perpendicular foot is the shortest solution ----
+    candidate = tau + g_step
+    ax_zoom.plot(line[:, 0], line[:, 1], color=ORANGE, lw=2.6, zorder=3)
+    ax_zoom.annotate("", xy=tuple(tau), xytext=(0, 0),
+                     arrowprops={"arrowstyle": "-|>", "color": BLACK, "lw": 2.2,
+                                 "mutation_scale": 15}, zorder=7)
+    ax_zoom.annotate("", xy=tuple(candidate), xytext=tuple(tau),
+                     arrowprops={"arrowstyle": "-|>", "color": DARK_BLUE, "lw": 2.5,
+                                 "mutation_scale": 15}, zorder=7)
+    ax_zoom.annotate("", xy=tuple(candidate), xytext=(0, 0),
+                     arrowprops={"arrowstyle": "-|>", "color": DARK_BLUE, "lw": 1.4,
+                                 "mutation_scale": 12, "ls": (0, (5, 3)), "alpha": 0.8}, zorder=6)
+    ax_zoom.scatter(*tau, color=ORANGE, marker="s", s=100, edgecolors=BLACK, linewidths=0.9, zorder=9)
+    ax_zoom.scatter(*candidate, color=ORANGE, marker="^", s=120, edgecolors=BLACK,
+                    linewidths=0.9, zorder=9)
+    ax_zoom.scatter([0], [0], color=BLACK, s=26, zorder=9)
+
+    tau_unit = tau / np.linalg.norm(tau)
+    small = 0.10
+    corner_zoom = np.array([
+        tau + small * g_step,
+        tau + small * g_step - small * tau_unit,
+        tau - small * tau_unit,
+    ])
+    ax_zoom.plot(corner_zoom[:, 0], corner_zoom[:, 1], color=BLACK, lw=1.2, zorder=10)
+
+    ax_zoom.annotate("origin", xy=(0, 0), xytext=(9, 4), textcoords="offset points",
+                     fontsize=9, color=GREY)
+    ax_zoom.annotate("direct inversion\n" r"$\|\mathbf{\tau}_{DI}\| = 0.281$", xy=tuple(tau),
+                     xytext=(-102, -36), textcoords="offset points", fontsize=9, color=BLACK,
+                     arrowprops={"arrowstyle": "-", "color": BLACK, "lw": 0.8})
+    ax_zoom.annotate("the +1 step: same\ntaste, " r"$\|\cdot\| = 1.039$", xy=tuple(candidate),
+                     xytext=(-118, 4), textcoords="offset points", fontsize=9, color=DARK_BLUE,
+                     arrowprops={"arrowstyle": "-", "color": DARK_BLUE, "lw": 0.8})
+    ax_zoom.annotate("this leg adds length\nbut changes nothing", xy=tuple(tau + 0.55 * g_step),
+                     xytext=(24, -20), textcoords="offset points", fontsize=9, color=DARK_BLUE,
+                     arrowprops={"arrowstyle": "-", "color": DARK_BLUE, "lw": 0.8})
+    ax_zoom.text(0.035, 0.035,
+                 r"$\|\mathbf{\tau}_{DI} + s\mathbf{g}\|^2 = \|\mathbf{\tau}_{DI}\|^2 + s^2$",
+                 transform=ax_zoom.transAxes, ha="left", va="bottom", fontsize=11,
+                 bbox={"facecolor": "white", "edgecolor": "0.78", "boxstyle": "round,pad=0.4"})
+
+    ax_zoom.axhline(0, color="0.75", lw=0.8, zorder=0)
+    ax_zoom.axvline(0, color="0.75", lw=0.8, zorder=0)
+    ax_zoom.set_xlim(*zoom_x)
+    ax_zoom.set_ylim(*zoom_y)
+    ax_zoom.set_aspect("equal")
+    ax_zoom.set_xlabel("$t_1$")
+    ax_zoom.set_title("The step is at right angles, so it only adds length", fontsize=11.5)
+
     fig.tight_layout()
     fig.savefig(out_dir / "pls-null-space-geometry.png")
     plt.close(fig)
