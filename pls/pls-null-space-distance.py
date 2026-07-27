@@ -90,6 +90,15 @@ def build_figure(out_dir: Path) -> None:
     ax.axvline(0, color=ORANGE, lw=1.0, ls=":", zorder=1)
     ax.axvline(s_t2, color=MAROON, lw=1.0, ls=":", zorder=1)
 
+    # The -1 and +1 steps marked on the squared-norm curve as well, using the same
+    # filled orange triangles as the two companion score plots, so the same pair of
+    # designs can be recognised across all three figures.
+    both = float(((tau + g) ** 2).sum())
+    for step, marker in ((-1.0, "v"), (1.0, "^")):
+        ax.plot([step], [float(((tau + step * g) ** 2).sum())], marker=marker, ms=10,
+                color=ORANGE, mec=BLACK, mew=0.8, zorder=7,
+                label=(f"The $-1$ and $+1$ steps, both at {both:.3f}" if step < 0 else None))
+
     # The three rows tabulated in the chapter, labelled clear of the curve and of
     # the two minimum markers, which sit close together near the origin.
     offsets = {-1.0: (18, 20), 0.0: (16, 34), 1.0: (-54, 20)}
