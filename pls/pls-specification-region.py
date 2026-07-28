@@ -76,7 +76,6 @@ def build_figure(out_dir: Path) -> None:
     sf = pls.scaling_factor_for_scores_.to_numpy()
     q = pls.y_loadings_.to_numpy().ravel()
     loadings = pls.x_loadings_.to_numpy()
-    weights = pls.direct_weights_.to_numpy()
     y_mean, y_std = float(y_block.mean().iloc[0]), float(y_block.std().iloc[0])
     x_mean, x_std = x_block.mean().to_numpy(), x_block.std().to_numpy()
 
@@ -88,19 +87,26 @@ def build_figure(out_dir: Path) -> None:
         """Hotelling's T-squared for scores given as rows."""
         return ((scores / sf) ** 2).sum(axis=1)
 
-    # The region, swept out on a dense grid of the score plane.
+    # A dense grid of the score plane, used only to shade the region in the left panel.
     axis = np.linspace(-6, 6, 1500)
     grid = np.column_stack([a.ravel() for a in np.meshgrid(axis, axis)])
     inside = (t2_of(grid) <= t2_limit) & (taste_of(grid) >= TASTE_LOW) & (taste_of(grid) <= TASTE_HIGH)
-    region_scores = grid[inside]
-    region_inputs = region_scores @ loadings.T * x_std + x_mean
+
+    # The region itself is swept exactly as the chapter sweeps it, so the box drawn here
+    # and the min/max the chapter prints are the same numbers.
+    swept = []
+    for target in np.linspace(TASTE_LOW, TASTE_HIGH, 5):
+        for step in np.linspace(-6, 6, 2001):
+            candidate = pls.invert(target, null_space_coordinates=[step])
+            if candidate.hotellings_t2 <= t2_limit:
+                swept.append(candidate.x_new.to_numpy())
+    region_inputs = np.array(swept)
 
     low, high = region_inputs.min(axis=0), region_inputs.max(axis=0)
 
     # The eight corners of the box those three ranges describe.
     corners = np.array(np.meshgrid(*([lo, hi] for lo, hi in zip(low, high)))).reshape(3, -1).T
-    corner_scores = (corners - x_mean) / x_std @ weights
-    corner_taste = taste_of(corner_scores)
+    corner_taste = pls.predict(pd.DataFrame(corners, columns=X_COLUMNS)).to_numpy().ravel()
 
     fig = plt.figure(figsize=(12.8, 5.9))
     ax_scores = fig.add_subplot(1, 2, 1)
