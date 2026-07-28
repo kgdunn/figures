@@ -212,7 +212,7 @@ def build_figure(out_dir: Path) -> None:
     ax_inputs.set_zlabel("Lactic", labelpad=8)
     ax_inputs.tick_params(axis="both", pad=2, labelsize=9)
     ax_inputs.set_title("The region is flat; the box of ranges is not", fontsize=11.5)
-    ax_inputs.view_init(elev=20, azim=-118)
+    ax_inputs.view_init(elev=20, azim=-138)
     ax_inputs.grid(visible=False)
 
     fig.tight_layout()
