@@ -65,11 +65,14 @@ GREY = "0.55"
 BLACK = "#111111"
 
 # The four corners of the region and its centre, marked identically in both panels.
+# Colour carries the target taste, shape carries which end of that taste's null space,
+# so the pairing can be read off without consulting the legend.
+TASTE_20, TASTE_30 = "#6a3d9a", "#1b9e77"
 LANDMARKS = (
-    ("#6a3d9a", "v", "Region corner: taste 20, low"),
-    ("#1b9e77", "^", "Region corner: taste 20, high"),
-    ("#e7298a", "D", "Region corner: taste 30, low"),
-    ("#66a61e", "s", "Region corner: taste 30, high"),
+    (TASTE_20, "v", "Taste 20, low end"),
+    (TASTE_20, "^", "Taste 20, high end"),
+    (TASTE_30, "v", "Taste 30, low end"),
+    (TASTE_30, "^", "Taste 30, high end"),
     ("#111111", "*", "Region centre: taste 25"),
 )
 
