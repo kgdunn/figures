@@ -95,8 +95,8 @@ def build_figure(out_dir: Path) -> None:
     # The region itself is swept exactly as the chapter sweeps it, so the box drawn here
     # and the min/max the chapter prints are the same numbers.
     swept = []
-    for target in np.linspace(TASTE_LOW, TASTE_HIGH, 5):
-        for step in np.linspace(-6, 6, 2001):
+    for target in np.linspace(TASTE_LOW, TASTE_HIGH, 41):
+        for step in np.linspace(-6, 6, 801):
             candidate = pls.invert(target, null_space_coordinates=[step])
             if candidate.hotellings_t2 <= t2_limit:
                 swept.append(candidate.x_new.to_numpy())
