@@ -209,14 +209,18 @@ def build_figure(out_dir: Path) -> None:
 
     ax_zoom.annotate("origin", xy=(0, 0), xytext=(9, 4), textcoords="offset points",
                      fontsize=9, color=GREY)
+    # Kept clear of the horizontal axis line, which runs just below the solution.
     ax_zoom.annotate("direct inversion\n" r"$\|\mathbf{\tau}_{DI}\| = 0.281$", xy=tuple(tau),
-                     xytext=(-102, -36), textcoords="offset points", fontsize=9, color=BLACK,
-                     arrowprops={"arrowstyle": "-", "color": BLACK, "lw": 0.8})
+                     xytext=(-105, 6), textcoords="offset points", fontsize=9, color=BLACK,
+                     va="bottom", arrowprops={"arrowstyle": "-", "color": BLACK, "lw": 0.8})
     ax_zoom.annotate("the +1 step: same\ntaste, " r"$\|\cdot\| = 1.039$", xy=tuple(candidate),
                      xytext=(-118, 4), textcoords="offset points", fontsize=9, color=DARK_BLUE,
                      arrowprops={"arrowstyle": "-", "color": DARK_BLUE, "lw": 0.8})
-    ax_zoom.annotate("this leg adds length\nbut changes nothing", xy=tuple(tau + 0.55 * g_step),
-                     xytext=(24, -20), textcoords="offset points", fontsize=9, color=DARK_BLUE,
+    # On the free side of the leg, where nothing else is drawn, and close to it.
+    ax_zoom.annotate("this leg adds length\nbut leaves the predicted\ntaste unchanged",
+                     xy=tuple(tau + 0.55 * g_step),
+                     xytext=(-14, 0), textcoords="offset points", fontsize=9, color=DARK_BLUE,
+                     ha="right", va="center",
                      arrowprops={"arrowstyle": "-", "color": DARK_BLUE, "lw": 0.8})
     ax_zoom.text(0.035, 0.035,
                  r"$\|\mathbf{\tau}_{DI} + s\mathbf{g}\|^2 = \|\mathbf{\tau}_{DI}\|^2 + s^2$",
