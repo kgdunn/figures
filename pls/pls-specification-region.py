@@ -192,8 +192,9 @@ def build_figure(out_dir: Path) -> None:
     ax_scores.legend(loc="upper left", fontsize=7.4, framealpha=0.94, borderpad=0.5)
 
     # --- right: the region against the box of three ranges --------------------
-    ax_inputs.scatter(region_inputs[:, 0], region_inputs[:, 1], region_inputs[:, 2], s=6,
-                      color=ORANGE, alpha=0.45, lw=0, depthshade=False)
+    # Large enough for the swept points to read as a surface rather than a dusting.
+    ax_inputs.scatter(region_inputs[:, 0], region_inputs[:, 1], region_inputs[:, 2], s=22,
+                      color=ORANGE, alpha=0.5, lw=0, depthshade=False)
     for start, end in (
         (0, 1), (0, 2), (0, 4), (1, 3), (1, 5), (2, 3),
         (2, 6), (3, 7), (4, 5), (4, 6), (5, 7), (6, 7),
