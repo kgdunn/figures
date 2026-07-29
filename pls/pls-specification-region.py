@@ -86,6 +86,11 @@ plt.rcParams.update(
 )
 
 
+def landmark_area(marker: str) -> float:
+    """Marker area in points squared. The star reads small at the shared size, so it gets double."""
+    return 300.0 if marker == "*" else 150.0
+
+
 def build_figure(out_dir: Path) -> None:
     """Fit the model, sweep the acceptable range, and draw the region against its box."""
     cheese = pd.read_csv(DATA_URL)
@@ -179,8 +184,8 @@ def build_figure(out_dir: Path) -> None:
     ax_scores.scatter(scores[:, 0], scores[:, 1], s=24, color=DARK_BLUE, alpha=0.55, lw=0,
                       zorder=5, label="Calibration cheeses")
     for point, (colour, marker, label) in zip(mark_scores, LANDMARKS):
-        ax_scores.scatter(*point, color=colour, marker=marker, s=150, edgecolors="white",
-                          linewidths=1.1, zorder=9, label=label)
+        ax_scores.scatter(*point, color=colour, marker=marker, s=landmark_area(marker),
+                          edgecolors="white", linewidths=1.1, zorder=9, label=label)
     ax_scores.axhline(0, color="0.8", lw=0.8, zorder=0)
     ax_scores.axvline(0, color="0.8", lw=0.8, zorder=0)
     ax_scores.set_xlim(-4.2, 4.2)
@@ -192,8 +197,9 @@ def build_figure(out_dir: Path) -> None:
     ax_scores.legend(loc="upper left", fontsize=7.4, framealpha=0.94, borderpad=0.5)
 
     # --- right: the region against the box of three ranges --------------------
-    ax_inputs.scatter(region_inputs[:, 0], region_inputs[:, 1], region_inputs[:, 2], s=6,
-                      color=ORANGE, alpha=0.45, lw=0, depthshade=False)
+    # Large enough for the swept points to read as a surface rather than a dusting.
+    ax_inputs.scatter(region_inputs[:, 0], region_inputs[:, 1], region_inputs[:, 2], s=22,
+                      color=ORANGE, alpha=0.5, lw=0, depthshade=False)
     for start, end in (
         (0, 1), (0, 2), (0, 4), (1, 3), (1, 5), (2, 3),
         (2, 6), (3, 7), (4, 5), (4, 6), (5, 7), (6, 7),
@@ -208,8 +214,8 @@ def build_figure(out_dir: Path) -> None:
         ax_inputs.text(corner[0], corner[1], corner[2], note, fontsize=8, color=colour,
                        fontweight="bold")
     for point, (colour, marker, _label) in zip(mark_inputs, LANDMARKS):
-        ax_inputs.scatter(*point, color=colour, marker=marker, s=150, edgecolors="white",
-                          linewidths=1.1, depthshade=False, zorder=10)
+        ax_inputs.scatter(*point, color=colour, marker=marker, s=landmark_area(marker),
+                          edgecolors="white", linewidths=1.1, depthshade=False, zorder=10)
     ax_inputs.set_xlabel("Acetic", labelpad=10)
     ax_inputs.set_ylabel("H2S", labelpad=12)
     ax_inputs.set_zlabel("Lactic", labelpad=8)
