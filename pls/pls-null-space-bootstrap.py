@@ -13,10 +13,14 @@ returned. Overplotting turns the spread into a density, so the fan is the
 uncertainty itself rather than a number describing it. The fan pinches near the
 direct-inversion solution and spreads from there, which is the asymmetry the
 chapter draws out: the refits agree on the point and disagree on the direction.
+Each refit is sign-aligned with the full model first, because a PLS component is
+unchanged when its weight, loading, score and y-loading all flip together, and
+the second component comes back reversed in about a quarter of the resamples.
 
 Right panel: the same spread as an angle from the direction the full
 calibration set gives. Compared without sign, since a direction and its
-negative describe the same line.
+negative describe the same line. Measured in the input space, where the
+component flips cancel, so this panel is the same either way.
 
 Requires the ``process_improve`` package (``pip install process-improve``) for
 ``PLS``. Runs a couple of minutes for the default 2000 refits.
@@ -80,16 +84,24 @@ def build_figure(out_dir: Path) -> None:
     reference = g_0 @ pls.x_loadings_.to_numpy().T
     reference = reference / np.linalg.norm(reference)
 
+    w_full = pls.x_weights_.to_numpy()  # the sign convention the refits are matched to
+
     rng = np.random.default_rng(SEED)
     refits, angles = [], []
     for _ in range(N_BOOTSTRAP):
         sample = train.iloc[rng.integers(0, len(train), len(train))]
         boot = PLS(n_components=2).fit(sample[X_COLUMNS], sample[["Taste"]])
         boot_result = boot.invert(TARGET_TASTE)
-        refits.append((boot_result.scores.to_numpy(), boot_result.null_space_basis.to_numpy().ravel()))
-        direction = boot_result.null_space_basis.to_numpy().ravel() @ boot.x_loadings_.to_numpy().T
+        g_b = boot_result.null_space_basis.to_numpy().ravel()
+        # A PLS component is unchanged when w, p, t and q all flip together, and which
+        # version the algorithm returns depends on the sample. The left panel is drawn in
+        # score coordinates, so each refit is aligned with the full model before plotting.
+        flip = np.sign((boot.x_weights_.to_numpy() * w_full).sum(axis=0))
+        refits.append((boot_result.scores.to_numpy() * flip, g_b * flip))
+        direction = g_b @ boot.x_loadings_.to_numpy().T
         direction = direction / np.linalg.norm(direction)
-        # A direction and its negative are the same line, so compare without sign.
+        # A direction and its negative are the same line, so compare without sign. The
+        # flips cancel between g and P here, so this panel needs no alignment.
         angles.append(np.degrees(np.arccos(np.clip(abs(direction @ reference), 0, 1))))
     angles = np.array(angles)
 
