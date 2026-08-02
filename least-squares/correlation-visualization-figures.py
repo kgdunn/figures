@@ -13,7 +13,10 @@ previously described these displays without showing any of them:
   cells, so the two displays can be read against each other.
 - ``distillation-tower-correlation-heatmap.png``: the same heat map for
   27 variables, the size at which printing the numbers stops working
-  and the colour has to carry the message on its own.
+  and the colour has to carry the message on its own. Rows and columns
+  are reordered by hierarchical clustering, so that correlated
+  variables gather into blocks along the diagonal instead of being
+  scattered through the order the file happens to use.
 - ``distillation-tower-scatterplot-matrix.png``: five of those 27
   columns, chosen to span the range of correlation with the outcome
   variable ``VapourPressure`` (strong negative through to strong
@@ -49,6 +52,8 @@ mpl.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from scipy.cluster.hierarchy import leaves_list, linkage
+from scipy.spatial.distance import squareform
 
 BLUE = "#0072B2"
 VERMILLION = "#D55E00"
@@ -180,11 +185,34 @@ def scatterplot_matrix(data: pd.DataFrame, outdir: pathlib.Path, name: str,
     print(f"wrote {outdir / name}")
 
 
+def cluster_order(correlation: pd.DataFrame) -> list[str]:
+    """Variable names reordered so that correlated ones sit together.
+
+    Hierarchical clustering on the distance :math:`1 - r`, which is 0 for a
+    pair moving exactly together and 2 for a pair moving exactly opposite,
+    with average linkage. The variables are then read off in the order the
+    dendrogram's leaves fall, which is the ordering the D3 Les Miserables
+    co-occurrence matrix offers under "by cluster". ``optimal_ordering``
+    flips branches to put the most similar pair either side of each join,
+    which the dendrogram is free to do without changing the clustering.
+    """
+    distance = 1 - correlation.to_numpy()
+    np.fill_diagonal(distance, 0.0)
+    # squareform wants the condensed upper triangle; the matrix is symmetric
+    # up to floating-point noise, which checks=False lets through.
+    tree = linkage(squareform(distance, checks=False), method="average",
+                   optimal_ordering=True)
+    return [correlation.columns[i] for i in leaves_list(tree)]
+
+
 def correlation_heatmap(data: pd.DataFrame, outdir: pathlib.Path, name: str,
                         annotate: bool = False, size: float = 9.0,
-                        label_size: int = 12) -> None:
+                        label_size: int = 12, cluster: bool = False) -> None:
     """The correlation matrix as a diverging colour map, red high, blue low."""
     correlation = data.corr()
+    if cluster:
+        order = cluster_order(correlation)
+        correlation = correlation.loc[order, order]
     names = list(correlation.columns)
     n = len(names)
     fig, ax = plt.subplots(figsize=(size * 1.15, size))
@@ -261,9 +289,11 @@ def main(outdir: pathlib.Path) -> None:
     print(outcome.drop("VapourPressure").reindex(
         outcome.drop("VapourPressure").abs().sort_values(ascending=False).index
     ).round(3).to_string())
+    print("clustered column order: "
+          + ", ".join(cluster_order(distillation.corr())))
     correlation_heatmap(distillation, outdir,
                         "distillation-tower-correlation-heatmap.png",
-                        annotate=False, size=9.5, label_size=11)
+                        annotate=False, size=9.5, label_size=11, cluster=True)
     scatterplot_matrix(distillation[DISTILL_SUBSET], outdir,
                        "distillation-tower-scatterplot-matrix.png",
                        marker_size=16, alpha=0.55, filled=True)
