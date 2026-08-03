@@ -9,12 +9,15 @@
 
 - ``r-squared-versus-standard-error.png``: four simulated data sets from
   the same model, y = 5 + x + e, drawn on common axes. The rows differ
-  in the size of the error, S_E = 1 kg and S_E = 3 kg; the columns
+  in the size of the error, S_E = 1 kg and S_E = 2 kg; the columns
   differ in how widely x was sampled, over the full range or over the
-  middle third of it. Each row therefore holds the prediction error
+  middle half of it. Each row therefore holds the prediction error
   fixed while R-squared moves, and the two panels on the anti-diagonal
-  report the same R-squared of 0.80 with a three-fold difference in
-  prediction error.
+  report the same R-squared of 0.90 with a two-fold difference in
+  prediction error. The errors are rescaled after they are drawn so
+  that the realised S_E is exactly 1.000 kg and 2.000 kg rather than
+  approximately so: least squares residuals are linear in the errors,
+  so scaling the errors by a constant scales S_E by the same constant.
 
 Both figures use a fixed seed, so the numbers annotated on the panels
 are the same ones the plotly code in the chapter produces.
@@ -41,7 +44,7 @@ VERMILLION = "#D55E00"
 GREY = "#666666"
 
 DPI = 300
-SEED = 347
+SEED = 225
 HERE = pathlib.Path(__file__).parent
 
 # The 11-point example carried through the least-squares chapter.
@@ -124,18 +127,24 @@ def r2_versus_se_figure(outdir: pathlib.Path, filename: str) -> None:
     """Four data sets from one model: R-squared moves, S_E stays or not."""
     rng = np.random.default_rng(SEED)
     n = 40
-    # Sampled over the full range of x, or over its middle third: the same
-    # underlying relationship, but a third of the spread in x.
+    # Sampled over the full range of x, or over its middle half: the same
+    # underlying relationship, but half the spread in x.
     spreads = {"x sampled over 0 to 20": (0.0, 20.0),
-               "x sampled over 6.7 to 13.3": (20 / 3, 40 / 3)}
-    sigmas = [1.0, 3.0]
+               "x sampled over 5 to 15": (5.0, 15.0)}
+    targets = [1.0, 2.0]
 
     fig, axes = plt.subplots(2, 2, figsize=(11.0, 8.5), sharex=True, sharey=True)
-    for row, sigma in enumerate(sigmas):
+    for row, target in enumerate(targets):
         for col, (title, (low, high)) in enumerate(spreads.items()):
             ax = axes[row][col]
             x = rng.uniform(low, high, n)
-            y = 5.0 + 1.0 * x + rng.normal(0.0, sigma, n)
+            errors = rng.normal(0.0, 1.0, n)
+
+            # Rescale the errors so the realised standard error is exactly
+            # the target. Least squares residuals are linear in the errors,
+            # so scaling the errors scales S_E by the same factor.
+            se_draw = fit(x, 5.0 + 1.0 * x + errors)[3]
+            y = 5.0 + 1.0 * x + errors * (target / se_draw)
             b0, b1, r2, se = fit(x, y)
 
             grid = np.linspace(low, high, 100)
@@ -157,11 +166,11 @@ def r2_versus_se_figure(outdir: pathlib.Path, filename: str) -> None:
                 ax.set_xlabel("x")
             if col == 0:
                 ax.set_ylabel("y [kg]")
-            print(f"{filename}: sigma {sigma}, {title}: "
-                  f"R2 {r2:.3f}, S_E {se:.2f}, slope {b1:.3f}")
+            print(f"{filename}: target S_E {target}, {title}: "
+                  f"R2 {r2:.3f}, S_E {se:.4f}, slope {b1:.3f}")
 
     axes[0][0].set_xlim(-1.0, 21.0)
-    axes[0][0].set_ylim(-1.0, 33.0)
+    axes[0][0].set_ylim(-1.0, 31.0)
     fig.tight_layout()
     fig.savefig(outdir / filename, dpi=DPI)
     plt.close(fig)
