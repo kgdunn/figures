@@ -92,30 +92,30 @@ def symmetry_figure(outdir: pathlib.Path, filename: str) -> None:
 
     # Residuals each line minimises: vertical for one, horizontal for the other.
     for xi, yi in zip(x, y):
-        ax.plot([xi, xi], [yi, b0 + b1 * xi], color=BLUE, linewidth=1.0, alpha=0.45)
+        ax.plot([xi, xi], [yi, b0 + b1 * xi], color=BLUE, linewidth=1.8, alpha=0.55)
         ax.plot(
-            [xi, a0 + a1 * yi], [yi, yi], color=VERMILLION, linewidth=1.0, alpha=0.45
+            [xi, a0 + a1 * yi], [yi, yi], color=VERMILLION, linewidth=1.8, alpha=0.55
         )
 
-    ax.plot(grid, b0 + b1 * grid, color=BLUE, linewidth=2.2,
+    ax.plot(grid, b0 + b1 * grid, color=BLUE, linewidth=3.6,
             label=f"Predicting y from x: slope {b1:.3f}")
-    ax.plot(grid, c0 + c1 * grid, color=VERMILLION, linewidth=2.2, linestyle="--",
+    ax.plot(grid, c0 + c1 * grid, color=VERMILLION, linewidth=3.6, linestyle="--",
             label=f"Predicting x from y: slope {c1:.3f} in these axes")
-    ax.plot(x, y, "o", color="black", markersize=7, zorder=5)
-    ax.plot(x.mean(), y.mean(), "P", color=GREY, markersize=13, zorder=6,
+    ax.plot(x, y, "o", color="black", markersize=11, zorder=5)
+    ax.plot(x.mean(), y.mean(), "P", color=GREY, markersize=18, zorder=6,
             label="Mean of the data")
 
     ax.text(
         0.03, 0.97,
         f"Both models: $R^2$ = {r2:.4f}",
-        transform=ax.transAxes, va="top", ha="left", fontsize=15,
+        transform=ax.transAxes, va="top", ha="left", fontsize=17,
     )
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_xlim(2.5, 15.5)
     ax.set_ylim(3.0, 11.5)
     ax.grid(True, color="#DDDDDD")
-    ax.legend(loc="lower right", fontsize=12, framealpha=1.0)
+    ax.legend(loc="lower right", fontsize=13, framealpha=1.0)
     fig.tight_layout()
     fig.savefig(outdir / filename, dpi=DPI)
     plt.close(fig)
