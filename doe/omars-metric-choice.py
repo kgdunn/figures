@@ -85,9 +85,14 @@ MAX_R = {
         23: 0.162650, 25: 0.200082, 27: 0.200000, 29: 0.121212, 31: 0.091747},
 }
 
-# Absolute correlation matrices of four of the plotted designs, used as insets so the reader
+# Absolute correlation matrices of five of the plotted designs, used as insets so the reader
 # can see what a value of max |r| looks like. Keyed by (centre-point count, run count), and
 # ordered as the three quadratics then the three two-factor interactions.
+#
+# The first three are the smallest design at each centre-point count. All three have the same
+# four half-rows, so what separates them is the centre runs alone: as those are added, the
+# quadratic-to-interaction correlation falls from 0.707 to 0.645 to 0.606 while the
+# quadratic-to-quadratic correlation rises from 0 to 0.167 to 0.267.
 INSETS = {
     (1, 9): [[1.000, 0.000, 0.000, 0.000, 0.000, 0.707],
              [0.000, 1.000, 0.000, 0.000, 0.707, 0.000],
@@ -95,12 +100,18 @@ INSETS = {
              [0.000, 0.000, 0.707, 1.000, 0.500, 0.500],
              [0.000, 0.707, 0.000, 0.500, 1.000, 0.500],
              [0.707, 0.000, 0.000, 0.500, 0.500, 1.000]],
-    (1, 13): [[1.000, 0.300, 0.300, 0.0, 0.0, 0.0],
-              [0.300, 1.000, 0.300, 0.0, 0.0, 0.0],
-              [0.300, 0.300, 1.000, 0.0, 0.0, 0.0],
-              [0.000, 0.000, 0.000, 1.0, 0.0, 0.0],
-              [0.000, 0.000, 0.000, 0.0, 1.0, 0.0],
-              [0.000, 0.000, 0.000, 0.0, 0.0, 1.0]],
+    (2, 10): [[1.000, 0.167, 0.167, 0.000, 0.000, 0.645],
+              [0.167, 1.000, 0.167, 0.000, 0.645, 0.000],
+              [0.167, 0.167, 1.000, 0.645, 0.000, 0.000],
+              [0.000, 0.000, 0.645, 1.000, 0.500, 0.500],
+              [0.000, 0.645, 0.000, 0.500, 1.000, 0.500],
+              [0.645, 0.000, 0.000, 0.500, 0.500, 1.000]],
+    (3, 11): [[1.000, 0.267, 0.267, 0.000, 0.000, 0.606],
+              [0.267, 1.000, 0.267, 0.000, 0.606, 0.000],
+              [0.267, 0.267, 1.000, 0.606, 0.000, 0.000],
+              [0.000, 0.000, 0.606, 1.000, 0.500, 0.500],
+              [0.000, 0.606, 0.000, 0.500, 1.000, 0.500],
+              [0.606, 0.000, 0.000, 0.500, 0.500, 1.000]],
     (2, 24): [[1.000, 0.250, 0.120, 0.0, 0.0, 0.0],
               [0.250, 1.000, 0.239, 0.0, 0.0, 0.0],
               [0.120, 0.239, 1.000, 0.0, 0.0, 0.0],
@@ -168,25 +179,29 @@ for ax, (idx, title, direction, log_y, monotone) in zip(axes.ravel(), PANELS):
 # common 0-to-1 scale so the shading can be compared across them.
 ax_r = axes[1, 2]
 ax_r.set_ylim(-0.03, 1.02)
-PLACEMENT = {(1, 9): (0.03, 0.78), (1, 13): (0.35, 0.78),
-             (2, 24): (0.575, 0.78), (1, 31): (0.80, 0.78)}
-for (centre, n_runs), (x0, y0) in PLACEMENT.items():
-    inset = ax_r.inset_axes([x0, y0, 0.165, 0.165])
+SIZE = 0.145
+PLACEMENT = {(1, 9): 0.02, (2, 10): 0.175, (3, 11): 0.33, (2, 24): 0.575, (1, 31): 0.80}
+SERIES_COLOUR = {centre: colour for centre, colour, _, _ in SERIES}
+for (centre, n_runs), x0 in PLACEMENT.items():
+    colour, y0 = SERIES_COLOUR[centre], 0.79
+    inset = ax_r.inset_axes([x0, y0, SIZE, SIZE])
     inset.imshow(np.array(INSETS[(centre, n_runs)]), cmap="Blues", vmin=0, vmax=1,
                  interpolation="nearest")
     inset.axhline(2.5, color="#7A848D", linewidth=0.7)   # quadratics | interactions
     inset.axvline(2.5, color="#7A848D", linewidth=0.7)
     inset.set_xticks([])
     inset.set_yticks([])
+    # Border and leader line take the series colour, so each inset is tied to its own
+    # centre-point count without needing a label.
     for spine in inset.spines.values():
-        spine.set_color("#4A5560")
-        spine.set_linewidth(0.9)
+        spine.set_color(colour)
+        spine.set_linewidth(1.3)
     ax_r.annotate("", xy=(n_runs, MAX_R[centre][n_runs]), xycoords="data",
-                  xytext=(x0 + 0.083, y0), textcoords=ax_r.transAxes,
-                  arrowprops=dict(arrowstyle="-", color="#7A848D", linewidth=0.9,
-                                  shrinkA=1, shrinkB=3))
+                  xytext=(x0 + SIZE / 2, y0), textcoords=ax_r.transAxes,
+                  arrowprops=dict(arrowstyle="-", color=colour, linewidth=0.9, alpha=0.75,
+                                  shrinkA=1, shrinkB=4))
     ax_r.plot([n_runs], [MAX_R[centre][n_runs]], marker="o", markersize=9,
-              markerfacecolor="none", markeredgecolor="#4A5560", markeredgewidth=1.2,
+              markerfacecolor="none", markeredgecolor=colour, markeredgewidth=1.3,
               zorder=5)
 
 for column, label in enumerate(COLUMN_LABELS):
