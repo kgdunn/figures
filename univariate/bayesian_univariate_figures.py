@@ -135,9 +135,9 @@ def prior_likelihood_posterior(outdir: pathlib.Path) -> None:
     ax.axvline(PRIOR_MEAN, color=GREY, linewidth=1, linestyle=":")
     ax.axvline(xbar, color=ORANGE, linewidth=1, linestyle=":")
     ax.annotate(
-        "posterior mean = 19.5,\nbetween 18 and 20",
-        xy=(m_post - s_post, stats.norm.pdf(s_post, 0, s_post)),
-        xytext=(12.3, 0.22), fontsize=15,
+        "posterior mean\n19.5: between\n18 and 20",
+        xy=(m_post + s_post, stats.norm.pdf(s_post, 0, s_post)),
+        xytext=(25.8, 0.30), fontsize=15, ha="right",
         arrowprops=dict(arrowstyle="->", color="black"),
     )
     ax.text(m_post, 0.05, "95%", ha="center", fontsize=15, color=BLUE)
@@ -187,7 +187,7 @@ def sequential_updating(outdir: pathlib.Path) -> None:
 
 def yield_difference_posterior(outdir: pathlib.Path) -> None:
     centre, scale, df = 3.04, 3.02, 18
-    d = np.linspace(-8, 14, 881)
+    d = np.linspace(-11, 14, 1001)
     density = stats.t.pdf((d - centre) / scale, df) / scale
 
     fig, ax = plt.subplots(figsize=(10, 7))
@@ -203,7 +203,7 @@ def yield_difference_posterior(outdir: pathlib.Path) -> None:
     )
     ax.annotate(
         "16%: the pooled-variance\ncalculation, seen from\nthe other side",
-        xy=(-1.8, 0.02), xytext=(-8.0, 0.075), fontsize=15,
+        xy=(-1.8, 0.02), xytext=(-10.9, 0.075), fontsize=15,
         arrowprops=dict(arrowstyle="->", color="black"),
     )
     ax.set_xlabel(r"Difference in long-run yields, $\mu_B - \mu_A$ [%]")
