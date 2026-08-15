@@ -54,7 +54,8 @@ for kk, pp in zip(k, parameters):
 ax.plot([4], [19], marker="x", ms=12, mew=2.6, color=GREY, zorder=6)
 ax.annotate("19 runs, 15 parameters,\nmodel matrix rank 14",
             xy=(4, 19), xytext=(3.05, 33.0), ha="left", va="center", fontsize=12, color=GREY,
-            arrowprops=dict(arrowstyle="->", color=GREY, lw=1.4, shrinkB=8,
+            zorder=7,
+            arrowprops=dict(arrowstyle="->", color=GREY, lw=2.2, shrinkB=8, zorder=7,
                             connectionstyle="arc3,rad=0.3"))
 
 ax.set_xticks(k)
