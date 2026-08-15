@@ -24,8 +24,6 @@ omars_anchor_entry for the Box-Behnken cells, so the figure cannot drift away fr
 Reproducible; run from this directory to write the PNG alongside it.
 """
 import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib.lines import Line2D
 from matplotlib.patches import Patch, Rectangle
 from process_improve.experiments import get_omars_trade_off_table_entry
 from process_improve.experiments.omars_trade_off import (
@@ -60,7 +58,7 @@ for n in runs:
             row.append((("dsd" if n == dsd_runs[k] else None), entry) if entry.exists else None)
     cells.append(row)
 
-fig, ax = plt.subplots(figsize=(8.6, 11.0))
+fig, ax = plt.subplots(figsize=(8.6, 9.6))
 
 for i, row in enumerate(cells):
     for j, cell in enumerate(row):
@@ -98,25 +96,29 @@ ax.tick_params(length=0)
 for side in ("top", "right", "bottom", "left"):
     ax.spines[side].set_visible(False)
 
+# Two columns, so the notes cost half the vertical space. Matplotlib fills a multi-column
+# legend column by column, so the order here is the left column then the right one: the three
+# capability classes on the left, and what the marks and shading mean on the right.
 legend = [
     Patch(facecolor=FILLS["full"], label="Full: main effects, quadratics and all\n"
                                          "two-factor interactions, jointly estimable"),
     Patch(facecolor=FILLS["quad"], label="Quad: main effects and pure quadratics,\n"
                                          "with error degrees of freedom to test them"),
-    Patch(facecolor=FILLS["satd"], label="Satd: saturated, so estimates but no inference"),
+    Patch(facecolor=FILLS["satd"], label="Satd: saturated, so estimates but no\n"
+                                         "inference"),
+    Patch(facecolor=FILLS["bbd"], label="BBD: the Box-Behnken design, which closes\n"
+                                        "its column; every row below it repeats Full"),
+    Patch(facecolor="white", edgecolor="white",
+          label="DSD: the definitive screening design, the\n"
+                "smallest member of the family"),
     Patch(facecolor=FILLS["none"], edgecolor="0.8",
           label="Not a foldover design at this run count"),
     Patch(facecolor="white", edgecolor="#D55E00", lw=2.2,
-          label="Outlined: the estimability frontier, $N = k^2 + k + 1$"),
-    Patch(facecolor=FILLS["bbd"],
-          label="BBD: the Box-Behnken design, which closes its column;\n"
-                "every row below it repeats Full on more runs"),
-    Patch(facecolor="white", edgecolor="white",
-          label="DSD: marks the definitive screening design, the\n"
-                "smallest member of the family"),
+          label="Outlined: the estimability frontier,\n$N = k^2 + k + 1$"),
 ]
-ax.legend(handles=legend, loc="upper left", bbox_to_anchor=(0.0, -0.02),
-          fontsize=11, frameon=False, handlelength=1.4, labelspacing=0.9)
+ax.legend(handles=legend, loc="upper left", bbox_to_anchor=(-0.06, -0.015), ncols=2,
+          fontsize=10.5, frameon=False, handlelength=1.4, labelspacing=0.8,
+          columnspacing=1.6, alignment="left")
 
 fig.tight_layout()
 fig.savefig("omars-capability-staircase.png", dpi=300, facecolor="w", edgecolor="w",
