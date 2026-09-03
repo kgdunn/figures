@@ -8,6 +8,9 @@ read the true titer there from the simulator with every disturbance switched off
 that titer minus the titer of the recipe the team started with, 7.436 g/L; the most any
 recipe in the region can reach is 2.006 g/L more.
 
+The upper panel is the gain in titer; the lower panel is how often each of the three real
+effects that the recommendation depends on was declared active, over the same campaigns.
+
 Every number is carried as a literal because two hundred campaigns per design take minutes;
 omars_worked_study_data.py regenerates them.
 
@@ -37,11 +40,13 @@ PRIZE = 2.0064
 
 # Okabe-Ito, matching the other figures in this chapter.
 BLUE, GREEN, ORANGE, GREY, VERM = "#0072B2", "#009E73", "#E69F00", "#666666", "#D55E00"
+PURPLE, SPINE = "#CC79A7", "#98A2AB"
 
 omars = [v for k, v in GAINS.items() if k.startswith("OMARS")]
 runs = [v["runs"] for v in omars]
 
-fig, ax = plt.subplots(figsize=(8.6, 6.2))
+fig, (ax, ax_f) = plt.subplots(2, 1, figsize=(8.6, 8.6), sharex=True,
+                               gridspec_kw={"height_ratios": [1.5, 1.0]})
 
 ax.axhline(PRIZE, color=GREY, lw=1.2, ls=(0, (5, 4)), zorder=1)
 ax.text(31.4, PRIZE + 0.04, f"best possible, {PRIZE:.3f} g/L", ha="right", va="bottom",
@@ -67,18 +72,42 @@ for name, colour, dx, marker in (("Box-Behnken 27", GREEN, -0.55, "*"), ("CCD 27
     ax.plot([x], [v["worst"]], color=colour, marker="v", ms=7, lw=0, markerfacecolor="white",
             markeredgewidth=1.6, zorder=5)
 
-ax.set_xticks(runs)
-ax.set_xlim(11.5, 32.5)
 ax.set_ylim(-3.5, 2.4)
-ax.set_xlabel("Number of runs, $N$", fontsize=13)
-ax.set_ylabel("Titer gained over the current recipe, g/L", fontsize=13)
-ax.grid(axis="y", color="0.9", lw=0.9)
-ax.set_axisbelow(True)
-for side in ("top", "right"):
-    ax.spines[side].set_visible(False)
+ax.set_ylabel("Titer gained over the current recipe, g/L", fontsize=12)
 # Legend above the axes, so no marker can land in it.
 ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.0), ncols=2, fontsize=10, frameon=False,
           columnspacing=1.6, handlelength=2.0)
+
+# Lower panel: how often each real effect was found, over the same campaigns.
+EFFECTS = (("feed_rate", "feed rate, main effect", BLUE, "o"),
+           ("hold_temp:shift_day", "hold temperature × shift day", VERM, "s"),
+           ("hold_temp^2", "hold temperature, quadratic", PURPLE, "D"))
+for key, label, colour, marker in EFFECTS:
+    ax_f.plot(runs, [100 * v["found"][key] for v in omars], color=colour, marker=marker, ms=6.5,
+              lw=2.0, zorder=4, label=label)
+    for name, dx, mk in (("Box-Behnken 27", -0.55, "*"), ("CCD 27", 0.55, "D")):
+        ax_f.plot([GAINS[name]["runs"] + dx], [100 * GAINS[name]["found"][key]], mk,
+                  ms=12 if mk == "*" else 7, color=colour, markerfacecolor="white", markeredgewidth=1.6,
+                  zorder=5)
+ax_f.set_ylim(-4, 104)
+ax_f.set_yticks([0, 25, 50, 75, 100])
+ax_f.set_ylabel("Campaigns finding the effect, %", fontsize=12)
+ax_f.set_xticks(runs)
+ax_f.set_xlim(11.5, 32.5)
+ax_f.set_xlabel("Number of runs, $N$", fontsize=13)
+ax_f.legend(loc="lower right", bbox_to_anchor=(1.0, 0.02), fontsize=10, frameon=True, facecolor="white",
+            edgecolor="0.85", framealpha=1.0)
+ax_f.text(11.9, -1.5, "hollow star, hollow diamond: Box-Behnken\nand CCD at 27 runs, as in the upper panel",
+          ha="left", va="bottom", fontsize=9, color=GREY)
+
+for axis in (ax, ax_f):
+    axis.grid(axis="y", color="0.9", lw=0.9)
+    axis.set_axisbelow(True)
+    for side in ("top", "right"):
+        axis.spines[side].set_visible(False)
+    for side in ("left", "bottom"):
+        axis.spines[side].set_color(SPINE)
+    axis.tick_params(colors="0.25", labelsize=10.5)
 
 fig.tight_layout()
 fig.savefig("omars-worked-study-tradeoff.png", dpi=300, facecolor="w", edgecolor="w",
