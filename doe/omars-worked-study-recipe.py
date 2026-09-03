@@ -34,17 +34,16 @@ for hold, shift in ((28.5, 2.0), (28.5, 3.5), (31.5, 2.0), (31.5, 3.5)):
 ax_t.plot(days, schedule(CURRENT["hold_temp"], CURRENT["shift_day"]), color=BLUE, lw=2.4, zorder=3,
           label="current recipe")
 ax_t.plot([], [], color="0.78", lw=1.2, label="corners of the study region")
-ax_t.text(0.15, GROWTH_TEMP + 0.35, "growth, 36.8 °C", fontsize=9.5, color=GREY, ha="left", va="bottom")
-ax_t.annotate("hold, 30.0 °C", xy=(7.0, CURRENT["hold_temp"]), xytext=(7.0, CURRENT["hold_temp"] + 1.3),
-              fontsize=9.5, color=GREY, ha="left", va="bottom")
-ax_t.annotate("shift starts on day 2.75,\nramp of 1.5 days", xy=(3.4, 34.0), xytext=(5.6, 35.0),
+ax_t.text(0.15, GROWTH_TEMP - 0.35, "growth,\n36.8 °C", fontsize=9.5, color=GREY, ha="left", va="top")
+ax_t.text(7.0, CURRENT["hold_temp"] + 0.3, "hold, 30.0 °C", fontsize=9.5, color=GREY, ha="left", va="bottom")
+ax_t.annotate("shift starts on day 2.75,\nramp of 1.5 days", xy=(3.55, 33.4), xytext=(5.6, 33.4),
               fontsize=9.5, color=GREY, ha="left", va="center",
               arrowprops={"arrowstyle": "-", "color": GREY, "lw": 0.9})
 ax_t.set_xlim(0, CONFIG.batch_days)
 ax_t.set_ylim(27.5, 38)
 ax_t.set_xlabel("Day of the batch", fontsize=11.5)
 ax_t.set_ylabel("Temperature setpoint, °C", fontsize=11.5)
-ax_t.legend(loc="lower left", fontsize=9.5, frameon=False)
+ax_t.legend(loc="upper right", fontsize=9.5, frameon=True, facecolor="white", edgecolor="0.85", framealpha=1.0)
 
 # Right: twenty replicate batches at the current recipe, as the chapter runs them.
 for s in range(20):
@@ -60,7 +59,7 @@ ax_y.set_xlim(0, CONFIG.batch_days)
 ax_y.set_ylim(0, 9.2)
 ax_y.set_xlabel("Day of the batch", fontsize=11.5)
 ax_y.set_ylabel("Titer, g/L", fontsize=11.5)
-ax_y.legend(loc="lower right", fontsize=9.5, frameon=False)
+ax_y.legend(loc="lower right", fontsize=9.5, frameon=True, facecolor="white", edgecolor="0.85", framealpha=1.0)
 
 for ax in (ax_t, ax_y):
     for side in ("top", "right"):

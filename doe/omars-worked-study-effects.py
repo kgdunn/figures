@@ -66,11 +66,11 @@ for y_gap, title in ((16.0, "Main effects"), (11.0, "Quadratics"), (6.0, "Two-fa
             transform=ax.get_yaxis_transform(), style="italic")
 
 ax.set_yticks([])
-ax.set_ylim(-0.8, 16.5)
+ax.set_ylim(-1.0, 16.5)
 ax.set_xlabel(f"Coefficient on log titer, coded units, with a 95% interval on {df} df", fontsize=11.5)
 ax.plot([], [], "o", color=BLUE, ms=8, label="selected by the staged analysis")
 ax.plot([], [], "o", color="white", mec="0.45", mew=1.5, ms=8, label="not selected")
-ax.legend(loc="upper right", fontsize=9.5, frameon=False)
+ax.legend(loc="lower left", fontsize=9.5, frameon=True, facecolor="white", edgecolor="0.85", framealpha=1.0)
 for side in ("top", "right", "left"):
     ax.spines[side].set_visible(False)
 ax.spines["bottom"].set_color(SPINE)

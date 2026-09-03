@@ -69,8 +69,10 @@ ax.set_ylim(1.9, 0)
 ax.set_xticks([j + 0.5 for j in range(len(runs))])
 ax.set_xticklabels([str(n) for n in runs], fontsize=11)
 ax.set_yticks([])
-ax.set_xlabel("Number of runs, $N$, with one centre run  (four factors)", fontsize=11.5)
-ax.tick_params(length=0, colors="0.25")
+ax.xaxis.set_ticks_position("top")
+ax.xaxis.set_label_position("top")
+ax.set_xlabel("Number of runs, $N$, with one centre run  (four factors)", fontsize=11.5, labelpad=8)
+ax.tick_params(length=0, colors="0.25", pad=4)
 for side in ("top", "right", "bottom", "left"):
     ax.spines[side].set_visible(False)
 
@@ -81,7 +83,7 @@ legend = [
     Patch(facecolor=FILLS["bbd"], label="BBD: the Box-Behnken design"),
     Patch(facecolor="white", edgecolor=VERMILION, lw=2.2, label="Outlined: the estimability frontier"),
 ]
-ax.legend(handles=legend, loc="upper center", bbox_to_anchor=(0.5, -0.30), ncols=3, fontsize=9.5,
+ax.legend(handles=legend, loc="upper center", bbox_to_anchor=(0.5, -0.02), ncols=3, fontsize=9.5,
           frameon=False, handlelength=1.3, columnspacing=1.4)
 
 fig.tight_layout()
