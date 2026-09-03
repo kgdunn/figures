@@ -33,7 +33,7 @@ for hold, shift in ((28.5, 2.0), (28.5, 3.5), (31.5, 2.0), (31.5, 3.5)):
     ax_t.plot(days, schedule(hold, shift), color="0.78", lw=1.2, zorder=2)
 ax_t.plot(days, schedule(CURRENT["hold_temp"], CURRENT["shift_day"]), color=BLUE, lw=2.4, zorder=3,
           label="current recipe")
-ax_t.plot([], [], color="0.78", lw=1.2, label="corners of the study region")
+ax_t.plot([], [], color="0.78", lw=1.2, label="corners of the\nstudy region")
 ax_t.text(0.15, GROWTH_TEMP - 0.35, "growth,\n36.8 °C", fontsize=9.5, color=GREY, ha="left", va="top")
 ax_t.text(7.0, CURRENT["hold_temp"] + 0.3, "hold, 30.0 °C", fontsize=9.5, color=GREY, ha="left", va="bottom")
 ax_t.annotate("shift starts on day 2.75,\nramp of 1.5 days", xy=(3.55, 33.4), xytext=(5.6, 33.4),
@@ -51,7 +51,7 @@ for s in range(20):
     ax_y.plot(states.index, states["titer"], color=BLUE, lw=1.0, alpha=0.35, zorder=2)
 quiet = simulate(QUIET, **CURRENT, random_state=0).states
 ax_y.plot(quiet.index, quiet["titer"], color=VERMILION, lw=2.2, zorder=4, label="no disturbance")
-ax_y.plot([], [], color=BLUE, lw=1.0, alpha=0.6, label="20 replicate batches")
+ax_y.plot([], [], color=BLUE, lw=1.0, alpha=0.6, label="20 replicate\nbatches")
 ax_y.axvspan(CURRENT["shift_day"], CURRENT["shift_day"] + RAMP_DAYS, color="0.93", lw=0, zorder=1)
 ax_y.text(CURRENT["shift_day"] + RAMP_DAYS / 2, 8.9, "ramp", ha="center", va="top", fontsize=9.5,
           color=GREY)
