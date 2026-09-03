@@ -67,9 +67,9 @@ for y_gap, title in ((16.0, "Main effects"), (11.0, "Quadratics"), (6.0, "Two-fa
 
 ax.set_yticks([])
 ax.set_ylim(-1.0, 16.5)
-ax.set_xlim(-0.34, 0.19)                                # room on the left for the legend box
+ax.set_xlim(-0.25, 0.19)                                # a little room on the left for the legend box
 ax.set_xlabel(f"Coefficient on log titer, coded units, with a 95% interval on {df} df", fontsize=11.5)
-ax.plot([], [], "o", color=BLUE, ms=8, label="selected by the staged analysis")
+ax.plot([], [], "o", color=BLUE, ms=8, label="selected by the\nstaged analysis")
 ax.plot([], [], "o", color="white", mec="0.45", mew=1.5, ms=8, label="not selected")
 ax.legend(loc="lower left", bbox_to_anchor=(0.0, 0.02), fontsize=9.5, frameon=True, facecolor="white",
           edgecolor="0.85", framealpha=1.0)
