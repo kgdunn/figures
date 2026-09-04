@@ -9,19 +9,21 @@ reproduce its outcome:
   tightly-regulated variable, repeats to a 0.5% average relative spread;
   Tag10 spreads 7.4%, fourteen times wider, although every batch ran the
   same recipe. Real data: the recipe repeats, the batch does not.
-- ``golden-batch-replay-spread.png``: a 40-batch replay campaign of the
+- ``golden-batch-replay-spread.png``: a 200-batch replay campaign of the
   simulator (every batch requests the identical nominal schedule,
-  seed 0). Left: the recorded reactor temperature lies in a band a
-  fraction of a degree wide. Right: the final titers spread from 6.29 to
-  9.19 g/L (9.6% CV) around the disturbance-free reference of 8.01 g/L.
+  seed 0; the same campaign the chapter regresses on Z). Left: the
+  recorded reactor temperature lies in a band a fraction of a degree
+  wide. Right: the final titers spread around the disturbance-free
+  reference of 8.01 g/L; the script prints the range and the CV.
 - ``golden-batch-z-scores.png``: score plot of a two-component PCA on the
-  standardised 11-variable upstream (Z) block of 200 sampled batches.
-  The three feed classes A, B and C occupy overlapping ranges along the
-  dominant direction t1 (the feed-quality axis) rather than separate
-  clusters; assigning a fresh batch to the nearest class centroid in
-  standardised Z recovers the true label about 80% of the time, with
-  confusions only between adjacent classes. The per-class models in the
-  chapter are local models along this axis.
+  standardised 11-variable upstream (Z) block of the chapter's 200-batch
+  historical training campaign (seed chain of
+  ``evaluate_control_policies(random_state=0)``). The three feed classes
+  A, B and C occupy overlapping ranges along the dominant direction t1
+  (the feed-quality axis) rather than separate clusters; assigning a batch
+  to the nearest class centroid in standardised Z recovers the true label
+  about 85% of the time, with confusions only between adjacent classes.
+  The per-class models in the chapter are local models along this axis.
 - ``golden-batch-variance-decomposition.png``: the titer-variance split
   of a 200-batch replay campaign (seed 0) into measured initial
   conditions, the unmeasured within-batch disturbance, control and
@@ -35,7 +37,7 @@ simulator number is reproducible from the stated seeds.
 
 Usage
 -----
-    uv run --with "process-improve[batch]>=1.68" --with matplotlib \
+    uv run --with "process-improve[batch]>=1.79" --with matplotlib \
         python golden-batch-figures.py [output_dir]
 
 Writes the four PNGs into ``output_dir`` (default: this script's own
@@ -121,7 +123,7 @@ def replay_spread(outdir: pathlib.Path) -> None:
     from process_improve.simulation import BioreactorConfig, BioreactorSimulator
 
     simulator = BioreactorSimulator()
-    campaign = simulator.simulate_campaign(40, policy="replay", random_state=0)
+    campaign = simulator.simulate_campaign(200, policy="replay", random_state=0)
     reference = BioreactorSimulator(
         dataclasses.replace(BioreactorConfig(), ic_scale=0.0, within_batch_scale=0.0, noise_scale=0.0)
     ).simulate_batch(None)
@@ -129,7 +131,7 @@ def replay_spread(outdir: pathlib.Path) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(14, 5.5), width_ratios=[2.2, 1.0])
     ax = axes[0]
     for batch in campaign.batches.values():
-        ax.plot(batch.index, batch["temperature"], color=BLUE, alpha=0.25, lw=0.9)
+        ax.plot(batch.index, batch["temperature"], color=BLUE, alpha=0.12, lw=0.8)
     ax.set_xlabel("Time [day]")
     ax.set_ylabel("Recorded temperature [°C]")
     ax.set_title("Every batch requests the same schedule")
@@ -148,6 +150,10 @@ def replay_spread(outdir: pathlib.Path) -> None:
         arrowprops={"arrowstyle": "->", "color": VERMILLION},
     )
     cv = 100 * titer.std(ddof=1) / titer.mean()
+    print(
+        f"replay spread: {len(titer)} batches, mean {titer.mean():.2f}, sd {titer.std(ddof=1):.2f}, "
+        f"range {titer.min():.2f} to {titer.max():.2f} g/L, CV {cv:.1f}%; reference {reference.titer:.2f}"
+    )
     ax.set_xlabel("Final titer [g/L]")
     ax.set_ylabel("Batches")
     ax.set_title(f"The outcomes: {cv:.1f}% CV")
@@ -156,20 +162,40 @@ def replay_spread(outdir: pathlib.Path) -> None:
 
 
 def z_scores(outdir: pathlib.Path) -> None:
-    """PCA score plot of the upstream Z block, coloured by feed class."""
-    from process_improve.multivariate import MCUVScaler, PCA
-    from process_improve.simulation import sample_initial_conditions
+    """PCA score plot of the training campaign's Z block, coloured by feed class.
 
-    drawn = sample_initial_conditions(200, random_state=0)
-    scaled = MCUVScaler().fit_transform(drawn.z)
+    The campaign is the chapter's own 200-batch historical campaign (the
+    first seed drawn from the master seed 0, as in
+    ``evaluate_control_policies(random_state=0)``), so the plotted batches
+    are the ones the per-class models are fitted on.
+    """
+    from process_improve.multivariate import MCUVScaler, PCA
+    from process_improve.simulation import BioreactorSimulator
+
+    train_seed = int(np.random.default_rng(0).integers(2**31))
+    train = BioreactorSimulator().simulate_campaign(200, policy="historical", mv_variation=2.5, random_state=train_seed)
+    z_train = train.initial_conditions
+    labels = np.asarray(list(train.classes))
+    scaled = MCUVScaler().fit_transform(z_train)
     model = PCA(n_components=2).fit(scaled)
     scores = model.scores_
 
     explained = 100 * model.r2_per_component_
+    z_mean, z_sd = z_train.mean(), z_train.std(ddof=1)
+    standardised = (z_train - z_mean) / z_sd
+    centroids = {g: standardised[labels == g].mean() for g in ("A", "B", "C")}
+    assigned = np.array(
+        [min(centroids, key=lambda g: float(((standardised.iloc[i] - centroids[g]) ** 2).sum())) for i in range(len(z_train))]
+    )
+    print(
+        f"z-scores: classes {dict(zip(*np.unique(labels, return_counts=True)))}; "
+        f"nearest-centroid agreement {np.mean(assigned == labels):.3f}; "
+        f"t1, t2 explain {explained.iloc[0]:.1f}%, {explained.iloc[1]:.1f}% of Z"
+    )
 
     fig, ax = plt.subplots(figsize=(9.5, 7))
     for label in ("A", "B", "C"):
-        mask = np.asarray(drawn.classes) == label
+        mask = labels == label
         ax.scatter(
             scores.iloc[mask, 0],
             scores.iloc[mask, 1],

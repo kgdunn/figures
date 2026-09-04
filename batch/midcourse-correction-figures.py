@@ -10,9 +10,11 @@ function's documented headline exactly.
 - ``mcc-monitoring-funnel.png``: the predicted final titer of one
   batch from the poorest feed class (test batch 28; replay outcome
   3.66 g/L) at every decision point, with the 95% prediction-interval
-  band. From the first day the projection sits near 3.3 g/L, far below
-  the 8 g/L target, and it stays there: the batch announces its
-  shortfall early, while there is still time to act.
+  band built at each decision point (``MidCourseCorrector.predict``).
+  From the first day the projection sits near 3.2 g/L, far below the
+  8 g/L target; the interval narrows from +/-4.0 g/L at day 0.5 to
+  +/-1.75 at day 4 and +/-0.9 at day 9.5, and its upper end drops below
+  the target from day 2.5 on.
 - ``mcc-correction-at-k.png``: the same batch's temperature and pH
   schedules before and after the day-4 correction. Instead of
   completing the drop to the 29 degC production hold on schedule, the
@@ -21,18 +23,20 @@ function's documented headline exactly.
   executed, the batch finishes at 5.79 g/L instead of 3.66 g/L (+58%).
 - ``mcc-policy-comparison.png``: forty fresh batches under four executed
   policies: replay 7.51 +/- 1.20 g/L, mid-course correction
-  7.71 +/- 0.78 (four corrected, none harmed), the
-  oracle-from-the-decision-point ceiling 7.83 +/- 0.63, and the
+  7.75 +/- 0.78 (five corrected, none harmed; dead band 1.0, the whole
+  interval must fall short of the target), the
+  oracle-from-the-decision-point ceiling 7.87 +/- 0.63, and the
   perfect-feedforward (adapted) ceiling 7.82 +/- 1.01. Left: each
   corrected batch's jump. Right: the distributions; correction removes
   the low tail, which feedforward adaptation cannot reach.
 - ``mcc-decision-point-window.png``: the executed gain of the corrected
   batches as the single decision point moves through the batch. The
-  window is mid-batch (days 4 to 5): earlier, uncertain projections
-  trigger corrections that misdirect; later, the remaining schedule has
-  no leverage and corrections turn harmful.
+  window is mid-batch (days 3 to 5, largest gain at day 4): earlier, the
+  interval at the decision point is wide, so the dead band admits only
+  the clearest shortfalls and the gain is about half of the peak; later,
+  the remaining schedule has no leverage and corrections turn harmful.
 - ``mcc-exploration-dial.png``: predicted versus executed titer of the
-  four corrected batches as the T2 (stay-where-the-model-has-data)
+  five corrected batches as the T2 (stay-where-the-model-has-data)
   penalty is relaxed, hard caps off. On this process the executed
   outcome improves monotonically and sits above the prediction at every
   setting; the late-decision-point harm in the window figure shows the
@@ -40,7 +44,7 @@ function's documented headline exactly.
 
 Usage
 -----
-    uv run --with "process-improve[control]>=1.68" --with matplotlib \
+    uv run --with "process-improve[control]>=1.79" --with matplotlib \
         python midcourse-correction-figures.py [output_dir]
 
 Writes the five PNGs into ``output_dir`` (default: this script's own
@@ -137,7 +141,7 @@ def _headline_setup():
             mode="target",
             y_target=TARGET,
             target_side="below",
-            dead_band=2.5,
+            dead_band=1.0,
             weights={"target": 1.0, "movement": 0.1},
             bounds=bounds,
             rate_limits={"temperature": 3.0, "pH": 0.5},
@@ -165,43 +169,22 @@ def monitoring_funnel_and_correction(outdir: pathlib.Path) -> None:
     corrector = correctors[assign(z_row)]
     model = corrector.model
 
-    # Prediction and interval at every decision point, no intervention.
-    from scipy.stats import t as t_dist
-
-    from process_improve.batch.control import midcourse_correction
-
+    # Prediction and interval at every decision point, no intervention: the
+    # corrector's monitoring question, with the interval at that decision
+    # point (wide early, narrowing as the batch reveals itself).
     ks, y_hat, half = [], [], []
-    features = model.feature_columns_
     for k in range(1, model.n_timesteps_):
-        masks = corrector._masks_at(k)
-        observed = corrector._observed_series(
-            base.tags.iloc[:k].reset_index(drop=True), z_row, k
-        )
-        free_labels = list(features[masks.free])
-        nominal_remaining = pd.Series(
-            {(tag, s): float(corrector.nominal_schedule.iloc[s][tag]) for (tag, s) in free_labels}
-        )
-        probe = midcourse_correction(
-            model,
-            observed=observed,
-            free_columns=free_labels,
-            mode="target",
-            y_target=TARGET,
-            weights={"target": 0.0, "movement": 1.0},
-            nominal_remaining=nominal_remaining,
-        )
-        n = model.n_samples_
-        df = max(n - int(model.n_components) - 1, 1)
-        t_crit = t_dist.ppf(0.975, df)
-        leverage = 1.0 / n + probe.t2 / (n - 1)
-        error_std = float(model.rmse_.iloc[0, -1])
+        prediction = corrector.predict(base.tags.iloc[:k].reset_index(drop=True), initial_conditions=z_row, k=k)
         ks.append(k)
-        y_hat.append(float(probe.y_hat_no_change.iloc[0]))
-        half.append(float(t_crit * np.sqrt(1.0 + leverage) * error_std))
+        y_hat.append(float(prediction.y_hat.iloc[0]))
+        half.append(float(prediction.half_width.iloc[0]))
 
     days = np.array(ks) * 0.5
     y_hat = np.array(y_hat)
     half = np.array(half)
+    print("funnel (batch 28): day, predicted titer, half-width")
+    for d, y, h in zip(days, y_hat, half):
+        print(f"  {d:4.1f} {y:6.2f} +/- {h:5.2f}")
 
     fig, ax = plt.subplots(figsize=(11, 6.5))
     ax.fill_between(days, y_hat - half, y_hat + half, color=SKY, alpha=0.35, label="95% prediction interval")
@@ -222,6 +205,8 @@ def monitoring_funnel_and_correction(outdir: pathlib.Path) -> None:
     trajectory = outcome.schedule.copy()
     trajectory.index = simulator.nominal_trajectory().index
     redo = simulator.simulate_batch(z_row, trajectory, random_state=seed)
+    print(f"correction at day 4: replay {base.titer:.3f} -> executed {redo.titer:.3f} g/L "
+          f"(predicted {float(outcome.y_hat.iloc[0]):.3f}); reason {outcome.reason}")
 
     nominal = corrector.nominal_schedule
     day_axis = np.asarray(simulator.nominal_trajectory().index, dtype=float)
@@ -264,6 +249,10 @@ def policy_comparison(outdir: pathlib.Path) -> None:
     result = evaluate_control_policies(BioreactorSimulator(), y_target=TARGET, random_state=0)
     batches = result.batches
     corrected = batches[batches["corrected"]]
+    print("policy comparison (executed titers, g/L):")
+    print(result.summary.round(3).to_string())
+    print(f"{result.n_corrected} corrected, {result.n_harmed} harmed; reasons: {batches['reason'].value_counts().to_dict()}")
+    print(corrected[["class_assigned", "replay", "midcourse", "y_hat_no_change", "half_width", "y_hat_predicted"]].round(3).to_string())
 
     fig, axes = plt.subplots(1, 2, figsize=(14, 6.5), width_ratios=[1.0, 1.6])
 
@@ -349,6 +338,8 @@ def decision_point_window(outdir: pathlib.Path) -> None:
             }
         )
     sweep = pd.DataFrame(rows)
+    print("decision-point sweep:")
+    print(sweep.round(3).to_string())
 
     fig, ax = plt.subplots(figsize=(11.5, 6.8))
     ax.axhline(0, color=GREY, lw=1.0)
@@ -367,8 +358,8 @@ def decision_point_window(outdir: pathlib.Path) -> None:
             fontsize=13.5,
             color=GREY,
         )
-    ax.axvspan(3.9, 5.1, color=GREEN, alpha=0.12)
-    ax.annotate("the window", xy=(4.5, ax.get_ylim()[0] + 0.12), ha="center", fontsize=16, color=GREEN)
+    ax.axvspan(2.9, 5.1, color=GREEN, alpha=0.12)
+    ax.annotate("the window", xy=(4.0, ax.get_ylim()[0] + 0.12), ha="center", fontsize=16, color=GREEN)
     ax.set_xlabel("Decision point [day]")
     ax.set_ylabel("Mean executed gain [g/L]")
     ax.set_ylim(top=sweep["mean_gain"].max() + 0.45)
@@ -406,6 +397,8 @@ def exploration_dial(outdir: pathlib.Path) -> None:
             }
         )
     dial = pd.DataFrame(rows)
+    print("exploration dial:")
+    print(dial.round(3).to_string())
 
     fig, ax = plt.subplots(figsize=(11, 6.5))
     x = np.arange(len(dial))
