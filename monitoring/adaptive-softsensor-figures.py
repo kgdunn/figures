@@ -101,8 +101,11 @@ def main(out_dir: Path) -> None:  # noqa: PLR0915
         lambda_center_y=0, alpha_scale_y=0, adaptive_spe_limit=False, conf_level=0.99,
     ).fit(lab.loc[train, tags], lab.loc[train, ["vapour_pressure_kpa"]])
     static_pred, static_t2, static_spe, _ = stream(static)
-    t2_lim = float(static.hotellings_t2_limit(conf_level=0.99))
-    spe_lim = float(static.update(Xrow[0]).spe_limit)
+    # Both limits are fixed by the training data (every adaptation rate is zero);
+    # the update() Bunch carries them, and one probe update is enough.
+    probe = static.update(Xrow[0])
+    t2_lim = float(probe.hotellings_t2_limit)
+    spe_lim = float(probe.spe_limit)
     learn = static_spe < 2.5 * spe_lim
 
     def ewma_smooth(values, lam=0.35) -> np.ndarray:
