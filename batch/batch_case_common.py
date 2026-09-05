@@ -191,6 +191,19 @@ def _tag_blocks(row: pd.Series) -> list[tuple[str, int, int]]:
     return blocks
 
 
+def shade_alternate_tags(ax, n_tags: int) -> None:
+    """Shade alternate tag positions on a one-bar-per-tag axis.
+
+    The bands line up with those of :func:`contribution_vector`, which shades
+    the same alternate blocks of the unfolded axis, so a summed-per-tag panel
+    below one of those reads against the same striping.
+    """
+    for position in range(1, n_tags, 2):
+        ax.axvspan(position - 0.5, position + 0.5, color=BAND, zorder=0, lw=0)
+    ax.set_xlim(-0.5, n_tags - 0.5)
+    ax.grid(False, axis="x")
+
+
 def contribution_vector(row: pd.Series, *, ax, ylabel: str, colour: str = DARK_BLUE) -> None:
     """Draw one batch's contribution vector over the unfolded (tag, time) axis with shaded tag blocks."""
     values = row.to_numpy(dtype=float)
@@ -247,6 +260,7 @@ def contribution_triptych(row: pd.Series, *, what: str, title: str) -> Figure:
     axes[1].bar(range(len(by_tag)), by_tag.to_numpy(), color=DARK_BLUE, width=0.6, zorder=2)
     axes[1].set_xticks(range(len(by_tag)), [str(tag) for tag in by_tag.index], rotation=20, ha="right")
     axes[1].axhline(0, color=GREY, lw=0.8)
+    shade_alternate_tags(axes[1], len(by_tag))
     label_bars(axes[1], by_tag.to_numpy(dtype=float))
     axes[1].set_ylabel(f"{what}, summed per tag")
     axes[2].bar(by_time.index.to_numpy(), by_time.to_numpy(), width=1.0, color=DARK_BLUE, lw=0, zorder=2)
