@@ -25,7 +25,9 @@ import pathlib
 import sys
 
 import matplotlib.pyplot as plt
-from batch_case_common import AQUA, DARK_BLUE, GREY, ORANGE, contribution_triptych, influence_plot, overlay_panels, save, score_plot, tag_panels
+import numpy as np
+import pandas as pd
+from batch_case_common import AQUA, BAND, DARK_BLUE, GREY, ORANGE, PALE_GREY, contribution_triptych, influence_plot, overlay_panels, save, score_plot, tag_panels
 
 from process_improve.batch import BatchPCA, load_dupont
 
@@ -35,6 +37,10 @@ ABOVE_SPE_LIMIT = [49, 51]  # a residual the two components cannot describe
 ABOVE_T2_LIMIT = [50, 52, 53, 54, 55]  # extreme along the components themselves
 FLAGGED = {**{b: AQUA for b in ABOVE_T2_LIMIT}, **{b: ORANGE for b in ABOVE_SPE_LIMIT}}
 SECOND_CLUSTER = [37, 39, 43, 44, 45, 46, 47, 48]
+CLUSTER_TAGS = ["TempC-1", "Press-3", "Press-2"]  # the three largest |t2| + |t3| contributions of the cluster
+EARLY_WINDOW = 25  # samples 0 to 25 carry 65% of the cluster's t2 and 89% of its t3 contribution
+RAW_WINDOW = 30
+MEMBER_DOT = "0.35"  # darker than the axis grey, so the eight members read against the bars
 POOR_QUALITY_NOT_VISIBLE = [38, 40, 41, 42]
 
 
@@ -70,25 +76,62 @@ def main(out_dir: pathlib.Path) -> None:
     fig = score_plot(model_b, pc_horiz=2, pc_vert=3, highlight={b: ORANGE for b in SECOND_CLUSTER}, labels=SECOND_CLUSTER, title="Model B: batches 1 to 48, components 2 and 3")
     save(fig, out_dir, "batch-case-dupont-model-b-scores")
 
-    t3 = model_b.score_contributions(model_b.unfold_and_scale(kept_b), component=3)
-    fig, axes = plt.subplots(1, 2, figsize=(9.5, 3.4), gridspec_kw={"width_ratios": [1, 1.4]})
-    by_tag = t3.loc[39].groupby(level="tag", sort=False).sum()
-    axes[0].bar(range(len(by_tag)), by_tag.to_numpy(), color=DARK_BLUE, width=0.6)
-    axes[0].set_xticks(range(len(by_tag)), [str(t) for t in by_tag.index], rotation=30, ha="right")
-    axes[0].axhline(0, color="0.55", lw=0.8)
-    axes[0].set_ylabel("Contribution to $t_3$, summed per tag")
-    axes[0].set_title("Batch 39: contributions to $t_3$")
-    for b, batch in batches.items():
-        if b not in SECOND_CLUSTER:
-            axes[1].plot(batch["Press-3"].to_numpy(), color="0.82", lw=0.7)
-    for b in SECOND_CLUSTER:
-        axes[1].plot(batches[b]["Press-3"].to_numpy(), color=ORANGE, lw=1.0, label="batches 37, 39, 43 to 48" if b == 37 else None)
-    axes[1].plot(batches[39]["Press-3"].to_numpy(), color=DARK_BLUE, lw=1.8, label="batch 39")
+    # The columns are centred, so the model centre is the origin and a group's mean row is
+    # its displacement from the centre. Contributions are linear in the row, so the mean of
+    # the members' contributions is the contribution of the group mean, and it sums to the
+    # group's mean score. That is what makes a whole cluster, rather than one representative
+    # batch, the thing to plot here.
+    scaled_b = model_b.unfold_and_scale(kept_b)
+    per_component = {a: model_b.score_contributions(scaled_b, component=a) for a in (2, 3)}
+    group = {a: c.loc[SECOND_CLUSTER].mean(axis=0) for a, c in per_component.items()}
+
+    fig, axes = plt.subplots(1, 2, figsize=(11.2, 4.3), gridspec_kw={"width_ratios": [1.15, 1]})
+    per_tag = pd.DataFrame({a: group[a].groupby(level="tag", sort=False).sum() for a in (2, 3)})
+    positions, width = np.arange(len(per_tag)), 0.38
+    for offset, (component, colour) in zip((-width / 2, width / 2), ((2, DARK_BLUE), (3, ORANGE)), strict=True):
+        axes[0].bar(positions + offset, per_tag[component].to_numpy(), width=width, color=colour, label=f"$t_{component}$", zorder=2)
+        members = [per_component[component].loc[b].groupby(level="tag", sort=False).sum().to_numpy() for b in SECOND_CLUSTER]
+        for row in members:
+            axes[0].scatter(positions + offset, row, s=8, color=MEMBER_DOT, alpha=0.9, zorder=3, linewidths=0)
+    axes[0].axhline(0, color=GREY, lw=0.8)
+    axes[0].set_xticks(positions, [str(tag) for tag in per_tag.index], rotation=30, ha="right")
+    axes[0].set_ylabel("Contribution to the score, summed per tag")
+    axes[0].set_title("The cluster against the model centre, per tag")
+    axes[0].legend(loc="upper left")
+    axes[0].text(0.985, 0.965, "dots: the eight members", transform=axes[0].transAxes, ha="right", va="top", fontsize=8.5, color=MEMBER_DOT)
+    for component, colour in ((2, DARK_BLUE), (3, ORANGE)):
+        by_time = group[component].groupby(level="sequence").sum()
+        axes[1].plot(by_time.index.to_numpy(), by_time.to_numpy(), color=colour, lw=1.5, label=f"$t_{component}$")
+    axes[1].axhline(0, color=GREY, lw=0.8)
+    axes[1].axvspan(0, EARLY_WINDOW, color=BAND, zorder=0, lw=0)
+    axes[1].text(EARLY_WINDOW, 0.97, f" samples 0 to {EARLY_WINDOW}", transform=axes[1].get_xaxis_transform(), ha="left", va="top", fontsize=8.5, color=GREY)
     axes[1].set_xlabel("Sample [aligned time]")
-    axes[1].set_title("Press-3: the second cluster runs a different pressure profile")
-    axes[1].legend(loc="best")
+    axes[1].set_ylabel("Contribution to the score, summed per sample")
+    axes[1].set_title("... and when in the batch it happens")
+    axes[1].legend(loc="upper right")
     fig.tight_layout()
-    save(fig, out_dir, "batch-case-dupont-batch-39")
+    save(fig, out_dir, "batch-case-dupont-group-contribution")
+
+    # The same difference in the raw data. Over the whole batch it is under 2% of the panel
+    # height for two of these three tags, so the panels are limited to the window the
+    # contributions point at.
+    others = [b for b in kept_b if b not in SECOND_CLUSTER]
+    fig, axes = plt.subplots(1, len(CLUSTER_TAGS), figsize=(12.0, 3.7))
+    for ax, tag in zip(axes, CLUSTER_TAGS, strict=True):
+        for b in others:
+            ax.plot(kept_b[b][tag].to_numpy(), color=PALE_GREY, lw=0.8, zorder=1)
+        for b in SECOND_CLUSTER:
+            ax.plot(kept_b[b][tag].to_numpy(), color=ORANGE, lw=1.0, alpha=0.9, zorder=3, label="the eight-batch group" if b == SECOND_CLUSTER[0] else None)
+        ax.plot([], [], color=PALE_GREY, lw=1.4, label=f"the other {len(others)} batches")
+        ax.set_xlim(0, RAW_WINDOW)
+        values = np.concatenate([kept_b[b][tag].to_numpy()[: RAW_WINDOW + 1] for b in kept_b])
+        pad = 0.06 * np.ptp(values)
+        ax.set_ylim(values.min() - pad, values.max() + pad)
+        ax.set_title(f"{tag}, samples 0 to {RAW_WINDOW}")
+        ax.set_xlabel("Sample [aligned time]")
+    axes[0].legend(loc="best")
+    fig.tight_layout()
+    save(fig, out_dir, "batch-case-dupont-group-raw")
 
     excluded = set(range(SPE_OUTLIER, 56)) | set(SECOND_CLUSTER)
     kept_c = {b: batch for b, batch in batches.items() if b not in excluded}
