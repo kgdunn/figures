@@ -208,6 +208,35 @@ def contribution_vector(row: pd.Series, *, ax, ylabel: str, colour: str = DARK_B
     ax.grid(False, axis="x")
 
 
+def label_bars(ax, values: np.ndarray, *, fmt: str = "{:.1f}", floor: float = 0.05, colour: str = DARK_BLUE) -> None:
+    """Write each bar's value at its outer end, above a positive bar and below a negative one.
+
+    A value smaller than ``floor`` is written as a bound rather than as the
+    rounded ``0.0``, which next to a bar of no visible height would read as an
+    exact zero. The axis limits are widened on whichever side carries bars, so
+    a label never lands on the frame.
+    """
+    low, high = min(0.0, float(values.min())), max(0.0, float(values.max()))
+    span = (high - low) or 1.0
+    ax.set_ylim(low - (0.15 * span if low < 0 else 0.0), high + (0.15 * span if high > 0 else 0.0))
+    for position, value in enumerate(values):
+        above = value >= 0
+        if 0 < abs(value) < floor:
+            text = f"<{fmt.format(floor * 2)}" if above else f">-{fmt.format(floor * 2)}"
+        else:
+            text = fmt.format(value)
+        ax.text(
+            position,
+            value + (0.02 * span if above else -0.02 * span),
+            text,
+            ha="center",
+            va="bottom" if above else "top",
+            fontsize=8,
+            color=colour,
+            zorder=3,
+        )
+
+
 def contribution_triptych(row: pd.Series, *, what: str, title: str) -> Figure:
     """The full contribution vector, its sum per tag, and its sum per time sample, in three panels."""
     by_tag = row.groupby(level="tag", sort=False).sum()
@@ -218,6 +247,7 @@ def contribution_triptych(row: pd.Series, *, what: str, title: str) -> Figure:
     axes[1].bar(range(len(by_tag)), by_tag.to_numpy(), color=DARK_BLUE, width=0.6, zorder=2)
     axes[1].set_xticks(range(len(by_tag)), [str(tag) for tag in by_tag.index], rotation=20, ha="right")
     axes[1].axhline(0, color=GREY, lw=0.8)
+    label_bars(axes[1], by_tag.to_numpy(dtype=float))
     axes[1].set_ylabel(f"{what}, summed per tag")
     axes[2].bar(by_time.index.to_numpy(), by_time.to_numpy(), width=1.0, color=DARK_BLUE, lw=0, zorder=2)
     axes[2].axhline(0, color=GREY, lw=0.8)
