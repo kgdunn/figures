@@ -50,6 +50,12 @@ jobs:
         uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
+          # This repository has no uv.lock: the scripts run in ephemeral
+          # environments built from the --with specs below, not from a project.
+          # setup-uv's default cache key globs for **/uv.lock and errors out
+          # when it finds none, so key the cache on nothing and let it cache the
+          # downloads alone.
+          cache-dependency-glob: ""
 
       - name: List the scripts in scope
         run: uv run --no-project --with 'process-improve[all]' python tools/check_figure_scripts.py --list
@@ -83,6 +89,12 @@ jobs:
         uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
+          # This repository has no uv.lock: the scripts run in ephemeral
+          # environments built from the --with specs below, not from a project.
+          # setup-uv's default cache key globs for **/uv.lock and errors out
+          # when it finds none, so key the cache on nothing and let it cache the
+          # downloads alone.
+          cache-dependency-glob: ""
 
       - name: Run them against the library's main branch
         run: |
@@ -105,6 +117,12 @@ jobs:
         uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
+          # This repository has no uv.lock: the scripts run in ephemeral
+          # environments built from the --with specs below, not from a project.
+          # setup-uv's default cache key globs for **/uv.lock and errors out
+          # when it finds none, so key the cache on nothing and let it cache the
+          # downloads alone.
+          cache-dependency-glob: ""
 
       - name: Run the scripts that need pyoptex
         run: |
