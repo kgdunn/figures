@@ -28,7 +28,7 @@ import pathlib
 
 import matplotlib.pyplot as plt
 import numpy as np
-from batch_case_common import AQUA, DARK_BLUE, ORANGE, contribution_triptych, influence_plot, overlay_panels, parity_plot, save, score_plot, tag_panels
+from batch_case_common import AQUA, BAND, DARK_BLUE, GREY, ORANGE, contribution_triptych, influence_plot, overlay_panels, parity_plot, save, score_plot, tag_panels
 
 from process_improve.batch import BatchPLS, load_sbr
 
@@ -74,23 +74,29 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     save(fig, out_dir, "batch-case-sbr-observed-vs-fitted")
 
     # When does each trajectory of the two faulty batches leave the band of the other batches?
-    # One panel per tag and batch: |z|, the deviation from the other batches' mean in their standard deviations.
+    # One panel per tag and batch: z, the signed deviation from the other batches' mean in their
+    # standard deviations. Signed rather than absolute, so the direction of the departure shows.
     others = np.stack([batch.to_numpy() for key, batch in trajectories.items() if key not in HIGHLIGHT])
     mean, sd = others.mean(axis=0), others.std(axis=0, ddof=1)
     fig, axes = plt.subplots(2, len(sbr.trajectory_tags), figsize=(13.0, 4.4), sharex=True, sharey=True)
     for row, batch_id in enumerate([FAULT_FROM_START, FAULT_PARTWAY]):
-        z = np.abs((trajectories[batch_id].to_numpy() - mean) / sd)
+        z = (trajectories[batch_id].to_numpy() - mean) / sd
         for j, tag in enumerate(sbr.trajectory_tags):
             ax = axes[row, j]
-            ax.plot(z[:, j], lw=1.2, color=HIGHLIGHT[batch_id])
-            ax.axhline(2, color="0.55", lw=0.8, ls="--")
+            ax.axhspan(-2, 2, color=BAND, zorder=0, lw=0)
+            ax.plot(z[:, j], lw=1.2, color=HIGHLIGHT[batch_id], zorder=2)
+            ax.axhline(0, color=GREY, lw=0.8)
+            for level in (-2, 2):
+                ax.axhline(level, color="0.55", lw=0.8, ls="--")
             if row == 0:
                 ax.set_title(tag)
             if j == 0:
-                ax.set_ylabel(f"batch {batch_id}\n|z| [sd of the others]")
+                ax.set_ylabel(f"batch {batch_id}\nz [sd of the others]")
             if row == 1:
                 ax.set_xlabel("Sample")
-    axes[0, -1].text(0.99, 2, "2 sd", transform=axes[0, -1].get_yaxis_transform(), ha="right", va="bottom", fontsize=8.5)
+    for level, label in ((2, "+2 sd"), (-2, "-2 sd")):
+        axes[0, -1].text(0.99, level, label, transform=axes[0, -1].get_yaxis_transform(), ha="right",
+                         va="bottom" if level > 0 else "top", fontsize=8.5)
     fig.suptitle("Distance of batches 37 (top) and 34 (bottom) from the other batches, tag by tag", y=1.01)
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-departure")
