@@ -28,13 +28,14 @@ import pathlib
 
 import matplotlib.pyplot as plt
 import numpy as np
-from batch_case_common import AQUA, DARK_BLUE, ORANGE, contribution_triptych, overlay_panels, parity_plot, save, score_plot, spe_plot, tag_panels
+from batch_case_common import AQUA, DARK_BLUE, ORANGE, contribution_triptych, influence_plot, overlay_panels, parity_plot, save, score_plot, tag_panels
 
 from process_improve.batch import BatchPLS, load_sbr
 
 FAULT_FROM_START = 37
 FAULT_PARTWAY = 34
 HIGHLIGHT = {FAULT_PARTWAY: ORANGE, FAULT_FROM_START: AQUA}
+SPE_OUTLIERS = [8, 15, 16]  # flagged by the SPE, and not the batches carrying the injected fault
 
 
 def main(out_dir: pathlib.Path, data_url: str | None) -> None:
@@ -47,7 +48,7 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
 
     model = BatchPLS(n_components=2).fit(trajectories, quality)
     save(score_plot(model, highlight=HIGHLIGHT, labels=list(HIGHLIGHT), title="Batch PLS: scores of the 53 batches"), out_dir, "batch-case-sbr-scores")
-    save(spe_plot(model, highlight=HIGHLIGHT, labels=list(HIGHLIGHT), title="Batch PLS: SPE after two components"), out_dir, "batch-case-sbr-spe")
+    save(influence_plot(model, highlight=HIGHLIGHT, labels=[*HIGHLIGHT, *SPE_OUTLIERS], title="Batch PLS: Hotelling's $T^2$ against SPE"), out_dir, "batch-case-sbr-influence")
 
     r2_grid = model.r2_per_variable_.iloc[:, -1].unstack(level="sequence").reindex(index=model.tag_names_)
     fig = tag_panels(r2_grid, ylabel="$R^2$", ncols=3)

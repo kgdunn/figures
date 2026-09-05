@@ -26,7 +26,7 @@ import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
-from batch_case_common import AQUA, DARK_BLUE, GREY, ORANGE, contribution_triptych, overlay_panels, parity_plot, save, score_plot, spe_plot, tag_panels
+from batch_case_common import AQUA, DARK_BLUE, GREY, ORANGE, contribution_triptych, influence_plot, overlay_panels, parity_plot, save, score_plot, tag_panels
 
 from process_improve.batch import dict_to_wide, load_fmc
 from process_improve.multivariate import PCA, PLS, MCUVScaler
@@ -94,9 +94,9 @@ def main(out_dir: pathlib.Path) -> None:
     squared = pca_x.spe_contributions(x_scaled) ** 2
     complete = squared.dropna(how="all").index
     worst = int(pca_x.spe_.loc[complete].iloc[:, -1].idxmax())
-    fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), gridspec_kw={"width_ratios": [1, 1.3]})
+    fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), gridspec_kw={"width_ratios": [1, 1.1]})
     score_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE, worst: AQUA}, labels=[OPERATING_OUTLIER, worst], title="Batch PCA on the trajectories: scores", ax=axes[0])
-    spe_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE, worst: AQUA}, labels=[OPERATING_OUTLIER, worst], title="Batch PCA: SPE after two components", ax=axes[1])
+    influence_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE, worst: AQUA}, labels=[OPERATING_OUTLIER, worst, 41], title="Batch PCA: Hotelling's $T^2$ against SPE", ax=axes[1])
     fig.tight_layout()
     save(fig, out_dir, "batch-case-fmc-batch-pca")
 

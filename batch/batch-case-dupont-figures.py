@@ -25,12 +25,15 @@ import pathlib
 import sys
 
 import matplotlib.pyplot as plt
-from batch_case_common import AQUA, DARK_BLUE, ORANGE, contribution_triptych, overlay_panels, save, score_plot, spe_plot, tag_panels
+from batch_case_common import AQUA, DARK_BLUE, GREY, ORANGE, contribution_triptych, influence_plot, overlay_panels, save, score_plot, tag_panels
 
 from process_improve.batch import BatchPCA, load_dupont
 
 SPE_OUTLIER = 49
-SCORE_OUTLIERS = [50, 51, 52, 53, 54, 55]
+LAST_SIX = [50, 51, 52, 53, 54, 55]
+ABOVE_SPE_LIMIT = [49, 51]  # a residual the two components cannot describe
+ABOVE_T2_LIMIT = [50, 52, 53, 54, 55]  # extreme along the components themselves
+FLAGGED = {**{b: AQUA for b in ABOVE_T2_LIMIT}, **{b: ORANGE for b in ABOVE_SPE_LIMIT}}
 SECOND_CLUSTER = [37, 39, 43, 44, 45, 46, 47, 48]
 POOR_QUALITY_NOT_VISIBLE = [38, 40, 41, 42]
 
@@ -42,10 +45,10 @@ def main(out_dir: pathlib.Path) -> None:
     save(fig, out_dir, "batch-case-dupont-raw-trajectories")
 
     model_a = BatchPCA(n_components=2).fit(batches)
-    fig = score_plot(model_a, highlight={**{b: AQUA for b in SCORE_OUTLIERS}, SPE_OUTLIER: ORANGE}, labels=[*SCORE_OUTLIERS, SPE_OUTLIER], title="Model A: 55 batches, two components")
+    fig = score_plot(model_a, highlight=FLAGGED, labels=LAST_SIX + [SPE_OUTLIER], title="Model A: 55 batches, two components")
     save(fig, out_dir, "batch-case-dupont-model-a-scores")
-    fig = spe_plot(model_a, highlight={SPE_OUTLIER: ORANGE}, labels=[SPE_OUTLIER], title="Model A: SPE after two components")
-    save(fig, out_dir, "batch-case-dupont-model-a-spe")
+    fig = influence_plot(model_a, highlight=FLAGGED, labels=ABOVE_SPE_LIMIT + ABOVE_T2_LIMIT, title="Model A: Hotelling's $T^2$ against SPE")
+    save(fig, out_dir, "batch-case-dupont-model-a-influence")
 
     scaled = model_a.unfold_and_scale(batches)
     squared = model_a.spe_contributions(scaled) ** 2
@@ -90,9 +93,9 @@ def main(out_dir: pathlib.Path) -> None:
     excluded = set(range(SPE_OUTLIER, 56)) | set(SECOND_CLUSTER)
     kept_c = {b: batch for b, batch in batches.items() if b not in excluded}
     model_c = BatchPCA(n_components=3).fit(kept_c)
-    fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), gridspec_kw={"width_ratios": [1, 1.3]})
+    fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), gridspec_kw={"width_ratios": [1, 1.1]})
     score_plot(model_c, highlight={b: ORANGE for b in POOR_QUALITY_NOT_VISIBLE}, labels=POOR_QUALITY_NOT_VISIBLE, title="Model C: 40 batches, scores", ax=axes[0])
-    spe_plot(model_c, highlight={b: ORANGE for b in POOR_QUALITY_NOT_VISIBLE}, labels=POOR_QUALITY_NOT_VISIBLE, title="Model C: SPE after three components", ax=axes[1])
+    influence_plot(model_c, highlight={b: ORANGE for b in POOR_QUALITY_NOT_VISIBLE}, labels=POOR_QUALITY_NOT_VISIBLE, title="Model C: Hotelling's $T^2$ against SPE", ax=axes[1])
     fig.tight_layout()
     save(fig, out_dir, "batch-case-dupont-model-c")
 

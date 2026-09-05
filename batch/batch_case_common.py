@@ -119,7 +119,7 @@ def score_plot(
     return fig
 
 
-def spe_plot(
+def influence_plot(
     model,
     *,
     highlight: dict[int, str] | None = None,
@@ -128,24 +128,53 @@ def spe_plot(
     title: str = "",
     ax=None,
 ) -> Figure:
-    """SPE of every batch after the last component, with the limit; selected batches coloured and labelled."""
+    """Hotelling's T2 against SPE for every batch, with both limits drawn.
+
+    Each batch is one dot: how far it sits *along* the model's components
+    (Hotelling's T2, horizontal) against how far it sits *away* from them (SPE,
+    vertical). The two limits split the plot into quadrants, which separates a
+    batch that is extreme in a direction the model knows from one the model
+    cannot describe. Plotting either statistic against the batch number instead
+    would put the order the batches happen to appear in on an axis, which
+    carries no information about the batch.
+    """
     if ax is None:
-        fig, ax = plt.subplots(figsize=FIGSIZE_WIDE)
+        fig, ax = plt.subplots(figsize=(5.4, 4.4))
     else:
         fig = ax.figure
+    t2 = model.hotellings_t2_.iloc[:, -1]
     spe = model.spe_.iloc[:, -1]
-    limit = float(model.spe_limit(conf_level=conf_level))
+    t2_limit = float(model.hotellings_t2_limit(conf_level=conf_level))
+    spe_limit = float(model.spe_limit(conf_level=conf_level))
     highlight = highlight or {}
-    colours = [highlight.get(b, DARK_BLUE) for b in spe.index]
-    ax.vlines(spe.index, 0, spe.to_numpy(), color=PALE_GREY, lw=1)
-    ax.scatter(spe.index, spe.to_numpy(), s=26, color=colours, edgecolor="white", linewidth=0.8, zorder=3)
-    ax.axhline(limit, color=GREY, ls="--", lw=1)
-    ax.text(0.01, limit, f"{conf_level:.0%} limit", transform=ax.get_yaxis_transform(), va="bottom", ha="left", fontsize=8.5)
+
+    x_max = max(float(t2.max()), t2_limit) * 1.14
+    y_min, y_max = float(spe.min()) * 0.94, max(float(spe.max()), spe_limit) * 1.06
+    ax.set_xlim(0, x_max)
+    ax.set_ylim(y_min, y_max)
+
+    ax.axvline(t2_limit, color=GREY, ls="--", lw=1)
+    ax.axhline(spe_limit, color=GREY, ls="--", lw=1)
+    ax.text(t2_limit, 0.99, f" {conf_level:.0%} limit", transform=ax.get_xaxis_transform(), va="top", ha="left", fontsize=8.5, color=GREY)
+    ax.text(0.995, spe_limit, f"{conf_level:.0%} limit", transform=ax.get_yaxis_transform(), va="bottom", ha="right", fontsize=8.5, color=GREY)
+
+    others = [batch_id for batch_id in t2.index if batch_id not in highlight]
+    ax.scatter(t2.loc[others], spe.loc[others], s=30, color=DARK_BLUE, edgecolor="white", linewidth=1, zorder=3)
+    for batch_id, colour in highlight.items():
+        ax.scatter(t2.loc[batch_id], spe.loc[batch_id], s=52, color=colour, edgecolor="white", linewidth=1, zorder=4)
     for batch_id in labels or []:
-        ax.annotate(str(batch_id), (batch_id, spe.loc[batch_id]), xytext=(3, 4), textcoords="offset points", fontsize=8.5)
-    ax.set_xlabel("Batch")
+        to_the_left = float(t2.loc[batch_id]) > 0.82 * x_max
+        ax.annotate(
+            str(batch_id),
+            (t2.loc[batch_id], spe.loc[batch_id]),
+            xytext=(-6, 5) if to_the_left else (6, 5),
+            textcoords="offset points",
+            ha="right" if to_the_left else "left",
+            fontsize=8.5,
+        )
+
+    ax.set_xlabel("Hotelling's $T^2$")
     ax.set_ylabel("SPE")
-    ax.set_ylim(0, max(float(spe.max()), limit) * 1.12)
     ax.set_title(title)
     return fig
 
