@@ -44,7 +44,7 @@ function's documented headline exactly.
 
 Usage
 -----
-    uv run --with "process-improve[control]>=1.79" --with matplotlib \
+    uv run --with "process-improve[control]>=1.80" --with matplotlib \
         python midcourse-correction-figures.py [output_dir]
 
 Writes the five PNGs into ``output_dir`` (default: this script's own
