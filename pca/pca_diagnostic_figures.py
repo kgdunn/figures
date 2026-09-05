@@ -200,6 +200,34 @@ GREEN = "#009E73"
 LDPE_URL = "https://openmv.net/file/LDPE.csv"
 
 
+class TooOldForThisFigure(RuntimeError):
+    """The installed process-improve cannot reproduce a figure this script writes.
+
+    Distinct from a plain failure: nothing here is broken, the library simply
+    predates a fix the figure depends on. The caller leaves the committed image
+    alone and says why, rather than overwriting it with a wrong one.
+    """
+
+
+def _version_tuple(text: str) -> tuple[int, ...]:
+    """The leading numeric components of a version string, for comparison.
+
+    Stops at the first chunk that is not purely digits, keeping any digits it
+    starts with: ``"1.80.0"`` gives ``(1, 80, 0)`` and ``"1.80.0.dev3"`` gives
+    ``(1, 80, 0, 3)``. Both compare correctly against a ``(1, 80, 0)`` floor,
+    which is all this is asked to decide.
+    """
+    parts: list[int] = []
+    for chunk in text.split("."):
+        digits = "".join(c for c in chunk if c.isdigit())
+        if not digits or digits != chunk:
+            if digits:
+                parts.append(int(digits))
+            break
+        parts.append(int(chunk))
+    return tuple(parts)
+
+
 def process_improve_q2() -> tuple[np.ndarray, np.ndarray, int]:
     """Cross-validated Q-squared for the LDPE data, element-wise k-fold.
 
@@ -211,6 +239,7 @@ def process_improve_q2() -> tuple[np.ndarray, np.ndarray, int]:
     comparison means something.
     """
     import warnings
+    from importlib.metadata import version
 
     from process_improve.multivariate.methods import PCA, MCUVScaler
 
@@ -247,11 +276,17 @@ def process_improve_q2() -> tuple[np.ndarray, np.ndarray, int]:
                               - np.asarray(chosen.q2, dtype=float))))
     print(f"Q² on the raw block against the pre-scaled block: largest difference {gap:.2e}")
     if gap > 1e-3:
+        installed = version("process-improve")
+        if _version_tuple(installed) < (1, 80, 0):
+            raise TooOldForThisFigure(
+                f"process-improve {installed} accumulates cross-validation error in the "
+                f"units of the block it is given, so the two calls disagree by {gap:.3f}. "
+                "1.80.0 or later is needed to reproduce this figure."
+            )
         raise ValueError(
-            f"Q² on the raw and pre-scaled blocks disagree by {gap:.3f}. This script "
-            "needs process-improve 1.80.0 or later, where cross-validation error is "
-            "measured in the space each fold was fitted in; before that the curve "
-            "depended on the units the columns arrived in."
+            f"Q² on the raw and pre-scaled blocks disagree by {gap:.3f} on "
+            f"process-improve {installed}, which should measure both in the space each "
+            "fold was fitted in. Something has regressed; see kgdunn/process-improve#546."
         )
     return (np.asarray(chosen.q2, dtype=float),
             np.asarray(chosen.q2_se, dtype=float),
@@ -264,6 +299,11 @@ def q2_comparison(outdir: pathlib.Path) -> None:
         q2, q2_se, selected = process_improve_q2()
     except ImportError:
         print("process_improve not importable: skipping q2-across-packages.png")
+        return
+    except TooOldForThisFigure as exc:
+        # The committed PNG stands. Regenerating it here would replace a correct
+        # figure with a wrong one, which is worse than not regenerating it.
+        print(f"skipping q2-across-packages.png: {exc}")
         return
 
     components = np.arange(1, len(R2) + 1)
