@@ -158,70 +158,47 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     save(fig, out_dir, "batch-case-sbr-observed-vs-fitted")
 
     # When does each trajectory of the two faulty batches leave the band of the other batches?
-    # One panel per tag and batch: z, the signed deviation from the other batches' mean in their
-    # standard deviations. Signed rather than absolute, so the direction of the departure shows.
+    # One panel per tag and batch, two signed distances from the other batches (signed rather than
+    # absolute, so the direction of the departure shows): dashed, the deviation from the others'
+    # mean in their standard deviations; solid, a robust version with the others' median as centre
+    # and 1.4826 times their median absolute deviation as scale (the factor makes the MAD equal the
+    # standard deviation of normal values, and a batch among the others that is itself unusual at a
+    # sample does not widen the band), smoothed with an EWMA (lambda = 0.3, the value the book's
+    # EWMA chapter uses; pandas starts the average at the first sample's value).
     others = np.stack([batch.to_numpy() for key, batch in trajectories.items() if key not in HIGHLIGHT])
     mean, sd = others.mean(axis=0), others.std(axis=0, ddof=1)
+    centre, spread = np.median(others, axis=0), median_absolute_deviation(others, axis=0, scale="normal")
     fig, axes = plt.subplots(2, len(sbr.trajectory_tags), figsize=(13.0, 4.4), sharex=True, sharey=True)
     for row, batch_id in enumerate([FAULT_FROM_START, FAULT_PARTWAY]):
         z = (trajectories[batch_id].to_numpy() - mean) / sd
+        z_robust = pd.DataFrame((trajectories[batch_id].to_numpy() - centre) / spread).ewm(alpha=EWMA_LAMBDA, adjust=False).mean().to_numpy()
         for j, tag in enumerate(sbr.trajectory_tags):
             ax = axes[row, j]
             ax.axhspan(-2, 2, color=BAND, zorder=0, lw=0)
-            ax.plot(z[:, j], lw=1.2, color=HIGHLIGHT[batch_id], zorder=2)
+            ax.plot(z[:, j], lw=1.0, ls="--", color=HIGHLIGHT[batch_id], alpha=0.8, zorder=2, label="mean and sd")
+            ax.plot(z_robust[:, j], lw=1.4, color=HIGHLIGHT[batch_id], zorder=3, label="robust, smoothed")
             ax.axhline(0, color=GREY, lw=0.8)
             for level in (-2, 2):
-                ax.axhline(level, color="0.55", lw=0.8, ls="--")
+                ax.axhline(level, color="0.55", lw=0.8, ls=":")
             if row == 0:
                 ax.set_title(tag)
             if j == 0:
-                ax.set_ylabel(f"batch {batch_id}\nz [sd of the others]")
+                ax.set_ylabel(f"batch {batch_id}")  # the suptitle names the quantity; a longer label collides between the rows
             if row == 1:
                 ax.set_xlabel("Sample")
-    for level, label in ((2, "+2 sd"), (-2, "-2 sd")):
-        axes[0, -1].text(0.99, level, label, transform=axes[0, -1].get_yaxis_transform(), ha="right",
-                         va="bottom" if level > 0 else "top", fontsize=8.5)
-    fig.suptitle("Distance of batches 37 (top) and 34 (bottom) from the other batches, tag by tag", y=1.01)
-    fig.tight_layout()
-    save(fig, out_dir, "batch-case-sbr-departure")
-
-    # The same chart with a robust centre and scale: the median of the other batches and 1.4826 times their
-    # median absolute deviation (the factor makes the MAD equal the standard deviation of normal values), so a
-    # batch among the others that is itself unusual at a sample does not widen the band. The robust z is then
-    # smoothed with an EWMA (lambda = 0.3, the value the book's EWMA chapter uses); pandas starts the average at
-    # the first sample's value. The raw robust z is drawn faint behind the smoothed line.
-    centre = np.median(others, axis=0)
-    spread = median_absolute_deviation(others, axis=0, scale="normal")
-    fig, axes = plt.subplots(2, len(sbr.trajectory_tags), figsize=(13.0, 4.4), sharex=True, sharey=True)
-    for row, batch_id in enumerate([FAULT_FROM_START, FAULT_PARTWAY]):
-        z_robust = (trajectories[batch_id].to_numpy() - centre) / spread
-        z_ewma = pd.DataFrame(z_robust).ewm(alpha=EWMA_LAMBDA, adjust=False).mean().to_numpy()
-        for j, tag in enumerate(sbr.trajectory_tags):
-            ax = axes[row, j]
-            ax.axhspan(-2, 2, color=BAND, zorder=0, lw=0)
-            ax.plot(z_robust[:, j], lw=0.8, color=HIGHLIGHT[batch_id], alpha=0.35, zorder=2)
-            ax.plot(z_ewma[:, j], lw=1.4, color=HIGHLIGHT[batch_id], zorder=3)
-            ax.axhline(0, color=GREY, lw=0.8)
-            for level in (-2, 2):
-                ax.axhline(level, color="0.55", lw=0.8, ls="--")
-            if row == 0:
-                ax.set_title(tag)
-            if j == 0:
-                ax.set_ylabel(f"batch {batch_id}\nrobust z\n[MAD of the others]")
-            if row == 1:
-                ax.set_xlabel("Sample")
-    for level, label in ((2, "+2 MAD"), (-2, "-2 MAD")):
-        # white backing so the label reads over the trace, which ends near -2 in this panel
+    axes[0, 0].legend(loc="lower right", fontsize=8)  # lower left is where this trace starts, at -6
+    for level, label in ((2, "+2"), (-2, "-2")):
+        # white backing so the label reads over the traces, which end near -2 in this panel
         axes[0, -1].text(0.99, level, label, transform=axes[0, -1].get_yaxis_transform(), ha="right",
                          va="bottom" if level > 0 else "top", fontsize=8.5, zorder=5,
                          bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.0, "alpha": 0.85})
     fig.suptitle(
-        "Robust distance of batches 37 (top) and 34 (bottom) from the other batches: "
-        f"median and 1.4826 MAD, EWMA lambda = {EWMA_LAMBDA}",
+        "Distance of batches 37 (top) and 34 (bottom) from the other batches, tag by tag: "
+        "robust (median, MAD, EWMA; solid) and mean-and-sd (dashed)",
         y=1.01,
     )
     fig.tight_layout()
-    save(fig, out_dir, "batch-case-sbr-departure-robust")
+    save(fig, out_dir, "batch-case-sbr-departure")
 
     # -- On-line prediction: how the error of the evolving quality prediction falls as the batch is observed.
     # RMSEE from the 53-batch model on its own training batches (solid), RMSEP with each batch held out of the
