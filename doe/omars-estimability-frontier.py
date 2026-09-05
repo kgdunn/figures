@@ -48,11 +48,16 @@ for kk, pp in zip(k, parameters):
     ax.annotate(f"{pp}", xy=(kk, pp), xytext=(0, -17), textcoords="offset points",
                 ha="center", fontsize=11.5, color=BLUE)
 
-# The four-factor case, worked in the text: 19 runs, 15 parameters, rank 14.
+# The four-factor case, worked in the text: 19 runs, 15 parameters, rank 14. The note sits
+# above the frontier and to its left, where the axes are empty, rather than below the line
+# among the definitive screening design markers. Its leader stops short of the frontier and
+# points towards the marked cross, rather than crossing the line to touch it.
 ax.plot([4], [19], marker="x", ms=12, mew=2.6, color=GREY, zorder=6)
 ax.annotate("19 runs, 15 parameters,\nmodel matrix rank 14",
-            xy=(4, 19), xytext=(4.55, 5.0), fontsize=12, color=GREY,
-            arrowprops=dict(arrowstyle="->", color=GREY, lw=1.4))
+            xy=(3.88, 21.4), xytext=(3.05, 33.0), ha="left", va="center", fontsize=12,
+            color=GREY, zorder=7,
+            arrowprops=dict(arrowstyle="->", color=GREY, lw=2.2, shrinkB=3, zorder=7,
+                            connectionstyle="arc3,rad=0.3"))
 
 ax.set_xticks(k)
 ax.set_xlabel("Number of factors, $k$", fontsize=13)
