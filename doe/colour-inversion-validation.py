@@ -10,6 +10,7 @@ coding-invariant curve-match inversion actually reaches when its real-unit setti
 through the simulator. Ordered by late-time drift. Regenerates ``colour-inversion-validation.png``.
 """
 
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D

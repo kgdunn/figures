@@ -6,6 +6,7 @@ runs separate in the latent space. Right: the W* (direct X-weights, the process 
 factors and the response is read directly. Regenerates ``colour-pls-scores-loadings.png``.
 """
 
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D

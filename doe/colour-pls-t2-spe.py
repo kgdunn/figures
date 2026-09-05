@@ -13,6 +13,7 @@ with concentration, and the marker fill marks the co-solvent (open low, filled h
 Regenerates ``colour-pls-t2-spe.png``.
 """
 
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import contextlib
 import io
 

@@ -5,6 +5,7 @@ at ten time points from mixing to plateau. Compounds differ both in amplitude an
 late-time drift of the curve shape. Regenerates ``colour-development-curves.png``.
 """
 
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import matplotlib.pyplot as plt
 
 from colour_case_study import COMPOUND_LEVELS, TIME_POINTS, build_design, mean_curves, simulate_curves

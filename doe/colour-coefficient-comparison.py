@@ -7,6 +7,7 @@ side; they nearly coincide, so PLS reproduces the regression when enough compone
 Regenerates ``colour-coefficient-comparison.png``.
 """
 
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd

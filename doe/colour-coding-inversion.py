@@ -14,6 +14,7 @@ brackets, so the reader sees how many factors leave the window and by how much.
 Regenerates ``colour-coding-inversion.png``.
 """
 
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import contextlib
 import io
 

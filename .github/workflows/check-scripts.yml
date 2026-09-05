@@ -1,0 +1,124 @@
+name: Check figure scripts
+
+# The scripts here draw the figures for Process Improvement using Data, and they
+# call the process-improve package. Over one release cycle five of them stopped
+# running, on renames and changed return types, and nothing noticed until a
+# figure had to be regenerated; four of the five drew every figure on one page of
+# the book. This runs every script that imports the package.
+#
+# The `release` job is the gate: it uses the PyPI release, which is what a
+# contributor installs. The `library-main` job runs the same set against the
+# library's main branch and is advisory; when it fails and `release` passes, a
+# coming library change is about to break these scripts, and the fix belongs here
+# before that release ships. The nightly schedule catches a release landing on a
+# day nobody pushes.
+#
+# The `colour-case-study` job covers the scripts the first two cannot: the colour
+# case study's design is built by pyoptex, whose plotly and numba pins conflict
+# with the [all] extra, so those scripts carry a `check-scripts: requires pyoptex`
+# marker and skip there. This job installs [expt] plus pyoptex and runs them.
+#
+# Whole run is a few minutes wall clock, so there is no fast subset: every script
+# runs on every pull request. `# check-scripts: slow` exists for a script that
+# outgrows that.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: check-scripts-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  release:
+    name: Against the PyPI release
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: List the scripts in scope
+        run: uv run --no-project --with 'process-improve[all]' python tools/check_figure_scripts.py --list
+
+      - name: Run them
+        run: uv run --no-project --with 'process-improve[all]' python tools/check_figure_scripts.py --jobs 4
+
+      - name: Confirm no figure was rewritten
+        # savefig and write_image are disabled during the check; this is the
+        # backstop that says so, and it fails loudly if a new writer appears.
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "The check modified the working tree:"
+            git status --porcelain
+            exit 1
+          fi
+
+  library-main:
+    name: Against process-improve main (advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Run them against the library's main branch
+        run: |
+          uv run --no-project \
+            --with 'process-improve[all] @ git+https://github.com/kgdunn/process-improve@main' \
+            python tools/check_figure_scripts.py --jobs 4
+
+  colour-case-study:
+    name: The colour case study, with pyoptex
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Run the scripts that need pyoptex
+        run: |
+          # [expt] for pyDOE3 and [ilp] for the OMARS solver, which the other DOE
+          # scripts in this directory need. [plotting] cannot come along: it wants
+          # plotly >= 6.5.2 while pyoptex pins plotly < 6. These scripts draw with
+          # matplotlib, so that is installed on its own.
+          uv run --no-project --with 'process-improve[expt,ilp]' --with pyoptex --with matplotlib \
+            python tools/check_figure_scripts.py doe --jobs 4
+
+      - name: Confirm no figure was rewritten
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "The check modified the working tree:"
+            git status --porcelain
+            exit 1
+          fi
