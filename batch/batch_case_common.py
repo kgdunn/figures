@@ -9,6 +9,9 @@ The colours are the book's house colours (the same ones the adaptive
 soft-sensor figures use), checked as a categorical set with the data-viz
 palette validator: dark blue for the main series, orange for the batch under
 discussion, aqua for a second highlighted batch, grey for everything else.
+Purple and magenta extend the set to five for the one figure that needs a
+colour per quality attribute; the five clear the validator's colour-vision
+and normal-vision separation checks (worst pair 9.4 and 16.1 Delta E).
 """
 
 from __future__ import annotations
@@ -26,6 +29,8 @@ from matplotlib.figure import Figure
 DARK_BLUE = "#1f3d7a"
 ORANGE = "#c55a11"
 AQUA = "#1baf7a"
+PURPLE = "#6f42c1"
+MAGENTA = "#b03a78"
 GREY = "0.55"
 PALE_GREY = "0.82"
 BAND = "#e9edf4"  # alternate shading of the tag blocks in a contribution vector
@@ -307,3 +312,51 @@ def parity_plot(observed: pd.Series, predicted: pd.Series, *, highlight: dict[in
     ax.set_ylabel("Fitted")
     ax.set_title(title)
     ax.legend(loc="upper left")
+
+
+def online_chart(
+    ax,
+    result,
+    statistic: str,
+    *,
+    colour: str,
+    mean_trace: np.ndarray,
+    conf_level: float,
+    fault_at: int | None = None,
+    fault_label: str = "fault begins",
+    legend_loc: str = "upper left",
+) -> None:
+    """One batch's on-line Hotelling's T2 or SPE against the per-sample control limit.
+
+    ``result`` is what ``BatchMonitor.monitor`` returns for the batch. The
+    batch's statistic is drawn in ``colour`` over the mean of the reference
+    batches at each sample and the dashed limit, with a marker on every
+    sample above the limit. The vertical axis is scaled to the batch's own
+    trace and the typical limit, with headroom for the legend, so the very
+    wide limits of the first few samples (where the reference batches have
+    hardly been observed) run off the top of the panel rather than squash
+    the rest. ``fault_at`` draws a dotted vertical line at that sample with
+    ``fault_label`` written along it, so the label stays clear of the legend.
+    """
+    if statistic == "t2":
+        trace, limit, alarm, ylabel = result.hotellings_t2, result.t2_limit, result.t2_alarm, "Hotelling's $T^2$"
+    elif statistic == "spe":
+        trace, limit, alarm, ylabel = result.spe, result.spe_limit, result.spe_alarm, "SPE of the newest sample"
+    else:
+        raise ValueError(f"statistic must be 't2' or 'spe'; got {statistic!r}.")
+    time = np.asarray(result.time)
+    trace, limit, alarm = np.asarray(trace, dtype=float), np.asarray(limit, dtype=float), np.asarray(alarm, dtype=bool)
+
+    ax.plot(time, np.asarray(mean_trace, dtype=float)[: len(time)], color=PALE_GREY, lw=1.6, zorder=1, label="reference-batch mean")
+    ax.plot(time, limit, color=GREY, lw=1, ls="--", zorder=2, label=f"{conf_level:.0%} limit")
+    ax.plot(time, trace, color=colour, lw=1.3, zorder=3)
+    if alarm.any():
+        ax.plot(time[alarm], trace[alarm], ls="none", marker="o", ms=3.4, color=colour, mec="white", mew=0.4, zorder=4, label="above the limit")
+    if fault_at is not None:
+        ax.axvline(fault_at, color=GREY, lw=1, ls=":", zorder=2)
+        ax.text(fault_at, 0.97, fault_label, transform=ax.get_xaxis_transform(), rotation=90, va="top", ha="right", fontsize=8.5, color=GREY)
+    ax.set_ylim(0, 1.35 * max(float(trace.max()), float(np.median(limit))))
+    ax.set_xlim(0, float(time[-1]) + 1)
+    ax.set_xlabel("Samples observed")
+    ax.set_ylabel(ylabel)
+    ax.legend(loc=legend_loc)
