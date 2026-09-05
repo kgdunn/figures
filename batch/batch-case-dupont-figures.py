@@ -41,7 +41,7 @@ POOR_QUALITY_NOT_VISIBLE = [38, 40, 41, 42]
 def main(out_dir: pathlib.Path) -> None:
     batches = load_dupont()
 
-    fig = overlay_panels(batches, ["TempC-1", "Press-1", "Flow-1", "TempR-1"], {SPE_OUTLIER: ORANGE, 54: DARK_BLUE})
+    fig = overlay_panels(batches, ["TempC-1", "Press-1", "Flow-1", "TempR-1"], {SPE_OUTLIER: ORANGE, 54: AQUA})
     save(fig, out_dir, "batch-case-dupont-raw-trajectories")
 
     model_a = BatchPCA(n_components=2).fit(batches)
