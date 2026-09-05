@@ -60,6 +60,7 @@ from matplotlib.legend_handler import HandlerTuple
 from matplotlib.lines import Line2D
 
 from process_improve.batch import BatchMonitor, BatchPLS, load_sbr
+from process_improve.univariate import median_absolute_deviation
 
 FAULT_FROM_START = 37
 FAULT_PARTWAY = 34
@@ -78,6 +79,7 @@ FIRST_SAMPLE_SHOWN = 5  # the score estimate from fewer samples than this is too
 MONITOR_CONF_LEVEL = 0.99
 ALARM_RUN = 3  # consecutive samples above the limit before an alarm counts
 FAULT_SAMPLE = 100  # the impurity enters batch 34 at about this sample
+EWMA_LAMBDA = 0.3  # smoothing of the robust departure chart, the value the book's EWMA chapter uses
 TRANSIENT_END = 15  # the cooling-water temperature settles after this many samples; the forecast panel starts here
 FORECASTS = {FAULT_FROM_START: ("Conversion", [30, 60]), FAULT_PARTWAY: ("CoolingTemp", [60, 115])}
 
@@ -182,6 +184,44 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     fig.suptitle("Distance of batches 37 (top) and 34 (bottom) from the other batches, tag by tag", y=1.01)
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-departure")
+
+    # The same chart with a robust centre and scale: the median of the other batches and 1.4826 times their
+    # median absolute deviation (the factor makes the MAD equal the standard deviation of normal values), so a
+    # batch among the others that is itself unusual at a sample does not widen the band. The robust z is then
+    # smoothed with an EWMA (lambda = 0.3, the value the book's EWMA chapter uses); pandas starts the average at
+    # the first sample's value. The raw robust z is drawn faint behind the smoothed line.
+    centre = np.median(others, axis=0)
+    spread = median_absolute_deviation(others, axis=0, scale="normal")
+    fig, axes = plt.subplots(2, len(sbr.trajectory_tags), figsize=(13.0, 4.4), sharex=True, sharey=True)
+    for row, batch_id in enumerate([FAULT_FROM_START, FAULT_PARTWAY]):
+        z_robust = (trajectories[batch_id].to_numpy() - centre) / spread
+        z_ewma = pd.DataFrame(z_robust).ewm(alpha=EWMA_LAMBDA, adjust=False).mean().to_numpy()
+        for j, tag in enumerate(sbr.trajectory_tags):
+            ax = axes[row, j]
+            ax.axhspan(-2, 2, color=BAND, zorder=0, lw=0)
+            ax.plot(z_robust[:, j], lw=0.8, color=HIGHLIGHT[batch_id], alpha=0.35, zorder=2)
+            ax.plot(z_ewma[:, j], lw=1.4, color=HIGHLIGHT[batch_id], zorder=3)
+            ax.axhline(0, color=GREY, lw=0.8)
+            for level in (-2, 2):
+                ax.axhline(level, color="0.55", lw=0.8, ls="--")
+            if row == 0:
+                ax.set_title(tag)
+            if j == 0:
+                ax.set_ylabel(f"batch {batch_id}\nrobust z\n[MAD of the others]")
+            if row == 1:
+                ax.set_xlabel("Sample")
+    for level, label in ((2, "+2 MAD"), (-2, "-2 MAD")):
+        # white backing so the label reads over the trace, which ends near -2 in this panel
+        axes[0, -1].text(0.99, level, label, transform=axes[0, -1].get_yaxis_transform(), ha="right",
+                         va="bottom" if level > 0 else "top", fontsize=8.5, zorder=5,
+                         bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.0, "alpha": 0.85})
+    fig.suptitle(
+        "Robust distance of batches 37 (top) and 34 (bottom) from the other batches: "
+        f"median and 1.4826 MAD, EWMA lambda = {EWMA_LAMBDA}",
+        y=1.01,
+    )
+    fig.tight_layout()
+    save(fig, out_dir, "batch-case-sbr-departure-robust")
 
     # -- On-line prediction: how the error of the evolving quality prediction falls as the batch is observed.
     # RMSEE from the 53-batch model on its own training batches (solid), RMSEP with each batch held out of the
