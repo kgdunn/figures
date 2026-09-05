@@ -218,7 +218,8 @@ def process_improve_q2() -> tuple[np.ndarray, np.ndarray, int]:
         ldpe = pd.read_csv(LDPE_URL)
     except Exception:  # noqa: BLE001
         ldpe = pd.read_csv(HERE / "LDPE.csv")
-    scaled = MCUVScaler().fit_transform(ldpe.iloc[:, 1:])
+    raw = ldpe.iloc[:, 1:]
+    scaled = MCUVScaler().fit_transform(raw)
 
     fitted = PCA(n_components=len(R2)).fit(scaled)
     largest = float(np.max(np.abs(np.asarray(fitted.r2_cumulative_, dtype=float) - np.array(R2))))
@@ -226,11 +227,31 @@ def process_improve_q2() -> tuple[np.ndarray, np.ndarray, int]:
     if largest > 1e-4:
         raise ValueError(f"R² disagrees with the recorded values by {largest:.4f}")
 
+    # The raw block goes in: the element-wise scheme centres and scales inside
+    # every fold, and measures its error there, so nothing about a held-out cell
+    # reaches the model that predicts it and no column's units set the curve.
+    settings = {"max_components": len(R2), "cv": 7, "cv_scheme": "ekf",
+                "n_repeats": 5, "random_state": 42}
+    chosen = PCA.select_n_components(raw, **settings)
+
+    # Passing the pre-scaled block has to give the same curve. It did not
+    # before process-improve 1.80.0: PRESS was accumulated in the input units,
+    # so on this data set the Mw column, which holds 99.5% of the raw sum of
+    # squares, set the whole curve on its own and the two calls disagreed
+    # wildly (kgdunn/process-improve#546). Checked rather than assumed, because
+    # an older library would otherwise quietly write a wrong PNG here.
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        chosen = PCA.select_n_components(
-            scaled, max_components=len(R2), cv=7, cv_scheme="ekf",
-            n_repeats=5, random_state=42,
+        prescaled = PCA.select_n_components(scaled, **settings)
+    gap = float(np.max(np.abs(np.asarray(prescaled.q2, dtype=float)
+                              - np.asarray(chosen.q2, dtype=float))))
+    print(f"Q² on the raw block against the pre-scaled block: largest difference {gap:.2e}")
+    if gap > 1e-3:
+        raise ValueError(
+            f"Q² on the raw and pre-scaled blocks disagree by {gap:.3f}. This script "
+            "needs process-improve 1.80.0 or later, where cross-validation error is "
+            "measured in the space each fold was fitted in; before that the curve "
+            "depended on the units the columns arrived in."
         )
     return (np.asarray(chosen.q2, dtype=float),
             np.asarray(chosen.q2_se, dtype=float),
@@ -261,8 +282,11 @@ def q2_comparison(outdir: pathlib.Path) -> None:
     ax.fill_between(components, q2 - q2_se, q2 + q2_se, color=GREEN, alpha=0.25,
                     linewidth=0)
     ax.axvline(2, color=GREY, linestyle="--", linewidth=1.5)
-    ax.annotate("Two components: both curves\nreach their highest value here\nand neither exceeds it again",
-                (2.15, 0.93), color=GREY, fontsize=13, va="top")
+    # Both curves climb again past the eighth component, where R² is already
+    # 99.1% and there is very little left to hold out and predict. The claim
+    # here is about the readable part of the curve, so it has to say so.
+    ax.annotate("Two components: the highest value\neither curve reaches over the first\neight, before the model runs out\nof variation to hold out",
+                (2.15, 0.97), color=GREY, fontsize=13, va="top")
     ax.set_xticks(components)
     ax.set_xlabel("Number of components")
     ax.set_ylabel("Cross-validated $Q^2$")
