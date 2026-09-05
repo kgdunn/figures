@@ -15,7 +15,7 @@ chapter shows the equivalent Plotly code; the committed figures are these
 matplotlib renderings.
 
 Requires the ``process_improve`` package (``pip install 'process-improve[batch]'``,
-version 1.80 or later) for ``BatchPLS``, ``BatchMonitor`` and ``load_sbr``. The
+version 1.81 or later) for ``BatchPLS``, ``BatchMonitor`` and ``load_sbr``. The
 leave-one-batch-out sweep behind the prediction-error figure refits the model
 53 times and takes about a minute; everything else runs in seconds.
 
