@@ -62,8 +62,11 @@ def evaluate_split(df: pd.DataFrame, x_cols: list[str], y_col: str, frac: float 
     scaler_x = MCUVScaler().fit(X_tr)
     scaler_y = MCUVScaler().fit(y_tr)
     model = PLS(n_components=2).fit(scaler_x.transform(X_tr), scaler_y.transform(y_tr))
-    result = model.predict(scaler_x.transform(X_te))
-    y_te_hat_mcuv = pd.DataFrame(np.asarray(result.y_hat), index=X_te.index, columns=[y_col])
+    # PLS.predict returns the predictions as a DataFrame (the sklearn contract);
+    # the Bunch with scores, T2 and SPE alongside y_hat is PLS.diagnose.
+    y_te_hat_mcuv = pd.DataFrame(
+        np.asarray(model.predict(scaler_x.transform(X_te))), index=X_te.index, columns=[y_col]
+    )
     y_te_hat = scaler_y.inverse_transform(y_te_hat_mcuv).values.ravel()
     rmsep = float(np.sqrt(np.mean((y_te.values.ravel() - y_te_hat) ** 2)))
     r2_y_train = float(model.r2_cumulative_.iloc[-1])

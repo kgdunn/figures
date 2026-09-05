@@ -212,7 +212,7 @@ def figure_contribution(contribs: pd.Series, first_alarm_idx: int, out: pathlib.
     colors = ["#4c72b0" if v >= 0 else "#4c72b0" for v in contribs.values]  # neutral
     ax.bar(contribs.index, contribs.values, color=colors)
     ax.axhline(0, color="black", linewidth=0.6)
-    ax.set_ylabel("Contribution to $T^2$ score movement (scaled units)")
+    ax.set_ylabel("Contribution to Hotelling's $T^2$")
     ax.set_title(
         f"Per-variable T^2 contributions at phase-2 subgroup {first_alarm_idx} "
         f"(first T^2 alarm)"
@@ -302,7 +302,8 @@ def main() -> None:
     figure_loadings(model, FIGURES_DIR / "Flotation-MSPC-loadings.png")
     print("[4/7] loadings done")
 
-    result = model.predict(scaler.transform(p2_sub))
+    p2_scaled = scaler.transform(p2_sub)
+    result = model.diagnose(p2_scaled)
     t2 = result.hotellings_t2.iloc[:, -1]
     spe = result.spe
     t2_lim = float(model.hotellings_t2_limit(conf_level=CONF_LEVEL))
@@ -319,11 +320,11 @@ def main() -> None:
     print(f"first T^2 alarm at phase-2 subgroup {first_t2_alarm}")
     print(f"first SPE alarm at phase-2 subgroup {first_spe_alarm}")
 
-    # T^2-style contribution from the library: how each X-variable contributes
-    # to the (t_alarm - 0) movement in score space, weighted by 1/sqrt(explained
-    # variance) per component. Library API, no manual residual arithmetic.
-    t_at_alarm = result.scores.loc[first_t2_alarm].values
-    contribs = model.score_contributions(t_at_alarm, weighted=True)
+    # Contributions to Hotelling's T^2 at the first alarm, from the library:
+    # t2_contributions(X) pools every component (each score scaled by its
+    # variance) and returns one row per observation, so the per-variable terms
+    # of a row sum to that observation's T^2.
+    contribs = model.t2_contributions(p2_scaled).loc[first_t2_alarm]
     print("T^2 contributions at the first T^2 alarm:")
     print(contribs.round(3).to_dict())
     figure_contribution(contribs, first_t2_alarm,

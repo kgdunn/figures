@@ -93,7 +93,7 @@ def true_purity(temperature, substrate):
 
 def build_design():
     """Return the nine-run central composite design and both measured responses."""
-    alpha = np.sqrt(2.0)
+    alpha = 1.41  # rotatable axial distance 2**(2/4), rounded as in the book's code
     coded = [
         (-1.0, -1.0),
         (+1.0, -1.0),

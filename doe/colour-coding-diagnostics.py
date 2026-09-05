@@ -9,6 +9,7 @@ omitted and the flag moves with it. Treatment (reference) and cell-means coding 
 that corner, so nothing crosses the 95% T2 limit. Regenerates ``colour-coding-diagnostics.png``.
 """
 
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import contextlib
 import io
 

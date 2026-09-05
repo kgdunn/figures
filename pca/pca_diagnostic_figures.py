@@ -200,6 +200,34 @@ GREEN = "#009E73"
 LDPE_URL = "https://openmv.net/file/LDPE.csv"
 
 
+class TooOldForThisFigure(RuntimeError):
+    """The installed process-improve cannot reproduce a figure this script writes.
+
+    Distinct from a plain failure: nothing here is broken, the library simply
+    predates a fix the figure depends on. The caller leaves the committed image
+    alone and says why, rather than overwriting it with a wrong one.
+    """
+
+
+def _version_tuple(text: str) -> tuple[int, ...]:
+    """The leading numeric components of a version string, for comparison.
+
+    Stops at the first chunk that is not purely digits, keeping any digits it
+    starts with: ``"1.80.0"`` gives ``(1, 80, 0)`` and ``"1.80.0.dev3"`` gives
+    ``(1, 80, 0, 3)``. Both compare correctly against a ``(1, 80, 0)`` floor,
+    which is all this is asked to decide.
+    """
+    parts: list[int] = []
+    for chunk in text.split("."):
+        digits = "".join(c for c in chunk if c.isdigit())
+        if not digits or digits != chunk:
+            if digits:
+                parts.append(int(digits))
+            break
+        parts.append(int(chunk))
+    return tuple(parts)
+
+
 def process_improve_q2() -> tuple[np.ndarray, np.ndarray, int]:
     """Cross-validated Q-squared for the LDPE data, element-wise k-fold.
 
@@ -211,6 +239,7 @@ def process_improve_q2() -> tuple[np.ndarray, np.ndarray, int]:
     comparison means something.
     """
     import warnings
+    from importlib.metadata import version
 
     from process_improve.multivariate.methods import PCA, MCUVScaler
 
@@ -218,7 +247,8 @@ def process_improve_q2() -> tuple[np.ndarray, np.ndarray, int]:
         ldpe = pd.read_csv(LDPE_URL)
     except Exception:  # noqa: BLE001
         ldpe = pd.read_csv(HERE / "LDPE.csv")
-    scaled = MCUVScaler().fit_transform(ldpe.iloc[:, 1:])
+    raw = ldpe.iloc[:, 1:]
+    scaled = MCUVScaler().fit_transform(raw)
 
     fitted = PCA(n_components=len(R2)).fit(scaled)
     largest = float(np.max(np.abs(np.asarray(fitted.r2_cumulative_, dtype=float) - np.array(R2))))
@@ -226,11 +256,37 @@ def process_improve_q2() -> tuple[np.ndarray, np.ndarray, int]:
     if largest > 1e-4:
         raise ValueError(f"R² disagrees with the recorded values by {largest:.4f}")
 
+    # The raw block goes in: the element-wise scheme centres and scales inside
+    # every fold, and measures its error there, so nothing about a held-out cell
+    # reaches the model that predicts it and no column's units set the curve.
+    settings = {"max_components": len(R2), "cv": 7, "cv_scheme": "ekf",
+                "n_repeats": 5, "random_state": 42}
+    chosen = PCA.select_n_components(raw, **settings)
+
+    # Passing the pre-scaled block has to give the same curve. It did not
+    # before process-improve 1.80.0: PRESS was accumulated in the input units,
+    # so on this data set the Mw column, which holds 99.5% of the raw sum of
+    # squares, set the whole curve on its own and the two calls disagreed
+    # wildly (kgdunn/process-improve#546). Checked rather than assumed, because
+    # an older library would otherwise quietly write a wrong PNG here.
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        chosen = PCA.select_n_components(
-            scaled, max_components=len(R2), cv=7, cv_scheme="ekf",
-            n_repeats=5, random_state=42,
+        prescaled = PCA.select_n_components(scaled, **settings)
+    gap = float(np.max(np.abs(np.asarray(prescaled.q2, dtype=float)
+                              - np.asarray(chosen.q2, dtype=float))))
+    print(f"Q² on the raw block against the pre-scaled block: largest difference {gap:.2e}")
+    if gap > 1e-3:
+        installed = version("process-improve")
+        if _version_tuple(installed) < (1, 80, 0):
+            raise TooOldForThisFigure(
+                f"process-improve {installed} accumulates cross-validation error in the "
+                f"units of the block it is given, so the two calls disagree by {gap:.3f}. "
+                "1.80.0 or later is needed to reproduce this figure."
+            )
+        raise ValueError(
+            f"Q² on the raw and pre-scaled blocks disagree by {gap:.3f} on "
+            f"process-improve {installed}, which should measure both in the space each "
+            "fold was fitted in. Something has regressed; see kgdunn/process-improve#546."
         )
     return (np.asarray(chosen.q2, dtype=float),
             np.asarray(chosen.q2_se, dtype=float),
@@ -243,6 +299,11 @@ def q2_comparison(outdir: pathlib.Path) -> None:
         q2, q2_se, selected = process_improve_q2()
     except ImportError:
         print("process_improve not importable: skipping q2-across-packages.png")
+        return
+    except TooOldForThisFigure as exc:
+        # The committed PNG stands. Regenerating it here would replace a correct
+        # figure with a wrong one, which is worse than not regenerating it.
+        print(f"skipping q2-across-packages.png: {exc}")
         return
 
     components = np.arange(1, len(R2) + 1)
@@ -261,8 +322,11 @@ def q2_comparison(outdir: pathlib.Path) -> None:
     ax.fill_between(components, q2 - q2_se, q2 + q2_se, color=GREEN, alpha=0.25,
                     linewidth=0)
     ax.axvline(2, color=GREY, linestyle="--", linewidth=1.5)
-    ax.annotate("Two components: both curves\nreach their highest value here\nand neither exceeds it again",
-                (2.15, 0.93), color=GREY, fontsize=13, va="top")
+    # Both curves climb again past the eighth component, where R² is already
+    # 99.1% and there is very little left to hold out and predict. The claim
+    # here is about the readable part of the curve, so it has to say so.
+    ax.annotate("Two components: the highest value\neither curve reaches over the first\neight, before the model runs out\nof variation to hold out",
+                (2.15, 0.97), color=GREY, fontsize=13, va="top")
     ax.set_xticks(components)
     ax.set_xlabel("Number of components")
     ax.set_ylabel("Cross-validated $Q^2$")

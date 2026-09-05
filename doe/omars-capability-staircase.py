@@ -11,7 +11,7 @@ model the run budget makes estimable:
     Satd  saturated (the definitive screening design size): no error degrees of freedom
 
 The number in each cell is the error degrees of freedom left over. Blank cells are budgets
-that are not a foldover design at all. Every value comes from omars_tradeoff, so the
+that are not a foldover design at all. Every value comes from get_omars_trade_off_table_entry, so the
 figure cannot drift away from the library.
 
 Reproducible; run from this directory to write the PNG alongside it.
@@ -19,15 +19,15 @@ Reproducible; run from this directory to write the PNG alongside it.
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch, Rectangle
-from process_improve.experiments import omars_tradeoff
-from process_improve.experiments.omars_tradeoff import DEFAULT_FACTORS, DEFAULT_RUNS
+from process_improve.experiments import get_omars_trade_off_table_entry
+from process_improve.experiments.omars_trade_off import DEFAULT_FACTORS, DEFAULT_RUNS
 
 # Okabe-Ito colourblind-safe palette, ordered by decreasing capability.
 FILLS = {"full": "#0072B2", "quad": "#56B4E9", "satd": "#E69F00", "none": "#F4F4F4"}
 INKS = {"full": "white", "quad": "#10334A", "satd": "#4A2F00", "none": "#F4F4F4"}
 
 runs, factors = DEFAULT_RUNS, DEFAULT_FACTORS
-cells = [[omars_tradeoff(n, k, display=False) for k in factors] for n in runs]
+cells = [[get_omars_trade_off_table_entry(n, k, display=False) for k in factors] for n in runs]
 
 fig, ax = plt.subplots(figsize=(8.2, 6.6))
 
