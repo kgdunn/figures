@@ -33,7 +33,7 @@ from batch_case_common import (
     AQUA,
     DARK_BLUE,
     GREY,
-    MAGENTA,
+    GOLD,
     ORANGE,
     PALE_GREY,
     PURPLE,
@@ -60,7 +60,7 @@ OPERATING_OUTLIER = 20
 QUALITY_GROUP = [61, 14]
 TRAJECTORY_BATCHES = [13, 5, 7]
 DISPOSITION = {"good": 33, "abnormal": 61, "high solvent": 71}  # the plant's classes: the last batch number of each
-DISPOSITION_STYLES = {"good": (DARK_BLUE, "o"), "abnormal": (PURPLE, "^"), "high solvent": (MAGENTA, "s")}  # colour, marker
+DISPOSITION_STYLES = {"good": (DARK_BLUE, "o"), "abnormal": (PURPLE, "^"), "high solvent": (GOLD, "s")}  # colour, marker
 PHASE_ENDS = (175, 249)  # the first sample of the high-speed phase and the sample of the peak temperature
 RAW_TAGS = ["CTankLvl", "ClockTime", "D-Temp", "D-Temp-SP"]  # the raw trajectories shown beside the Zop contributions
 

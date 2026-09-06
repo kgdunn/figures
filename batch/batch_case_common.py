@@ -31,6 +31,7 @@ ORANGE = "#c55a11"
 AQUA = "#1baf7a"
 PURPLE = "#6f42c1"
 MAGENTA = "#b03a78"
+GOLD = "#d4a017"  # the third disposition class of the FMC case; distinct from purple, blue, orange and aqua
 GREY = "0.55"
 PALE_GREY = "0.82"
 BAND = "#e9edf4"  # alternate shading of the tag blocks in a contribution vector
@@ -136,6 +137,7 @@ def group_scatter(
     dots (``MARKER_CODED`` against ``MARKER``), because a triangle and a square need the size to be told apart.
     """
     styles = group_styles or {}
+    area = {"s": 0.78}  # a square fills its bounding box; scale it to the visible area of a circle of the same s
     if size is None:
         size = MARKER if groups is None else MARKER_CODED
     if highlight_size is None:
@@ -146,11 +148,11 @@ def group_scatter(
     else:
         for label, (colour, marker) in styles.items():
             members = [b for b in x.index if groups.get(b) == label and b not in highlight]
-            ax.scatter(x.loc[members], y.loc[members], s=size, color=colour, marker=marker, edgecolor="white",
+            ax.scatter(x.loc[members], y.loc[members], s=size * area.get(marker, 1.0), color=colour, marker=marker, edgecolor="white",
                        linewidth=1, zorder=3, label=f"classed {label}")
     for batch_id, colour in highlight.items():
         marker = styles.get(groups.get(batch_id), (None, "o"))[1] if groups is not None else "o"
-        ax.scatter(x.loc[batch_id], y.loc[batch_id], s=highlight_size, color=colour, marker=marker,
+        ax.scatter(x.loc[batch_id], y.loc[batch_id], s=highlight_size * area.get(marker, 1.0), color=colour, marker=marker,
                    edgecolor="white", linewidth=1, zorder=4)
 
 
