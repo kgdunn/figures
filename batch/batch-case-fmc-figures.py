@@ -139,8 +139,8 @@ def main(out_dir: pathlib.Path) -> None:
         group_scatter(ax, block_scores.iloc[:, 0], block_scores.iloc[:, 1], {OPERATING_OUTLIER: ORANGE}, highlight_size=200, **coded)
         ax.annotate("20", (block_scores.loc[OPERATING_OUTLIER].iloc[0], block_scores.loc[OPERATING_OUTLIER].iloc[1]), xytext=(6, 4), textcoords="offset points", fontsize=8.5)
         r2 = np.diff([0.0, *mb_z.r2_x_per_block_cumulative_.loc[name].to_numpy(dtype=float)])
-        ax.set_xlabel(f"block score $t_1$ [{r2[0]:.1%}]")
-        ax.set_ylabel(f"block score $t_2$ [{r2[1]:.1%}]")
+        ax.set_xlabel(f"block score $t_1$ [$R^2_X$ {r2[0]:.1%}]")
+        ax.set_ylabel(f"block score $t_2$ [$R^2_X$ {r2[1]:.1%}]")
         ax.set_title(titles[name][0])
         weight_plot(axes[1, col], mb_z.block_weights_[name], title=titles[name][1], label_left=("Time1",))
     for ax in axes[0]:
@@ -233,8 +233,8 @@ def main(out_dir: pathlib.Path) -> None:
         ax.axhline(0, color=GREY, lw=0.8)
         ax.axvline(0, color=GREY, lw=0.8)
         r2 = np.diff([0.0, *mb.r2_x_per_block_cumulative_.loc[name].to_numpy(dtype=float)])
-        ax.set_xlabel(f"block score $t_1$ [{r2[0]:.1%}]")
-        ax.set_ylabel(f"block score $t_2$ [{r2[1]:.1%}]")
+        ax.set_xlabel(f"block score $t_1$ [$R^2_X$ {r2[0]:.1%}]")
+        ax.set_ylabel(f"block score $t_2$ [$R^2_X$ {r2[1]:.1%}]")
         ax.set_title(f"{name} block")
     handles, labels = axes[0].get_legend_handles_labels()  # one legend for the three panels, in a row below them
     fig.legend(handles, labels, loc="lower center", ncol=4, fontsize=8, frameon=False, bbox_to_anchor=(0.5, 0.0))

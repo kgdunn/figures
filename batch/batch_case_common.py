@@ -205,8 +205,9 @@ def score_plot(
     ax.axhline(0, color=GREY, lw=0.8)
     ax.axvline(0, color=GREY, lw=0.8)
     r2 = explained_per_component(model)
-    ax.set_xlabel(f"$t_{pc_horiz}$ [{r2[pc_horiz - 1]:.1%}]")
-    ax.set_ylabel(f"$t_{pc_vert}$ [{r2[pc_vert - 1]:.1%}]")
+    note = "$R^2_X$ " if type(model).__name__ in ("PLS", "BatchPLS") else ""  # a PLS also has an R2 of Y: say which
+    ax.set_xlabel(f"$t_{pc_horiz}$ [{note}{r2[pc_horiz - 1]:.1%}]")
+    ax.set_ylabel(f"$t_{pc_vert}$ [{note}{r2[pc_vert - 1]:.1%}]")
     ax.set_title(title)
     ax.set_aspect("equal", adjustable="datalim")
     if groups is not None:
