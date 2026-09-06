@@ -81,7 +81,6 @@ MONITOR_CONF_LEVEL = 0.99
 ALARM_RUN = 3  # consecutive samples above the limit before an alarm counts
 FAULT_SAMPLE = 100  # the impurity enters batch 34 at about this sample
 EWMA_LAMBDA = 0.3  # smoothing of the robust departure chart, the value the book's EWMA chapter uses
-TRANSIENT_END = 15  # the cooling-water temperature settles after this many samples; the forecast panel starts here
 FORECASTS = {FAULT_FROM_START: ("Conversion", [30, 60]), FAULT_PARTWAY: ("CoolingTemp", [60, 115])}
 
 
@@ -341,43 +340,42 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
 
     # -- What the reference model expected the rest of each faulty batch to look like (Wold et al. 2009, Eq. 4):
     # the scores estimated from the samples so far, mapped back through the loadings onto the unobserved cells.
+    # Drawn in the z form of the departure figure: every tag as a distance from the 51 normal batches at that
+    # sample, in their standard deviations, so the average batch is the zero line and a departure reads directly.
+    stack = np.stack([batch.to_numpy() for batch in normal.values()])
+    z_mean, z_sd = stack.mean(axis=0), stack.std(axis=0, ddof=1)
+
+    def z_form(frame: pd.DataFrame) -> pd.DataFrame:
+        return pd.DataFrame((frame.to_numpy() - z_mean) / z_sd, columns=frame.columns, index=frame.index)
+
     fig, axes = plt.subplots(1, 2, figsize=(9.0, 3.9))
     time = np.arange(1, model.n_timesteps_ + 1)
     for ax, (batch_id, (tag, sample_points)) in zip(axes, FORECASTS.items(), strict=True):
         colour = HIGHLIGHT[batch_id]
         for j, batch in enumerate(normal.values()):
-            ax.plot(time, batch[tag].to_numpy(), color=PALE_GREY, lw=0.6, zorder=1, label="normal batches" if j == 0 else None)
-        actual = trajectories[batch_id][tag].to_numpy()
+            ax.plot(time, z_form(batch)[tag].to_numpy(), color=PALE_GREY, lw=0.6, zorder=1, label="normal batches" if j == 0 else None)
+        ax.axhline(0, color=GREY, lw=0.8, zorder=2)
+        actual = z_form(trajectories[batch_id])[tag].to_numpy()
         first = sample_points[0]
         ax.plot(time, actual, color=colour, lw=1.4, alpha=0.35, zorder=2, label=f"batch {batch_id}, what happened")
         ax.plot(time[:first], actual[:first], color=colour, lw=1.8, zorder=3, label=f"batch {batch_id}, first {first} samples")
         for k, style in zip(sample_points, ["--", (0, (1.0, 1.6))], strict=True):
-            forecast = reference.predict_online(trajectories[batch_id], upto_k=k).forecast[tag]
+            forecast = z_form(reference.predict_online(trajectories[batch_id], upto_k=k).forecast)[tag].to_numpy()
             print(
-                f"batch {batch_id} {tag}, mean over the samples after {k}: forecast {forecast.iloc[k:].mean():.4f}, "
-                f"actual {trajectories[batch_id][tag].iloc[k:].mean():.4f}, "
-                f"normal batches {np.mean([batch[tag].iloc[k:].mean() for batch in normal.values()]):.4f}"
+                f"batch {batch_id} {tag}, mean over the samples after {k}: forecast {forecast[k:].mean():.2f} sd, "
+                f"actual {actual[k:].mean():.2f} sd"
             )
-            ax.plot(time[k:], forecast.to_numpy()[k:], color=colour, lw=1.7, ls=style, zorder=4, label=f"forecast from {k} samples")
+            ax.plot(time[k:], forecast[k:], color=colour, lw=1.7, ls=style, zorder=4, label=f"forecast from {k} samples")
         if batch_id == FAULT_PARTWAY:
             ax.axvline(FAULT_SAMPLE, color=GREY, lw=1, ls=":", zorder=2)
-            # Written along the bottom, to the right of the line: the legend fills the upper right of this panel.
             ax.text(FAULT_SAMPLE + 2, 0.03, "impurity enters", transform=ax.get_xaxis_transform(), va="bottom", ha="left", fontsize=8.5, color=GREY)
         ax.set_xlim(0, model.n_timesteps_ + 2)
         ax.set_xlabel("Sample [aligned time]")
-        ax.set_ylabel(tag)
+        ax.set_ylabel("Distance from the normal batches [sd]")
     axes[0].set_title(f"Batch {FAULT_FROM_START}: conversion,\nforecast of the remainder")
-    axes[0].legend(loc="lower right")
-    # The cooling-water temperature swings through 5 degrees in the first 15 samples of every batch; the panel
-    # starts after that transient so the 0.4 degree departure of batch 34 is not squashed by it. The vertical
-    # axis is set from the samples shown (autoscaling would still span the transient), with room for the legend.
-    settled = [batch["CoolingTemp"].iloc[TRANSIENT_END:] for batch in [*normal.values(), trajectories[FAULT_PARTWAY]]]
-    low, high = min(float(s.min()) for s in settled), max(float(s.max()) for s in settled)
-    axes[1].set_xlim(TRANSIENT_END, model.n_timesteps_ + 2)
-    axes[1].set_ylim(low - 0.25 * (high - low), high + 0.65 * (high - low))
-    axes[1].set_xlabel(f"Sample [aligned time], after the start-up transient (samples 1 to {TRANSIENT_END})")
+    axes[0].legend(loc="upper right")
     axes[1].set_title(f"Batch {FAULT_PARTWAY}: cooling-water temperature,\nforecast of the remainder")
-    axes[1].legend(loc="upper right")
+    axes[1].legend(loc="upper left")
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-forecast")
 
