@@ -106,11 +106,17 @@ def score_plot(
     pc_vert: int = 2,
     highlight: dict[int, str] | None = None,
     labels: list[int] | None = None,
+    label_left: tuple[int, ...] = (),
     conf_level: float = 0.95,
     title: str = "",
+    legend_loc: str = "upper right",
     ax=None,
 ) -> Figure:
-    """Scores on two components with the Hotelling's T2 ellipse; selected batches coloured and labelled."""
+    """Scores on two components with the Hotelling's T2 ellipse; selected batches coloured and labelled.
+
+    ``label_left`` names the batches whose label sits to the left of the marker, for the cases where the
+    default right-hand placement would collide with a neighbour.
+    """
     if ax is None:
         fig, ax = plt.subplots(figsize=(4.8, 4.4))
     else:
@@ -125,7 +131,9 @@ def score_plot(
     for batch_id, colour in highlight.items():
         ax.scatter(x.loc[batch_id], y.loc[batch_id], s=46, color=colour, edgecolor="white", linewidth=1, zorder=4)
     for batch_id in labels or []:
-        ax.annotate(str(batch_id), (x.loc[batch_id], y.loc[batch_id]), xytext=(4, 4), textcoords="offset points", fontsize=8.5)
+        left = batch_id in label_left
+        ax.annotate(str(batch_id), (x.loc[batch_id], y.loc[batch_id]), xytext=(-4 if left else 4, 4),
+                    textcoords="offset points", ha="right" if left else "left", fontsize=8.5)
     ax.axhline(0, color=GREY, lw=0.8)
     ax.axvline(0, color=GREY, lw=0.8)
     r2 = explained_per_component(model)
@@ -133,7 +141,7 @@ def score_plot(
     ax.set_ylabel(f"$t_{pc_vert}$ [{r2[pc_vert - 1]:.1%}]")
     ax.set_title(title)
     ax.set_aspect("equal", adjustable="datalim")
-    ax.legend(loc="upper right")
+    ax.legend(loc=legend_loc)
     return fig
 
 

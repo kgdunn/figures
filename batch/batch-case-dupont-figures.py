@@ -37,6 +37,7 @@ ABOVE_SPE_LIMIT = [49, 51]  # a residual the two components cannot describe
 ABOVE_T2_LIMIT = [50, 52, 53, 54, 55]  # extreme along the components themselves
 FLAGGED = {**{b: AQUA for b in ABOVE_T2_LIMIT}, **{b: ORANGE for b in ABOVE_SPE_LIMIT}}
 SECOND_CLUSTER = [37, 39, 43, 44, 45, 46, 47, 48]
+ARROW = "0.3"  # the contribution direction drawn on the model B score plot
 CLUSTER_TAGS = ["TempC-1", "Press-3", "Press-2"]  # the three largest |t2| + |t3| contributions of the cluster
 EARLY_WINDOW = 25  # samples 0 to 25 carry 66% of the cluster's t2 and 90% of its t3 contribution
 RAW_WINDOW = 30
@@ -73,7 +74,17 @@ def main(out_dir: pathlib.Path) -> None:
 
     kept_b = {b: batch for b, batch in batches.items() if b < SPE_OUTLIER}
     model_b = BatchPCA(n_components=3).fit(kept_b)
-    fig = score_plot(model_b, pc_horiz=2, pc_vert=3, highlight={b: ORANGE for b in SECOND_CLUSTER}, labels=SECOND_CLUSTER, title="Model B: batches 1 to 48, components 2 and 3")
+    fig = score_plot(model_b, pc_horiz=2, pc_vert=3, highlight={b: ORANGE for b in SECOND_CLUSTER}, labels=SECOND_CLUSTER,
+                     label_left=(39, 47), legend_loc="lower left", title="Model B: batches 1 to 48, components 2 and 3")
+    # The contributions below compare the group with the model centre: draw that direction, from the group's average
+    # point to the origin, with its label riding along the arrow (the axes have equal scales, so the data angle holds).
+    group_t2, group_t3 = model_b.scores_.loc[SECOND_CLUSTER].iloc[:, 1:3].mean()
+    ax = fig.axes[0]
+    ax.annotate("", xy=(0, 0), xytext=(group_t2, group_t3), zorder=5,
+                arrowprops={"arrowstyle": "-|>", "lw": 2.5, "color": ARROW, "shrinkA": 0, "shrinkB": 0, "mutation_scale": 18})
+    ax.annotate("contribution direction", (group_t2 / 2, group_t3 / 2), xytext=(-3, 4), textcoords="offset points",
+                rotation=np.degrees(np.arctan2(group_t3, group_t2)), rotation_mode="anchor", ha="center", va="bottom",
+                fontsize=9, color=ARROW, zorder=5)
     save(fig, out_dir, "batch-case-dupont-model-b-scores")
 
     # The columns are centred, so the model centre is the origin and a group's mean row is
