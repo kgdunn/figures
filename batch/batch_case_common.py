@@ -50,6 +50,7 @@ plt.rcParams.update(
     {
         "font.size": 10,
         "axes.grid": True,
+        "axes.axisbelow": True,  # the grid goes behind the data, never over a bar or a marker
         "grid.alpha": 0.3,
         "figure.dpi": 140,
         "axes.spines.top": False,
