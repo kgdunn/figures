@@ -27,7 +27,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from batch_case_common import AQUA, DARK_BLUE, GREY, ORANGE, PALE_GREY, PURPLE, contribution_triptych, influence_plot, overlay_panels, save, score_plot, tag_panels
+from batch_case_common import AQUA, DARK_BLUE, GREY, ORANGE, PALE_GREY, PURPLE, contribution_triptych, influence_plot, overlay_panels, save, score_plot, tag_panels, shade_alternate_tags
 
 from process_improve.batch import BatchPCA, load_dupont
 
@@ -114,6 +114,7 @@ def main(out_dir: pathlib.Path) -> None:
         for row in members:
             ax_bars.scatter(positions + offset, row, s=16, facecolor="white", edgecolor=MEMBER_DOT, linewidth=0.8, zorder=3)
     ax_bars.axhline(0, color=GREY, lw=0.8)
+    shade_alternate_tags(ax_bars, len(per_tag))
     ax_bars.set_xticks(positions, [str(tag) for tag in per_tag.index], rotation=30, ha="right")
     ax_bars.set_ylabel("Contribution to the score, summed per tag")
     ax_bars.set_title("The cluster against the model centre, per tag")

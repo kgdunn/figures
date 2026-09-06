@@ -99,6 +99,39 @@ def explained_per_component(model) -> np.ndarray:
     return np.asarray(model.r2_per_component_, dtype=float)
 
 
+def group_scatter(
+    ax,
+    x: pd.Series,
+    y: pd.Series,
+    highlight: dict[int, str],
+    *,
+    groups: pd.Series | None = None,
+    group_styles: dict[str, tuple[str, str]] | None = None,
+    size: float = 28,
+    highlight_size: float = 46,
+) -> None:
+    """Scatter the batches in ``x`` and ``y``, colour- and shape-coded by ``groups`` when given, with ``highlight`` on top.
+
+    Without ``groups`` every batch is a dark-blue circle. With ``groups`` (a Series over the batch ids) and
+    ``group_styles`` (group -> (colour, marker)) each group gets its own colour and marker and one legend
+    entry, "classed <group>"; a highlighted batch is drawn larger in its highlight colour but keeps its
+    group's marker, so its class stays readable.
+    """
+    styles = group_styles or {}
+    if groups is None:
+        others = [b for b in x.index if b not in highlight]
+        ax.scatter(x.loc[others], y.loc[others], s=size, color=DARK_BLUE, edgecolor="white", linewidth=1, zorder=3)
+    else:
+        for label, (colour, marker) in styles.items():
+            members = [b for b in x.index if groups.get(b) == label and b not in highlight]
+            ax.scatter(x.loc[members], y.loc[members], s=size, color=colour, marker=marker, edgecolor="white",
+                       linewidth=1, zorder=3, label=f"classed {label}")
+    for batch_id, colour in highlight.items():
+        marker = styles.get(groups.get(batch_id), (None, "o"))[1] if groups is not None else "o"
+        ax.scatter(x.loc[batch_id], y.loc[batch_id], s=highlight_size, color=colour, marker=marker,
+                   edgecolor="white", linewidth=1, zorder=4)
+
+
 def score_plot(
     model,
     *,
@@ -111,13 +144,17 @@ def score_plot(
     conf_level: float = 0.95,
     title: str = "",
     legend_loc: str = "upper right",
+    groups: pd.Series | None = None,
+    group_styles: dict[str, tuple[str, str]] | None = None,
     ax=None,
 ) -> Figure:
     """Scores on two components with the Hotelling's T2 ellipse; selected batches coloured and labelled.
 
     ``label_left`` names the batches whose label sits to the left of the marker, for the cases where the
     default right-hand placement would collide with a neighbour. ``label_leader`` maps a batch to an offset
-    in points and draws a leader line to it, for a batch that sits inside a dense cloud.
+    in points and draws a leader line to it, for a batch that sits inside a dense cloud. ``groups`` (a
+    Series over the batches) with ``group_styles`` (group -> (colour, marker)) colour- and shape-codes the
+    batches by a known classification; a highlighted batch keeps its group's marker in the highlight colour.
     """
     if ax is None:
         fig, ax = plt.subplots(figsize=(4.8, 4.4))
@@ -128,10 +165,7 @@ def score_plot(
     ex, ey = model.ellipse_coordinates(score_horiz=pc_horiz, score_vert=pc_vert, conf_level=conf_level)
     ax.plot(ex, ey, color=GREY, lw=1, ls="--", label=f"{conf_level:.0%} confidence ellipse")
     highlight = highlight or {}
-    others = [b for b in scores.index if b not in highlight]
-    ax.scatter(x.loc[others], y.loc[others], s=28, color=DARK_BLUE, edgecolor="white", linewidth=1, zorder=3)
-    for batch_id, colour in highlight.items():
-        ax.scatter(x.loc[batch_id], y.loc[batch_id], s=46, color=colour, edgecolor="white", linewidth=1, zorder=4)
+    group_scatter(ax, x, y, highlight, groups=groups, group_styles=group_styles)
     label_leader = label_leader or {}
     for batch_id in labels or []:
         point = (x.loc[batch_id], y.loc[batch_id])
@@ -162,6 +196,9 @@ def influence_plot(
     labels: list[int] | None = None,
     conf_level: float = 0.95,
     title: str = "",
+    groups: pd.Series | None = None,
+    group_styles: dict[str, tuple[str, str]] | None = None,
+    legend_loc: str = "upper left",
     ax=None,
 ) -> Figure:
     """Hotelling's T2 against SPE for every batch, with both limits drawn.
@@ -194,10 +231,9 @@ def influence_plot(
     ax.text(t2_limit, 0.99, f" {conf_level:.0%} limit", transform=ax.get_xaxis_transform(), va="top", ha="left", fontsize=8.5, color=GREY)
     ax.text(0.995, spe_limit, f"{conf_level:.0%} limit", transform=ax.get_yaxis_transform(), va="bottom", ha="right", fontsize=8.5, color=GREY)
 
-    others = [batch_id for batch_id in t2.index if batch_id not in highlight]
-    ax.scatter(t2.loc[others], spe.loc[others], s=30, color=DARK_BLUE, edgecolor="white", linewidth=1, zorder=3)
-    for batch_id, colour in highlight.items():
-        ax.scatter(t2.loc[batch_id], spe.loc[batch_id], s=52, color=colour, edgecolor="white", linewidth=1, zorder=4)
+    group_scatter(ax, t2, spe, highlight, groups=groups, group_styles=group_styles, size=30, highlight_size=52)
+    if groups is not None:
+        ax.legend(loc=legend_loc, fontsize=8)
     for batch_id in labels or []:
         to_the_left = float(t2.loc[batch_id]) > 0.82 * x_max
         ax.annotate(
@@ -307,17 +343,47 @@ def contribution_triptych(row: pd.Series, *, what: str, title: str) -> Figure:
     return fig
 
 
-def tag_panels(grid: pd.DataFrame, *, ylabel: str, ncols: int = 5, colour: str = DARK_BLUE, second: pd.DataFrame | None = None, second_label: str = "", first_label: str = "") -> Figure:
-    """Small multiples: one panel per tag (row of ``grid``), the values over time; an optional second grid overlaid."""
+def tag_panels(
+    grid: pd.DataFrame,
+    *,
+    ylabel: str,
+    ncols: int = 5,
+    colour: str = DARK_BLUE,
+    second: pd.DataFrame | None = None,
+    second_label: str = "",
+    first_label: str = "",
+    secondary: pd.DataFrame | None = None,
+    secondary_label: str = "",
+    vlines: tuple[float, ...] = (),
+) -> Figure:
+    """Small multiples: one panel per tag (row of ``grid``), the values over time; an optional second grid overlaid.
+
+    ``secondary`` is a grid on the same rows drawn in orange against a second, right-hand axis from 0 to 1 (an
+    R2 per cell, for instance). ``vlines`` draws a faint vertical line at each of those samples in every panel,
+    to mark the phases of the batch.
+    """
     tags = list(grid.index)
     nrows = int(np.ceil(len(tags) / ncols))
-    fig, axes = plt.subplots(nrows, ncols, figsize=(2.1 * ncols, 2.0 * nrows), sharex=True, sharey=True, squeeze=False)
-    for ax, tag in zip(axes.ravel(), tags, strict=False):
-        ax.plot(grid.columns.to_numpy(), grid.loc[tag].to_numpy(), color=colour, lw=1.4, label=first_label)
+    fig, axes = plt.subplots(nrows, ncols, figsize=(2.3 * ncols, 2.1 * nrows), sharex=True, sharey=True, squeeze=False)
+    for k, (ax, tag) in enumerate(zip(axes.ravel(), tags, strict=False)):
+        for x in vlines:
+            ax.axvline(x, color=PALE_GREY, lw=0.9, zorder=0)
+        ax.plot(grid.columns.to_numpy(), grid.loc[tag].to_numpy(), color=colour, lw=1.4, label=first_label, zorder=3)
         if second is not None:
             ax.plot(second.columns.to_numpy(), second.loc[tag].to_numpy(), color=ORANGE, lw=1.4, label=second_label)
         ax.axhline(0, color=GREY, lw=0.7)
         ax.set_title(str(tag))
+        if secondary is not None:
+            twin = ax.twinx()
+            twin.plot(secondary.columns.to_numpy(), secondary.loc[tag].to_numpy(), color=ORANGE, lw=1.1, zorder=2)
+            twin.set_ylim(0, 1)
+            twin.grid(False)
+            twin.spines["top"].set_visible(False)
+            twin.tick_params(axis="y", colors=ORANGE, labelsize=8)
+            if k % ncols == ncols - 1 or k == len(tags) - 1:
+                twin.set_ylabel(secondary_label, color=ORANGE, fontsize=9)
+            else:
+                twin.set_yticklabels([])
     for ax in axes.ravel()[len(tags) :]:
         ax.set_visible(False)
     for ax in axes[-1]:
