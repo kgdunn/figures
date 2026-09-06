@@ -305,7 +305,8 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
                  conf_level=MONITOR_CONF_LEVEL)
     axes[0].set_title(f"Batch {FAULT_FROM_START}: Hotelling's $T^2$,\nfirst sustained alarm after {t2_alarm} samples")
     online_chart(axes[1], results[FAULT_PARTWAY], "spe", colour=ORANGE, mean_trace=monitor.spe_mean_over_time_,
-                 conf_level=MONITOR_CONF_LEVEL, fault_at=FAULT_SAMPLE, fault_label="impurity enters", legend_loc="upper left")
+                 conf_level=MONITOR_CONF_LEVEL, fault_at=FAULT_SAMPLE, fault_label="impurity enters", fault_label_top=0.66,
+                 legend_loc="upper left")
     axes[1].set_title(f"Batch {FAULT_PARTWAY}: SPE of the newest sample,\nfirst sustained alarm after {spe_alarm} samples")
     ax = axes[2]
     ax.bar(range(len(shares)), shares.to_numpy(), color=DARK_BLUE, width=0.6, zorder=2)

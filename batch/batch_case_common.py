@@ -361,6 +361,7 @@ def online_chart(
     conf_level: float,
     fault_at: int | None = None,
     fault_label: str = "fault begins",
+    fault_label_top: float = 0.97,
     legend_loc: str = "upper left",
 ) -> None:
     """One batch's on-line Hotelling's T2 or SPE against the per-sample control limit.
@@ -373,7 +374,8 @@ def online_chart(
     wide limits of the first few samples (where the reference batches have
     hardly been observed) run off the top of the panel rather than squash
     the rest. ``fault_at`` draws a dotted vertical line at that sample with
-    ``fault_label`` written along it, so the label stays clear of the legend.
+    ``fault_label`` written along it from ``fault_label_top`` (axes fraction) downward, so the label
+    can be placed below a legend.
     """
     if statistic == "t2":
         trace, limit, alarm, ylabel = result.hotellings_t2, result.t2_limit, result.t2_alarm, "Hotelling's $T^2$"
@@ -391,7 +393,8 @@ def online_chart(
         ax.plot(time[alarm], trace[alarm], ls="none", marker="o", ms=3.4, color=colour, mec="white", mew=0.4, zorder=4, label="above the limit")
     if fault_at is not None:
         ax.axvline(fault_at, color=GREY, lw=1, ls=":", zorder=2)
-        ax.text(fault_at, 0.97, fault_label, transform=ax.get_xaxis_transform(), rotation=90, va="top", ha="right", fontsize=8.5, color=GREY)
+        ax.text(fault_at, fault_label_top, fault_label, transform=ax.get_xaxis_transform(), rotation=90, va="top", ha="right",
+                fontsize=8.5, color=GREY)
     ax.set_ylim(0, 1.35 * max(float(trace.max()), float(np.median(limit))))
     ax.set_xlim(0, float(time[-1]) + 1)
     ax.set_xlabel("Samples observed")
