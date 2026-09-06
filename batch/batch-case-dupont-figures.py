@@ -52,7 +52,7 @@ def main(out_dir: pathlib.Path) -> None:
 
     model_a = BatchPCA(n_components=2).fit(batches)
     # Batch 49 sits inside the central cloud, so its label is pulled clear of the points on a leader line.
-    fig = score_plot(model_a, highlight=FLAGGED, labels=LAST_SIX + [SPE_OUTLIER], label_leader={SPE_OUTLIER: (-46, -34)},
+    fig = score_plot(model_a, highlight=FLAGGED, labels=LAST_SIX + [SPE_OUTLIER], label_leader={SPE_OUTLIER: (-16, -12)},
                      title="Model A: 55 batches, two components")
     save(fig, out_dir, "batch-case-dupont-model-a-scores")
     fig = influence_plot(model_a, highlight=FLAGGED, labels=ABOVE_SPE_LIMIT + ABOVE_T2_LIMIT, title="Model A: Hotelling's $T^2$ against SPE")
