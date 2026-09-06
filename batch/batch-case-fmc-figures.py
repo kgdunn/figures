@@ -5,11 +5,13 @@ Mirrors the analysis in the pid-book chapter
 ladder of two-component models on the FMC batch dryer data (PCA on quality,
 PLS from the initial conditions, multiblock PLS on both initial-condition
 blocks, batch PCA and batch PLS on the trajectories, and the batch multiblock
-PLS that joins all three blocks). The chapter shows the equivalent Plotly
-code; the committed figures are these matplotlib renderings.
+PLS that joins all three blocks, with ``ClockTime`` as the eleventh
+trajectory), and the four batches classed good whose trajectories sit with
+the abnormal batches. The chapter shows the equivalent Plotly code; the
+committed figures are these matplotlib renderings.
 
 Requires the ``process_improve`` package (``pip install 'process-improve[batch]'``,
-version 1.79 or later) for ``load_fmc``, ``dict_to_wide`` and ``MBPLS``.
+version 1.81 or later) for ``load_fmc``, ``dict_to_wide`` and ``MBPLS``.
 
 Usage::
 
@@ -26,7 +28,25 @@ import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
-from batch_case_common import AQUA, DARK_BLUE, GREY, ORANGE, contribution_triptych, influence_plot, overlay_panels, parity_plot, save, score_plot, tag_panels
+import pandas as pd
+from batch_case_common import (
+    AQUA,
+    DARK_BLUE,
+    GREY,
+    ORANGE,
+    PALE_GREY,
+    PURPLE,
+    contribution_triptych,
+    influence_plot,
+    label_bars,
+    overlay_panels,
+    parity_plot,
+    save,
+    score_plot,
+    shade_alternate_tags,
+    tag_panels,
+)
+from matplotlib.lines import Line2D
 
 from process_improve.batch import dict_to_wide, load_fmc
 from process_improve.multivariate import PCA, PLS, MCUVScaler
@@ -35,6 +55,9 @@ from process_improve.multivariate.methods import MBPLS
 OPERATING_OUTLIER = 20
 QUALITY_GROUP = [61, 14]
 TRAJECTORY_BATCHES = [13, 5, 7]
+DISPOSITION = {"good": 33, "abnormal": 61, "high solvent": 71}  # the plant's classes: the last batch number of each
+DISPOSITION_COLOURS = {"good": DARK_BLUE, "abnormal": PURPLE, "high solvent": AQUA}
+RAW_TAGS = ["CTankLvl", "ClockTime", "D-Temp", "D-Temp-SP"]  # the raw trajectories shown beside the Zop contributions
 
 
 def grouped_bars(ax, table, *, colours: list[str], ylabel: str, title: str) -> None:
@@ -88,7 +111,7 @@ def main(out_dir: pathlib.Path) -> None:
     fig.tight_layout()
     save(fig, out_dir, "batch-case-fmc-mbpls-z")
 
-    wide = dict_to_wide({b: batch.drop(columns="ClockTime") for b, batch in X.items()})
+    wide = dict_to_wide(X)  # ten process tags plus ClockTime, the eleventh trajectory
     x_scaled = MCUVScaler().fit_transform(wide)
     x_scaled.columns = wide.columns
     pca_x = PCA(n_components=2).fit(x_scaled)
@@ -97,12 +120,12 @@ def main(out_dir: pathlib.Path) -> None:
     worst = int(pca_x.spe_.loc[complete].iloc[:, -1].idxmax())
     fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), gridspec_kw={"width_ratios": [1, 1.1]})
     score_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE, worst: AQUA}, labels=[OPERATING_OUTLIER, worst], title="Batch PCA on the trajectories: scores", ax=axes[0])
-    influence_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE, worst: AQUA}, labels=[OPERATING_OUTLIER, worst, 41], title="Batch PCA: Hotelling's $T^2$ against SPE", ax=axes[1])
+    influence_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE, worst: AQUA}, labels=[OPERATING_OUTLIER, worst, 51], title="Batch PCA: Hotelling's $T^2$ against SPE", ax=axes[1])
     fig.tight_layout()
     save(fig, out_dir, "batch-case-fmc-batch-pca")
 
-    p1 = pca_x.loadings_.iloc[:, 0].unstack(level="sequence").reindex(index=[t for t in X[keep[0]].columns if t != "ClockTime"])
-    fig = tag_panels(p1, ylabel="$p_1$", ncols=5)
+    p1 = pca_x.loadings_.iloc[:, 0].unstack(level="sequence").reindex(index=list(X[keep[0]].columns))
+    fig = tag_panels(p1, ylabel="$p_1$", ncols=4)
     fig.suptitle("Batch PCA: loading $p_1$ over the batch, one panel per tag", y=1.02)
     save(fig, out_dir, "batch-case-fmc-loadings-p1")
 
@@ -121,10 +144,11 @@ def main(out_dir: pathlib.Path) -> None:
     axes[1].set_title("Batch 13: contributions to $t_1$")
     fig.tight_layout()
     save(fig, out_dir, "batch-case-fmc-batch-pls")
-    fig = overlay_panels(X, ["D-Temp", "CTankLvl", "Power", "J-Temp-SP"], {13: ORANGE, 5: AQUA, 7: DARK_BLUE})
+    fig = overlay_panels(X, ["D-Temp", "CTankLvl", "ClockTime", "J-Temp-SP"], {13: ORANGE, 5: AQUA, 7: DARK_BLUE})
     save(fig, out_dir, "batch-case-fmc-raw-batches-13-5-7")
 
-    mb = MBPLS(n_components=2).fit({"Zchem": Zchem, "Zop": Zop, "X": wide}, Y)
+    blocks = {"Zchem": Zchem, "Zop": Zop, "X": wide}
+    mb = MBPLS(n_components=2).fit(blocks, Y)
     fig, axes = plt.subplots(1, 3, figsize=(13.0, 4.0), gridspec_kw={"width_ratios": [1, 1, 1]})
     ss = mb.super_scores_
     others = [b for b in ss.index if b not in TRAJECTORY_BATCHES]
@@ -145,6 +169,67 @@ def main(out_dir: pathlib.Path) -> None:
     parity_plot(observed, mb.predictions_["SolventConc"].loc[observed.index], highlight={13: ORANGE}, ax=axes[2], title="SolventConc: observed and fitted")
     fig.tight_layout()
     save(fig, out_dir, "batch-case-fmc-batch-mbpls")
+
+    # Off-spec trajectories, on-spec product: place every batch, block by block, with the nearer group average
+    groups = pd.Series(pd.cut(keep, bins=[0, *DISPOSITION.values()], labels=list(DISPOSITION)).astype(str), index=keep)
+
+    def nearer_group(scores: pd.DataFrame) -> pd.Series:
+        centres = {name: scores.loc[groups == name].mean() for name in ("good", "abnormal")}
+        return pd.DataFrame({name: ((scores - centre) ** 2).sum(axis=1) for name, centre in centres.items()}).idxmin(axis=1)
+
+    placed = pd.DataFrame({name: nearer_group(scores) for name, scores in mb.block_scores_.items()})
+    anomalous = [b for b in keep if groups[b] == "good" and placed.loc[b, "X"] == "abnormal" and (placed.loc[b, ["Zchem", "Zop"]] == "good").all()]
+    x_scores = mb.block_scores_["X"]
+    abnormal_scores = x_scores.loc[groups == "abnormal"]
+    neighbours = sorted({int(b) for a in anomalous for b in ((abnormal_scores - x_scores.loc[a]) ** 2).sum(axis=1).nsmallest(2).index})
+    print(f"anomalous {anomalous}; nearest abnormal neighbours {neighbours}")
+
+    fig, axes = plt.subplots(1, 3, figsize=(13.0, 4.3))
+    label_offsets = {2: (5, 4), 3: (-5, 4), 6: (5, -4), 7: (5, 4)}  # keep the four labels off each other in the X block
+    for ax, (name, scores) in zip(axes, mb.block_scores_.items(), strict=True):
+        for label, colour in DISPOSITION_COLOURS.items():
+            members = [b for b in keep if groups[b] == label and b not in anomalous]
+            ax.scatter(scores.loc[members].iloc[:, 0], scores.loc[members].iloc[:, 1], s=28, color=colour, edgecolor="white", linewidth=1, label=f"classed {label}", zorder=3)
+        ax.scatter(scores.loc[anomalous].iloc[:, 0], scores.loc[anomalous].iloc[:, 1], s=50, color=ORANGE, edgecolor="white", linewidth=1, label="classed good, trajectories with the abnormal", zorder=4)
+        for b in anomalous:
+            dx, dy = label_offsets.get(b, (5, 4))
+            ax.annotate(str(b), (scores.loc[b].iloc[0], scores.loc[b].iloc[1]), xytext=(dx, dy), textcoords="offset points", ha="right" if dx < 0 else "left", va="top" if dy < 0 else "bottom", fontsize=8.5, zorder=6)
+        ax.axhline(0, color=GREY, lw=0.8)
+        ax.axvline(0, color=GREY, lw=0.8)
+        r2 = np.diff([0.0, *mb.r2_x_per_block_cumulative_.loc[name].to_numpy(dtype=float)])
+        ax.set_xlabel(f"block score $t_1$ [{r2[0]:.1%}]")
+        ax.set_ylabel(f"block score $t_2$ [{r2[1]:.1%}]")
+        ax.set_title(f"{name} block")
+    axes[0].legend(loc="lower left", fontsize=8)
+    fig.tight_layout()
+    save(fig, out_dir, "batch-case-fmc-block-scores")
+
+    contributions = mb.score_contributions(blocks, component=1)["Zop"]
+    move = contributions.loc[anomalous].mean() - contributions.loc[neighbours].mean()
+    fig = plt.figure(figsize=(13.0, 5.8), layout="constrained")
+    grid = fig.add_gridspec(2, 3, width_ratios=[1.45, 1, 1])
+    ax = fig.add_subplot(grid[:, 0])
+    ax.bar(range(len(move)), move.to_numpy(dtype=float), color=DARK_BLUE, width=0.6, zorder=2)
+    ax.set_xticks(range(len(move)), [str(name) for name in move.index], rotation=30, ha="right")
+    ax.axhline(0, color=GREY, lw=0.8)
+    shade_alternate_tags(ax, len(move))
+    label_bars(ax, move.to_numpy(dtype=float), fmt="{:.2f}", floor=0.005)
+    ax.set_ylabel("Contribution to the Zop block score $t_1$")
+    ax.set_title("From the neighbours' average to the four batches' average")
+    highlight = {**dict.fromkeys(neighbours, AQUA), **dict.fromkeys(anomalous, ORANGE)}
+    for k, tag in enumerate(RAW_TAGS):
+        ax = fig.add_subplot(grid[k // 2, 1 + k % 2])
+        for b, batch in X.items():
+            if b not in highlight:
+                ax.plot(batch[tag].to_numpy(), color=PALE_GREY, lw=0.7, zorder=1)
+        for b, colour in highlight.items():
+            ax.plot(X[b][tag].to_numpy(), color=colour, lw=1.4, zorder=3 if colour == ORANGE else 2)
+        ax.set_title(tag)
+        if k >= 2:
+            ax.set_xlabel("Sample [aligned time]")
+    handles = [Line2D([], [], color=ORANGE, lw=1.8, label="the four batches (classed good)"), Line2D([], [], color=AQUA, lw=1.8, label="their nearest abnormal batches")]
+    fig.axes[1].legend(handles=handles, loc="upper left", fontsize=8)
+    save(fig, out_dir, "batch-case-fmc-anomalous")
 
 
 if __name__ == "__main__":
