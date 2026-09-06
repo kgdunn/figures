@@ -107,6 +107,7 @@ def score_plot(
     highlight: dict[int, str] | None = None,
     labels: list[int] | None = None,
     label_left: tuple[int, ...] = (),
+    label_leader: dict[int, tuple[float, float]] | None = None,
     conf_level: float = 0.95,
     title: str = "",
     legend_loc: str = "upper right",
@@ -115,7 +116,8 @@ def score_plot(
     """Scores on two components with the Hotelling's T2 ellipse; selected batches coloured and labelled.
 
     ``label_left`` names the batches whose label sits to the left of the marker, for the cases where the
-    default right-hand placement would collide with a neighbour.
+    default right-hand placement would collide with a neighbour. ``label_leader`` maps a batch to an offset
+    in points and draws a leader line to it, for a batch that sits inside a dense cloud.
     """
     if ax is None:
         fig, ax = plt.subplots(figsize=(4.8, 4.4))
@@ -130,9 +132,17 @@ def score_plot(
     ax.scatter(x.loc[others], y.loc[others], s=28, color=DARK_BLUE, edgecolor="white", linewidth=1, zorder=3)
     for batch_id, colour in highlight.items():
         ax.scatter(x.loc[batch_id], y.loc[batch_id], s=46, color=colour, edgecolor="white", linewidth=1, zorder=4)
+    label_leader = label_leader or {}
     for batch_id in labels or []:
+        point = (x.loc[batch_id], y.loc[batch_id])
+        if batch_id in label_leader:
+            dx, dy = label_leader[batch_id]
+            ax.annotate(str(batch_id), point, xytext=(dx, dy), textcoords="offset points", fontsize=8.5,
+                        ha="right" if dx < 0 else "left", va="top" if dy < 0 else "bottom", zorder=6,
+                        arrowprops={"arrowstyle": "-", "color": GREY, "lw": 0.8, "shrinkA": 2, "shrinkB": 3})
+            continue
         left = batch_id in label_left
-        ax.annotate(str(batch_id), (x.loc[batch_id], y.loc[batch_id]), xytext=(-4 if left else 4, 4),
+        ax.annotate(str(batch_id), point, xytext=(-4 if left else 4, 4),
                     textcoords="offset points", ha="right" if left else "left", fontsize=8.5)
     ax.axhline(0, color=GREY, lw=0.8)
     ax.axvline(0, color=GREY, lw=0.8)

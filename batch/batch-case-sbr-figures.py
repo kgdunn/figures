@@ -317,6 +317,27 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-online-monitoring")
 
+    # -- The spread of the score estimates across the reference batches, which the per-sample T2 divides by: far
+    # wider than the final scores early in the batch, equal to it at the end. The T2 limit itself is constant.
+    spread = np.sqrt(np.diagonal(monitor.score_covariance_over_time_, axis1=1, axis2=2))
+    spread = spread / reference.scores_.std(ddof=1).to_numpy()
+    fig, ax = plt.subplots(figsize=(6.4, 3.8))
+    samples = np.arange(1, len(spread) + 1)
+    for a, colour in enumerate((DARK_BLUE, ORANGE)):
+        ax.plot(samples, spread[:, a], color=colour, lw=1.6, label=f"$t_{a + 1}$", zorder=3)
+    ax.axhline(1.0, color=GREY, lw=1, ls="--", zorder=2)
+    ax.text(0.99, 1.0, "spread of the final scores", transform=ax.get_yaxis_transform(), ha="right", va="top",
+            fontsize=8.5, color=GREY)
+    ax.set_yscale("log")
+    ax.set_ylim(0.7, float(spread.max()) * 1.8)   # the estimates are widest a few samples in, so let the data set the top
+    ax.set_xlim(0, reference.n_timesteps_ + 2)
+    ax.set_xlabel("Samples observed")
+    ax.set_ylabel("Spread relative to the final scores")
+    ax.set_title("Spread of the on-line score estimates")
+    ax.legend(loc="upper right")
+    fig.tight_layout()
+    save(fig, out_dir, "batch-case-sbr-score-spread")
+
     # -- What the reference model expected the rest of each faulty batch to look like (Wold et al. 2009, Eq. 4):
     # the scores estimated from the samples so far, mapped back through the loadings onto the unobserved cells.
     fig, axes = plt.subplots(1, 2, figsize=(9.0, 3.9))
