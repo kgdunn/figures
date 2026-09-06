@@ -34,6 +34,7 @@ from batch_case_common import (
     DARK_BLUE,
     GREY,
     GOLD,
+    MARKER_CODED,
     ORANGE,
     PALE_GREY,
     PURPLE,
@@ -87,11 +88,11 @@ def weight_plot(ax, weights: pd.DataFrame, *, title: str, label_left: tuple[str,
     right, for a label that would otherwise sit on a neighbour's.
     """
     w1, w2 = weights.iloc[:, 0].to_numpy(dtype=float), weights.iloc[:, 1].to_numpy(dtype=float)
-    ax.scatter(w1, w2, s=40, color=DARK_BLUE, edgecolor="white", linewidth=1, zorder=3)
+    ax.scatter(w1, w2, s=MARKER_CODED, color=DARK_BLUE, edgecolor="white", linewidth=1, zorder=3)  # as the score plots
     for name, x, y in zip(weights.index, w1, w2, strict=True):
         left = str(name) in label_left
-        ax.annotate(str(name), (x, y), xytext=(-4, -4) if left else (4, 3), textcoords="offset points",
-                    ha="right" if left else "left", va="top" if left else "bottom", fontsize=8.5)
+        ax.annotate(str(name), (x, y), xytext=(-6, -6) if left else (6, 5), textcoords="offset points",
+                    ha="right" if left else "left", va="top" if left else "bottom", fontsize=10.5)
     ax.axhline(0, color=GREY, lw=0.8)
     ax.axvline(0, color=GREY, lw=0.8)
     ax.set_xlabel("block weight $w_1$")
