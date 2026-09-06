@@ -40,7 +40,7 @@ SECOND_CLUSTER = [37, 39, 43, 44, 45, 46, 47, 48]
 CLUSTER_TAGS = ["TempC-1", "Press-3", "Press-2"]  # the three largest |t2| + |t3| contributions of the cluster
 EARLY_WINDOW = 25  # samples 0 to 25 carry 66% of the cluster's t2 and 90% of its t3 contribution
 RAW_WINDOW = 30
-MEMBER_DOT = "0.35"  # darker than the axis grey, so the eight members read against the bars
+MEMBER_DOT = "0.25"  # edge colour of the member markers: white face and dark edge read on the bars and on the background
 POOR_QUALITY_NOT_VISIBLE = [38, 40, 41, 42]
 
 
@@ -92,7 +92,7 @@ def main(out_dir: pathlib.Path) -> None:
         axes[0].bar(positions + offset, per_tag[component].to_numpy(), width=width, color=colour, label=f"$t_{component}$", zorder=2)
         members = [per_component[component].loc[b].groupby(level="tag", sort=False).sum().to_numpy() for b in SECOND_CLUSTER]
         for row in members:
-            axes[0].scatter(positions + offset, row, s=8, color=MEMBER_DOT, alpha=0.9, zorder=3, linewidths=0)
+            axes[0].scatter(positions + offset, row, s=16, facecolor="white", edgecolor=MEMBER_DOT, linewidth=0.8, zorder=3)
     axes[0].axhline(0, color=GREY, lw=0.8)
     axes[0].set_xticks(positions, [str(tag) for tag in per_tag.index], rotation=30, ha="right")
     axes[0].set_ylabel("Contribution to the score, summed per tag")

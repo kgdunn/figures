@@ -203,23 +203,16 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     save(fig, out_dir, "batch-case-sbr-departure")
 
     # -- On-line prediction: how the error of the evolving quality prediction falls as the batch is observed.
-    # RMSEE from the 53-batch model on its own training batches (solid), RMSEP with each batch held out of the
-    # fit in turn (dashed, every fifth sample to keep the 53 refits near a minute), both relative to the
+    # Leave-one-batch-out RMSEP: each batch held out of the fit in turn and traced as it runs, relative to the
     # attribute's standard deviation over the 53 batches: a ratio of 1 is the error of predicting the average.
     sd = quality.std(ddof=1)
-    rmsee = model.online_rmse(trajectories, quality)
-    loo_samples = list(range(10, model.n_timesteps_ + 1, 5))
-    rmsep = leave_one_batch_out_rmse(trajectories, quality, loo_samples)
+    rmsep = leave_one_batch_out_rmse(trajectories, quality, list(range(1, model.n_timesteps_ + 1)))
     for attribute in ("ParticleSize", "Composition"):
-        print(
-            f"{attribute}: RMSEE / sd after "
-            + ", ".join(f"{k} samples {rmsee.loc[k, attribute] / sd[attribute]:.2f}" for k in REPORT_SAMPLES)
-        )
         print(
             f"{attribute}: leave-one-batch-out RMSEP / sd after "
             + ", ".join(f"{k} samples {rmsep.loc[k, attribute] / sd[attribute]:.2f}" for k in REPORT_SAMPLES)
         )
-    rmsee_ratio, rmsep_ratio = (rmsee / sd).loc[10:], rmsep / sd
+    rmsep_ratio = (rmsep / sd).loc[10:]
     fig, ax = plt.subplots(figsize=(9.0, 4.4))
     ax.axhline(1.0, color=GREY, lw=1, zorder=1)
     ax.text(0.99, 1.0, "as good as the average batch", transform=ax.get_yaxis_transform(), ha="right", va="bottom",
@@ -227,32 +220,17 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     for attribute, colour in ATTRIBUTE_COLOURS.items():
         # Branching and CrossLinking coincide; the wider line underneath lets both colours show.
         lw = 2.8 if attribute == "Branching" else 1.5
-        ax.plot(rmsee_ratio.index, rmsee_ratio[attribute].to_numpy(), color=colour, lw=lw, zorder=3)
-        ax.plot(rmsep_ratio.index, rmsep_ratio[attribute].to_numpy(), color=colour, lw=lw, ls="--", zorder=3)
+        ax.plot(rmsep_ratio.index, rmsep_ratio[attribute].to_numpy(), color=colour, lw=lw, zorder=3)
     swatch = {attribute: Line2D([], [], color=colour, lw=2) for attribute, colour in ATTRIBUTE_COLOURS.items()}
-    handles = [
-        swatch["Composition"],
-        swatch["ParticleSize"],
-        (swatch["Branching"], swatch["CrossLinking"]),
-        swatch["Polydispersity"],
-        Line2D([], [], color=GREY, lw=1.5),
-        Line2D([], [], color=GREY, lw=1.5, ls="--"),
-    ]
-    labels = [
-        "Composition",
-        "ParticleSize",
-        "Branching, CrossLinking (coincide)",
-        "Polydispersity",
-        "RMSEE: model fitted on all 53 batches",
-        "RMSEP: each batch held out of the fit in turn",
-    ]
+    handles = [swatch["Composition"], swatch["ParticleSize"], (swatch["Branching"], swatch["CrossLinking"]), swatch["Polydispersity"]]
+    labels = ["Composition", "ParticleSize", "Branching, CrossLinking (coincide)", "Polydispersity"]
     ax.legend(handles, labels, loc="upper right", handler_map={tuple: HandlerTuple(ndivide=None, pad=0.2)},
               handlelength=3.2)
     ax.set_xlim(0, model.n_timesteps_ + 2)
     ax.set_ylim(0, None)
     ax.set_xlabel("Samples observed")
-    ax.set_ylabel("RMSE / standard deviation of the attribute")
-    ax.set_title("How the mid-batch prediction error falls as the batch is observed")
+    ax.set_ylabel("RMSEP / standard deviation of the attribute")
+    ax.set_title("How the leave-one-batch-out prediction error falls as the batch is observed")
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-online-rmse")
 
@@ -271,9 +249,9 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(9.0, 3.9))
     for ax, attribute in zip(axes, ["ParticleSize", second], strict=True):
         y_hat = trace.y_hat[attribute].loc[FIRST_SAMPLE_SHOWN:]
-        half_width = 2 * rmsee[attribute].loc[FIRST_SAMPLE_SHOWN:]
+        half_width = 2 * rmsep[attribute].loc[FIRST_SAMPLE_SHOWN:]
         ax.fill_between(y_hat.index, (y_hat - half_width).to_numpy(), (y_hat + half_width).to_numpy(), color=BAND,
-                        lw=0, zorder=1, label="$\\pm 2$ RMSEE after this many samples")
+                        lw=0, zorder=1, label="$\\pm 2$ RMSEP after this many samples")
         ax.plot(y_hat.index, y_hat.to_numpy(), color=DARK_BLUE, lw=1.6, zorder=3, label="predicted from the samples so far")
         ax.axhline(final[attribute], color=GREY, lw=1, ls="--", zorder=2)
         ax.axhline(measured[attribute], color="black", lw=1, zorder=2)
