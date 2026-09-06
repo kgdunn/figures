@@ -34,6 +34,8 @@ MAGENTA = "#b03a78"
 GREY = "0.55"
 PALE_GREY = "0.82"
 BAND = "#e9edf4"  # alternate shading of the tag blocks in a contribution vector
+MARKER, HIGHLIGHT = 28, 46  # scatter areas (points squared) of a plain dot and of a highlighted batch
+MARKER_CODED, HIGHLIGHT_CODED = 112, 170  # the same when the markers are shape-coded: twice the side
 FIGSIZE_WIDE = (9.0, 3.6)
 
 plt.rcParams.update(
@@ -99,6 +101,12 @@ def explained_per_component(model) -> np.ndarray:
     return np.asarray(model.r2_per_component_, dtype=float)
 
 
+def compact_legend(ax, loc: str, fontsize: float = 8) -> None:
+    """A legend in two columns when it has four or more entries (a 2 x 2 grid), so it is wider and less tall."""
+    handles, _labels = ax.get_legend_handles_labels()
+    ax.legend(loc=loc, ncol=2 if len(handles) >= 4 else 1, fontsize=fontsize, columnspacing=1.0, handletextpad=0.5)
+
+
 def group_scatter(
     ax,
     x: pd.Series,
@@ -107,17 +115,22 @@ def group_scatter(
     *,
     groups: pd.Series | None = None,
     group_styles: dict[str, tuple[str, str]] | None = None,
-    size: float = 28,
-    highlight_size: float = 46,
+    size: float | None = None,
+    highlight_size: float | None = None,
 ) -> None:
     """Scatter the batches in ``x`` and ``y``, colour- and shape-coded by ``groups`` when given, with ``highlight`` on top.
 
     Without ``groups`` every batch is a dark-blue circle. With ``groups`` (a Series over the batch ids) and
     ``group_styles`` (group -> (colour, marker)) each group gets its own colour and marker and one legend
     entry, "classed <group>"; a highlighted batch is drawn larger in its highlight colour but keeps its
-    group's marker, so its class stays readable.
+    group's marker, so its class stays readable. Shape-coded markers are drawn at twice the side of plain
+    dots (``MARKER_CODED`` against ``MARKER``), because a triangle and a square need the size to be told apart.
     """
     styles = group_styles or {}
+    if size is None:
+        size = MARKER if groups is None else MARKER_CODED
+    if highlight_size is None:
+        highlight_size = HIGHLIGHT if groups is None else HIGHLIGHT_CODED
     if groups is None:
         others = [b for b in x.index if b not in highlight]
         ax.scatter(x.loc[others], y.loc[others], s=size, color=DARK_BLUE, edgecolor="white", linewidth=1, zorder=3)
@@ -185,7 +198,10 @@ def score_plot(
     ax.set_ylabel(f"$t_{pc_vert}$ [{r2[pc_vert - 1]:.1%}]")
     ax.set_title(title)
     ax.set_aspect("equal", adjustable="datalim")
-    ax.legend(loc=legend_loc)
+    if groups is not None:
+        compact_legend(ax, legend_loc)
+    else:
+        ax.legend(loc=legend_loc)
     return fig
 
 
@@ -231,9 +247,10 @@ def influence_plot(
     ax.text(t2_limit, 0.99, f" {conf_level:.0%} limit", transform=ax.get_xaxis_transform(), va="top", ha="left", fontsize=8.5, color=GREY)
     ax.text(0.995, spe_limit, f"{conf_level:.0%} limit", transform=ax.get_yaxis_transform(), va="bottom", ha="right", fontsize=8.5, color=GREY)
 
-    group_scatter(ax, t2, spe, highlight, groups=groups, group_styles=group_styles, size=30, highlight_size=52)
+    group_scatter(ax, t2, spe, highlight, groups=groups, group_styles=group_styles,
+                  size=None if groups is not None else 30, highlight_size=None if groups is not None else 52)
     if groups is not None:
-        ax.legend(loc=legend_loc, fontsize=8)
+        compact_legend(ax, legend_loc)
     for batch_id in labels or []:
         to_the_left = float(t2.loc[batch_id]) > 0.82 * x_max
         ax.annotate(
@@ -375,7 +392,7 @@ def tag_panels(
         ax.set_title(str(tag))
         if secondary is not None:
             twin = ax.twinx()
-            twin.plot(secondary.columns.to_numpy(), secondary.loc[tag].to_numpy(), color=ORANGE, lw=1.1, zorder=2)
+            twin.plot(secondary.columns.to_numpy(), secondary.loc[tag].to_numpy(), color=ORANGE, lw=1.1, alpha=0.55, zorder=2)
             twin.set_ylim(0, 1)
             twin.grid(False)
             twin.spines["top"].set_visible(False)

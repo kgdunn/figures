@@ -37,6 +37,7 @@ from batch_case_common import (
     ORANGE,
     PALE_GREY,
     PURPLE,
+    compact_legend,
     contribution_triptych,
     group_scatter,
     influence_plot,
@@ -101,19 +102,19 @@ def main(out_dir: pathlib.Path) -> None:
     mb_z = MBPLS(n_components=2).fit({"Zchem": Zchem, "Zop": Zop}, Y)
     fig, axes = plt.subplots(2, 2, figsize=(10.0, 8.4))
     ss = mb_z.super_scores_
-    group_scatter(axes[0, 0], ss.iloc[:, 0], ss.iloc[:, 1], {OPERATING_OUTLIER: ORANGE}, highlight_size=70, **coded)
+    group_scatter(axes[0, 0], ss.iloc[:, 0], ss.iloc[:, 1], {OPERATING_OUTLIER: ORANGE}, highlight_size=200, **coded)
     axes[0, 0].annotate("20", (ss.loc[OPERATING_OUTLIER].iloc[0], ss.loc[OPERATING_OUTLIER].iloc[1]), xytext=(6, 4), textcoords="offset points", fontsize=8.5)
     r2y = mb_z.r2_y_per_component_.to_numpy()
     axes[0, 0].set_xlabel(f"super score $t_1$ [$R^2_Y$ {r2y[0]:.1%}]")
     axes[0, 0].set_ylabel(f"super score $t_2$ [$R^2_Y$ {r2y[1]:.1%}]")
     axes[0, 0].set_title("Super scores: batch 20 (orange) at the lower left")
-    axes[0, 0].legend(loc="upper left", fontsize=8)
+    compact_legend(axes[0, 0], "upper left")
     weights = mb_z.super_weights_.copy()
     weights.columns = [f"component {c}" for c in weights.columns]
     grouped_bars(axes[0, 1], weights, colours=[DARK_BLUE, ORANGE], ylabel="super weight", title="Super weights: how much each block pulls")
     titles = {"Zchem": "Chemistry block scores: batch 20 inside the cloud", "Zop": "Operating-condition block scores: batch 20 far outside"}
     for ax, (name, block_scores) in zip(axes[1], mb_z.block_scores_.items(), strict=True):
-        group_scatter(ax, block_scores.iloc[:, 0], block_scores.iloc[:, 1], {OPERATING_OUTLIER: ORANGE}, highlight_size=70, **coded)
+        group_scatter(ax, block_scores.iloc[:, 0], block_scores.iloc[:, 1], {OPERATING_OUTLIER: ORANGE}, highlight_size=200, **coded)
         ax.annotate("20", (block_scores.loc[OPERATING_OUTLIER].iloc[0], block_scores.loc[OPERATING_OUTLIER].iloc[1]), xytext=(6, 4), textcoords="offset points", fontsize=8.5)
         r2 = np.diff([0.0, *mb_z.r2_x_per_block_cumulative_.loc[name].to_numpy(dtype=float)])
         ax.set_xlabel(f"block score $t_1$ [{r2[0]:.1%}]")
@@ -131,7 +132,7 @@ def main(out_dir: pathlib.Path) -> None:
     pca_x = PCA(n_components=2).fit(x_scaled)
     squared = pca_x.spe_contributions(x_scaled) ** 2  # NaN only at the missing cells; the rest from the observed cells
     fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), gridspec_kw={"width_ratios": [1, 1.1]})
-    score_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE}, labels=[OPERATING_OUTLIER], title="Batch PCA on the trajectories: scores", legend_loc="lower right", ax=axes[0], **coded)
+    score_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE}, labels=[OPERATING_OUTLIER], title="Batch PCA on the trajectories: scores", legend_loc="upper left", ax=axes[0], **coded)
     influence_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE}, labels=[OPERATING_OUTLIER, 41, 51], title="Batch PCA: Hotelling's $T^2$ against SPE", legend_loc="center right", ax=axes[1], **coded)
     fig.tight_layout()
     save(fig, out_dir, "batch-case-fmc-batch-pca")
@@ -170,7 +171,7 @@ def main(out_dir: pathlib.Path) -> None:
     group_scatter(axes[0], ss.iloc[:, 0], ss.iloc[:, 1], {13: ORANGE, 5: AQUA, 7: AQUA}, **coded)
     for b in TRAJECTORY_BATCHES:
         axes[0].annotate(str(b), (ss.loc[b].iloc[0], ss.loc[b].iloc[1]), xytext=(4, 4), textcoords="offset points", fontsize=8.5)
-    axes[0].legend(loc="upper left", fontsize=8)
+    compact_legend(axes[0], "upper left")
     axes[0].axhline(0, color=GREY, lw=0.8)
     axes[0].axvline(0, color=GREY, lw=0.8)
     r2y = mb.r2_y_per_component_.to_numpy()
@@ -200,8 +201,8 @@ def main(out_dir: pathlib.Path) -> None:
     fig, axes = plt.subplots(1, 3, figsize=(13.0, 4.3))
     label_offsets = {2: (5, 4), 3: (-5, 4), 6: (5, -4), 7: (5, 4)}  # keep the four labels off each other in the X block
     for ax, (name, scores) in zip(axes, mb.block_scores_.items(), strict=True):
-        group_scatter(ax, scores.iloc[:, 0], scores.iloc[:, 1], dict.fromkeys(anomalous, ORANGE), highlight_size=50, **coded)
-        ax.scatter([], [], s=50, color=ORANGE, marker="o", edgecolor="white", linewidth=1, label="classed good, trajectories with the abnormal")
+        group_scatter(ax, scores.iloc[:, 0], scores.iloc[:, 1], dict.fromkeys(anomalous, ORANGE), highlight_size=170, **coded)
+        ax.scatter([], [], s=170, color=ORANGE, marker="o", edgecolor="white", linewidth=1, label="the four batches (classed good)")
         for b in anomalous:
             dx, dy = label_offsets.get(b, (5, 4))
             ax.annotate(str(b), (scores.loc[b].iloc[0], scores.loc[b].iloc[1]), xytext=(dx, dy), textcoords="offset points", ha="right" if dx < 0 else "left", va="top" if dy < 0 else "bottom", fontsize=8.5, zorder=6)
@@ -211,8 +212,9 @@ def main(out_dir: pathlib.Path) -> None:
         ax.set_xlabel(f"block score $t_1$ [{r2[0]:.1%}]")
         ax.set_ylabel(f"block score $t_2$ [{r2[1]:.1%}]")
         ax.set_title(f"{name} block")
-    axes[0].legend(loc="lower left", fontsize=8)
-    fig.tight_layout()
+    handles, labels = axes[0].get_legend_handles_labels()  # one legend for the three panels, in a row below them
+    fig.legend(handles, labels, loc="lower center", ncol=4, fontsize=8, frameon=False, bbox_to_anchor=(0.5, 0.0))
+    fig.tight_layout(rect=(0, 0.07, 1, 1))
     save(fig, out_dir, "batch-case-fmc-block-scores")
 
     contributions = mb.score_contributions(blocks, component=1)["Zop"]
