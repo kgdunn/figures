@@ -360,7 +360,7 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
         ax.plot(time, actual, color=colour, lw=1.4, alpha=0.35, zorder=2, label=f"batch {batch_id}, what happened")
         ax.plot(time[:first], actual[:first], color=colour, lw=1.8, zorder=3, label=f"batch {batch_id}, first {first} samples")
         # The later forecast in its own colour and heavier, so the two stay apart where both run near zero.
-        for k, style, line_colour, width in zip(sample_points, ["--", (0, (1.0, 1.6))], [colour, PURPLE], [1.7, 2.3], strict=True):
+        for k, style, line_colour, width in zip(sample_points, ["--", (0, (1.0, 1.6))], [colour, DARK_BLUE], [1.7, 2.3], strict=True):
             forecast = z_form(reference.predict_online(trajectories[batch_id], upto_k=k).forecast)[tag].to_numpy()
             print(
                 f"batch {batch_id} {tag}, mean over the samples after {k}: forecast {forecast[k:].mean():.2f} sd, "
