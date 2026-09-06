@@ -34,6 +34,13 @@ MAGENTA = "#b03a78"
 GREY = "0.55"
 PALE_GREY = "0.82"
 BAND = "#e9edf4"  # alternate shading of the tag blocks in a contribution vector
+PHASE_LINE = "0.55"  # the vertical phase-separator lines drawn over grey overlays
+
+
+def phase_lines(ax, xs, *, colour: str = PHASE_LINE, zorder: float = 1.5, lw: float = 0.9, ls: str = "--") -> None:
+    """Draw a vertical line at each sample in ``xs`` (the ends of the batch phases)."""
+    for x in xs:
+        ax.axvline(x, color=colour, lw=lw, ls=ls, zorder=zorder)
 MARKER, HIGHLIGHT = 28, 46  # scatter areas (points squared) of a plain dot and of a highlighted batch
 MARKER_CODED, HIGHLIGHT_CODED = 112, 170  # the same when the markers are shape-coded: twice the side
 FIGSIZE_WIDE = (9.0, 3.6)
@@ -70,11 +77,13 @@ def overlay_panels(
     ncols: int = 2,
     figsize: tuple[float, float] | None = None,
     xlabel: str = "Sample [aligned time]",
+    vlines: tuple[float, ...] = (),
 ) -> Figure:
-    """One panel per tag: every batch in grey, the highlighted batches in colour."""
+    """One panel per tag: every batch in grey, the highlighted batches in colour, ``vlines`` at the phase ends."""
     nrows = int(np.ceil(len(tags) / ncols))
     fig, axes = plt.subplots(nrows, ncols, figsize=figsize or (4.5 * ncols, 2.6 * nrows), squeeze=False)
     for ax, tag in zip(axes.ravel(), tags, strict=False):
+        phase_lines(ax, vlines)
         for batch_id, batch in batches.items():
             if batch_id not in highlight:
                 ax.plot(batch[tag].to_numpy(), color=PALE_GREY, lw=0.7, zorder=1)
@@ -339,8 +348,13 @@ def label_bars(ax, values: np.ndarray, *, fmt: str = "{:.1f}", floor: float = 0.
         )
 
 
-def contribution_triptych(row: pd.Series, *, what: str, title: str) -> Figure:
-    """The full contribution vector, its sum per tag, and its sum per time sample, in three panels."""
+def contribution_triptych(
+    row: pd.Series, *, what: str, title: str, vlines: tuple[float, ...] = (), vline_colour: str = ORANGE
+) -> Figure:
+    """The full contribution vector, its sum per tag, and its sum per time sample, in three panels.
+
+    ``vlines`` marks the phase ends on the per-sample panel, drawn in ``vline_colour`` on top of the bars.
+    """
     by_tag = row.groupby(level="tag", sort=False).sum()
     by_time = row.groupby(level="sequence").sum()
     fig, axes = plt.subplots(3, 1, figsize=(9.0, 8.0), gridspec_kw={"height_ratios": [1.3, 1, 1]})
@@ -357,6 +371,7 @@ def contribution_triptych(row: pd.Series, *, what: str, title: str) -> Figure:
     axes[2].set_xlabel("Sample [aligned time]")
     axes[2].set_ylabel(f"{what}, summed per sample")
     fig.tight_layout()
+    phase_lines(axes[2], vlines, colour=vline_colour, zorder=4, lw=1.2, ls="-")
     return fig
 
 

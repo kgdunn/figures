@@ -44,6 +44,7 @@ from batch_case_common import (
     label_bars,
     overlay_panels,
     parity_plot,
+    phase_lines,
     save,
     score_plot,
     shade_alternate_tags,
@@ -87,7 +88,7 @@ def main(out_dir: pathlib.Path) -> None:
     groups = pd.Series(pd.cut(keep, bins=[0, *DISPOSITION.values()], labels=list(DISPOSITION)).astype(str), index=keep)
     coded = {"groups": groups, "group_styles": DISPOSITION_STYLES}  # colour and marker by the plant's disposition
 
-    fig = overlay_panels(X, ["D-Temp", "J-Temp", "CTankLvl", "ClockTime"], {OPERATING_OUTLIER: ORANGE})
+    fig = overlay_panels(X, ["D-Temp", "J-Temp", "CTankLvl", "ClockTime"], {OPERATING_OUTLIER: ORANGE}, vlines=PHASE_ENDS)
     save(fig, out_dir, "batch-case-fmc-raw-trajectories")
 
     y_scaled = MCUVScaler().fit_transform(Y)
@@ -147,7 +148,8 @@ def main(out_dir: pathlib.Path) -> None:
 
     spe_share = squared.div(squared.sum(axis=1), axis=0) * 100
     share_20 = spe_share.loc[OPERATING_OUTLIER].fillna(0.0)  # a missing cell has no residual: drawn as an empty position
-    save(contribution_triptych(share_20, what="Share of SPE [%]", title=f"Batch {OPERATING_OUTLIER}: share of the SPE carried by each (tag, time) cell"), out_dir, f"batch-case-fmc-batch-{OPERATING_OUTLIER}-spe-contributions")
+    fig = contribution_triptych(share_20, what="Share of SPE [%]", title=f"Batch {OPERATING_OUTLIER}: share of the SPE carried by each (tag, time) cell", vlines=PHASE_ENDS)
+    save(fig, out_dir, f"batch-case-fmc-batch-{OPERATING_OUTLIER}-spe-contributions")
 
     pls_x = PLS(n_components=2, scale=False).fit(x_scaled, y_scaled)
     t1 = pls_x.score_contributions(x_scaled, component=1)
@@ -161,7 +163,7 @@ def main(out_dir: pathlib.Path) -> None:
     axes[1].set_title("Batch 13: contributions to $t_1$")
     fig.tight_layout()
     save(fig, out_dir, "batch-case-fmc-batch-pls")
-    fig = overlay_panels(X, ["D-Temp", "CTankLvl", "ClockTime", "J-Temp-SP"], {13: ORANGE, 5: AQUA, 7: DARK_BLUE})
+    fig = overlay_panels(X, ["D-Temp", "CTankLvl", "ClockTime", "J-Temp-SP"], {13: ORANGE, 5: AQUA, 7: DARK_BLUE}, vlines=PHASE_ENDS)
     save(fig, out_dir, "batch-case-fmc-raw-batches-13-5-7")
 
     blocks = {"Zchem": Zchem, "Zop": Zop, "X": wide}
@@ -232,6 +234,7 @@ def main(out_dir: pathlib.Path) -> None:
     highlight = {**dict.fromkeys(neighbours, AQUA), **dict.fromkeys(anomalous, ORANGE)}
     for k, tag in enumerate(RAW_TAGS):
         ax = fig.add_subplot(grid[k // 2, 1 + k % 2])
+        phase_lines(ax, PHASE_ENDS)
         for b, batch in X.items():
             if b not in highlight:
                 ax.plot(batch[tag].to_numpy(), color=PALE_GREY, lw=0.7, zorder=1)
