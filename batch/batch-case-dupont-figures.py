@@ -27,7 +27,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from batch_case_common import AQUA, BAND, DARK_BLUE, GREY, ORANGE, PALE_GREY, contribution_triptych, influence_plot, overlay_panels, save, score_plot, tag_panels
+from batch_case_common import AQUA, BAND, DARK_BLUE, GREY, ORANGE, PALE_GREY, PURPLE, contribution_triptych, influence_plot, overlay_panels, save, score_plot, tag_panels
 
 from process_improve.batch import BatchPCA, load_dupont
 
@@ -136,9 +136,30 @@ def main(out_dir: pathlib.Path) -> None:
     excluded = set(range(SPE_OUTLIER, 56)) | set(SECOND_CLUSTER)
     kept_c = {b: batch for b, batch in batches.items() if b not in excluded}
     model_c = BatchPCA(n_components=3).fit(kept_c)
+    # The 15 batches left out of model C, projected onto it: the on-line projection at the last
+    # sample of a complete batch gives its scores, T2 and SPE against model C's centre and scale.
+    left_out = {
+        "batch 49": ([SPE_OUTLIER], ORANGE),
+        "batches 50 to 55": (list(range(50, 56)), AQUA),
+        "the second group": (SECOND_CLUSTER, PURPLE),
+    }
+    projected = {b: model_c.predict_online(batches[b], upto_k=model_c.n_timesteps_) for ids, _ in left_out.values() for b in ids}
     fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), gridspec_kw={"width_ratios": [1, 1.1]})
     score_plot(model_c, highlight={b: ORANGE for b in POOR_QUALITY_NOT_VISIBLE}, labels=POOR_QUALITY_NOT_VISIBLE, title="Model C: 40 batches, scores", ax=axes[0])
-    influence_plot(model_c, highlight={b: ORANGE for b in POOR_QUALITY_NOT_VISIBLE}, labels=POOR_QUALITY_NOT_VISIBLE, title="Model C: Hotelling's $T^2$ against SPE", ax=axes[1])
+    influence_plot(model_c, title="Model C and the 15 batches left out of it", ax=axes[1])
+    for label, (ids, colour) in left_out.items():
+        axes[1].scatter([float(projected[b].hotellings_t2) for b in ids], [float(projected[b].spe) for b in ids],
+                        s=40, color=colour, edgecolor="white", linewidth=1, zorder=5, label=label)
+    for b in (SPE_OUTLIER, 37):
+        axes[1].annotate(str(b), (float(projected[b].hotellings_t2), float(projected[b].spe)), xytext=(6, 4), textcoords="offset points", fontsize=8.5)
+    # Logarithmic axes: the projected batches sit up to two decades beyond the training cloud and its limits.
+    all_t2 = [*model_c.hotellings_t2_.iloc[:, -1].tolist(), *(float(r.hotellings_t2) for r in projected.values())]
+    all_spe = [*model_c.spe_.iloc[:, -1].tolist(), *(float(r.spe) for r in projected.values())]
+    axes[1].set_xscale("log")
+    axes[1].set_yscale("log")
+    axes[1].set_xlim(min(all_t2) * 0.6, max(all_t2) * 2.0)
+    axes[1].set_ylim(min(all_spe) * 0.8, max(all_spe) * 1.6)
+    axes[1].legend(loc="upper left", fontsize=8, title="projected onto model C", title_fontsize=8)  # lower right holds the SPE-limit label
     fig.tight_layout()
     save(fig, out_dir, "batch-case-dupont-model-c")
 

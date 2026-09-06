@@ -78,8 +78,9 @@ def main(out_dir: pathlib.Path) -> None:
     axes[0].annotate("20", (ss.loc[OPERATING_OUTLIER].iloc[0], ss.loc[OPERATING_OUTLIER].iloc[1]), xytext=(4, 4), textcoords="offset points", fontsize=8.5)
     axes[0].axhline(0, color=GREY, lw=0.8)
     axes[0].axvline(0, color=GREY, lw=0.8)
-    axes[0].set_xlabel("super score $t_1$")
-    axes[0].set_ylabel("super score $t_2$")
+    r2y = mb_z.r2_y_per_component_.to_numpy()
+    axes[0].set_xlabel(f"super score $t_1$ [$R^2_Y$ {r2y[0]:.1%}]")
+    axes[0].set_ylabel(f"super score $t_2$ [$R^2_Y$ {r2y[1]:.1%}]")
     axes[0].set_title("Multiblock PLS on Zchem and Zop: super scores")
     weights = mb_z.super_weights_.copy()
     weights.columns = [f"component {c}" for c in weights.columns]
@@ -133,8 +134,9 @@ def main(out_dir: pathlib.Path) -> None:
         axes[0].annotate(str(b), (ss.loc[b].iloc[0], ss.loc[b].iloc[1]), xytext=(4, 4), textcoords="offset points", fontsize=8.5)
     axes[0].axhline(0, color=GREY, lw=0.8)
     axes[0].axvline(0, color=GREY, lw=0.8)
-    axes[0].set_xlabel("super score $t_1$")
-    axes[0].set_ylabel("super score $t_2$")
+    r2y = mb.r2_y_per_component_.to_numpy()
+    axes[0].set_xlabel(f"super score $t_1$ [$R^2_Y$ {r2y[0]:.1%}]")
+    axes[0].set_ylabel(f"super score $t_2$ [$R^2_Y$ {r2y[1]:.1%}]")
     axes[0].set_title("Batch multiblock PLS: super scores")
     summary = mb.r2_x_per_block_cumulative_.iloc[:, -1].to_frame("$R^2_X$ after two components")
     summary["super VIP"] = mb.super_vip_

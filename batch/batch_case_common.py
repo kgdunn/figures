@@ -87,6 +87,18 @@ def overlay_panels(
     return fig
 
 
+def explained_per_component(model) -> np.ndarray:
+    """Fraction of the variance of X explained by each component, for the axis labels of a score plot.
+
+    PCA-type models report it as ``r2_per_component_``. PLS-type models report the R2 of Y
+    there and the cumulative R2 of every X column in ``r2_per_variable_``, whose column mean
+    is the cumulative R2 of X.
+    """
+    if type(model).__name__ in ("PLS", "BatchPLS"):
+        return np.diff([0.0, *np.asarray(model.r2_per_variable_.mean(axis=0), dtype=float)])
+    return np.asarray(model.r2_per_component_, dtype=float)
+
+
 def score_plot(
     model,
     *,
@@ -116,8 +128,9 @@ def score_plot(
         ax.annotate(str(batch_id), (x.loc[batch_id], y.loc[batch_id]), xytext=(4, 4), textcoords="offset points", fontsize=8.5)
     ax.axhline(0, color=GREY, lw=0.8)
     ax.axvline(0, color=GREY, lw=0.8)
-    ax.set_xlabel(f"$t_{pc_horiz}$")
-    ax.set_ylabel(f"$t_{pc_vert}$")
+    r2 = explained_per_component(model)
+    ax.set_xlabel(f"$t_{pc_horiz}$ [{r2[pc_horiz - 1]:.1%}]")
+    ax.set_ylabel(f"$t_{pc_vert}$ [{r2[pc_vert - 1]:.1%}]")
     ax.set_title(title)
     ax.set_aspect("equal", adjustable="datalim")
     ax.legend(loc="upper right")
