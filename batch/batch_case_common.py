@@ -312,13 +312,19 @@ def tag_panels(grid: pd.DataFrame, *, ylabel: str, ncols: int = 5, colour: str =
     return fig
 
 
-def parity_plot(observed: pd.Series, predicted: pd.Series, *, highlight: dict[int, str], ax, title: str) -> None:
-    """Observed against fitted values with the y = x line; selected batches coloured and labelled."""
+def parity_plot(observed: pd.Series, predicted: pd.Series, *, highlight: dict[int, str], ax, title: str, label_left: tuple[int, ...] = ()) -> None:
+    """Observed against fitted values with the y = x line; selected batches coloured and labelled.
+
+    ``label_left`` names the highlighted batches whose label goes to the left of the marker,
+    for a point whose right-hand side is crowded by other batches.
+    """
     others = [b for b in observed.index if b not in highlight]
     ax.scatter(observed.loc[others], predicted.loc[others], s=26, color=DARK_BLUE, edgecolor="white", linewidth=0.8, zorder=3)
     for batch_id, colour in highlight.items():
         ax.scatter(observed.loc[batch_id], predicted.loc[batch_id], s=46, color=colour, edgecolor="white", linewidth=0.8, zorder=4)
-        ax.annotate(str(batch_id), (observed.loc[batch_id], predicted.loc[batch_id]), xytext=(4, 4), textcoords="offset points", fontsize=8.5)
+        to_the_left = batch_id in label_left
+        ax.annotate(str(batch_id), (observed.loc[batch_id], predicted.loc[batch_id]), xytext=(-5, 4) if to_the_left else (4, 4),
+                    textcoords="offset points", ha="right" if to_the_left else "left", fontsize=8.5)
     lo, hi = float(min(observed.min(), predicted.min())), float(max(observed.max(), predicted.max()))
     ax.plot([lo, hi], [lo, hi], color=GREY, lw=1, ls="--", label="y = x")
     ax.set_xlabel("Observed")

@@ -153,7 +153,9 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
 
     fig, axes = plt.subplots(1, 2, figsize=(9.0, 4.2))
     for ax, variable in zip(axes, ["Composition", "ParticleSize"], strict=True):
-        parity_plot(quality[variable], model.predictions_[variable], highlight=HIGHLIGHT, ax=ax, title=variable)
+        # batch 34 sits against the cloud of composition values, so its label goes to the left there
+        parity_plot(quality[variable], model.predictions_[variable], highlight=HIGHLIGHT, ax=ax, title=variable,
+                    label_left=(FAULT_PARTWAY,) if variable == "Composition" else ())
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-observed-vs-fitted")
 
