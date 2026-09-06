@@ -359,13 +359,14 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
         first = sample_points[0]
         ax.plot(time, actual, color=colour, lw=1.4, alpha=0.35, zorder=2, label=f"batch {batch_id}, what happened")
         ax.plot(time[:first], actual[:first], color=colour, lw=1.8, zorder=3, label=f"batch {batch_id}, first {first} samples")
-        for k, style in zip(sample_points, ["--", (0, (1.0, 1.6))], strict=True):
+        # The later forecast in its own colour and heavier, so the two stay apart where both run near zero.
+        for k, style, line_colour, width in zip(sample_points, ["--", (0, (1.0, 1.6))], [colour, PURPLE], [1.7, 2.3], strict=True):
             forecast = z_form(reference.predict_online(trajectories[batch_id], upto_k=k).forecast)[tag].to_numpy()
             print(
                 f"batch {batch_id} {tag}, mean over the samples after {k}: forecast {forecast[k:].mean():.2f} sd, "
                 f"actual {actual[k:].mean():.2f} sd"
             )
-            ax.plot(time[k:], forecast[k:], color=colour, lw=1.7, ls=style, zorder=4, label=f"forecast from {k} samples")
+            ax.plot(time[k:], forecast[k:], color=line_colour, lw=width, ls=style, zorder=4, label=f"forecast from sample {k} onwards")
         if batch_id == FAULT_PARTWAY:
             ax.axvline(FAULT_SAMPLE, color=GREY, lw=1, ls=":", zorder=2)
             ax.text(FAULT_SAMPLE + 2, 0.03, "impurity enters", transform=ax.get_xaxis_transform(), va="bottom", ha="left", fontsize=8.5, color=GREY)
