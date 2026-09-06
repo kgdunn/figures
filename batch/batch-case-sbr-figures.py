@@ -58,6 +58,7 @@ from batch_case_common import (
 )
 from matplotlib.legend_handler import HandlerTuple
 from matplotlib.lines import Line2D
+from matplotlib.ticker import MaxNLocator
 
 from process_improve.batch import BatchMonitor, BatchPLS, load_sbr
 from process_improve.univariate import median_absolute_deviation
@@ -131,7 +132,10 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     save(fig, out_dir, "batch-case-sbr-raw-trajectories")
 
     model = BatchPLS(n_components=2).fit(trajectories, quality)
-    save(score_plot(model, highlight=HIGHLIGHT, labels=list(HIGHLIGHT), title="Batch PLS: scores of the 53 batches"), out_dir, "batch-case-sbr-scores")
+    # Batch 4, the batch nearest the average quality, is marked for the mid-batch prediction figure further on.
+    fig = score_plot(model, highlight={**HIGHLIGHT, AVERAGE_BATCH: PURPLE}, labels=[*HIGHLIGHT, AVERAGE_BATCH],
+                     title="Batch PLS: scores of the 53 batches")
+    save(fig, out_dir, "batch-case-sbr-scores")
     save(influence_plot(model, highlight=HIGHLIGHT, labels=[*HIGHLIGHT, *SPE_OUTLIERS], title="Batch PLS: Hotelling's $T^2$ against SPE"), out_dir, "batch-case-sbr-influence")
 
     r2_grid = model.r2_per_variable_.iloc[:, -1].unstack(level="sequence").reindex(index=model.tag_names_)
@@ -249,9 +253,9 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(9.0, 3.9))
     for ax, attribute in zip(axes, ["ParticleSize", second], strict=True):
         y_hat = trace.y_hat[attribute].loc[FIRST_SAMPLE_SHOWN:]
-        half_width = 2 * rmsep[attribute].loc[FIRST_SAMPLE_SHOWN:]
+        half_width = rmsep[attribute].loc[FIRST_SAMPLE_SHOWN:]
         ax.fill_between(y_hat.index, (y_hat - half_width).to_numpy(), (y_hat + half_width).to_numpy(), color=BAND,
-                        lw=0, zorder=1, label="$\\pm 2$ RMSEP after this many samples")
+                        lw=0, zorder=1, label="$\\pm$ RMSEP after this many samples")
         ax.plot(y_hat.index, y_hat.to_numpy(), color=DARK_BLUE, lw=1.6, zorder=3, label="predicted from the samples so far")
         ax.axhline(final[attribute], color=GREY, lw=1, ls="--", zorder=2)
         ax.axhline(measured[attribute], color="black", lw=1, zorder=2)
@@ -268,6 +272,8 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
         ax.set_ylim(low - pad, high + pad)
         ax.set_xlim(0, model.n_timesteps_ + 2)
         ax.set_xlabel("Samples observed")
+        if attribute == "ParticleSize":
+            ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         ax.set_ylabel(attribute)
         ax.set_title(attribute)
         ax.legend(loc="lower right")
