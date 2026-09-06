@@ -354,8 +354,8 @@ def parity_plot(
         if batch_id in (label_offsets or {}):
             dx, dy = label_offsets[batch_id]
             ax.annotate(str(batch_id), (observed.loc[batch_id], predicted.loc[batch_id]), xytext=(dx, dy),
-                        textcoords="offset points", ha="right" if dx < 0 else "left", va="top" if dy < 0 else "bottom",
-                        fontsize=8.5)
+                        textcoords="offset points", ha="right" if dx < 0 else "left",
+                        va="top" if dy < 0 else ("center" if dy == 0 else "bottom"), fontsize=8.5)
             continue
         to_the_left = batch_id in label_left
         ax.annotate(str(batch_id), (observed.loc[batch_id], predicted.loc[batch_id]), xytext=(-5, 4) if to_the_left else (4, 4),
