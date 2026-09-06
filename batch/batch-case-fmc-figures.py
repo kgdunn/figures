@@ -80,6 +80,25 @@ def grouped_bars(ax, table, *, colours: list[str], ylabel: str, title: str) -> N
     ax.legend(loc="best")
 
 
+def weight_plot(ax, weights: pd.DataFrame, *, title: str, label_left: tuple[str, ...] = ()) -> None:
+    """The weights of the first two components of one block, one labelled point per variable.
+
+    ``label_left`` names the variables whose label goes to the lower left of the point instead of the upper
+    right, for a label that would otherwise sit on a neighbour's.
+    """
+    w1, w2 = weights.iloc[:, 0].to_numpy(dtype=float), weights.iloc[:, 1].to_numpy(dtype=float)
+    ax.scatter(w1, w2, s=40, color=DARK_BLUE, edgecolor="white", linewidth=1, zorder=3)
+    for name, x, y in zip(weights.index, w1, w2, strict=True):
+        left = str(name) in label_left
+        ax.annotate(str(name), (x, y), xytext=(-4, -4) if left else (4, 3), textcoords="offset points",
+                    ha="right" if left else "left", va="top" if left else "bottom", fontsize=8.5)
+    ax.axhline(0, color=GREY, lw=0.8)
+    ax.axvline(0, color=GREY, lw=0.8)
+    ax.set_xlabel("block weight $w_1$")
+    ax.set_ylabel("block weight $w_2$")
+    ax.set_title(title)
+
+
 def main(out_dir: pathlib.Path) -> None:
     fmc = load_fmc()
     keep = [b for b in fmc.batch_ids if b not in fmc.missing_chemistry]
@@ -101,7 +120,7 @@ def main(out_dir: pathlib.Path) -> None:
     save(fig, out_dir, "batch-case-fmc-quality-pca")
 
     mb_z = MBPLS(n_components=2).fit({"Zchem": Zchem, "Zop": Zop}, Y)
-    fig, axes = plt.subplots(2, 2, figsize=(10.0, 8.4))
+    fig, axes = plt.subplots(2, 3, figsize=(14.0, 8.6))
     ss = mb_z.super_scores_
     group_scatter(axes[0, 0], ss.iloc[:, 0], ss.iloc[:, 1], {OPERATING_OUTLIER: ORANGE}, highlight_size=200, **coded)
     axes[0, 0].annotate("20", (ss.loc[OPERATING_OUTLIER].iloc[0], ss.loc[OPERATING_OUTLIER].iloc[1]), xytext=(6, 4), textcoords="offset points", fontsize=8.5)
@@ -112,16 +131,18 @@ def main(out_dir: pathlib.Path) -> None:
     compact_legend(axes[0, 0], "upper left")
     weights = mb_z.super_weights_.copy()
     weights.columns = [f"component {c}" for c in weights.columns]
-    grouped_bars(axes[0, 1], weights, colours=[DARK_BLUE, ORANGE], ylabel="super weight", title="Super weights: how much each block pulls")
-    titles = {"Zchem": "Chemistry block scores: batch 20 inside the cloud", "Zop": "Operating-condition block scores: batch 20 far outside"}
-    for ax, (name, block_scores) in zip(axes[1], mb_z.block_scores_.items(), strict=True):
+    grouped_bars(axes[1, 0], weights, colours=[DARK_BLUE, ORANGE], ylabel="super weight", title="Super weights: how much each block pulls")
+    titles = {"Zchem": ("Chemistry block scores: batch 20 inside the cloud", "Chemistry block weights"), "Zop": ("Operating-condition block scores: batch 20 far outside", "Operating-condition block weights")}
+    for col, (name, block_scores) in enumerate(mb_z.block_scores_.items(), start=1):
+        ax = axes[0, col]
         group_scatter(ax, block_scores.iloc[:, 0], block_scores.iloc[:, 1], {OPERATING_OUTLIER: ORANGE}, highlight_size=200, **coded)
         ax.annotate("20", (block_scores.loc[OPERATING_OUTLIER].iloc[0], block_scores.loc[OPERATING_OUTLIER].iloc[1]), xytext=(6, 4), textcoords="offset points", fontsize=8.5)
         r2 = np.diff([0.0, *mb_z.r2_x_per_block_cumulative_.loc[name].to_numpy(dtype=float)])
         ax.set_xlabel(f"block score $t_1$ [{r2[0]:.1%}]")
         ax.set_ylabel(f"block score $t_2$ [{r2[1]:.1%}]")
-        ax.set_title(titles[name])
-    for ax in axes.ravel()[[0, 2, 3]]:
+        ax.set_title(titles[name][0])
+        weight_plot(axes[1, col], mb_z.block_weights_[name], title=titles[name][1], label_left=("Time1",))
+    for ax in axes[0]:
         ax.axhline(0, color=GREY, lw=0.8)
         ax.axvline(0, color=GREY, lw=0.8)
     fig.tight_layout()
