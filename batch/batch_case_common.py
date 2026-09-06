@@ -330,9 +330,20 @@ def tag_panels(grid: pd.DataFrame, *, ylabel: str, ncols: int = 5, colour: str =
     return fig
 
 
-def parity_plot(observed: pd.Series, predicted: pd.Series, *, highlight: dict[int, str], ax, title: str, label_left: tuple[int, ...] = ()) -> None:
+def parity_plot(
+    observed: pd.Series,
+    predicted: pd.Series,
+    *,
+    highlight: dict[int, str],
+    ax,
+    title: str,
+    label_left: tuple[int, ...] = (),
+    label_offsets: dict[int, tuple[float, float]] | None = None,
+) -> None:
     """Observed against fitted values with the y = x line; selected batches coloured and labelled.
 
+    ``label_offsets`` gives a batch its own label offset in points, with the alignment following the
+    signs, for a marker whose neighbours crowd both default positions.
     ``label_left`` names the highlighted batches whose label goes to the left of the marker,
     for a point whose right-hand side is crowded by other batches.
     """
@@ -340,6 +351,12 @@ def parity_plot(observed: pd.Series, predicted: pd.Series, *, highlight: dict[in
     ax.scatter(observed.loc[others], predicted.loc[others], s=26, color=DARK_BLUE, edgecolor="white", linewidth=0.8, zorder=3)
     for batch_id, colour in highlight.items():
         ax.scatter(observed.loc[batch_id], predicted.loc[batch_id], s=46, color=colour, edgecolor="white", linewidth=0.8, zorder=4)
+        if batch_id in (label_offsets or {}):
+            dx, dy = label_offsets[batch_id]
+            ax.annotate(str(batch_id), (observed.loc[batch_id], predicted.loc[batch_id]), xytext=(dx, dy),
+                        textcoords="offset points", ha="right" if dx < 0 else "left", va="top" if dy < 0 else "bottom",
+                        fontsize=8.5)
+            continue
         to_the_left = batch_id in label_left
         ax.annotate(str(batch_id), (observed.loc[batch_id], predicted.loc[batch_id]), xytext=(-5, 4) if to_the_left else (4, 4),
                     textcoords="offset points", ha="right" if to_the_left else "left", fontsize=8.5)
