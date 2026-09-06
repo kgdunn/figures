@@ -367,6 +367,9 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
                 f"actual {actual[k:].mean():.2f} sd"
             )
             ax.plot(time[k:], forecast[k:], color=line_colour, lw=width, ls=style, zorder=4, label=f"forecast from sample {k} onwards")
+            # The forecast is made from the batch's own data up to sample k; a vertical tie from the observed value
+            # at that sample to the first forecast value shows the jump that the forecast starts with.
+            ax.plot([k, k], [actual[k - 1], forecast[k]], color=line_colour, lw=1.2, zorder=4)
         if batch_id == FAULT_PARTWAY:
             ax.axvline(FAULT_SAMPLE, color=GREY, lw=1, ls=":", zorder=2)
             ax.text(FAULT_SAMPLE + 2, 0.03, "impurity enters", transform=ax.get_xaxis_transform(), va="bottom", ha="left", fontsize=8.5, color=GREY)
