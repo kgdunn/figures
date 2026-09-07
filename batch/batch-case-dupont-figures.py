@@ -9,7 +9,7 @@ trajectories cannot reveal. The chapter shows the equivalent Plotly code; the
 committed figures are these matplotlib renderings.
 
 Requires the ``process_improve`` package (``pip install 'process-improve[batch]'``,
-version 1.79 or later) for ``BatchPCA`` and ``load_dupont``.
+version 1.82.0 or later) for ``BatchPCA`` and ``load_dupont``.
 
 Usage::
 

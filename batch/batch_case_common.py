@@ -17,6 +17,7 @@ and normal-vision separation checks (worst pair 9.4 and 16.1 Delta E).
 from __future__ import annotations
 
 import pathlib
+import typing
 
 import matplotlib as mpl
 
@@ -24,7 +25,12 @@ mpl.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import matplotlib.patheffects as path_effects
 from matplotlib.figure import Figure
+from matplotlib.lines import Line2D
+
+if typing.TYPE_CHECKING:
+    from collections.abc import Callable
 
 DARK_BLUE = "#1f3d7a"
 ORANGE = "#c55a11"
@@ -44,6 +50,7 @@ def phase_lines(ax, xs, *, colour: str = PHASE_LINE, zorder: float = 1.5, lw: fl
         ax.axvline(x, color=colour, lw=lw, ls=ls, zorder=zorder)
 MARKER, HIGHLIGHT = 28, 46  # scatter areas (points squared) of a plain dot and of a highlighted batch
 MARKER_CODED, HIGHLIGHT_CODED = 112, 170  # the same when the markers are shape-coded: twice the side
+BUBBLE = 70  # the area given to the median batch when the marker area carries a value, not just identity
 FIGSIZE_WIDE = (9.0, 3.6)
 
 plt.rcParams.update(
@@ -57,7 +64,12 @@ plt.rcParams.update(
         "axes.spines.right": False,
         "axes.titlesize": 10.5,
         "axes.titleweight": "normal",
-        "legend.frameon": False,
+        # A legend sits over the grid and often over the data: give it a ground solid enough to read
+        # through, and no edge, so it does not read as a panel of its own.
+        "legend.frameon": True,
+        "legend.facecolor": "white",
+        "legend.framealpha": 0.85,
+        "legend.edgecolor": "none",
         "legend.fontsize": 9,
     }
 )
@@ -128,6 +140,7 @@ def group_scatter(
     group_styles: dict[str, tuple[str, str]] | None = None,
     size: float | None = None,
     highlight_size: float | None = None,
+    areas: pd.Series | None = None,
 ) -> None:
     """Scatter the batches in ``x`` and ``y``, colour- and shape-coded by ``groups`` when given, with ``highlight`` on top.
 
@@ -136,6 +149,9 @@ def group_scatter(
     entry, "classed <group>"; a highlighted batch is drawn larger in its highlight colour but keeps its
     group's marker, so its class stays readable. Shape-coded markers are drawn at twice the side of plain
     dots (``MARKER_CODED`` against ``MARKER``), because a triangle and a square need the size to be told apart.
+    ``areas`` (a Series over the batches, in points squared) gives each batch its own marker area, so that the
+    area can carry a quantity; a highlighted batch then keeps its area and is marked by a heavier edge instead
+    of by a larger one, because two meanings on one channel cannot both be read.
     """
     styles = group_styles or {}
     area = {"s": 0.78}  # a square fills its bounding box; scale it to the visible area of a circle of the same s
@@ -143,18 +159,25 @@ def group_scatter(
         size = MARKER if groups is None else MARKER_CODED
     if highlight_size is None:
         highlight_size = HIGHLIGHT if groups is None else HIGHLIGHT_CODED
+    def area_of(members: list, marker: str, when_plain: float) -> "float | pd.Series":
+        """The scatter area for these batches: their own when ``areas`` is given, else the shared size."""
+        scale = area.get(marker, 1.0)
+        return (areas.loc[members] * scale) if areas is not None else (when_plain * scale)
+
     if groups is None:
         others = [b for b in x.index if b not in highlight]
-        ax.scatter(x.loc[others], y.loc[others], s=size, color=DARK_BLUE, edgecolor="white", linewidth=1, zorder=3)
+        ax.scatter(x.loc[others], y.loc[others], s=area_of(others, "o", size), color=DARK_BLUE,
+                   edgecolor="white", linewidth=1, zorder=3)
     else:
         for label, (colour, marker) in styles.items():
             members = [b for b in x.index if groups.get(b) == label and b not in highlight]
-            ax.scatter(x.loc[members], y.loc[members], s=size * area.get(marker, 1.0), color=colour, marker=marker, edgecolor="white",
-                       linewidth=1, zorder=3, label=f"classed {label}")
+            ax.scatter(x.loc[members], y.loc[members], s=area_of(members, marker, size), color=colour, marker=marker,
+                       edgecolor="white", linewidth=1, zorder=3, label=f"classed {label}")
     for batch_id, colour in highlight.items():
         marker = styles.get(groups.get(batch_id), (None, "o"))[1] if groups is not None else "o"
-        ax.scatter(x.loc[batch_id], y.loc[batch_id], s=highlight_size * area.get(marker, 1.0), color=colour, marker=marker,
-                   edgecolor="white", linewidth=1, zorder=4)
+        ax.scatter(x.loc[batch_id], y.loc[batch_id], s=area_of([batch_id], marker, highlight_size), color=colour,
+                   marker=marker, edgecolor="white" if areas is None else "0.25",
+                   linewidth=1 if areas is None else 1.4, zorder=4)
 
 
 def score_plot(
@@ -165,7 +188,12 @@ def score_plot(
     highlight: dict[int, str] | None = None,
     labels: list[int] | None = None,
     label_left: tuple[int, ...] = (),
+    label_north: tuple[int, ...] = (),
     label_leader: dict[int, tuple[float, float]] | None = None,
+    sizes: pd.Series | None = None,
+    size_name: str = "",
+    size_reference: tuple[float, ...] = (),
+    size_of_reference: "Callable[[float], float] | None" = None,
     conf_level: float = 0.95,
     title: str = "",
     legend_loc: str = "upper right",
@@ -175,11 +203,19 @@ def score_plot(
 ) -> Figure:
     """Scores on two components with the Hotelling's T2 ellipse; selected batches coloured and labelled.
 
-    ``label_left`` names the batches whose label sits to the left of the marker, for the cases where the
-    default right-hand placement would collide with a neighbour. ``label_leader`` maps a batch to an offset
-    in points and draws a leader line to it, for a batch that sits inside a dense cloud. ``groups`` (a
-    Series over the batches) with ``group_styles`` (group -> (colour, marker)) colour- and shape-codes the
-    batches by a known classification; a highlighted batch keeps its group's marker in the highlight colour.
+    ``label_left`` names the batches whose label sits to the left of the marker and ``label_north`` those
+    whose label sits centred above it, for the cases where the default right-hand placement would collide
+    with a neighbour. ``label_leader`` maps a batch to an offset in points and draws a leader line to it, for
+    a batch that sits inside a dense cloud. ``groups`` (a Series over the batches) with ``group_styles``
+    (group -> (colour, marker)) colour- and shape-codes the batches by a known classification; a highlighted
+    batch keeps its group's marker in the highlight colour.
+
+    ``sizes`` (a Series over the batches, for instance their SPE) makes the marker **area** proportional to
+    that quantity, with the median batch drawn at ``BUBBLE``; ``size_name`` and ``size_reference`` then add
+    one legend circle per reference value, without which an area cannot be read off the plot. When ``sizes``
+    is a transform of the quantity the reader thinks in, such as the square of the SPE, ``size_of_reference``
+    maps a reference value back onto the same scale, so that the circle labelled "SPE 20" is the size a batch
+    with an SPE of 20 is drawn.
     """
     if ax is None:
         fig, ax = plt.subplots(figsize=(4.8, 4.4))
@@ -190,7 +226,9 @@ def score_plot(
     ex, ey = model.ellipse_coordinates(score_horiz=pc_horiz, score_vert=pc_vert, conf_level=conf_level)
     ax.plot(ex, ey, color=GREY, lw=1, ls="--", label=f"{conf_level:.0%} confidence ellipse")
     highlight = highlight or {}
-    group_scatter(ax, x, y, highlight, groups=groups, group_styles=group_styles)
+    # Area, not radius, carries the quantity: doubling the area means doubling the value it stands for.
+    areas = sizes.reindex(scores.index) * (BUBBLE / sizes.median()) if sizes is not None else None
+    group_scatter(ax, x, y, highlight, groups=groups, group_styles=group_styles, areas=areas)
     label_leader = label_leader or {}
     for batch_id in labels or []:
         point = (x.loc[batch_id], y.loc[batch_id])
@@ -199,6 +237,13 @@ def score_plot(
             ax.annotate(str(batch_id), point, xytext=(dx, dy), textcoords="offset points", fontsize=8.5,
                         ha="right" if dx < 0 else "left", va="top" if dy < 0 else "bottom", zorder=6,
                         arrowprops={"arrowstyle": "-", "color": GREY, "lw": 0.8, "shrinkA": 2, "shrinkB": 3})
+            continue
+        if batch_id in label_north:
+            gap = 4 + (float(areas.loc[batch_id]) ** 0.5) / 2 if areas is not None else 6
+            # A label directly above a marker inside a cloud can land on a neighbour: give it a white outline.
+            text = ax.annotate(str(batch_id), point, xytext=(0, gap), textcoords="offset points",
+                               ha="center", va="bottom", fontsize=8.5, zorder=6)
+            text.set_path_effects([path_effects.withStroke(linewidth=2.5, foreground="white")])
             continue
         left = batch_id in label_left
         ax.annotate(str(batch_id), point, xytext=(-4 if left else 4, 4),
@@ -211,7 +256,15 @@ def score_plot(
     ax.set_ylabel(f"$t_{pc_vert}$ [{note}{r2[pc_vert - 1]:.1%}]")
     ax.set_title(title)
     ax.set_aspect("equal", adjustable="datalim")
-    if groups is not None:
+    if size_reference:
+        handles, texts = ax.get_legend_handles_labels()
+        for value in size_reference:
+            on_scale = size_of_reference(value) if size_of_reference is not None else value
+            handles.append(Line2D([], [], ls="none", marker="o", color=GREY, markeredgecolor="white",
+                                  markersize=(on_scale * BUBBLE / sizes.median()) ** 0.5))
+            texts.append(f"{size_name} {value:g}" if size_name else f"{value:g}")
+        ax.legend(handles, texts, loc=legend_loc, labelspacing=0.9)
+    elif groups is not None:
         compact_legend(ax, legend_loc)
     else:
         ax.legend(loc=legend_loc)
@@ -441,13 +494,22 @@ def parity_plot(
     title: str,
     label_left: tuple[int, ...] = (),
     label_offsets: dict[int, tuple[float, float]] | None = None,
+    errors: dict[str, float] | None = None,
+    sd: float | None = None,
+    band_from: str = "",
+    band_multiple: float = 2.0,
 ) -> None:
     """Observed against fitted values with the y = x line; selected batches coloured and labelled.
 
     ``label_offsets`` gives a batch its own label offset in points, with the alignment following the
     signs, for a marker whose neighbours crowd both default positions.
     ``label_left`` names the highlighted batches whose label goes to the left of the marker,
-    for a point whose right-hand side is crowded by other batches.
+    for a point whose right-hand side is crowded by other batches. ``errors`` (name -> value, for
+    instance ``{"RMSEE": 1.87, "RMSEP": 2.42}``) is listed in the legend, in the units of the axes,
+    with each value also given in units of ``sd`` when that is passed: the scatter about the
+    ``y = x`` line is what the reader is judging, so the number belongs on the same plot.
+    ``band_from`` names one of those errors to shade as a band of ``band_multiple`` times it either
+    side of the line, which turns the number into the distance the reader is looking at.
     """
     others = [b for b in observed.index if b not in highlight]
     ax.scatter(observed.loc[others], predicted.loc[others], s=26, color=DARK_BLUE, edgecolor="white", linewidth=0.8, zorder=3)
@@ -463,11 +525,21 @@ def parity_plot(
         ax.annotate(str(batch_id), (observed.loc[batch_id], predicted.loc[batch_id]), xytext=(-5, 4) if to_the_left else (4, 4),
                     textcoords="offset points", ha="right" if to_the_left else "left", fontsize=8.5)
     lo, hi = float(min(observed.min(), predicted.min())), float(max(observed.max(), predicted.max()))
-    ax.plot([lo, hi], [lo, hi], color=GREY, lw=1, ls="--", label="y = x")
+    if band_from:
+        # Below the markers and above the grid: the band is context for the scatter, not a mark of its own.
+        half = band_multiple * (errors or {})[band_from]
+        ax.fill_between([lo, hi], [lo - half, hi - half], [lo + half, hi + half], color=BAND, zorder=1, lw=0,
+                        label=f"$\\pm${band_multiple:g} {band_from}")
+        ax.set_ylim(lo - 1.15 * half, hi + 1.15 * half)   # the band sets the view, not the outermost batch
+    ax.plot([lo, hi], [lo, hi], color=GREY, lw=1, ls="--", label="y = x", zorder=2)
     ax.set_xlabel("Observed")
     ax.set_ylabel("Fitted")
     ax.set_title(title)
-    ax.legend(loc="upper left")
+    handles, texts = ax.get_legend_handles_labels()
+    for name, value in (errors or {}).items():
+        handles.append(Line2D([], [], ls="none", marker="none"))          # a value, with no mark of its own
+        texts.append(f"{name} {value:.3g}" + (f" ({value / sd:.2f} sd)" if sd else ""))
+    ax.legend(handles, texts, loc="upper left", handlelength=1.4, handletextpad=0.6)
 
 
 def online_chart(
