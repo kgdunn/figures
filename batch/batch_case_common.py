@@ -64,7 +64,12 @@ plt.rcParams.update(
         "axes.spines.right": False,
         "axes.titlesize": 10.5,
         "axes.titleweight": "normal",
-        "legend.frameon": False,
+        # A legend sits over the grid and often over the data: give it a ground solid enough to read
+        # through, and no edge, so it does not read as a panel of its own.
+        "legend.frameon": True,
+        "legend.facecolor": "white",
+        "legend.framealpha": 0.85,
+        "legend.edgecolor": "none",
         "legend.fontsize": 9,
     }
 )
@@ -534,10 +539,7 @@ def parity_plot(
     for name, value in (errors or {}).items():
         handles.append(Line2D([], [], ls="none", marker="none"))          # a value, with no mark of its own
         texts.append(f"{name} {value:.3g}" + (f" ({value / sd:.2f} sd)" if sd else ""))
-    # The legend sits over the grid and, in a parity plot, close to the cloud: give it a background
-    # solid enough to read through and no frame, so it does not read as a panel of its own.
-    ax.legend(handles, texts, loc="upper left", facecolor="white", framealpha=0.85, edgecolor="none",
-              handlelength=1.4, handletextpad=0.6)
+    ax.legend(handles, texts, loc="upper left", handlelength=1.4, handletextpad=0.6)
 
 
 def online_chart(
