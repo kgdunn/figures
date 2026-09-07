@@ -489,13 +489,18 @@ def parity_plot(
     title: str,
     label_left: tuple[int, ...] = (),
     label_offsets: dict[int, tuple[float, float]] | None = None,
+    errors: dict[str, float] | None = None,
+    sd: float | None = None,
 ) -> None:
     """Observed against fitted values with the y = x line; selected batches coloured and labelled.
 
     ``label_offsets`` gives a batch its own label offset in points, with the alignment following the
     signs, for a marker whose neighbours crowd both default positions.
     ``label_left`` names the highlighted batches whose label goes to the left of the marker,
-    for a point whose right-hand side is crowded by other batches.
+    for a point whose right-hand side is crowded by other batches. ``errors`` (name -> value, for
+    instance ``{"RMSEE": 1.87, "RMSEP": 2.42}``) is listed in the legend, in the units of the axes,
+    with each value also given in units of ``sd`` when that is passed: the scatter about the
+    ``y = x`` line is what the reader is judging, so the number belongs on the same plot.
     """
     others = [b for b in observed.index if b not in highlight]
     ax.scatter(observed.loc[others], predicted.loc[others], s=26, color=DARK_BLUE, edgecolor="white", linewidth=0.8, zorder=3)
@@ -515,7 +520,14 @@ def parity_plot(
     ax.set_xlabel("Observed")
     ax.set_ylabel("Fitted")
     ax.set_title(title)
-    ax.legend(loc="upper left")
+    handles, texts = ax.get_legend_handles_labels()
+    for name, value in (errors or {}).items():
+        handles.append(Line2D([], [], ls="none", marker="none"))          # a value, with no mark of its own
+        texts.append(f"{name} {value:.3g}" + (f" ({value / sd:.2f} sd)" if sd else ""))
+    # The legend sits over the grid and, in a parity plot, close to the cloud: give it a background
+    # solid enough to read through and no frame, so it does not read as a panel of its own.
+    ax.legend(handles, texts, loc="upper left", facecolor="white", framealpha=0.85, edgecolor="none",
+              handlelength=1.4, handletextpad=0.6)
 
 
 def online_chart(

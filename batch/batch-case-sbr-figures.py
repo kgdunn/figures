@@ -160,11 +160,19 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     save(contribution_triptych(t1.loc[FAULT_FROM_START], what="Contribution to $t_1$", title="Batch 37: contributions to $t_1$"), out_dir, "batch-case-sbr-batch-37-contributions")
     save(contribution_triptych(t2.loc[FAULT_PARTWAY], what="Contribution to $t_2$", title="Batch 34: contributions to $t_2$"), out_dir, "batch-case-sbr-batch-34-contributions")
 
+    # One leave-one-batch-out sweep serves two figures: the end-of-batch row is the RMSEP quoted on the
+    # parity plot below, and the whole frame is the prediction-error curve further on.
+    sd = quality.std(ddof=1)
+    rmsep = leave_one_batch_out_rmse(trajectories, quality, list(range(1, model.n_timesteps_ + 1)))
+    rmsee = np.sqrt(((quality - model.predictions_) ** 2).mean())
+
     fig, axes = plt.subplots(1, 2, figsize=(9.0, 4.2))
     for ax, variable in zip(axes, ["Composition", "ParticleSize"], strict=True):
         # batch 34 sits against the cloud of composition values, so its label goes to the left there
         parity_plot(quality[variable], model.predictions_[variable], highlight=HIGHLIGHT, ax=ax, title=variable,
-                    label_offsets={FAULT_PARTWAY: (-6, 0)} if variable == "Composition" else None)  # just west of the marker
+                    label_offsets={FAULT_PARTWAY: (-6, 0)} if variable == "Composition" else None,  # just west of it
+                    errors={"RMSEE": rmsee[variable], "RMSEP": rmsep.loc[model.n_timesteps_, variable]},
+                    sd=sd[variable])
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-observed-vs-fitted")
 
@@ -177,11 +185,11 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     # sample does not widen the band), smoothed with an EWMA (lambda = 0.3, the value the book's
     # EWMA chapter uses; pandas starts the average at the first sample's value).
     others = np.stack([batch.to_numpy() for key, batch in trajectories.items() if key not in HIGHLIGHT])
-    mean, sd = others.mean(axis=0), others.std(axis=0, ddof=1)
+    mean_centre, mean_spread = others.mean(axis=0), others.std(axis=0, ddof=1)
     centre, spread = np.median(others, axis=0), median_absolute_deviation(others, axis=0, scale="normal")
     fig, axes = plt.subplots(2, len(sbr.trajectory_tags), figsize=(13.0, 4.4), sharex=True, sharey=True)
     for row, batch_id in enumerate([FAULT_FROM_START, FAULT_PARTWAY]):
-        z = (trajectories[batch_id].to_numpy() - mean) / sd
+        z = (trajectories[batch_id].to_numpy() - mean_centre) / mean_spread
         z_robust = pd.DataFrame((trajectories[batch_id].to_numpy() - centre) / spread).ewm(alpha=EWMA_LAMBDA, adjust=False).mean().to_numpy()
         for j, tag in enumerate(sbr.trajectory_tags):
             ax = axes[row, j]
@@ -212,10 +220,9 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     save(fig, out_dir, "batch-case-sbr-departure")
 
     # -- On-line prediction: how the error of the evolving quality prediction falls as the batch is observed.
-    # Leave-one-batch-out RMSEP: each batch held out of the fit in turn and traced as it runs, relative to the
-    # attribute's standard deviation over the 53 batches: a ratio of 1 is the error of predicting the average.
-    sd = quality.std(ddof=1)
-    rmsep = leave_one_batch_out_rmse(trajectories, quality, list(range(1, model.n_timesteps_ + 1)))
+    # The leave-one-batch-out sweep computed above, now read as a curve: each batch held out of the fit in
+    # turn and traced as it runs, relative to the attribute's standard deviation over the 53 batches, so
+    # that a ratio of 1 is the error of predicting the average batch.
     for attribute in ("ParticleSize", "Composition"):
         print(
             f"{attribute}: leave-one-batch-out RMSEP / sd after "
