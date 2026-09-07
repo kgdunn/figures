@@ -37,6 +37,9 @@ ABOVE_SPE_LIMIT = [49, 51]  # a residual the two components cannot describe
 ABOVE_T2_LIMIT = [50, 52, 53, 54, 55]  # extreme along the components themselves
 FLAGGED = {**{b: AQUA for b in ABOVE_T2_LIMIT}, **{b: ORANGE for b in ABOVE_SPE_LIMIT}}
 SECOND_CLUSTER = [37, 39, 43, 44, 45, 46, 47, 48]
+# One colour and one marker for the cluster in every figure it appears in, so that it is recognised
+# across the page; orange already stands for batch 49 and aqua for batches 50 to 55.
+CLUSTER_COLOUR, CLUSTER_MARKER = PURPLE, "^"
 ARROW = "0.3"  # the contribution direction drawn on the model B score plot
 RAW_TAGS = ["TempC-1", "Press-3", "Press-2", "Flow-2"]  # the three largest |t2| + |t3| contributions of the cluster, and Flow-2
 RAW_WINDOW = 30  # the raw panels stop here: samples 0 to 25 carry 66% of the cluster's t2 and 90% of its t3 contribution
@@ -75,8 +78,9 @@ def main(out_dir: pathlib.Path) -> None:
 
     kept_b = {b: batch for b, batch in batches.items() if b < SPE_OUTLIER}
     model_b = BatchPCA(n_components=3).fit(kept_b)
-    fig = score_plot(model_b, pc_horiz=2, pc_vert=3, highlight={b: ORANGE for b in SECOND_CLUSTER}, labels=SECOND_CLUSTER,
-                     label_left=(39, 47), legend_loc="lower left", title="Model B: batches 1 to 48, components 2 and 3")
+    fig = score_plot(model_b, pc_horiz=2, pc_vert=3, highlight={b: CLUSTER_COLOUR for b in SECOND_CLUSTER},
+                     highlight_marker=CLUSTER_MARKER, labels=SECOND_CLUSTER, label_left=(39, 47),
+                     legend_loc="lower left", title="Model B: batches 1 to 48, components 2 and 3")
     # The contributions below compare the group with the model centre: draw that direction, from the group's average
     # point to the origin, with its label riding along the arrow (the axes have equal scales, so the data angle holds).
     group_t2, group_t3 = model_b.scores_.loc[SECOND_CLUSTER].iloc[:, 1:3].mean()
@@ -124,7 +128,7 @@ def main(out_dir: pathlib.Path) -> None:
         for b in others:
             ax.plot(kept_b[b][tag].to_numpy(), color=PALE_GREY, lw=0.8, zorder=1)
         for b in SECOND_CLUSTER:
-            ax.plot(kept_b[b][tag].to_numpy(), color=ORANGE, lw=1.0, alpha=0.9, zorder=3, label="the eight-batch group" if b == SECOND_CLUSTER[0] else None)
+            ax.plot(kept_b[b][tag].to_numpy(), color=CLUSTER_COLOUR, lw=1.0, alpha=0.9, zorder=3, label="the eight-batch group" if b == SECOND_CLUSTER[0] else None)
         ax.plot([], [], color=PALE_GREY, lw=1.4, label=f"the other {len(others)} batches")
         ax.set_xlim(0, RAW_WINDOW)
         values = np.concatenate([kept_b[b][tag].to_numpy()[: RAW_WINDOW + 1] for b in kept_b])
@@ -142,17 +146,18 @@ def main(out_dir: pathlib.Path) -> None:
     # The 15 batches left out of model C, projected onto it: the on-line projection at the last
     # sample of a complete batch gives its scores, T2 and SPE against model C's centre and scale.
     left_out = {
-        "batch 49": ([SPE_OUTLIER], ORANGE),
-        "batches 50 to 55": (list(range(50, 56)), AQUA),
-        "the second group": (SECOND_CLUSTER, PURPLE),
+        "batch 49": ([SPE_OUTLIER], ORANGE, "o"),
+        "batches 50 to 55": (list(range(50, 56)), AQUA, "o"),
+        "the second group": (SECOND_CLUSTER, CLUSTER_COLOUR, CLUSTER_MARKER),
     }
-    projected = {b: model_c.predict_online(batches[b], upto_k=model_c.n_timesteps_) for ids, _ in left_out.values() for b in ids}
+    projected = {b: model_c.predict_online(batches[b], upto_k=model_c.n_timesteps_) for ids, _, _ in left_out.values() for b in ids}
     fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), gridspec_kw={"width_ratios": [1, 1.1]})
     score_plot(model_c, highlight={b: ORANGE for b in POOR_QUALITY_NOT_VISIBLE}, labels=POOR_QUALITY_NOT_VISIBLE, title="Model C: 40 batches, scores", ax=axes[0])
     influence_plot(model_c, title="Model C and the 15 batches left out of it", ax=axes[1])
-    for label, (ids, colour) in left_out.items():
+    for label, (ids, colour, marker) in left_out.items():
         axes[1].scatter([float(projected[b].hotellings_t2) for b in ids], [float(projected[b].spe) for b in ids],
-                        s=40, color=colour, edgecolor="white", linewidth=1, zorder=5, label=label)
+                        s=40 if marker == "o" else 52, color=colour, marker=marker,
+                        edgecolor="white", linewidth=1, zorder=5, label=label)
     for b in (SPE_OUTLIER, 37):
         axes[1].annotate(str(b), (float(projected[b].hotellings_t2), float(projected[b].spe)), xytext=(6, 4), textcoords="offset points", fontsize=8.5)
     # Logarithmic axes: the projected batches sit up to two decades beyond the training cloud and its limits.

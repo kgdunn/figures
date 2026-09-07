@@ -138,6 +138,7 @@ def group_scatter(
     *,
     groups: pd.Series | None = None,
     group_styles: dict[str, tuple[str, str]] | None = None,
+    highlight_marker: str = "o",
     size: float | None = None,
     highlight_size: float | None = None,
     areas: pd.Series | None = None,
@@ -149,6 +150,8 @@ def group_scatter(
     entry, "classed <group>"; a highlighted batch is drawn larger in its highlight colour but keeps its
     group's marker, so its class stays readable. Shape-coded markers are drawn at twice the side of plain
     dots (``MARKER_CODED`` against ``MARKER``), because a triangle and a square need the size to be told apart.
+    ``highlight_marker`` gives the highlighted batches a shape of their own when there are no ``groups``, so
+    that a set carried across several figures is recognised by its shape as well as by its colour.
     ``areas`` (a Series over the batches, in points squared) gives each batch its own marker area, so that the
     area can carry a quantity; a highlighted batch then keeps its area and is marked by a heavier edge instead
     of by a larger one, because two meanings on one channel cannot both be read.
@@ -174,7 +177,7 @@ def group_scatter(
             ax.scatter(x.loc[members], y.loc[members], s=area_of(members, marker, size), color=colour, marker=marker,
                        edgecolor="white", linewidth=1, zorder=3, label=f"classed {label}")
     for batch_id, colour in highlight.items():
-        marker = styles.get(groups.get(batch_id), (None, "o"))[1] if groups is not None else "o"
+        marker = styles.get(groups.get(batch_id), (None, "o"))[1] if groups is not None else highlight_marker
         ax.scatter(x.loc[batch_id], y.loc[batch_id], s=area_of([batch_id], marker, highlight_size), color=colour,
                    marker=marker, edgecolor="white" if areas is None else "0.25",
                    linewidth=1 if areas is None else 1.4, zorder=4)
@@ -199,6 +202,7 @@ def score_plot(
     legend_loc: str = "upper right",
     groups: pd.Series | None = None,
     group_styles: dict[str, tuple[str, str]] | None = None,
+    highlight_marker: str = "o",
     ax=None,
 ) -> Figure:
     """Scores on two components with the Hotelling's T2 ellipse; selected batches coloured and labelled.
@@ -228,7 +232,8 @@ def score_plot(
     highlight = highlight or {}
     # Area, not radius, carries the quantity: doubling the area means doubling the value it stands for.
     areas = sizes.reindex(scores.index) * (BUBBLE / sizes.median()) if sizes is not None else None
-    group_scatter(ax, x, y, highlight, groups=groups, group_styles=group_styles, areas=areas)
+    group_scatter(ax, x, y, highlight, groups=groups, group_styles=group_styles,
+                  highlight_marker=highlight_marker, areas=areas)
     label_leader = label_leader or {}
     for batch_id in labels or []:
         point = (x.loc[batch_id], y.loc[batch_id])
