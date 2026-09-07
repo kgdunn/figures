@@ -491,6 +491,8 @@ def parity_plot(
     label_offsets: dict[int, tuple[float, float]] | None = None,
     errors: dict[str, float] | None = None,
     sd: float | None = None,
+    band_from: str = "",
+    band_multiple: float = 2.0,
 ) -> None:
     """Observed against fitted values with the y = x line; selected batches coloured and labelled.
 
@@ -501,6 +503,8 @@ def parity_plot(
     instance ``{"RMSEE": 1.87, "RMSEP": 2.42}``) is listed in the legend, in the units of the axes,
     with each value also given in units of ``sd`` when that is passed: the scatter about the
     ``y = x`` line is what the reader is judging, so the number belongs on the same plot.
+    ``band_from`` names one of those errors to shade as a band of ``band_multiple`` times it either
+    side of the line, which turns the number into the distance the reader is looking at.
     """
     others = [b for b in observed.index if b not in highlight]
     ax.scatter(observed.loc[others], predicted.loc[others], s=26, color=DARK_BLUE, edgecolor="white", linewidth=0.8, zorder=3)
@@ -516,7 +520,13 @@ def parity_plot(
         ax.annotate(str(batch_id), (observed.loc[batch_id], predicted.loc[batch_id]), xytext=(-5, 4) if to_the_left else (4, 4),
                     textcoords="offset points", ha="right" if to_the_left else "left", fontsize=8.5)
     lo, hi = float(min(observed.min(), predicted.min())), float(max(observed.max(), predicted.max()))
-    ax.plot([lo, hi], [lo, hi], color=GREY, lw=1, ls="--", label="y = x")
+    if band_from:
+        # Below the markers and above the grid: the band is context for the scatter, not a mark of its own.
+        half = band_multiple * (errors or {})[band_from]
+        ax.fill_between([lo, hi], [lo - half, hi - half], [lo + half, hi + half], color=BAND, zorder=1, lw=0,
+                        label=f"$\\pm${band_multiple:g} {band_from}")
+        ax.set_ylim(lo - 1.15 * half, hi + 1.15 * half)   # the band sets the view, not the outermost batch
+    ax.plot([lo, hi], [lo, hi], color=GREY, lw=1, ls="--", label="y = x", zorder=2)
     ax.set_xlabel("Observed")
     ax.set_ylabel("Fitted")
     ax.set_title(title)
