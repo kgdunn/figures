@@ -365,8 +365,11 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     time = np.arange(1, model.n_timesteps_ + 1)
     for ax, (batch_id, (tag, sample_points)) in zip(axes, FORECASTS.items(), strict=True):
         colour = HIGHLIGHT[batch_id]
-        for j, batch in enumerate(normal.values()):
-            ax.plot(time, z_form(batch)[tag].to_numpy(), color=PALE_GREY, lw=0.6, zorder=1, label="normal batches" if j == 0 else None)
+        # The 51 normal batches as a band rather than 51 lines: on a noisy tag the lines fill the panel
+        # and the forecasts have to be read through them. The band is where the middle 90% of them lie.
+        spread = np.stack([z_form(batch)[tag].to_numpy() for batch in normal.values()])
+        ax.fill_between(time, np.percentile(spread, 5, axis=0), np.percentile(spread, 95, axis=0),
+                        color=PALE_GREY, zorder=1, label="normal batches, middle 90%")
         ax.axhline(0, color=GREY, lw=0.8, zorder=2)
         actual = z_form(trajectories[batch_id])[tag].to_numpy()
         first = sample_points[0]
