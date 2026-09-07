@@ -132,11 +132,14 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
 
     model = BatchPLS(n_components=2).fit(trajectories, quality)
     # Batch 4, the batch nearest the average quality, is marked for the mid-batch prediction figure further on.
-    # The marker area is the batch's SPE, so that the plot shows both ways a batch can be unusual: the two
-    # faulty batches are extreme in the scores and, in the residual, the smallest markers on the plot.
+    # The marker area is the batch's squared residual, so that the plot shows both ways a batch can be
+    # unusual: the two faulty batches are extreme in the scores and, in the residual, the smallest markers
+    # on the plot. SPE squared rather than SPE: the batches span a factor of two in SPE, which is a factor
+    # of four in area, and the sum of squared residuals is the quantity that adds up over the cells anyway.
     fig = score_plot(model, highlight={**HIGHLIGHT, AVERAGE_BATCH: PURPLE}, labels=[*HIGHLIGHT, AVERAGE_BATCH],
-                     label_north=(AVERAGE_BATCH,), sizes=model.spe_.iloc[:, -1], size_name="SPE",
-                     size_reference=(20, 35), title="Batch PLS: scores of the 53 batches")
+                     label_north=(AVERAGE_BATCH,), sizes=model.spe_.iloc[:, -1] ** 2, size_name="SPE",
+                     size_reference=(20, 30, 40), size_of_reference=lambda spe: spe**2,
+                     title="Batch PLS: scores of the 53 batches")
     save(fig, out_dir, "batch-case-sbr-scores")
     save(influence_plot(model, highlight=HIGHLIGHT, labels=[*HIGHLIGHT, *SPE_OUTLIERS], title="Batch PLS: Hotelling's $T^2$ against SPE"), out_dir, "batch-case-sbr-influence")
 

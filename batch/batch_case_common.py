@@ -17,6 +17,7 @@ and normal-vision separation checks (worst pair 9.4 and 16.1 Delta E).
 from __future__ import annotations
 
 import pathlib
+import typing
 
 import matplotlib as mpl
 
@@ -27,6 +28,9 @@ import pandas as pd
 import matplotlib.patheffects as path_effects
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
+
+if typing.TYPE_CHECKING:
+    from collections.abc import Callable
 
 DARK_BLUE = "#1f3d7a"
 ORANGE = "#c55a11"
@@ -184,6 +188,7 @@ def score_plot(
     sizes: pd.Series | None = None,
     size_name: str = "",
     size_reference: tuple[float, ...] = (),
+    size_of_reference: "Callable[[float], float] | None" = None,
     conf_level: float = 0.95,
     title: str = "",
     legend_loc: str = "upper right",
@@ -202,7 +207,10 @@ def score_plot(
 
     ``sizes`` (a Series over the batches, for instance their SPE) makes the marker **area** proportional to
     that quantity, with the median batch drawn at ``BUBBLE``; ``size_name`` and ``size_reference`` then add
-    one legend circle per reference value, without which an area cannot be read off the plot.
+    one legend circle per reference value, without which an area cannot be read off the plot. When ``sizes``
+    is a transform of the quantity the reader thinks in, such as the square of the SPE, ``size_of_reference``
+    maps a reference value back onto the same scale, so that the circle labelled "SPE 20" is the size a batch
+    with an SPE of 20 is drawn.
     """
     if ax is None:
         fig, ax = plt.subplots(figsize=(4.8, 4.4))
@@ -246,8 +254,9 @@ def score_plot(
     if size_reference:
         handles, texts = ax.get_legend_handles_labels()
         for value in size_reference:
+            on_scale = size_of_reference(value) if size_of_reference is not None else value
             handles.append(Line2D([], [], ls="none", marker="o", color=GREY, markeredgecolor="white",
-                                  markersize=(value * BUBBLE / sizes.median()) ** 0.5))
+                                  markersize=(on_scale * BUBBLE / sizes.median()) ** 0.5))
             texts.append(f"{size_name} {value:g}" if size_name else f"{value:g}")
         ax.legend(handles, texts, loc=legend_loc, labelspacing=0.9)
     elif groups is not None:
