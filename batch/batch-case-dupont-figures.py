@@ -27,7 +27,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from batch_case_common import AQUA, DARK_BLUE, GREY, ORANGE, PALE_GREY, PURPLE, contribution_triptych, influence_plot, overlay_panels, save, score_plot, tag_panels, shade_alternate_tags
+from batch_case_common import AQUA, DARK_BLUE, GREY, MAGENTA, ORANGE, PALE_GREY, PURPLE, contribution_triptych, influence_plot, overlay_panels, save, score_plot, tag_panels, shade_alternate_tags
 
 from process_improve.batch import BatchPCA, load_dupont
 
@@ -45,6 +45,10 @@ RAW_TAGS = ["TempC-1", "Press-3", "Press-2", "Flow-2"]  # the three largest |t2|
 RAW_WINDOW = 30  # the raw panels stop here: samples 0 to 25 carry 66% of the cluster's t2 and 90% of its t3 contribution
 MEMBER_DOT = "0.25"  # edge colour of the member markers: white face and dark edge read on the bars and on the background
 POOR_QUALITY_NOT_VISIBLE = [38, 40, 41, 42]
+# Their own colour and shape as well: the two panels of the model C figure sit side by side, and
+# orange there already means batch 49. Magenta clears the colour-vision and contrast checks against
+# the four colours it shares the figure with.
+POOR_QUALITY_COLOUR, POOR_QUALITY_MARKER = MAGENTA, "D"
 
 
 def main(out_dir: pathlib.Path) -> None:
@@ -152,7 +156,12 @@ def main(out_dir: pathlib.Path) -> None:
     }
     projected = {b: model_c.predict_online(batches[b], upto_k=model_c.n_timesteps_) for ids, _, _ in left_out.values() for b in ids}
     fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), gridspec_kw={"width_ratios": [1, 1.1]})
-    score_plot(model_c, highlight={b: ORANGE for b in POOR_QUALITY_NOT_VISIBLE}, labels=POOR_QUALITY_NOT_VISIBLE, title="Model C: 40 batches, scores", ax=axes[0])
+    # 38 sits below batch 21, and 40, 41 and 42 sit together near the centre: the four labels are
+    # placed away from the neighbour each would otherwise land on.
+    score_plot(model_c, highlight={b: POOR_QUALITY_COLOUR for b in POOR_QUALITY_NOT_VISIBLE},
+               highlight_marker=POOR_QUALITY_MARKER, labels=POOR_QUALITY_NOT_VISIBLE,
+               label_left=(38, 40), label_north=(41,),
+               title="Model C: 40 batches, scores", ax=axes[0])
     influence_plot(model_c, title="Model C and the 15 batches left out of it", ax=axes[1])
     for label, (ids, colour, marker) in left_out.items():
         axes[1].scatter([float(projected[b].hotellings_t2) for b in ids], [float(projected[b].spe) for b in ids],
