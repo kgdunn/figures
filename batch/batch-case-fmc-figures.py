@@ -11,7 +11,7 @@ the abnormal batches. The chapter shows the equivalent Plotly code; the
 committed figures are these matplotlib renderings.
 
 Requires the ``process_improve`` package (``pip install 'process-improve[batch]'``,
-version 1.81 or later) for ``load_fmc``, ``dict_to_wide`` and ``MBPLS``.
+version 1.82.0 or later) for ``load_fmc``, ``dict_to_wide`` and ``MBPLS``.
 
 Usage::
 
