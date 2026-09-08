@@ -137,7 +137,7 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     # on the plot. SPE squared rather than SPE: the batches span a factor of two in SPE, which is a factor
     # of four in area, and the sum of squared residuals is the quantity that adds up over the cells anyway.
     fig = score_plot(model, highlight={**HIGHLIGHT, AVERAGE_BATCH: PURPLE}, labels=[*HIGHLIGHT, AVERAGE_BATCH],
-                     label_north=(AVERAGE_BATCH,), sizes=model.spe_.iloc[:, -1] ** 2, size_name="SPE",
+                     sizes=model.spe_.iloc[:, -1] ** 2, size_name="SPE",
                      size_reference=(20, 30, 40), size_of_reference=lambda spe: spe**2,
                      title="Batch PLS: scores of the 53 batches")
     save(fig, out_dir, "batch-case-sbr-scores")
@@ -361,12 +361,15 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     def z_form(frame: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame((frame.to_numpy() - z_mean) / z_sd, columns=frame.columns, index=frame.index)
 
-    fig, axes = plt.subplots(1, 2, figsize=(9.0, 3.9))
+    fig, axes = plt.subplots(1, 2, figsize=(9.0, 4.7))
     time = np.arange(1, model.n_timesteps_ + 1)
     for ax, (batch_id, (tag, sample_points)) in zip(axes, FORECASTS.items(), strict=True):
         colour = HIGHLIGHT[batch_id]
-        for j, batch in enumerate(normal.values()):
-            ax.plot(time, z_form(batch)[tag].to_numpy(), color=PALE_GREY, lw=0.6, zorder=1, label="normal batches" if j == 0 else None)
+        # The 51 normal batches as a band rather than 51 lines: on a noisy tag the lines fill the panel
+        # and the forecasts have to be read through them. The band is where the middle 90% of them lie.
+        spread = np.stack([z_form(batch)[tag].to_numpy() for batch in normal.values()])
+        ax.fill_between(time, np.percentile(spread, 5, axis=0), np.percentile(spread, 95, axis=0),
+                        color=PALE_GREY, zorder=1, label="normal batches, middle 90%")
         ax.axhline(0, color=GREY, lw=0.8, zorder=2)
         actual = z_form(trajectories[batch_id])[tag].to_numpy()
         first = sample_points[0]
@@ -379,7 +382,7 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
                 f"batch {batch_id} {tag}, mean over the samples after {k}: forecast {forecast[k:].mean():.2f} sd, "
                 f"actual {actual[k:].mean():.2f} sd"
             )
-            ax.plot(time[k:], forecast[k:], color=line_colour, lw=width, ls=style, zorder=4, label=f"forecast from sample {k} onwards")
+            ax.plot(time[k:], forecast[k:], color=line_colour, lw=width, ls=style, zorder=4, label=f"forecast from sample {k}")
             # The forecast is made from the batch's own data up to sample k; a vertical tie from the observed value
             # at that sample to the first forecast value shows the jump that the forecast starts with.
             ax.plot([k, k], [actual[k - 1], forecast[k]], color=line_colour, lw=1.2, zorder=4)
@@ -390,9 +393,12 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
         ax.set_xlabel("Sample [aligned time]")
         ax.set_ylabel("Distance from the normal batches [sd]")
     axes[0].set_title(f"Batch {FAULT_FROM_START}: conversion,\nforecast of the remainder")
-    axes[0].legend(loc="upper right")
     axes[1].set_title(f"Batch {FAULT_PARTWAY}: cooling-water temperature,\nforecast of the remainder")
-    axes[1].legend(loc="upper left")
+    # Under the panels, not in them: on the cooling-water temperature every corner holds something the
+    # panel is about, the rise after the impurity enters above and the two forecasts below.
+    for ax in axes:
+        ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.22), ncol=2, fontsize=8, frameon=False,
+                  handlelength=2.2, columnspacing=1.0)
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-forecast")
 
