@@ -11,7 +11,10 @@ the abnormal batches. The chapter shows the equivalent Plotly code; the
 committed figures are these matplotlib renderings.
 
 Requires the ``process_improve`` package (``pip install 'process-improve[batch]'``,
-version 1.82.0 or later) for ``load_fmc``, ``dict_to_wide`` and ``MBPLS``.
+version 1.83.0 or later) for ``load_fmc``, ``dict_to_wide`` and ``MBPLS``. The
+multiblock figures need 1.83.0: earlier versions compute the super score of a
+row with missing cells per block rather than pooled, which moves the block
+scores and the per-block R2 on this data.
 
 Usage::
 
@@ -121,19 +124,20 @@ def main(out_dir: pathlib.Path) -> None:
         (axes[2], "The warp itself: clock time\nat each aligned sample",
          lambda b: (np.arange(len(fmc.X[b])), fmc.X[b]["ClockTime"].to_numpy()), "Sample [aligned time]", True),
     ]
+    # The three batches keep their colours across the panels, so one legend serves all three. It goes on
+    # the warp panel, where each line ends at that batch's own duration and the lower right is empty.
     for ax, title, series, xlabel, phases in panels:
         for b in shared:
             if b not in marked:
                 ax.plot(*series(b), color=PALE_GREY, lw=0.7, zorder=1)
         for b, colour in marked.items():
-            label = f"batch {b}: {duration[b]:.0f} units" if title.startswith("Before") else f"batch {b}"
-            ax.plot(*series(b), color=colour, lw=1.8, zorder=3, label=label)
+            ax.plot(*series(b), color=colour, lw=1.8, zorder=3, label=f"batch {b}: {duration[b]:.0f} units")
         if phases:
             for end in PHASE_ENDS:
                 ax.axvline(end, color=GREY, lw=0.9, ls=":", zorder=2)
         ax.set_title(title)
         ax.set_xlabel(xlabel)
-        ax.legend(loc="lower right" if phases else "upper left", fontsize=8)
+    axes[2].legend(loc="lower right", fontsize=8)
     axes[0].set_ylabel("Dryer temperature")
     axes[2].set_ylabel("Clock time")
     fig.tight_layout()
