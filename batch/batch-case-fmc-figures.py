@@ -38,6 +38,7 @@ from batch_case_common import (
     ORANGE,
     PALE_GREY,
     PURPLE,
+    annotate_batches,
     compact_legend,
     contribution_triptych,
     group_scatter,
@@ -63,6 +64,7 @@ TRAJECTORY_BATCHES = [13, 5, 7]
 DISPOSITION = {"good": 33, "abnormal": 61, "high solvent": 71}  # the plant's classes: the last batch number of each
 DISPOSITION_STYLES = {"good": (DARK_BLUE, "o"), "abnormal": (PURPLE, "^"), "high solvent": (GOLD, "s")}  # colour, marker
 PHASE_ENDS = (175, 249)  # the first sample of the high-speed phase and the sample of the peak temperature
+PHASE_NAMES = ("solvent collection", "drying ramp", "cool-down")  # the three regions those ends divide
 RAW_TAGS = ["CTankLvl", "ClockTime", "D-Temp", "D-Temp-SP"]  # the raw trajectories shown beside the Zop contributions
 
 
@@ -114,8 +116,9 @@ def main(out_dir: pathlib.Path) -> None:
     raw = load_dryer()
     shared = [b for b in raw if b in fmc.X]
     duration = {b: float(np.nanmax(raw[b]["ClockTime"]) - np.nanmin(raw[b]["ClockTime"])) for b in shared}
-    shortest, longest = min(duration, key=duration.get), max(duration, key=duration.get)
-    marked = {shortest: AQUA, longest: ORANGE}
+    by_duration = sorted(duration, key=duration.get)
+    shortest, middling, longest = by_duration[0], by_duration[len(by_duration) // 2], by_duration[-1]
+    marked = {shortest: AQUA, middling: PURPLE, longest: ORANGE}
     fig, axes = plt.subplots(1, 3, figsize=(12.6, 3.6))
     panels = [
         (axes[0], "Before: dryer temperature\nagainst clock time",
@@ -155,11 +158,29 @@ def main(out_dir: pathlib.Path) -> None:
     fig.tight_layout()
     save(fig, out_dir, "batch-case-fmc-quality-pca")
 
+    zop_scaled = MCUVScaler().fit_transform(Zop)
+    pls_op = PLS(n_components=2, scale=False).fit(zop_scaled, y_scaled)
+    fig, axes = plt.subplots(1, 2, figsize=(11.2, 4.9), gridspec_kw={"width_ratios": [1, 1.3]})
+    score_plot(pls_op, highlight={OPERATING_OUTLIER: ORANGE}, labels=[OPERATING_OUTLIER, *QUALITY_GROUP],
+               title="PLS from the operating conditions to quality", ax=axes[0], **coded)
+    # Batch 20 sits at the lower left, where the legend would otherwise cover its label.
+    axes[0].legend(loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=2, fontsize=8, frameon=False)
+    contribution = pls_op.score_contributions(zop_scaled, component=1).loc[OPERATING_OUTLIER]
+    axes[1].bar(range(len(contribution)), contribution.to_numpy(), color=DARK_BLUE, width=0.6, zorder=2)
+    axes[1].set_xticks(range(len(contribution)), [str(c) for c in contribution.index], rotation=25, ha="right")
+    axes[1].axhline(0, color=GREY, lw=0.8)
+    shade_alternate_tags(axes[1], len(contribution))
+    label_bars(axes[1], contribution.to_numpy(dtype=float))
+    axes[1].set_ylabel("Contribution to $t_1$")
+    axes[1].set_title(f"What puts batch {OPERATING_OUTLIER} there")
+    fig.tight_layout()
+    save(fig, out_dir, "batch-case-fmc-pls-zop")
+
     mb_z = MBPLS(n_components=2).fit({"Zchem": Zchem, "Zop": Zop}, Y)
     fig, axes = plt.subplots(2, 3, figsize=(14.0, 8.6))
     ss = mb_z.super_scores_
     group_scatter(axes[0, 0], ss.iloc[:, 0], ss.iloc[:, 1], {OPERATING_OUTLIER: ORANGE}, highlight_size=200, **coded)
-    axes[0, 0].annotate("20", (ss.loc[OPERATING_OUTLIER].iloc[0], ss.loc[OPERATING_OUTLIER].iloc[1]), xytext=(6, 4), textcoords="offset points", fontsize=8.5)
+    annotate_batches(axes[0, 0], ss.iloc[:, 0], ss.iloc[:, 1], (OPERATING_OUTLIER, *QUALITY_GROUP))
     r2y = mb_z.r2_y_per_component_.to_numpy()
     axes[0, 0].set_xlabel(f"super score $t_1$ [$R^2_Y$ {r2y[0]:.1%}]")
     axes[0, 0].set_ylabel(f"super score $t_2$ [$R^2_Y$ {r2y[1]:.1%}]")
@@ -172,7 +193,7 @@ def main(out_dir: pathlib.Path) -> None:
     for col, (name, block_scores) in enumerate(mb_z.block_scores_.items(), start=1):
         ax = axes[0, col]
         group_scatter(ax, block_scores.iloc[:, 0], block_scores.iloc[:, 1], {OPERATING_OUTLIER: ORANGE}, highlight_size=200, **coded)
-        ax.annotate("20", (block_scores.loc[OPERATING_OUTLIER].iloc[0], block_scores.loc[OPERATING_OUTLIER].iloc[1]), xytext=(6, 4), textcoords="offset points", fontsize=8.5)
+        annotate_batches(ax, block_scores.iloc[:, 0], block_scores.iloc[:, 1], (OPERATING_OUTLIER, *QUALITY_GROUP))
         r2 = np.diff([0.0, *mb_z.r2_x_per_block_cumulative_.loc[name].to_numpy(dtype=float)])
         ax.set_xlabel(f"block score $t_1$ [$R^2_X$ {r2[0]:.1%}]")
         ax.set_ylabel(f"block score $t_2$ [$R^2_X$ {r2[1]:.1%}]")
@@ -190,7 +211,7 @@ def main(out_dir: pathlib.Path) -> None:
     pca_x = PCA(n_components=2).fit(x_scaled)
     squared = pca_x.spe_contributions(x_scaled) ** 2  # NaN only at the missing cells; the rest from the observed cells
     fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), gridspec_kw={"width_ratios": [1, 1.1]})
-    score_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE}, labels=[OPERATING_OUTLIER], title="Batch PCA on the trajectories: scores", legend_loc="upper left", ax=axes[0], **coded)
+    score_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE}, labels=[OPERATING_OUTLIER, *QUALITY_GROUP], title="Batch PCA on the trajectories: scores", legend_loc="upper left", ax=axes[0], **coded)
     influence_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE}, labels=[OPERATING_OUTLIER, 41, 51], title="Batch PCA: Hotelling's $T^2$ against SPE", legend_loc="center right", ax=axes[1], **coded)
     fig.tight_layout()
     save(fig, out_dir, "batch-case-fmc-batch-pca")
@@ -205,13 +226,16 @@ def main(out_dir: pathlib.Path) -> None:
 
     spe_share = squared.div(squared.sum(axis=1), axis=0) * 100
     share_20 = spe_share.loc[OPERATING_OUTLIER].fillna(0.0)  # a missing cell has no residual: drawn as an empty position
-    fig = contribution_triptych(share_20, what="Share of SPE [%]", title=f"Batch {OPERATING_OUTLIER}: share of the SPE carried by each (tag, time) cell", vlines=PHASE_ENDS)
+    fig = contribution_triptych(share_20, what="Share of SPE [%]", title=f"Batch {OPERATING_OUTLIER}: share of the SPE carried by each (tag, time) cell",
+                                vlines=PHASE_ENDS, phase_names=PHASE_NAMES)
     save(fig, out_dir, f"batch-case-fmc-batch-{OPERATING_OUTLIER}-spe-contributions")
 
     pls_x = PLS(n_components=2, scale=False).fit(x_scaled, y_scaled)
     t1 = pls_x.score_contributions(x_scaled, component=1)
     fig, axes = plt.subplots(1, 2, figsize=(10.0, 4.2), gridspec_kw={"width_ratios": [1, 1.2]})
-    score_plot(pls_x, highlight={13: ORANGE, 5: AQUA, 7: AQUA}, labels=TRAJECTORY_BATCHES, title="Batch PLS to quality: scores", legend_loc="upper left", ax=axes[0], **coded)
+    score_plot(pls_x, highlight={13: ORANGE, 5: AQUA, 7: AQUA}, labels=[*TRAJECTORY_BATCHES, *QUALITY_GROUP],
+               label_left=(13,),  # batches 13 and 14 sit side by side: their labels would otherwise touch
+               title="Batch PLS to quality: scores", legend_loc="upper left", ax=axes[0], **coded)
     by_tag = t1.loc[13].groupby(level="tag", sort=False).sum()
     axes[1].bar(range(len(by_tag)), by_tag.to_numpy(), color=DARK_BLUE, width=0.6)
     axes[1].set_xticks(range(len(by_tag)), [str(t) for t in by_tag.index], rotation=30, ha="right")
@@ -228,8 +252,7 @@ def main(out_dir: pathlib.Path) -> None:
     fig, axes = plt.subplots(1, 3, figsize=(13.0, 4.0), gridspec_kw={"width_ratios": [1, 1, 1]})
     ss = mb.super_scores_
     group_scatter(axes[0], ss.iloc[:, 0], ss.iloc[:, 1], {13: ORANGE, 5: AQUA, 7: AQUA}, **coded)
-    for b in TRAJECTORY_BATCHES:
-        axes[0].annotate(str(b), (ss.loc[b].iloc[0], ss.loc[b].iloc[1]), xytext=(4, 4), textcoords="offset points", fontsize=8.5)
+    annotate_batches(axes[0], ss.iloc[:, 0], ss.iloc[:, 1], (*TRAJECTORY_BATCHES, *QUALITY_GROUP))
     compact_legend(axes[0], "upper left")
     axes[0].axhline(0, color=GREY, lw=0.8)
     axes[0].axvline(0, color=GREY, lw=0.8)
@@ -265,6 +288,7 @@ def main(out_dir: pathlib.Path) -> None:
         for b in anomalous:
             dx, dy = label_offsets.get(b, (5, 4))
             ax.annotate(str(b), (scores.loc[b].iloc[0], scores.loc[b].iloc[1]), xytext=(dx, dy), textcoords="offset points", ha="right" if dx < 0 else "left", va="top" if dy < 0 else "bottom", fontsize=8.5, zorder=6)
+        annotate_batches(ax, scores.iloc[:, 0], scores.iloc[:, 1], QUALITY_GROUP)
         ax.axhline(0, color=GREY, lw=0.8)
         ax.axvline(0, color=GREY, lw=0.8)
         r2 = np.diff([0.0, *mb.r2_x_per_block_cumulative_.loc[name].to_numpy(dtype=float)])

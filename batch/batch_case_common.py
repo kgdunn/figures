@@ -183,6 +183,38 @@ def group_scatter(
                    linewidth=1 if areas is None else 1.4, zorder=4)
 
 
+# The four sides a label can take, each with the alignment that pushes the text away from its marker.
+_LABEL_SIDES = {(7, 0): ("left", "center"), (-7, 0): ("right", "center"),
+                (0, 8): ("center", "bottom"), (0, -8): ("center", "top")}
+
+
+def annotate_batches(ax, x: pd.Series, y: pd.Series, batch_ids, *, fontsize: float = 8.5) -> None:
+    """Name a few points, each label on whichever side is furthest from the other points and inside the axes.
+
+    Hand-placing offsets stops working as soon as the model is refitted, so the side is chosen from the
+    laid-out figure: the candidate whose text anchor has the most room around it wins.
+    """
+    ax.figure.canvas.draw()  # transData and the axes box are only trustworthy once the figure is laid out
+    per_point = ax.figure.dpi / 72.0  # the offsets above are in points; the search below is in pixels
+    everyone = ax.transData.transform(np.column_stack([x.to_numpy(float), y.to_numpy(float)]))
+    box = ax.get_window_extent()
+
+    def clearance(here: np.ndarray, others: np.ndarray, side: tuple[int, int]) -> float:
+        anchor = here + np.asarray(side) * per_point
+        if not box.expanded(0.94, 0.94).contains(*anchor):  # a label at the edge is clipped by the axes
+            return 0.0
+        return float(np.hypot(*(others - anchor).T).min()) if len(others) else np.inf
+
+    for batch_id in batch_ids:
+        point = (float(x.loc[batch_id]), float(y.loc[batch_id]))
+        here = ax.transData.transform(point)
+        others = everyone[np.abs(everyone - here).max(axis=1) > 1e-6]
+        side = max(_LABEL_SIDES, key=lambda s: clearance(here, others, s))
+        ha, va = _LABEL_SIDES[side]
+        ax.annotate(str(batch_id), point, xytext=side, textcoords="offset points",
+                    ha=ha, va=va, fontsize=fontsize, zorder=6)
+
+
 def score_plot(
     model,
     *,
@@ -411,11 +443,18 @@ def label_bars(ax, values: np.ndarray, *, fmt: str = "{:.1f}", floor: float = 0.
 
 
 def contribution_triptych(
-    row: pd.Series, *, what: str, title: str, vlines: tuple[float, ...] = (), vline_colour: str = ORANGE
+    row: pd.Series,
+    *,
+    what: str,
+    title: str,
+    vlines: tuple[float, ...] = (),
+    vline_colour: str = ORANGE,
+    phase_names: tuple[str, ...] = (),
 ) -> Figure:
     """The full contribution vector, its sum per tag, and its sum per time sample, in three panels.
 
     ``vlines`` marks the phase ends on the per-sample panel, drawn in ``vline_colour`` on top of the bars.
+    ``phase_names`` labels the regions those lines divide, so the reader does not have to count them.
     """
     by_tag = row.groupby(level="tag", sort=False).sum()
     by_time = row.groupby(level="sequence").sum()
@@ -427,13 +466,18 @@ def contribution_triptych(
     axes[1].axhline(0, color=GREY, lw=0.8)
     shade_alternate_tags(axes[1], len(by_tag))
     label_bars(axes[1], by_tag.to_numpy(dtype=float))
-    axes[1].set_ylabel(f"{what}, summed per tag")
+    axes[1].set_ylabel("Summed per tag")  # the quantity is named by the title and the top panel
     axes[2].bar(by_time.index.to_numpy(), by_time.to_numpy(), width=1.0, color=DARK_BLUE, lw=0, zorder=2)
     axes[2].axhline(0, color=GREY, lw=0.8)
     axes[2].set_xlabel("Sample [aligned time]")
-    axes[2].set_ylabel(f"{what}, summed per sample")
-    fig.tight_layout()
+    axes[2].set_ylabel("Summed per sample")
+    fig.tight_layout(h_pad=1.6)
     phase_lines(axes[2], vlines, colour=vline_colour, zorder=4, lw=1.2, ls="-")
+    if phase_names:
+        edges = [float(by_time.index.min()), *vlines, float(by_time.index.max())]
+        for name, left, right in zip(phase_names, edges[:-1], edges[1:], strict=True):
+            axes[2].text((left + right) / 2, 0.94, name, transform=axes[2].get_xaxis_transform(),
+                         ha="center", va="top", fontsize=8.5, color=vline_colour)
     return fig
 
 
