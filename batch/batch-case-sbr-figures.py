@@ -137,7 +137,7 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     # on the plot. SPE squared rather than SPE: the batches span a factor of two in SPE, which is a factor
     # of four in area, and the sum of squared residuals is the quantity that adds up over the cells anyway.
     fig = score_plot(model, highlight={**HIGHLIGHT, AVERAGE_BATCH: PURPLE}, labels=[*HIGHLIGHT, AVERAGE_BATCH],
-                     label_north=(AVERAGE_BATCH,), sizes=model.spe_.iloc[:, -1] ** 2, size_name="SPE",
+                     sizes=model.spe_.iloc[:, -1] ** 2, size_name="SPE",
                      size_reference=(20, 30, 40), size_of_reference=lambda spe: spe**2,
                      title="Batch PLS: scores of the 53 batches")
     save(fig, out_dir, "batch-case-sbr-scores")

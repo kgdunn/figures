@@ -64,7 +64,7 @@ TRAJECTORY_BATCHES = [13, 5, 7]
 DISPOSITION = {"good": 33, "abnormal": 61, "high solvent": 71}  # the plant's classes: the last batch number of each
 DISPOSITION_STYLES = {"good": (DARK_BLUE, "o"), "abnormal": (PURPLE, "^"), "high solvent": (GOLD, "s")}  # colour, marker
 PHASE_ENDS = (175, 249)  # the first sample of the high-speed phase and the sample of the peak temperature
-PHASE_NAMES = ("solvent collection", "drying ramp", "cool-down")  # the three regions those ends divide
+PHASE_NAMES = ("Solvent collection", "Drying ramp", "Cool-down")  # the three regions those ends divide
 RAW_TAGS = ["CTankLvl", "ClockTime", "D-Temp", "D-Temp-SP"]  # the raw trajectories shown beside the Zop contributions
 
 
@@ -83,18 +83,11 @@ def grouped_bars(ax, table, *, colours: list[str], ylabel: str, title: str) -> N
     ax.legend(loc="best")
 
 
-def weight_plot(ax, weights: pd.DataFrame, *, title: str, label_left: tuple[str, ...] = ()) -> None:
-    """The weights of the first two components of one block, one labelled point per variable.
-
-    ``label_left`` names the variables whose label goes to the lower left of the point instead of the upper
-    right, for a label that would otherwise sit on a neighbour's.
-    """
-    w1, w2 = weights.iloc[:, 0].to_numpy(dtype=float), weights.iloc[:, 1].to_numpy(dtype=float)
+def weight_plot(ax, weights: pd.DataFrame, *, title: str) -> None:
+    """The weights of the first two components of one block, one labelled point per variable."""
+    w1, w2 = weights.iloc[:, 0].astype(float), weights.iloc[:, 1].astype(float)
     ax.scatter(w1, w2, s=MARKER_CODED, color=DARK_BLUE, edgecolor="white", linewidth=1, zorder=3)  # as the score plots
-    for name, x, y in zip(weights.index, w1, w2, strict=True):
-        left = str(name) in label_left
-        ax.annotate(str(name), (x, y), xytext=(-6, -6) if left else (6, 5), textcoords="offset points",
-                    ha="right" if left else "left", va="top" if left else "bottom", fontsize=10.5)
+    annotate_batches(ax, w1, w2, weights.index, fontsize=10.5)
     ax.axhline(0, color=GREY, lw=0.8)
     ax.axvline(0, color=GREY, lw=0.8)
     ax.set_xlabel("block weight $w_1$")
@@ -198,7 +191,7 @@ def main(out_dir: pathlib.Path) -> None:
         ax.set_xlabel(f"block score $t_1$ [$R^2_X$ {r2[0]:.1%}]")
         ax.set_ylabel(f"block score $t_2$ [$R^2_X$ {r2[1]:.1%}]")
         ax.set_title(titles[name][0])
-        weight_plot(axes[1, col], mb_z.block_weights_[name], title=titles[name][1], label_left=("Time1",))
+        weight_plot(axes[1, col], mb_z.block_weights_[name], title=titles[name][1])
     for ax in axes[0]:
         ax.axhline(0, color=GREY, lw=0.8)
         ax.axvline(0, color=GREY, lw=0.8)
@@ -234,7 +227,6 @@ def main(out_dir: pathlib.Path) -> None:
     t1 = pls_x.score_contributions(x_scaled, component=1)
     fig, axes = plt.subplots(1, 2, figsize=(10.0, 4.2), gridspec_kw={"width_ratios": [1, 1.2]})
     score_plot(pls_x, highlight={13: ORANGE, 5: AQUA, 7: AQUA}, labels=[*TRAJECTORY_BATCHES, *QUALITY_GROUP],
-               label_left=(13,),  # batches 13 and 14 sit side by side: their labels would otherwise touch
                title="Batch PLS to quality: scores", legend_loc="upper left", ax=axes[0], **coded)
     by_tag = t1.loc[13].groupby(level="tag", sort=False).sum()
     axes[1].bar(range(len(by_tag)), by_tag.to_numpy(), color=DARK_BLUE, width=0.6)
@@ -281,14 +273,10 @@ def main(out_dir: pathlib.Path) -> None:
     print(f"anomalous {anomalous}; nearest abnormal neighbours {neighbours}")
 
     fig, axes = plt.subplots(1, 3, figsize=(13.0, 4.3))
-    label_offsets = {2: (5, 4), 3: (-5, 4), 6: (5, -4), 7: (5, 4)}  # keep the four labels off each other in the X block
     for ax, (name, scores) in zip(axes, mb.block_scores_.items(), strict=True):
         group_scatter(ax, scores.iloc[:, 0], scores.iloc[:, 1], dict.fromkeys(anomalous, ORANGE), highlight_size=170, **coded)
         ax.scatter([], [], s=170, color=ORANGE, marker="o", edgecolor="white", linewidth=1, label="the four batches (classed good)")
-        for b in anomalous:
-            dx, dy = label_offsets.get(b, (5, 4))
-            ax.annotate(str(b), (scores.loc[b].iloc[0], scores.loc[b].iloc[1]), xytext=(dx, dy), textcoords="offset points", ha="right" if dx < 0 else "left", va="top" if dy < 0 else "bottom", fontsize=8.5, zorder=6)
-        annotate_batches(ax, scores.iloc[:, 0], scores.iloc[:, 1], QUALITY_GROUP)
+        annotate_batches(ax, scores.iloc[:, 0], scores.iloc[:, 1], [*anomalous, *QUALITY_GROUP])
         ax.axhline(0, color=GREY, lw=0.8)
         ax.axvline(0, color=GREY, lw=0.8)
         r2 = np.diff([0.0, *mb.r2_x_per_block_cumulative_.loc[name].to_numpy(dtype=float)])

@@ -26,8 +26,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import matplotlib.patheffects as path_effects
+from matplotlib.collections import PathCollection
 from matplotlib.figure import Figure
+from matplotlib.legend import Legend
+from matplotlib.text import Text
 from matplotlib.lines import Line2D
+from matplotlib.transforms import Bbox
 
 if typing.TYPE_CHECKING:
     from collections.abc import Callable
@@ -75,8 +79,152 @@ plt.rcParams.update(
 )
 
 
+AUTO_LABEL = "auto-placed"  # gid on the labels ``save`` positions once the layout is final
+LABEL_GAP = 2.5  # points of clear space asked for between a marker's edge and its label
+LABEL_REACH = (1.0, 3.6, 6.0)  # multiples of that gap to try; past the first, the label earns a leader line
+#   the steps past the first are wide, so a leader line is long enough to read as one
+_R2 = 0.7071  # the diagonal sides, as a unit vector
+# The eight sides a label can take, each with the alignment that pushes the text away from its point.
+_LABEL_SIDES = {
+    (1.0, 0.0): ("left", "center"), (-1.0, 0.0): ("right", "center"),
+    (0.0, 1.0): ("center", "bottom"), (0.0, -1.0): ("center", "top"),
+    (_R2, _R2): ("left", "bottom"), (-_R2, _R2): ("right", "bottom"),
+    (_R2, -_R2): ("left", "top"), (-_R2, -_R2): ("right", "top"),
+}
+
+
+def _drawn_discs(ax) -> tuple[np.ndarray, np.ndarray]:
+    """Centre (pixels) and radius (pixels) of every marker drawn on the axes.
+
+    A scatter's ``s`` is the marker area in points squared, so the radius is ``sqrt(s) / 2`` points.
+    """
+    centres, radii = [], []
+    for collection in ax.collections:
+        if not isinstance(collection, PathCollection):
+            continue
+        offsets = np.asarray(collection.get_offsets(), dtype=float)
+        if offsets.size == 0:
+            continue
+        sizes = np.asarray(collection.get_sizes(), dtype=float)
+        sizes = np.broadcast_to(sizes if sizes.size else np.array([36.0]), (len(offsets),))
+        centres.append(ax.transData.transform(offsets))
+        radii.append(np.sqrt(sizes) / 2 * ax.figure.dpi / 72.0)
+    if not centres:
+        return np.empty((0, 2)), np.empty(0)
+    return np.vstack(centres), np.concatenate(radii)
+
+
+def _facing(here: np.ndarray, box: Bbox) -> np.ndarray:
+    """The point on a label's box that faces the point it names: where its leader line ends."""
+    return np.clip(here, [box.x0, box.y0], [box.x1, box.y1])
+
+
+def _bite(box: Bbox, centres: np.ndarray, radii: np.ndarray) -> float:
+    """How far a text box reaches inside the nearest marker, in pixels; negative means it is clear."""
+    if len(centres) == 0:
+        return -np.inf
+    nearest = np.clip(centres, [box.x0, box.y0], [box.x1, box.y1])
+    return float(np.max(radii - np.hypot(*(centres - nearest).T)))
+
+
+def _segment_bite(centres: np.ndarray, radii: np.ndarray, start: np.ndarray, end: np.ndarray) -> float:
+    """How deep a leader line from ``start`` to ``end`` passes inside any marker, in pixels."""
+    if len(centres) == 0:
+        return -np.inf
+    along = end - start
+    step = np.clip(((centres - start) @ along) / max(float(along @ along), 1e-9), 0.0, 1.0)
+    closest = start + step[:, None] * along
+    return float(np.max(radii - np.hypot(*(centres - closest).T)))
+
+
+def _text_box(text, renderer) -> Bbox:
+    """The box the glyphs occupy. ``Annotation.get_window_extent`` unions in its leader line, which
+    reaches back to the point being labelled, so it would report every label as covering its own marker."""
+    return Text.get_window_extent(text, renderer)
+
+
+def _overlap(a: Bbox, b: Bbox) -> float:
+    """The smaller side of two boxes' intersection, in pixels; negative if they miss each other."""
+    return min(min(a.x1, b.x1) - max(a.x0, b.x0), min(a.y1, b.y1) - max(a.y0, b.y0))
+
+
+def _place(text, ax, renderer, centres, radii, taken: list[Bbox], page: Bbox) -> Bbox:
+    """Move one label to the clearest spot near its point, and report the box it ended up in.
+
+    Tried in order: the eight sides of its own marker, then the same eight further out, which turns on
+    the leader line back to the point. A label with nowhere clear to go keeps a white outline instead,
+    so it stays readable over whatever it lands on.
+    """
+    here = ax.transData.transform(text.xy)
+    mine = np.hypot(*(centres - here).T) < 1.5 if len(centres) else np.zeros(0, dtype=bool)
+    own = float(radii[mine].max()) if mine.any() else 0.0  # the label's own marker, not a passing neighbour
+    others, other_radii = centres[~mine], radii[~mine]
+    gap = own * 72.0 / ax.figure.dpi + LABEL_GAP  # the discs are measured in pixels, the offset is in points
+    best = None
+    for reach in LABEL_REACH:
+        for (dx, dy), (ha, va) in _LABEL_SIDES.items():
+            text.set_ha(ha)
+            text.set_va(va)
+            text.xyann = (dx * gap * reach, dy * gap * reach)
+            box = _text_box(text, renderer)
+            crowding = max([_bite(box, centres, radii), *(_overlap(box, other) for other in taken)])
+            if reach > LABEL_REACH[0]:  # a leader line that strikes through a marker points at the wrong one
+                crowding = max(crowding, _segment_bite(others, other_radii, here, _facing(here, box)))
+            if not (page.contains(box.x0, box.y0) and page.contains(box.x1, box.y1)):
+                crowding += 1e4  # running off the page is never the best side
+            if best is None or crowding < best[0]:
+                best = (crowding, ha, va, text.xyann, reach, box)
+        if best[0] <= 0:
+            break  # the closest ring that clears everything is the one to use
+    crowding, ha, va, offset, reach, box = best
+    text.set_ha(ha)
+    text.set_va(va)
+    text.xyann = offset
+    leader = getattr(text, "leader", None)
+    if leader is not None:  # far enough out that the reader has to be told which point it names
+        leader.set_visible(reach > LABEL_REACH[0])
+        if leader.get_visible():
+            facing = _facing(here, box)
+            along = (facing - here) / max(float(np.hypot(*(facing - here))), 1e-9)
+            ends = ax.transData.inverted().transform([here + along * (own + 1.0), facing - along * 2.0])
+            leader.set_data(ends[:, 0], ends[:, 1])
+    # A halo only where it is earned: nowhere is clear, so the text has to survive what it lands on.
+    text.set_path_effects([path_effects.withStroke(linewidth=2.5, foreground="white")] if crowding > 0 else [])
+    return _text_box(text, renderer)
+
+
+def place_labels(fig: Figure, rounds: int = 3) -> None:
+    """Put every auto-placed label on the clearest side of its point.
+
+    A fixed offset cannot do this: it is smaller than a highlighted marker's own radius, so the text
+    starts inside its own disc, and ``tight_layout`` moves the axes after the label is written. So the
+    sides are compared here, on the finished layout, against the markers, the legend, the hand-placed
+    text and the other labels. Placing one label moves the obstacles the next one sees, so the pass is
+    repeated: a few rounds are enough to settle, and the order the labels were added stops mattering.
+    """
+    for _ in range(rounds):
+        fig.canvas.draw()
+        renderer = fig.canvas.get_renderer()
+        page = Bbox.from_extents(0, 0, *fig.canvas.get_width_height())
+        for ax in fig.axes:
+            auto = [text for text in ax.texts if text.get_gid() == AUTO_LABEL]
+            if not auto:
+                continue
+            centres, radii = _drawn_discs(ax)
+            # Everything else on the axes is an obstacle: the legend, and any text placed by hand
+            # (a limit annotation, an arrow's caption) that an auto label must not land on.
+            fixed = [t for t in ax.texts if t.get_gid() != AUTO_LABEL and t.get_text().strip()]
+            boxes = {id(text): _text_box(text, renderer) for text in auto}
+            for text in auto:
+                obstacles = [legend.get_window_extent(renderer) for legend in ax.findobj(Legend)]
+                obstacles += [_text_box(other, renderer) for other in fixed]
+                obstacles += [box for key, box in boxes.items() if key != id(text)]
+                boxes[id(text)] = _place(text, ax, renderer, centres, radii, obstacles, page)
+
+
 def save(fig: Figure, out_dir: pathlib.Path, name: str) -> None:
     """Write ``name.png`` into ``out_dir`` and close the figure."""
+    place_labels(fig)
     path = out_dir / f"{name}.png"
     fig.savefig(path, bbox_inches="tight")
     plt.close(fig)
@@ -183,36 +331,19 @@ def group_scatter(
                    linewidth=1 if areas is None else 1.4, zorder=4)
 
 
-# The four sides a label can take, each with the alignment that pushes the text away from its marker.
-_LABEL_SIDES = {(7, 0): ("left", "center"), (-7, 0): ("right", "center"),
-                (0, 8): ("center", "bottom"), (0, -8): ("center", "top")}
-
-
 def annotate_batches(ax, x: pd.Series, y: pd.Series, batch_ids, *, fontsize: float = 8.5) -> None:
-    """Name a few points, each label on whichever side is furthest from the other points and inside the axes.
-
-    Hand-placing offsets stops working as soon as the model is refitted, so the side is chosen from the
-    laid-out figure: the candidate whose text anchor has the most room around it wins.
-    """
-    ax.figure.canvas.draw()  # transData and the axes box are only trustworthy once the figure is laid out
-    per_point = ax.figure.dpi / 72.0  # the offsets above are in points; the search below is in pixels
-    everyone = ax.transData.transform(np.column_stack([x.to_numpy(float), y.to_numpy(float)]))
-    box = ax.get_window_extent()
-
-    def clearance(here: np.ndarray, others: np.ndarray, side: tuple[int, int]) -> float:
-        anchor = here + np.asarray(side) * per_point
-        if not box.expanded(0.94, 0.94).contains(*anchor):  # a label at the edge is clipped by the axes
-            return 0.0
-        return float(np.hypot(*(others - anchor).T).min()) if len(others) else np.inf
-
+    """Name a few points on a scatter panel; ``save`` then gives each label the clearest side of its marker."""
     for batch_id in batch_ids:
         point = (float(x.loc[batch_id]), float(y.loc[batch_id]))
-        here = ax.transData.transform(point)
-        others = everyone[np.abs(everyone - here).max(axis=1) > 1e-6]
-        side = max(_LABEL_SIDES, key=lambda s: clearance(here, others, s))
-        ha, va = _LABEL_SIDES[side]
-        ax.annotate(str(batch_id), point, xytext=side, textcoords="offset points",
-                    ha=ha, va=va, fontsize=fontsize, zorder=6)
+        text = ax.annotate(str(batch_id), point, xytext=(4, 4), textcoords="offset points",
+                           fontsize=fontsize, zorder=6, gid=AUTO_LABEL)
+        # The leader is a line of its own rather than an annotation's arrow, so `save` can set both of
+        # its ends: it turns the line on only for a label it has to move far out, and prefers a
+        # position whose leader reaches the marker without striking through another one.
+        # `add_artist`, not `add_line`, leaves the axes' data limits alone.
+        leader = Line2D([], [], color=GREY, lw=0.8, zorder=5.5, visible=False, transform=ax.transData)
+        ax.add_artist(leader)
+        text.leader = leader
 
 
 def score_plot(
@@ -222,8 +353,6 @@ def score_plot(
     pc_vert: int = 2,
     highlight: dict[int, str] | None = None,
     labels: list[int] | None = None,
-    label_left: tuple[int, ...] = (),
-    label_north: tuple[int, ...] = (),
     label_leader: dict[int, tuple[float, float]] | None = None,
     sizes: pd.Series | None = None,
     size_name: str = "",
@@ -239,10 +368,9 @@ def score_plot(
 ) -> Figure:
     """Scores on two components with the Hotelling's T2 ellipse; selected batches coloured and labelled.
 
-    ``label_left`` names the batches whose label sits to the left of the marker and ``label_north`` those
-    whose label sits centred above it, for the cases where the default right-hand placement would collide
-    with a neighbour. ``label_leader`` maps a batch to an offset in points and draws a leader line to it, for
-    a batch that sits inside a dense cloud. ``groups`` (a Series over the batches) with ``group_styles``
+    ``labels`` names the batches to write beside their markers; the side each one takes is chosen by
+    ``save`` from the finished layout. ``label_leader`` maps a batch to an offset in points and draws a
+    leader line to it, for a batch that sits so deep inside a cloud that no side of it is clear. ``groups`` (a Series over the batches) with ``group_styles``
     (group -> (colour, marker)) colour- and shape-codes the batches by a known classification; a highlighted
     batch keeps its group's marker in the highlight colour.
 
@@ -269,22 +397,13 @@ def score_plot(
     label_leader = label_leader or {}
     for batch_id in labels or []:
         point = (x.loc[batch_id], y.loc[batch_id])
-        if batch_id in label_leader:
+        if batch_id in label_leader:  # a leader line is a deliberate mark, so its offset is given, not chosen
             dx, dy = label_leader[batch_id]
             ax.annotate(str(batch_id), point, xytext=(dx, dy), textcoords="offset points", fontsize=8.5,
                         ha="right" if dx < 0 else "left", va="top" if dy < 0 else "bottom", zorder=6,
                         arrowprops={"arrowstyle": "-", "color": GREY, "lw": 0.8, "shrinkA": 2, "shrinkB": 3})
             continue
-        if batch_id in label_north:
-            gap = 4 + (float(areas.loc[batch_id]) ** 0.5) / 2 if areas is not None else 6
-            # A label directly above a marker inside a cloud can land on a neighbour: give it a white outline.
-            text = ax.annotate(str(batch_id), point, xytext=(0, gap), textcoords="offset points",
-                               ha="center", va="bottom", fontsize=8.5, zorder=6)
-            text.set_path_effects([path_effects.withStroke(linewidth=2.5, foreground="white")])
-            continue
-        left = batch_id in label_left
-        ax.annotate(str(batch_id), point, xytext=(-4 if left else 4, 4),
-                    textcoords="offset points", ha="right" if left else "left", fontsize=8.5)
+        annotate_batches(ax, x, y, [batch_id])
     ax.axhline(0, color=GREY, lw=0.8)
     ax.axvline(0, color=GREY, lw=0.8)
     r2 = explained_per_component(model)
@@ -354,16 +473,7 @@ def influence_plot(
                   size=None if groups is not None else 30, highlight_size=None if groups is not None else 52)
     if groups is not None:
         compact_legend(ax, legend_loc)
-    for batch_id in labels or []:
-        to_the_left = float(t2.loc[batch_id]) > 0.82 * x_max
-        ax.annotate(
-            str(batch_id),
-            (t2.loc[batch_id], spe.loc[batch_id]),
-            xytext=(-6, 5) if to_the_left else (6, 5),
-            textcoords="offset points",
-            ha="right" if to_the_left else "left",
-            fontsize=8.5,
-        )
+    annotate_batches(ax, t2, spe, labels or [])
 
     ax.set_xlabel("Hotelling's $T^2$")
     ax.set_ylabel("SPE")
@@ -476,8 +586,14 @@ def contribution_triptych(
     if phase_names:
         edges = [float(by_time.index.min()), *vlines, float(by_time.index.max())]
         for name, left, right in zip(phase_names, edges[:-1], edges[1:], strict=True):
-            axes[2].text((left + right) / 2, 0.94, name, transform=axes[2].get_xaxis_transform(),
-                         ha="center", va="top", fontsize=8.5, color=vline_colour)
+            inside = by_time[(by_time.index >= left) & (by_time.index <= right)]
+            quarter = max(1, len(inside) // 4)
+            # A centred name lands on the bars; put it at whichever end of its phase leaves more headroom.
+            at_left = inside.iloc[:quarter].max() <= inside.iloc[-quarter:].max()
+            inset = 0.02 * (right - left)
+            axes[2].text(left + inset if at_left else right - inset, 0.96, name,
+                         transform=axes[2].get_xaxis_transform(), ha="left" if at_left else "right",
+                         va="top", fontsize=8.5, color=vline_colour)
     return fig
 
 
@@ -541,7 +657,6 @@ def parity_plot(
     highlight: dict[int, str],
     ax,
     title: str,
-    label_left: tuple[int, ...] = (),
     label_offsets: dict[int, tuple[float, float]] | None = None,
     errors: dict[str, float] | None = None,
     sd: float | None = None,
@@ -552,8 +667,8 @@ def parity_plot(
 
     ``label_offsets`` gives a batch its own label offset in points, with the alignment following the
     signs, for a marker whose neighbours crowd both default positions.
-    ``label_left`` names the highlighted batches whose label goes to the left of the marker,
-    for a point whose right-hand side is crowded by other batches. ``errors`` (name -> value, for
+    Any other highlighted batch is labelled on whichever side ``save`` finds clearest. ``errors``
+    (name -> value, for
     instance ``{"RMSEE": 1.87, "RMSEP": 2.42}``) is listed in the legend, in the units of the axes,
     with each value also given in units of ``sd`` when that is passed: the scatter about the
     ``y = x`` line is what the reader is judging, so the number belongs on the same plot.
@@ -570,9 +685,7 @@ def parity_plot(
                         textcoords="offset points", ha="right" if dx < 0 else "left",
                         va="top" if dy < 0 else ("center" if dy == 0 else "bottom"), fontsize=8.5)
             continue
-        to_the_left = batch_id in label_left
-        ax.annotate(str(batch_id), (observed.loc[batch_id], predicted.loc[batch_id]), xytext=(-5, 4) if to_the_left else (4, 4),
-                    textcoords="offset points", ha="right" if to_the_left else "left", fontsize=8.5)
+        annotate_batches(ax, observed, predicted, [batch_id])
     lo, hi = float(min(observed.min(), predicted.min())), float(max(observed.max(), predicted.max()))
     if band_from:
         # Below the markers and above the grid: the band is context for the scatter, not a mark of its own.

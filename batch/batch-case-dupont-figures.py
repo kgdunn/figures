@@ -83,7 +83,7 @@ def main(out_dir: pathlib.Path) -> None:
     kept_b = {b: batch for b, batch in batches.items() if b < SPE_OUTLIER}
     model_b = BatchPCA(n_components=3).fit(kept_b)
     fig = score_plot(model_b, pc_horiz=2, pc_vert=3, highlight={b: CLUSTER_COLOUR for b in SECOND_CLUSTER},
-                     highlight_marker=CLUSTER_MARKER, labels=SECOND_CLUSTER, label_left=(39, 47),
+                     highlight_marker=CLUSTER_MARKER, labels=SECOND_CLUSTER,
                      legend_loc="lower left", title="Model B: batches 1 to 48, components 2 and 3")
     # The contributions below compare the group with the model centre: draw that direction, from the group's average
     # point to the origin, with its label riding along the arrow (the axes have equal scales, so the data angle holds).
@@ -160,7 +160,6 @@ def main(out_dir: pathlib.Path) -> None:
     # placed away from the neighbour each would otherwise land on.
     score_plot(model_c, highlight={b: POOR_QUALITY_COLOUR for b in POOR_QUALITY_NOT_VISIBLE},
                highlight_marker=POOR_QUALITY_MARKER, labels=POOR_QUALITY_NOT_VISIBLE,
-               label_left=(38, 40), label_north=(41,),
                title="Model C: 40 batches, scores", ax=axes[0])
     influence_plot(model_c, title="Model C and the 15 batches left out of it", ax=axes[1])
     for label, (ids, colour, marker) in left_out.items():
