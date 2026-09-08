@@ -260,9 +260,9 @@ def main(out_dir: pathlib.Path) -> None:
     summary["super VIP"] = mb.super_vip_
     grouped_bars(axes[1], summary, colours=[DARK_BLUE, ORANGE], ylabel="", title="Per block: $R^2_X$ and super VIP")
     observed = Y["SolventConc"].dropna()
-    parity_plot(observed, mb.predictions_["SolventConc"].loc[observed.index],   # same three batches, same
-                highlight={13: ORANGE, 5: AQUA, 7: AQUA},                      # colours, as in the left panel
-                ax=axes[2], title="SolventConc: observed and fitted")
+    parity_plot(observed, mb.predictions_["SolventConc"].loc[observed.index],   # the same three batches, in the
+                highlight={13: ORANGE, 5: AQUA, 7: AQUA},                      # same colours, marker shapes and
+                ax=axes[2], title="SolventConc: observed and fitted", **coded)  # sizes as the super-score panel
     fig.tight_layout()
     save(fig, out_dir, "batch-case-fmc-batch-mbpls")
 
