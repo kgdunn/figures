@@ -53,7 +53,7 @@ from batch_case_common import (
 )
 from matplotlib.lines import Line2D
 
-from process_improve.batch import dict_to_wide, load_fmc
+from process_improve.batch import dict_to_wide, load_dryer, load_fmc
 from process_improve.multivariate import PCA, PLS, MCUVScaler
 from process_improve.multivariate.methods import MBPLS
 
@@ -107,6 +107,41 @@ def main(out_dir: pathlib.Path) -> None:
     Y, Zop, Zchem = fmc.Y.loc[keep], fmc.Zop.loc[keep], fmc.Zchem.loc[keep]
     groups = pd.Series(pd.cut(keep, bins=[0, *DISPOSITION.values()], labels=list(DISPOSITION)).astype(str), index=keep)
     coded = {"groups": groups, "group_styles": DISPOSITION_STYLES}  # colour and marker by the plant's disposition
+
+    # What alignment did to these batches: the same trajectories before and after, and the warp itself.
+    # The shortest and the longest batch are drawn in colour, so that the reader can follow two batches
+    # of very different duration onto the common grid.
+    raw = load_dryer()
+    shared = [b for b in raw if b in fmc.X]
+    duration = {b: float(np.nanmax(raw[b]["ClockTime"]) - np.nanmin(raw[b]["ClockTime"])) for b in shared}
+    shortest, longest = min(duration, key=duration.get), max(duration, key=duration.get)
+    marked = {shortest: AQUA, longest: ORANGE}
+    fig, axes = plt.subplots(1, 3, figsize=(12.6, 3.6))
+    panels = [
+        (axes[0], "Before: dryer temperature\nagainst clock time",
+         lambda b: (raw[b]["ClockTime"].to_numpy(), raw[b]["DryerTemp"].to_numpy()), "Clock time", False),
+        (axes[1], "After: the same batches\nagainst aligned sample",
+         lambda b: (np.arange(len(fmc.X[b])), fmc.X[b]["D-Temp"].to_numpy()), "Sample [aligned time]", True),
+        (axes[2], "The warp itself: clock time\nat each aligned sample",
+         lambda b: (np.arange(len(fmc.X[b])), fmc.X[b]["ClockTime"].to_numpy()), "Sample [aligned time]", True),
+    ]
+    for ax, title, series, xlabel, phases in panels:
+        for b in shared:
+            if b not in marked:
+                ax.plot(*series(b), color=PALE_GREY, lw=0.7, zorder=1)
+        for b, colour in marked.items():
+            label = f"batch {b}: {duration[b]:.0f} units" if title.startswith("Before") else f"batch {b}"
+            ax.plot(*series(b), color=colour, lw=1.8, zorder=3, label=label)
+        if phases:
+            for end in PHASE_ENDS:
+                ax.axvline(end, color=GREY, lw=0.9, ls=":", zorder=2)
+        ax.set_title(title)
+        ax.set_xlabel(xlabel)
+        ax.legend(loc="lower right" if phases else "upper left", fontsize=8)
+    axes[0].set_ylabel("Dryer temperature")
+    axes[2].set_ylabel("Clock time")
+    fig.tight_layout()
+    save(fig, out_dir, "batch-case-fmc-alignment")
 
     fig = overlay_panels(X, ["D-Temp", "J-Temp", "CTankLvl", "ClockTime"], {OPERATING_OUTLIER: ORANGE}, vlines=PHASE_ENDS)
     save(fig, out_dir, "batch-case-fmc-raw-trajectories")
