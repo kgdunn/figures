@@ -289,7 +289,9 @@ def main(out_dir: pathlib.Path) -> None:
             for b in members:
                 ax.plot([centre.iloc[0], scores.iloc[:, 0].loc[b]], [centre.iloc[1], scores.iloc[:, 1].loc[b]],
                         color=PALE_GREY, lw=0.6, zorder=0)
-            ax.scatter(*centre.iloc[:2], s=60, marker="P", color=GREY, edgecolor="white", linewidth=0.8, zorder=2)
+            # above the batches (zorder 3 and 4): the caption sends the reader to this cross, and in the
+            # chemistry block both averages fall inside the cloud, where a marker below the data is hidden
+            ax.scatter(*centre.iloc[:2], s=70, marker="P", color=GREY, edgecolor="white", linewidth=1.0, zorder=5)
         group_scatter(ax, scores.iloc[:, 0], scores.iloc[:, 1], dict.fromkeys(anomalous, ORANGE), highlight_size=170, **coded)
         ax.scatter([], [], s=170, color=ORANGE, marker="o", edgecolor="white", linewidth=1, label="the four batches (classed good)")
         annotate_batches(ax, scores.iloc[:, 0], scores.iloc[:, 1], [*anomalous, *QUALITY_GROUP])
