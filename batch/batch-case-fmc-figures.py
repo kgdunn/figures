@@ -83,7 +83,9 @@ def grouped_bars(ax, table, *, colours: list[str], ylabel: str, title: str) -> N
     shade_alternate_tags(ax, n_rows)
     ax.set_ylabel(ylabel)
     ax.set_title(title)
-    ax.legend(loc="best")
+    # "best" put the box on the two tallest bars of the super-VIP panel; give it room above them instead
+    ax.set_ylim(top=ax.get_ylim()[1] * 1.22)
+    ax.legend(loc="upper left")
 
 
 def weight_plot(ax, weights: pd.DataFrame, *, title: str) -> None:
