@@ -280,6 +280,16 @@ def main(out_dir: pathlib.Path) -> None:
 
     fig, axes = plt.subplots(1, 3, figsize=(13.0, 4.3))
     for ax, (name, scores) in zip(axes, mb.block_scores_.items(), strict=True):
+        # Each batch is joined to the average point of the group it is placed with, so the rule behind the
+        # reading is visible: a spoke reaching across to the other cloud is a batch classed one way by the
+        # plant and sitting with the other group in this block.
+        for label in ("good", "abnormal"):
+            members = [b for b in scores.index if placed.loc[b, name] == label]
+            centre = scores.loc[members].mean()
+            for b in members:
+                ax.plot([centre.iloc[0], scores.iloc[:, 0].loc[b]], [centre.iloc[1], scores.iloc[:, 1].loc[b]],
+                        color=PALE_GREY, lw=0.6, zorder=0)
+            ax.scatter(*centre.iloc[:2], s=60, marker="P", color=GREY, edgecolor="white", linewidth=0.8, zorder=2)
         group_scatter(ax, scores.iloc[:, 0], scores.iloc[:, 1], dict.fromkeys(anomalous, ORANGE), highlight_size=170, **coded)
         ax.scatter([], [], s=170, color=ORANGE, marker="o", edgecolor="white", linewidth=1, label="the four batches (classed good)")
         annotate_batches(ax, scores.iloc[:, 0], scores.iloc[:, 1], [*anomalous, *QUALITY_GROUP])

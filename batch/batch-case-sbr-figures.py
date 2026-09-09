@@ -141,7 +141,10 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
                      size_reference=(20, 30, 40), size_of_reference=lambda spe: spe**2,
                      title="Batch PLS: scores of the 53 batches")
     save(fig, out_dir, "batch-case-sbr-scores")
-    save(influence_plot(model, highlight=HIGHLIGHT, labels=[*HIGHLIGHT, *SPE_OUTLIERS], title="Batch PLS: Hotelling's $T^2$ against SPE"), out_dir, "batch-case-sbr-influence")
+    # The same marker areas as the score plot above, so a batch is recognised across the pair.
+    save(influence_plot(model, highlight=HIGHLIGHT, labels=[*HIGHLIGHT, *SPE_OUTLIERS],
+                        sizes=model.spe_.iloc[:, -1] ** 2,
+                        title="Batch PLS: Hotelling's $T^2$ against SPE"), out_dir, "batch-case-sbr-influence")
 
     r2_grid = model.r2_per_variable_.iloc[:, -1].unstack(level="sequence").reindex(index=model.tag_names_)
     fig = tag_panels(r2_grid, ylabel="$R^2$", ncols=3)

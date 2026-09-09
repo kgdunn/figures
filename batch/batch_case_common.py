@@ -432,6 +432,7 @@ def influence_plot(
     *,
     highlight: dict[int, str] | None = None,
     labels: list[int] | None = None,
+    sizes: pd.Series | None = None,
     conf_level: float = 0.95,
     title: str = "",
     groups: pd.Series | None = None,
@@ -469,7 +470,10 @@ def influence_plot(
     ax.text(t2_limit, 0.99, f" {conf_level:.0%} limit", transform=ax.get_xaxis_transform(), va="top", ha="left", fontsize=8.5, color=GREY)
     ax.text(0.995, spe_limit, f"{conf_level:.0%} limit", transform=ax.get_yaxis_transform(), va="bottom", ha="right", fontsize=8.5, color=GREY)
 
-    group_scatter(ax, t2, spe, highlight, groups=groups, group_styles=group_styles,
+    # ``sizes`` carries the same quantity, on the same scale, as the score plot that precedes this one,
+    # so a batch keeps its marker size across the pair and can be followed from one to the other.
+    areas = sizes.reindex(t2.index) * (BUBBLE / sizes.median()) if sizes is not None else None
+    group_scatter(ax, t2, spe, highlight, groups=groups, group_styles=group_styles, areas=areas,
                   size=None if groups is not None else 30, highlight_size=None if groups is not None else 52)
     if groups is not None:
         compact_legend(ax, legend_loc)
