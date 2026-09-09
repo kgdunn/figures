@@ -85,12 +85,13 @@ def main(out_dir: pathlib.Path) -> None:
     fig = score_plot(model_b, pc_horiz=2, pc_vert=3, highlight={b: CLUSTER_COLOUR for b in SECOND_CLUSTER},
                      highlight_marker=CLUSTER_MARKER, labels=SECOND_CLUSTER,
                      legend_loc="lower left", title="Model B: batches 1 to 48, components 2 and 3")
-    # The contributions below compare the group with the model centre: draw that direction, from the group's average
-    # point to the origin, with its label riding along the arrow (the axes have equal scales, so the data angle holds).
+    # The contributions below are the group's displacement from the model centre, so the arrow runs from the
+    # origin out to the group's average point, with its label riding along it (the axes have equal scales, so
+    # the data angle holds). Drawn the other way it would point against the quantity it labels.
     group_t2, group_t3 = model_b.scores_.loc[SECOND_CLUSTER].iloc[:, 1:3].mean()
     ax = fig.axes[0]
     ax.scatter(group_t2, group_t3, marker="s", s=42, color=ARROW, edgecolor="white", linewidth=0.8, zorder=6)
-    ax.annotate("", xy=(0, 0), xytext=(group_t2, group_t3), zorder=5,
+    ax.annotate("", xy=(group_t2, group_t3), xytext=(0, 0), zorder=5,
                 arrowprops={"arrowstyle": "-|>", "lw": 2.5, "color": ARROW, "shrinkA": 0, "shrinkB": 0, "mutation_scale": 18})
     ax.annotate("contribution direction", (group_t2 / 2, group_t3 / 2), xytext=(-3, 4), textcoords="offset points",
                 rotation=np.degrees(np.arctan2(group_t3, group_t2)), rotation_mode="anchor", ha="center", va="bottom",
