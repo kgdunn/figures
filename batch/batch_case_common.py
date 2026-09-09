@@ -432,6 +432,7 @@ def influence_plot(
     *,
     highlight: dict[int, str] | None = None,
     labels: list[int] | None = None,
+    sizes: pd.Series | None = None,
     conf_level: float = 0.95,
     title: str = "",
     groups: pd.Series | None = None,
@@ -469,7 +470,10 @@ def influence_plot(
     ax.text(t2_limit, 0.99, f" {conf_level:.0%} limit", transform=ax.get_xaxis_transform(), va="top", ha="left", fontsize=8.5, color=GREY)
     ax.text(0.995, spe_limit, f"{conf_level:.0%} limit", transform=ax.get_yaxis_transform(), va="bottom", ha="right", fontsize=8.5, color=GREY)
 
-    group_scatter(ax, t2, spe, highlight, groups=groups, group_styles=group_styles,
+    # ``sizes`` carries the same quantity, on the same scale, as the score plot that precedes this one,
+    # so a batch keeps its marker size across the pair and can be followed from one to the other.
+    areas = sizes.reindex(t2.index) * (BUBBLE / sizes.median()) if sizes is not None else None
+    group_scatter(ax, t2, spe, highlight, groups=groups, group_styles=group_styles, areas=areas,
                   size=None if groups is not None else 30, highlight_size=None if groups is not None else 52)
     if groups is not None:
         compact_legend(ax, legend_loc)
@@ -657,6 +661,8 @@ def parity_plot(
     highlight: dict[int, str],
     ax,
     title: str,
+    groups: pd.Series | None = None,
+    group_styles: dict[str, tuple[str, str]] | None = None,
     label_offsets: dict[int, tuple[float, float]] | None = None,
     errors: dict[str, float] | None = None,
     sd: float | None = None,
@@ -675,10 +681,8 @@ def parity_plot(
     ``band_from`` names one of those errors to shade as a band of ``band_multiple`` times it either
     side of the line, which turns the number into the distance the reader is looking at.
     """
-    others = [b for b in observed.index if b not in highlight]
-    ax.scatter(observed.loc[others], predicted.loc[others], s=26, color=DARK_BLUE, edgecolor="white", linewidth=0.8, zorder=3)
-    for batch_id, colour in highlight.items():
-        ax.scatter(observed.loc[batch_id], predicted.loc[batch_id], s=46, color=colour, edgecolor="white", linewidth=0.8, zorder=4)
+    group_scatter(ax, observed, predicted, highlight, groups=groups, group_styles=group_styles)
+    for batch_id in highlight:
         if batch_id in (label_offsets or {}):
             dx, dy = label_offsets[batch_id]
             ax.annotate(str(batch_id), (observed.loc[batch_id], predicted.loc[batch_id]), xytext=(dx, dy),
@@ -698,6 +702,8 @@ def parity_plot(
     ax.set_ylabel("Fitted")
     ax.set_title(title)
     handles, texts = ax.get_legend_handles_labels()
+    keep = [i for i, text in enumerate(texts) if not text.startswith("classed ")]  # named once, on the score plot
+    handles, texts = [handles[i] for i in keep], [texts[i] for i in keep]
     for name, value in (errors or {}).items():
         handles.append(Line2D([], [], ls="none", marker="none"))          # a value, with no mark of its own
         texts.append(f"{name} {value:.3g}" + (f" ({value / sd:.2f} sd)" if sd else ""))
