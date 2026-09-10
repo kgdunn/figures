@@ -83,7 +83,9 @@ def grouped_bars(ax, table, *, colours: list[str], ylabel: str, title: str) -> N
     shade_alternate_tags(ax, n_rows)
     ax.set_ylabel(ylabel)
     ax.set_title(title)
-    ax.legend(loc="best")
+    # "best" put the box on the two tallest bars of the super-VIP panel; give it room above them instead
+    ax.set_ylim(top=ax.get_ylim()[1] * 1.22)
+    ax.legend(loc="upper left")
 
 
 def weight_plot(ax, weights: pd.DataFrame, *, title: str) -> None:
@@ -289,7 +291,9 @@ def main(out_dir: pathlib.Path) -> None:
             for b in members:
                 ax.plot([centre.iloc[0], scores.iloc[:, 0].loc[b]], [centre.iloc[1], scores.iloc[:, 1].loc[b]],
                         color=PALE_GREY, lw=0.6, zorder=0)
-            ax.scatter(*centre.iloc[:2], s=60, marker="P", color=GREY, edgecolor="white", linewidth=0.8, zorder=2)
+            # above the batches (zorder 3 and 4): the caption sends the reader to this cross, and in the
+            # chemistry block both averages fall inside the cloud, where a marker below the data is hidden
+            ax.scatter(*centre.iloc[:2], s=70, marker="P", color=GREY, edgecolor="white", linewidth=1.0, zorder=5)
         group_scatter(ax, scores.iloc[:, 0], scores.iloc[:, 1], dict.fromkeys(anomalous, ORANGE), highlight_size=170, **coded)
         ax.scatter([], [], s=170, color=ORANGE, marker="o", edgecolor="white", linewidth=1, label="the four batches (classed good)")
         annotate_batches(ax, scores.iloc[:, 0], scores.iloc[:, 1], [*anomalous, *QUALITY_GROUP])

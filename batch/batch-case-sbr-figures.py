@@ -67,7 +67,7 @@ FAULT_FROM_START = 37
 FAULT_PARTWAY = 34
 HIGHLIGHT = {FAULT_PARTWAY: ORANGE, FAULT_FROM_START: AQUA}
 SPE_OUTLIERS = [8, 15, 16]  # flagged by the SPE, and not the batches carrying the injected fault
-AVERAGE_BATCH = 4  # the batch whose trajectories lie closest to the average
+AVERAGE_BATCH = 4  # the batch nearest the average quality
 ATTRIBUTE_COLOURS = {
     "Composition": DARK_BLUE,
     "ParticleSize": ORANGE,
