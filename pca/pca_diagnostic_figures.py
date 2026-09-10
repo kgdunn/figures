@@ -20,10 +20,14 @@ with the package and version named alongside them.
 
 The second curve is computed here, by ``process_improve``'s
 ``PCA.select_n_components`` with ``cv_scheme="ekf"``: the element-wise
-k-fold scheme of Bro et al. (2008), which holds out scattered individual
-cells of X and predicts each from a model that never saw it. That is the
-scheme the chapter recommends over the row-wise one, so the figure shows
-what it gives on the same data Simca-P was run on.
+k-fold scheme, which holds out scattered individual cells of X and
+predicts each from a model that never saw it. Simca-P is element-wise
+too, by the different route of Eastment and Krzanowski (1982): rows are
+held out to estimate the loadings, columns to estimate the scores, so an
+element is predicted by a score and a loading that were both estimated
+while it was out (Simca 15 User Guide, section 16.8.1). The figure
+therefore sets two element-wise predictors against each other, not an
+element-wise scheme against a row-wise one.
 
 ProSensus Multivariate is left out of the comparison figure: that software
 is no longer available, so a reader cannot check the curve or reproduce it.
@@ -314,7 +318,7 @@ def q2_comparison(outdir: pathlib.Path) -> None:
     fig, ax = plt.subplots(figsize=(11, 5.5))
     ax.grid(axis="y", color=GRID, linewidth=0.8)
     ax.plot(components, Q2["Simca-P 11.5"], "-o", color=ORANGE, linewidth=2.2,
-            markersize=8, label="Simca-P 11.5 (2006), row-wise")
+            markersize=8, label="Simca-P 11.5 (2006), element-wise (Krzanowski)")
     ax.plot(components, q2, "-^", color=GREEN, linewidth=2.6, markersize=9,
             label="process_improve, element-wise k-fold")
     # The band is the spread over five fold permutations. It is narrow
