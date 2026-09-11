@@ -641,7 +641,10 @@ def tag_panels(
             if k % ncols == ncols - 1 or k == len(tags) - 1:
                 twin.set_ylabel(secondary_label, color=ORANGE, fontsize=9)
             else:
-                twin.set_yticklabels([])
+                # Clearing only the labels leaves the tick marks behind, orange dashes with
+                # no scale beside them. Read against the left axis, which runs negative, they
+                # make a quantity that cannot be negative look as though it is. Drop the ticks.
+                twin.set_yticks([])
     for ax in axes.ravel()[len(tags) :]:
         ax.set_visible(False)
     for ax in axes[-1]:
