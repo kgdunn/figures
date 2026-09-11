@@ -637,11 +637,20 @@ def tag_panels(
             twin.set_ylim(0, 1)
             twin.grid(False)
             twin.spines["top"].set_visible(False)
-            twin.tick_params(axis="y", colors=ORANGE, labelsize=8)
             if k % ncols == ncols - 1 or k == len(tags) - 1:
+                # The spine matters. Without it a tick sits directly against its own label,
+                # so "1.0" reads as "-1.0" and a quantity that cannot be negative looks as
+                # though it is. Draw the axis line and point the ticks inward, into the plot,
+                # so the line always separates a tick from the number it belongs to.
+                twin.spines["right"].set_visible(True)
+                twin.spines["right"].set_color(ORANGE)
+                twin.tick_params(axis="y", colors=ORANGE, labelsize=8, direction="in")
                 twin.set_ylabel(secondary_label, color=ORANGE, fontsize=9)
             else:
-                twin.set_yticklabels([])
+                # No scale is shown on this panel, so clear the ticks as well as their labels:
+                # set_yticklabels([]) alone leaves orange dashes with nothing to read them by.
+                twin.spines["right"].set_visible(False)
+                twin.set_yticks([])
     for ax in axes.ravel()[len(tags) :]:
         ax.set_visible(False)
     for ax in axes[-1]:
