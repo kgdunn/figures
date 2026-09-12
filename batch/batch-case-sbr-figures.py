@@ -252,7 +252,9 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     swatch = {attribute: Line2D([], [], color=colour, lw=2) for attribute, colour in ATTRIBUTE_COLOURS.items()}
     handles = [swatch["Composition"], swatch["ParticleSize"], (swatch["Branching"], swatch["CrossLinking"]), swatch["Polydispersity"]]
     labels = ["Composition", "ParticleSize", "Branching, CrossLinking (coincide)", "Polydispersity"]
-    ax.legend(handles, labels, loc="upper right", handler_map={tuple: HandlerTuple(ndivide=None, pad=0.2)},
+    # Bottom left: the curves start high on the left and fall to the right, so the upper right is
+    # where they end up and the lower left is the one corner they never reach.
+    ax.legend(handles, labels, loc="lower left", handler_map={tuple: HandlerTuple(ndivide=None, pad=0.2)},
               handlelength=3.2)
     ax.set_xlim(0, model.n_timesteps_ + 2)
     ax.set_ylim(0, None)
