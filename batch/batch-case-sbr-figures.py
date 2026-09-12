@@ -63,6 +63,7 @@ from matplotlib.patches import Patch
 from matplotlib.ticker import MaxNLocator
 
 from process_improve.batch import BatchMonitor, BatchPLS, load_sbr
+from process_improve.multivariate import PLS
 from process_improve.univariate import median_absolute_deviation
 
 FAULT_FROM_START = 37
@@ -138,9 +139,17 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     # unusual: the two faulty batches are extreme in the scores and, in the residual, the smallest markers
     # on the plot. SPE squared rather than SPE: the batches span a factor of two in SPE, which is a factor
     # of four in area, and the sum of squared residuals is the quantity that adds up over the cells anyway.
+    # Five-fold cross-validation over the batches, so the axes carry what each component predicts of
+    # the quality block as well as what it explains of the trajectories. About 40 seconds.
+    unfolded = pd.DataFrame({b: t.to_numpy().ravel(order="F") for b, t in trajectories.items()}).T
+    validated = PLS.select_n_components(unfolded, quality.loc[unfolded.index], max_components=2,
+                                        cv=5, random_state=0).r2y_validated["total"]
+    q2y = np.diff([0.0, *validated.to_numpy()])
+    print(f"Q2Y per component: {q2y.round(3).tolist()}, cumulative {validated.iloc[-1]:.3f}")
     fig = score_plot(model, highlight={**HIGHLIGHT, AVERAGE_BATCH: PURPLE}, labels=[*HIGHLIGHT, AVERAGE_BATCH],
                      sizes=model.spe_.iloc[:, -1] ** 2, size_name="SPE",
                      size_reference=(20, 30, 40), size_of_reference=lambda spe: spe**2,
+                     q2=q2y,
                      title="Batch PLS: scores of the 53 batches")
     save(fig, out_dir, "batch-case-sbr-scores")
     # The same marker areas as the score plot above, so a batch is recognised across the pair.

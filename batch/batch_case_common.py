@@ -361,6 +361,7 @@ def score_plot(
     conf_level: float = 0.95,
     title: str = "",
     legend_loc: str = "upper right",
+    q2: "np.ndarray | None" = None,
     groups: pd.Series | None = None,
     group_styles: dict[str, tuple[str, str]] | None = None,
     highlight_marker: str = "o",
@@ -408,8 +409,16 @@ def score_plot(
     ax.axvline(0, color=GREY, lw=0.8)
     r2 = explained_per_component(model)
     note = "$R^2_X$ " if type(model).__name__ in ("PLS", "BatchPLS") else ""  # a PLS also has an R2 of Y: say which
-    ax.set_xlabel(f"$t_{pc_horiz}$ [{note}{r2[pc_horiz - 1]:.1%}]")
-    ax.set_ylabel(f"$t_{pc_vert}$ [{note}{r2[pc_vert - 1]:.1%}]")
+
+    def axis_label(component: int) -> str:
+        """R2 of X for the component, and the cross-validated R2 of Y beside it when supplied."""
+        parts = [f"{note}{r2[component - 1]:.1%}"]
+        if q2 is not None:
+            parts.append(f"$Q^2_Y$ {q2[component - 1]:.1%}")
+        return f"$t_{component}$ [{', '.join(parts)}]"
+
+    ax.set_xlabel(axis_label(pc_horiz))
+    ax.set_ylabel(axis_label(pc_vert))
     ax.set_title(title)
     ax.set_aspect("equal", adjustable="datalim")
     if size_reference:
