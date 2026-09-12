@@ -60,9 +60,10 @@ from batch_case_common import (
 from matplotlib.legend_handler import HandlerTuple
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
-from matplotlib.ticker import MaxNLocator
+from matplotlib.ticker import MaxNLocator, StrMethodFormatter
 
 from process_improve.batch import BatchMonitor, BatchPLS, load_sbr
+from process_improve.multivariate import PLS
 from process_improve.univariate import median_absolute_deviation
 
 FAULT_FROM_START = 37
@@ -170,6 +171,12 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     sd = quality.std(ddof=1)
     rmsep = leave_one_batch_out_rmse(trajectories, quality, list(range(1, model.n_timesteps_ + 1)))
     rmsee = np.sqrt(((quality - model.predictions_) ** 2).mean())
+    # Five-fold cross-validation over the batches, per attribute, so each panel says how much of its
+    # own attribute the model predicts beside how far it misses. About 40 seconds.
+    unfolded = pd.DataFrame({b: t.to_numpy().ravel(order="F") for b, t in trajectories.items()}).T
+    q2 = PLS.select_n_components(unfolded, quality.loc[unfolded.index], max_components=2,
+                                 cv=5, random_state=0).r2y_validated.loc[2]
+    print("Q2 per attribute:", q2[quality.columns].round(3).to_dict())
 
     fig, axes = plt.subplots(1, 2, figsize=(9.0, 4.2))
     for ax, variable in zip(axes, ["Composition", "ParticleSize"], strict=True):
@@ -177,7 +184,7 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
         parity_plot(quality[variable], model.predictions_[variable], highlight=HIGHLIGHT, ax=ax, title=variable,
                     label_offsets={FAULT_PARTWAY: (-6, 0)} if variable == "Composition" else None,  # just west of it
                     errors={"RMSEE": rmsee[variable], "RMSEP": rmsep.loc[model.n_timesteps_, variable]},
-                    sd=sd[variable], band_from="RMSEP")
+                    sd=sd[variable], q2=float(q2[variable]), band_from="RMSEP")
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-observed-vs-fitted")
 
@@ -241,11 +248,17 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     for attribute, colour in ATTRIBUTE_COLOURS.items():
         # Branching and CrossLinking coincide; the wider line underneath lets both colours show.
         lw = 2.8 if attribute == "Branching" else 1.5
-        ax.plot(rmsep_ratio.index, rmsep_ratio[attribute].to_numpy(), color=colour, lw=lw, zorder=3)
-    swatch = {attribute: Line2D([], [], color=colour, lw=2) for attribute, colour in ATTRIBUTE_COLOURS.items()}
+        # Polydispersity runs close to the composition over much of the batch, so it is dashed.
+        style = (0, (5, 2)) if attribute == "Polydispersity" else "-"
+        ax.plot(rmsep_ratio.index, rmsep_ratio[attribute].to_numpy(), color=colour, lw=lw, ls=style, zorder=3)
+    swatch = {attribute: Line2D([], [], color=colour, lw=2,
+                                ls=(0, (5, 2)) if attribute == "Polydispersity" else "-")
+              for attribute, colour in ATTRIBUTE_COLOURS.items()}
     handles = [swatch["Composition"], swatch["ParticleSize"], (swatch["Branching"], swatch["CrossLinking"]), swatch["Polydispersity"]]
     labels = ["Composition", "ParticleSize", "Branching, CrossLinking (coincide)", "Polydispersity"]
-    ax.legend(handles, labels, loc="upper right", handler_map={tuple: HandlerTuple(ndivide=None, pad=0.2)},
+    # Bottom left: the curves start high on the left and fall to the right, so the upper right is
+    # where they end up and the lower left is the one corner they never reach.
+    ax.legend(handles, labels, loc="lower left", handler_map={tuple: HandlerTuple(ndivide=None, pad=0.2)},
               handlelength=3.2)
     ax.set_xlim(0, model.n_timesteps_ + 2)
     ax.set_ylim(0, None)
@@ -345,15 +358,27 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     for a, colour in enumerate((DARK_BLUE, ORANGE)):
         ax.plot(samples, spread[:, a], color=colour, lw=1.6, label=f"$t_{a + 1}$", zorder=3)
     ax.axhline(1.0, color=GREY, lw=1, ls="--", zorder=2)
-    ax.text(0.99, 1.0, "spread of the final scores", transform=ax.get_yaxis_transform(), ha="right", va="top",
+    # Both curves end at the top right, so the label for this reference goes on the left.
+    ax.text(0.01, 1.0, "spread of the final scores", transform=ax.get_yaxis_transform(), ha="left", va="top",
+            fontsize=8.5, color=GREY)
+    # A second reference between the two ends, so the reader can see where each component gets
+    # halfway back to its final spread rather than only where it arrives.
+    ax.axhline(0.5, color=GREY, lw=0.9, ls=":", zorder=2)
+    ax.text(0.99, 0.5, "half the final spread", transform=ax.get_yaxis_transform(), ha="right", va="bottom",
             fontsize=8.5, color=GREY)
     ax.set_yscale("log")
-    ax.set_ylim(0.7, float(spread.max()) * 1.8)   # the estimates are widest a few samples in, so let the data set the top
+    # The estimator shrinks the scores toward the average batch while little has been observed, so the
+    # spread starts well below the final one and grows to it. Let the data set the bottom of the axis:
+    # a fixed floor clipped the first samples, which are where the shrinkage is strongest.
+    ax.set_ylim(float(spread.min()) * 0.85, 1.15)
+    # A ratio reads as 0.3, not as 3 x 10^-1, so label the decade and the minor ticks plainly.
+    ax.yaxis.set_major_formatter(StrMethodFormatter("{x:g}"))
+    ax.yaxis.set_minor_formatter(StrMethodFormatter("{x:g}"))
     ax.set_xlim(0, reference.n_timesteps_ + 2)
     ax.set_xlabel("Samples observed")
     ax.set_ylabel("Spread relative to the final scores")
     ax.set_title("Spread of the on-line score estimates")
-    ax.legend(loc="upper right")
+    ax.legend(loc="lower right")
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-score-spread")
 

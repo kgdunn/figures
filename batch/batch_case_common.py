@@ -675,6 +675,7 @@ def parity_plot(
     label_offsets: dict[int, tuple[float, float]] | None = None,
     errors: dict[str, float] | None = None,
     sd: float | None = None,
+    q2: float | None = None,
     band_from: str = "",
     band_multiple: float = 2.0,
 ) -> None:
@@ -689,6 +690,9 @@ def parity_plot(
     ``y = x`` line is what the reader is judging, so the number belongs on the same plot.
     ``band_from`` names one of those errors to shade as a band of ``band_multiple`` times it either
     side of the line, which turns the number into the distance the reader is looking at.
+    ``q2`` is this attribute's cross-validated :math:`R^2`, listed after the errors as a plain
+    fraction: it says how much of the attribute the model predicts, where the errors say by how far
+    it misses.
     """
     group_scatter(ax, observed, predicted, highlight, groups=groups, group_styles=group_styles)
     for batch_id in highlight:
@@ -716,6 +720,10 @@ def parity_plot(
     for name, value in (errors or {}).items():
         handles.append(Line2D([], [], ls="none", marker="none"))          # a value, with no mark of its own
         texts.append(f"{name} {value:.3g}" + (f" ({value / sd:.2f} sd)" if sd else ""))
+    if q2 is not None:
+        # A fraction, not an error in the units of the axes, so it carries no sd conversion.
+        handles.append(Line2D([], [], ls="none", marker="none"))
+        texts.append(f"$Q^2$ {q2:.3f}")
     ax.legend(handles, texts, loc="upper left", handlelength=1.4, handletextpad=0.6)
 
 
