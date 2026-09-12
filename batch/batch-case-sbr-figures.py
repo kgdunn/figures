@@ -345,10 +345,19 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     for a, colour in enumerate((DARK_BLUE, ORANGE)):
         ax.plot(samples, spread[:, a], color=colour, lw=1.6, label=f"$t_{a + 1}$", zorder=3)
     ax.axhline(1.0, color=GREY, lw=1, ls="--", zorder=2)
-    ax.text(0.99, 1.0, "spread of the final scores", transform=ax.get_yaxis_transform(), ha="right", va="top",
+    # On the left, where the curves are still low: the legend sits at the upper right.
+    ax.text(0.01, 1.0, "spread of the final scores", transform=ax.get_yaxis_transform(), ha="left", va="top",
+            fontsize=8.5, color=GREY)
+    # A second reference between the two ends, so the reader can see where each component gets
+    # halfway back to its final spread rather than only where it arrives.
+    ax.axhline(0.5, color=GREY, lw=0.9, ls=":", zorder=2)
+    ax.text(0.99, 0.5, "half the final spread", transform=ax.get_yaxis_transform(), ha="right", va="bottom",
             fontsize=8.5, color=GREY)
     ax.set_yscale("log")
-    ax.set_ylim(0.7, float(spread.max()) * 1.8)   # the estimates are widest a few samples in, so let the data set the top
+    # The estimator shrinks the scores toward the average batch while little has been observed, so the
+    # spread starts well below the final one and grows to it. Let the data set the bottom of the axis:
+    # a fixed floor clipped the first samples, which are where the shrinkage is strongest.
+    ax.set_ylim(float(spread.min()) * 0.85, 1.15)
     ax.set_xlim(0, reference.n_timesteps_ + 2)
     ax.set_xlabel("Samples observed")
     ax.set_ylabel("Spread relative to the final scores")
