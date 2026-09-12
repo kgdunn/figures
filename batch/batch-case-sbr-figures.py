@@ -362,7 +362,7 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     ax.set_xlabel("Samples observed")
     ax.set_ylabel("Spread relative to the final scores")
     ax.set_title("Spread of the on-line score estimates")
-    ax.legend(loc="upper right")
+    ax.legend(loc="lower right")
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-score-spread")
 
