@@ -248,8 +248,12 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     for attribute, colour in ATTRIBUTE_COLOURS.items():
         # Branching and CrossLinking coincide; the wider line underneath lets both colours show.
         lw = 2.8 if attribute == "Branching" else 1.5
-        ax.plot(rmsep_ratio.index, rmsep_ratio[attribute].to_numpy(), color=colour, lw=lw, zorder=3)
-    swatch = {attribute: Line2D([], [], color=colour, lw=2) for attribute, colour in ATTRIBUTE_COLOURS.items()}
+        # Polydispersity runs close to the composition over much of the batch, so it is dashed.
+        style = (0, (5, 2)) if attribute == "Polydispersity" else "-"
+        ax.plot(rmsep_ratio.index, rmsep_ratio[attribute].to_numpy(), color=colour, lw=lw, ls=style, zorder=3)
+    swatch = {attribute: Line2D([], [], color=colour, lw=2,
+                                ls=(0, (5, 2)) if attribute == "Polydispersity" else "-")
+              for attribute, colour in ATTRIBUTE_COLOURS.items()}
     handles = [swatch["Composition"], swatch["ParticleSize"], (swatch["Branching"], swatch["CrossLinking"]), swatch["Polydispersity"]]
     labels = ["Composition", "ParticleSize", "Branching, CrossLinking (coincide)", "Polydispersity"]
     # Bottom left: the curves start high on the left and fall to the right, so the upper right is
