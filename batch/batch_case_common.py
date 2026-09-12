@@ -361,7 +361,6 @@ def score_plot(
     conf_level: float = 0.95,
     title: str = "",
     legend_loc: str = "upper right",
-    q2: "np.ndarray | None" = None,
     groups: pd.Series | None = None,
     group_styles: dict[str, tuple[str, str]] | None = None,
     highlight_marker: str = "o",
@@ -409,16 +408,8 @@ def score_plot(
     ax.axvline(0, color=GREY, lw=0.8)
     r2 = explained_per_component(model)
     note = "$R^2_X$ " if type(model).__name__ in ("PLS", "BatchPLS") else ""  # a PLS also has an R2 of Y: say which
-
-    def axis_label(component: int) -> str:
-        """R2 of X for the component, and the cross-validated R2 of Y beside it when supplied."""
-        parts = [f"{note}{r2[component - 1]:.1%}"]
-        if q2 is not None:
-            parts.append(f"$Q^2_Y$ {q2[component - 1]:.1%}")
-        return f"$t_{component}$ [{', '.join(parts)}]"
-
-    ax.set_xlabel(axis_label(pc_horiz))
-    ax.set_ylabel(axis_label(pc_vert))
+    ax.set_xlabel(f"$t_{pc_horiz}$ [{note}{r2[pc_horiz - 1]:.1%}]")
+    ax.set_ylabel(f"$t_{pc_vert}$ [{note}{r2[pc_vert - 1]:.1%}]")
     ax.set_title(title)
     ax.set_aspect("equal", adjustable="datalim")
     if size_reference:
@@ -684,6 +675,7 @@ def parity_plot(
     label_offsets: dict[int, tuple[float, float]] | None = None,
     errors: dict[str, float] | None = None,
     sd: float | None = None,
+    q2: float | None = None,
     band_from: str = "",
     band_multiple: float = 2.0,
 ) -> None:
@@ -698,6 +690,9 @@ def parity_plot(
     ``y = x`` line is what the reader is judging, so the number belongs on the same plot.
     ``band_from`` names one of those errors to shade as a band of ``band_multiple`` times it either
     side of the line, which turns the number into the distance the reader is looking at.
+    ``q2`` is this attribute's cross-validated :math:`R^2`, listed after the errors as a plain
+    fraction: it says how much of the attribute the model predicts, where the errors say by how far
+    it misses.
     """
     group_scatter(ax, observed, predicted, highlight, groups=groups, group_styles=group_styles)
     for batch_id in highlight:
@@ -725,6 +720,10 @@ def parity_plot(
     for name, value in (errors or {}).items():
         handles.append(Line2D([], [], ls="none", marker="none"))          # a value, with no mark of its own
         texts.append(f"{name} {value:.3g}" + (f" ({value / sd:.2f} sd)" if sd else ""))
+    if q2 is not None:
+        # A fraction, not an error in the units of the axes, so it carries no sd conversion.
+        handles.append(Line2D([], [], ls="none", marker="none"))
+        texts.append(f"$Q^2$ {q2:.3f}")
     ax.legend(handles, texts, loc="upper left", handlelength=1.4, handletextpad=0.6)
 
 

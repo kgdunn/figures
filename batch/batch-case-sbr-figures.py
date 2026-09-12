@@ -139,17 +139,9 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     # unusual: the two faulty batches are extreme in the scores and, in the residual, the smallest markers
     # on the plot. SPE squared rather than SPE: the batches span a factor of two in SPE, which is a factor
     # of four in area, and the sum of squared residuals is the quantity that adds up over the cells anyway.
-    # Five-fold cross-validation over the batches, so the axes carry what each component predicts of
-    # the quality block as well as what it explains of the trajectories. About 40 seconds.
-    unfolded = pd.DataFrame({b: t.to_numpy().ravel(order="F") for b, t in trajectories.items()}).T
-    validated = PLS.select_n_components(unfolded, quality.loc[unfolded.index], max_components=2,
-                                        cv=5, random_state=0).r2y_validated["total"]
-    q2y = np.diff([0.0, *validated.to_numpy()])
-    print(f"Q2Y per component: {q2y.round(3).tolist()}, cumulative {validated.iloc[-1]:.3f}")
     fig = score_plot(model, highlight={**HIGHLIGHT, AVERAGE_BATCH: PURPLE}, labels=[*HIGHLIGHT, AVERAGE_BATCH],
                      sizes=model.spe_.iloc[:, -1] ** 2, size_name="SPE",
                      size_reference=(20, 30, 40), size_of_reference=lambda spe: spe**2,
-                     q2=q2y,
                      title="Batch PLS: scores of the 53 batches")
     save(fig, out_dir, "batch-case-sbr-scores")
     # The same marker areas as the score plot above, so a batch is recognised across the pair.
@@ -179,6 +171,12 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     sd = quality.std(ddof=1)
     rmsep = leave_one_batch_out_rmse(trajectories, quality, list(range(1, model.n_timesteps_ + 1)))
     rmsee = np.sqrt(((quality - model.predictions_) ** 2).mean())
+    # Five-fold cross-validation over the batches, per attribute, so each panel says how much of its
+    # own attribute the model predicts beside how far it misses. About 40 seconds.
+    unfolded = pd.DataFrame({b: t.to_numpy().ravel(order="F") for b, t in trajectories.items()}).T
+    q2 = PLS.select_n_components(unfolded, quality.loc[unfolded.index], max_components=2,
+                                 cv=5, random_state=0).r2y_validated.loc[2]
+    print("Q2 per attribute:", q2[quality.columns].round(3).to_dict())
 
     fig, axes = plt.subplots(1, 2, figsize=(9.0, 4.2))
     for ax, variable in zip(axes, ["Composition", "ParticleSize"], strict=True):
@@ -186,7 +184,7 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
         parity_plot(quality[variable], model.predictions_[variable], highlight=HIGHLIGHT, ax=ax, title=variable,
                     label_offsets={FAULT_PARTWAY: (-6, 0)} if variable == "Composition" else None,  # just west of it
                     errors={"RMSEE": rmsee[variable], "RMSEP": rmsep.loc[model.n_timesteps_, variable]},
-                    sd=sd[variable], band_from="RMSEP")
+                    sd=sd[variable], q2=float(q2[variable]), band_from="RMSEP")
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-observed-vs-fitted")
 
