@@ -60,7 +60,7 @@ from batch_case_common import (
 from matplotlib.legend_handler import HandlerTuple
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
-from matplotlib.ticker import MaxNLocator
+from matplotlib.ticker import MaxNLocator, StrMethodFormatter
 
 from process_improve.batch import BatchMonitor, BatchPLS, load_sbr
 from process_improve.multivariate import PLS
@@ -358,7 +358,7 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     for a, colour in enumerate((DARK_BLUE, ORANGE)):
         ax.plot(samples, spread[:, a], color=colour, lw=1.6, label=f"$t_{a + 1}$", zorder=3)
     ax.axhline(1.0, color=GREY, lw=1, ls="--", zorder=2)
-    # On the left, where the curves are still low: the legend sits at the upper right.
+    # Both curves end at the top right, so the label for this reference goes on the left.
     ax.text(0.01, 1.0, "spread of the final scores", transform=ax.get_yaxis_transform(), ha="left", va="top",
             fontsize=8.5, color=GREY)
     # A second reference between the two ends, so the reader can see where each component gets
@@ -371,6 +371,9 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     # spread starts well below the final one and grows to it. Let the data set the bottom of the axis:
     # a fixed floor clipped the first samples, which are where the shrinkage is strongest.
     ax.set_ylim(float(spread.min()) * 0.85, 1.15)
+    # A ratio reads as 0.3, not as 3 x 10^-1, so label the decade and the minor ticks plainly.
+    ax.yaxis.set_major_formatter(StrMethodFormatter("{x:g}"))
+    ax.yaxis.set_minor_formatter(StrMethodFormatter("{x:g}"))
     ax.set_xlim(0, reference.n_timesteps_ + 2)
     ax.set_xlabel("Samples observed")
     ax.set_ylabel("Spread relative to the final scores")
