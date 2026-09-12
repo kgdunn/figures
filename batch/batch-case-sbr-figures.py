@@ -15,7 +15,8 @@ chapter shows the equivalent Plotly code; the committed figures are these
 matplotlib renderings.
 
 Requires the ``process_improve`` package (``pip install 'process-improve[batch]'``,
-version 1.82.0 or later) for ``BatchPLS``, ``BatchMonitor`` and ``load_sbr``. The
+version 1.87.0 or later, where ``method="tsr"`` is trimmed score regression) for ``BatchPLS``,
+``BatchMonitor`` and ``load_sbr``. The
 leave-one-batch-out sweep behind the prediction-error figure refits the model
 53 times and takes about a minute; everything else runs in seconds.
 
@@ -58,6 +59,7 @@ from batch_case_common import (
 )
 from matplotlib.legend_handler import HandlerTuple
 from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
 from matplotlib.ticker import MaxNLocator
 
 from process_improve.batch import BatchMonitor, BatchPLS, load_sbr
@@ -253,48 +255,49 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-online-rmse")
 
-    # -- The evolving prediction for the near-average batch 4: ParticleSize, and the attribute whose measured value
-    # and final prediction differ the most (in standard deviations), so that the two rules are visibly apart.
-    trace = model.predict_online_trace(trajectories[AVERAGE_BATCH])
-    final, measured = model.predictions_.loc[AVERAGE_BATCH], quality.loc[AVERAGE_BATCH]
-    gap = ((final - measured).abs() / sd).drop("ParticleSize")
-    second = str(gap.idxmax())
-    print(f"batch {AVERAGE_BATCH}: |final prediction - measured| / sd = " + ", ".join(f"{a} {g:.3f}" for a, g in gap.items()))
-    print(
-        f"batch {AVERAGE_BATCH}: ParticleSize measured {measured['ParticleSize']:.1f}, final prediction "
-        f"{final['ParticleSize']:.1f}; second panel {second}: measured {measured[second]:.4g}, final prediction "
-        f"{final[second]:.4g}, sd {sd[second]:.3g}"
-    )
-    fig, axes = plt.subplots(1, 2, figsize=(9.0, 3.9))
-    for ax, attribute in zip(axes, ["ParticleSize", second], strict=True):
-        y_hat = trace.y_hat[attribute].loc[FIRST_SAMPLE_SHOWN:]
-        half_width = rmsep[attribute].loc[FIRST_SAMPLE_SHOWN:]
+    # -- The evolving particle-size prediction of two batches, on one pair of axes each. Trimmed score
+    # regression shrinks toward the average batch while the observed cells say little, so both traces start
+    # at the average of the 53. Batch 4 is already there and stays; batch 34, the lowest particle size of the
+    # 53, leaves it only when the second half of the batch supplies the information. Both are training
+    # batches, so these are fitted traces; the band beside them is the held-out error.
+    average_particle_size = float(quality["ParticleSize"].mean())
+    print(f"average ParticleSize over the {len(quality)} batches: {average_particle_size:.1f}")
+    fig, axes = plt.subplots(1, 2, figsize=(9.0, 4.3), sharey=True)
+    for ax, (batch_id, colour) in zip(axes, [(AVERAGE_BATCH, DARK_BLUE), (FAULT_PARTWAY, ORANGE)], strict=True):
+        trace = model.predict_online_trace(trajectories[batch_id])
+        final = float(model.predictions_.loc[batch_id, "ParticleSize"])
+        measured = float(quality.loc[batch_id, "ParticleSize"])
+        y_hat = trace.y_hat["ParticleSize"].loc[FIRST_SAMPLE_SHOWN:]
+        half_width = rmsep["ParticleSize"].loc[FIRST_SAMPLE_SHOWN:]
+        print(
+            f"batch {batch_id}: ParticleSize measured {measured:.1f}, final prediction {final:.1f}, "
+            + ", ".join(f"{k} samples {trace.y_hat.loc[k, 'ParticleSize']:.1f}" for k in REPORT_SAMPLES)
+        )
         ax.fill_between(y_hat.index, (y_hat - half_width).to_numpy(), (y_hat + half_width).to_numpy(), color=BAND,
-                        lw=0, zorder=1, label="$\\pm$ RMSEP after this many samples")
-        ax.plot(y_hat.index, y_hat.to_numpy(), color=DARK_BLUE, lw=1.6, zorder=3, label="predicted from the samples so far")
-        ax.axhline(final[attribute], color=GREY, lw=1, ls="--", zorder=2)
-        ax.axhline(measured[attribute], color="black", lw=1, zorder=2)
-        decimals = max(0, int(np.ceil(-np.log10(sd[attribute]))) + 1)
-        upper_is_final = final[attribute] > measured[attribute]
-        # The labels start where the trace is clear of the rules: from the first sample for ParticleSize (the
-        # early predictions sit well below), a little later for the second attribute, whose trace descends
-        # through the rules over the first samples.
-        label_x = 0.03 if attribute == "ParticleSize" else 0.12
-        rule_label(ax, final[attribute], f"final prediction {final[attribute]:.{decimals}f}", x=label_x, above=upper_is_final, colour=GREY)
-        rule_label(ax, measured[attribute], f"measured {measured[attribute]:.{decimals}f}", x=label_x, above=not upper_is_final, colour="black")
-        low, high = float(y_hat.min()), float(y_hat.max())
-        pad = 0.3 * (high - low)
-        ax.set_ylim(low - pad, high + pad)
+                        lw=0, zorder=1)
+        ax.axhline(average_particle_size, color=GREY, lw=1, ls=":", zorder=2)
+        ax.axhline(final, color=GREY, lw=1, ls="--", zorder=2)
+        ax.axhline(measured, color="black", lw=1, zorder=2)
+        ax.plot(y_hat.index, y_hat.to_numpy(), color=colour, lw=1.8, zorder=3)
+        # The numbers on the rules live in the caption and in the printed values; the rules themselves are
+        # named once, in the figure legend below, so that no label has to sit on the trace or on the band.
         ax.set_xlim(0, model.n_timesteps_ + 2)
         ax.set_xlabel("Samples observed")
-        if attribute == "ParticleSize":
-            ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-        ax.set_ylabel(attribute)
-        ax.set_title(attribute)
-        ax.legend(loc="lower right")
-    fig.suptitle(f"Batch {AVERAGE_BATCH}: the final quality predicted while the batch runs", y=1.02)
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.set_title(f"Batch {batch_id}: measured {measured:.1f}, predicted {final:.1f}")
+    axes[0].set_ylabel("ParticleSize")
+    handles = [
+        Patch(facecolor=BAND, label="$\\pm$ RMSEP after this many samples"),
+        Line2D([], [], color=DARK_BLUE, lw=1.8, label="predicted from the samples so far (batch 4)"),
+        Line2D([], [], color=ORANGE, lw=1.8, label="... and batch 34"),
+        Line2D([], [], color=GREY, lw=1, ls=":", label=f"average batch, {average_particle_size:.1f}"),
+        Line2D([], [], color=GREY, lw=1, ls="--", label="predicted from the complete batch"),
+        Line2D([], [], color="black", lw=1, label="measured"),
+    ]
+    fig.legend(handles=handles, loc="lower center", ncol=3, frameon=False, fontsize=8.5, bbox_to_anchor=(0.5, -0.06))
+    fig.suptitle("The final particle size predicted while the batch runs", y=1.02)
     fig.tight_layout()
-    save(fig, out_dir, f"batch-case-sbr-online-prediction-batch-{AVERAGE_BATCH}")
+    save(fig, out_dir, "batch-case-sbr-online-prediction")
 
     # -- On-line monitoring against a reference model of the normal batches only (34 and 37 left out): per-sample
     # T2 and instantaneous SPE limits from BatchMonitor. An alarm counts once the statistic stays above its limit
@@ -329,7 +332,7 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     shade_alternate_tags(ax, len(shares))
     label_bars(ax, shares.to_numpy(dtype=float))
     ax.set_ylabel("Share of the squared residual [%]")
-    ax.set_title(f"Batch {FAULT_PARTWAY} after {spe_alarm} samples:\nshare of the residual per tag")
+    ax.set_title(f"Batch {FAULT_PARTWAY} after {spe_alarm} samples:\nshare of the squared residual per tag")
     fig.tight_layout()
     save(fig, out_dir, "batch-case-sbr-online-monitoring")
 
