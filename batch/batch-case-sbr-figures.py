@@ -57,7 +57,6 @@ from batch_case_common import (
     shade_alternate_tags,
     tag_panels,
 )
-from matplotlib.legend_handler import HandlerTuple
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from matplotlib.ticker import MaxNLocator, StrMethodFormatter
@@ -75,7 +74,7 @@ ATTRIBUTE_COLOURS = {
     "Composition": DARK_BLUE,
     "ParticleSize": ORANGE,
     "Branching": AQUA,
-    "CrossLinking": PURPLE,
+    "CrossLinking": AQUA,
     "Polydispersity": MAGENTA,
 }
 REPORT_SAMPLES = [10, 50, 100, 150, 200]
@@ -246,20 +245,18 @@ def main(out_dir: pathlib.Path, data_url: str | None) -> None:
     ax.text(0.99, 1.0, "as good as the average batch", transform=ax.get_yaxis_transform(), ha="right", va="bottom",
             fontsize=8.5, color=GREY)
     for attribute, colour in ATTRIBUTE_COLOURS.items():
-        # Branching and CrossLinking coincide; the wider line underneath lets both colours show.
-        lw = 2.8 if attribute == "Branching" else 1.5
         # Polydispersity runs close to the composition over much of the batch, so it is dashed.
         style = (0, (5, 2)) if attribute == "Polydispersity" else "-"
-        ax.plot(rmsep_ratio.index, rmsep_ratio[attribute].to_numpy(), color=colour, lw=lw, ls=style, zorder=3)
+        ax.plot(rmsep_ratio.index, rmsep_ratio[attribute].to_numpy(), color=colour, lw=1.5, ls=style, zorder=3)
     swatch = {attribute: Line2D([], [], color=colour, lw=2,
                                 ls=(0, (5, 2)) if attribute == "Polydispersity" else "-")
               for attribute, colour in ATTRIBUTE_COLOURS.items()}
-    handles = [swatch["Composition"], swatch["ParticleSize"], (swatch["Branching"], swatch["CrossLinking"]), swatch["Polydispersity"]]
+    # Branching and CrossLinking coincide and now share a colour, so they share one entry.
+    handles = [swatch["Composition"], swatch["ParticleSize"], swatch["Branching"], swatch["Polydispersity"]]
     labels = ["Composition", "ParticleSize", "Branching, CrossLinking (coincide)", "Polydispersity"]
     # Bottom left: the curves start high on the left and fall to the right, so the upper right is
     # where they end up and the lower left is the one corner they never reach.
-    ax.legend(handles, labels, loc="lower left", handler_map={tuple: HandlerTuple(ndivide=None, pad=0.2)},
-              handlelength=3.2)
+    ax.legend(handles, labels, loc="lower left", handlelength=3.2)
     ax.set_xlim(0, model.n_timesteps_ + 2)
     ax.set_ylim(0, None)
     ax.set_xlabel("Samples observed")
