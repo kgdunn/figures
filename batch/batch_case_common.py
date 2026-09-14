@@ -240,8 +240,14 @@ def overlay_panels(
     figsize: tuple[float, float] | None = None,
     xlabel: str = "Sample [aligned time]",
     vlines: tuple[float, ...] = (),
+    xlim: tuple[int, int] | None = None,
 ) -> Figure:
-    """One panel per tag: every batch in grey, the highlighted batches in colour, ``vlines`` at the phase ends."""
+    """One panel per tag: every batch in grey, the highlighted batches in colour, ``vlines`` at the phase ends.
+
+    ``xlim`` restricts the panels to ``(first, last)`` samples inclusive and rescales each y axis to
+    the trajectories inside that window. Setting the x limit alone would leave y scaled to the whole
+    batch, which hides an excursion that is large between batches but small against the full range.
+    """
     nrows = int(np.ceil(len(tags) / ncols))
     fig, axes = plt.subplots(nrows, ncols, figsize=figsize or (4.5 * ncols, 2.6 * nrows), squeeze=False)
     for ax, tag in zip(axes.ravel(), tags, strict=False):
@@ -251,6 +257,11 @@ def overlay_panels(
                 ax.plot(batch[tag].to_numpy(), color=PALE_GREY, lw=0.7, zorder=1)
         for batch_id, colour in highlight.items():
             ax.plot(batches[batch_id][tag].to_numpy(), color=colour, lw=1.8, label=f"batch {batch_id}", zorder=3)
+        if xlim is not None:
+            window = np.array([batch[tag].to_numpy()[xlim[0] : xlim[1] + 1] for batch in batches.values()])
+            pad = 0.05 * (window.max() - window.min())
+            ax.set_xlim(*xlim)
+            ax.set_ylim(window.min() - pad, window.max() + pad)
         ax.set_title(tag)
         ax.set_xlabel(xlabel)
     for ax in axes.ravel()[len(tags) :]:
