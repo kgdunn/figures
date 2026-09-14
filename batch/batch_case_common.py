@@ -342,10 +342,22 @@ def group_scatter(
                    linewidth=1 if areas is None else 1.4, zorder=4)
 
 
-def annotate_batches(ax, x: pd.Series, y: pd.Series, batch_ids, *, fontsize: float = 8.5) -> None:
-    """Name a few points on a scatter panel; ``save`` then gives each label the clearest side of its marker."""
+def annotate_batches(ax, x: pd.Series, y: pd.Series, batch_ids, *, fontsize: float = 8.5,
+                     leaders: dict[int, tuple[float, float]] | None = None) -> None:
+    """Name a few points on a scatter panel; ``save`` then gives each label the clearest side of its marker.
+
+    ``leaders`` maps a batch to an offset in points: that label is placed exactly there with a leader
+    line to its marker, rather than left to ``save``'s solver. Use it for a marker inside a dense
+    cloud, where the solver has no clear side to choose and pushes the label onto an axis.
+    """
     for batch_id in batch_ids:
         point = (float(x.loc[batch_id]), float(y.loc[batch_id]))
+        if batch_id in (leaders or {}):  # a leader line is a deliberate mark, so its offset is given, not chosen
+            dx, dy = leaders[batch_id]
+            ax.annotate(str(batch_id), point, xytext=(dx, dy), textcoords="offset points", fontsize=fontsize,
+                        ha="right" if dx < 0 else "left", va="top" if dy < 0 else "bottom", zorder=6,
+                        arrowprops={"arrowstyle": "-", "color": GREY, "lw": 0.8, "shrinkA": 2, "shrinkB": 3})
+            continue
         text = ax.annotate(str(batch_id), point, xytext=(4, 4), textcoords="offset points",
                            fontsize=fontsize, zorder=6, gid=AUTO_LABEL)
         # The leader is a line of its own rather than an annotation's arrow, so `save` can set both of
@@ -443,6 +455,8 @@ def influence_plot(
     *,
     highlight: dict[int, str] | None = None,
     labels: list[int] | None = None,
+    highlight_marker: str = "o",
+    label_leader: dict[int, tuple[float, float]] | None = None,
     sizes: pd.Series | None = None,
     conf_level: float = 0.95,
     title: str = "",
@@ -483,12 +497,15 @@ def influence_plot(
 
     # ``sizes`` carries the same quantity, on the same scale, as the score plot that precedes this one,
     # so a batch keeps its marker size across the pair and can be followed from one to the other.
+    # ``highlight_marker`` does the same for shape: a set given its own marker in the score plot keeps it
+    # here, so the reader recognises it without re-reading a legend.
     areas = sizes.reindex(t2.index) * (BUBBLE / sizes.median()) if sizes is not None else None
     group_scatter(ax, t2, spe, highlight, groups=groups, group_styles=group_styles, areas=areas,
+                  highlight_marker=highlight_marker,
                   size=None if groups is not None else 30, highlight_size=None if groups is not None else 52)
     if groups is not None:
         compact_legend(ax, legend_loc)
-    annotate_batches(ax, t2, spe, labels or [])
+    annotate_batches(ax, t2, spe, labels or [], leaders=label_leader)
 
     ax.set_xlabel("Hotelling's $T^2$")
     ax.set_ylabel("SPE")

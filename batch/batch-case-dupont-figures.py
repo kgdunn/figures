@@ -171,7 +171,14 @@ def main(out_dir: pathlib.Path) -> None:
     score_plot(model_c, highlight={b: POOR_QUALITY_COLOUR for b in POOR_QUALITY_NOT_VISIBLE},
                highlight_marker=POOR_QUALITY_MARKER, labels=POOR_QUALITY_NOT_VISIBLE,
                title="Model C: 40 batches, scores", ax=axes[0])
-    influence_plot(model_c, title="Model C and the 15 batches left out of it", ax=axes[1])
+    # The same four, with the same colour and shape, in the influence plot: the text reads their SPE
+    # off this panel, and among 36 plain dots they are otherwise not findable.
+    # Batch 38 sits in the thickest part of the training cloud, where no side of its marker is clear:
+    # its label goes up into the empty band on a leader, the other three place themselves.
+    influence_plot(model_c, highlight={b: POOR_QUALITY_COLOUR for b in POOR_QUALITY_NOT_VISIBLE},
+                   highlight_marker=POOR_QUALITY_MARKER, labels=POOR_QUALITY_NOT_VISIBLE,
+                   label_leader={38: (4, 30)},
+                   title="Model C and the 15 batches left out of it", ax=axes[1])
     for label, (ids, colour, marker) in left_out.items():
         axes[1].scatter([float(projected[b].hotellings_t2) for b in ids], [float(projected[b].spe) for b in ids],
                         s=40 if marker == "o" else 52, color=colour, marker=marker,
@@ -184,7 +191,9 @@ def main(out_dir: pathlib.Path) -> None:
     axes[1].set_xscale("log")
     axes[1].set_yscale("log")
     axes[1].set_xlim(min(all_t2) * 0.6, max(all_t2) * 2.0)
-    axes[1].set_ylim(min(all_spe) * 0.8, max(all_spe) * 1.6)
+    # Extra room below the training cloud: it sits on the floor of the panel, and the four labels
+    # there would otherwise crowd the axis.
+    axes[1].set_ylim(min(all_spe) * 0.6, max(all_spe) * 1.6)
     axes[1].legend(loc="upper left", fontsize=8, title="projected onto model C", title_fontsize=8)  # lower right holds the SPE-limit label
     fig.tight_layout()
     save(fig, out_dir, "batch-case-dupont-model-c")
