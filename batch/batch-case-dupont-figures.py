@@ -43,6 +43,9 @@ CLUSTER_COLOUR, CLUSTER_MARKER = PURPLE, "^"
 ARROW = "0.3"  # the contribution direction drawn on the model B score plot
 RAW_TAGS = ["TempC-1", "Press-3", "Press-2", "Flow-2"]  # the three largest |t2| + |t3| contributions of the cluster, and Flow-2
 RAW_WINDOW = 30  # the raw panels stop here: samples 0 to 25 carry 66% of the cluster's t2 and 90% of its t3 contribution
+RAW_49_TAGS = ["TempC-1", "TempH-1", "Press-2", "Flow-2"]  # the four largest shares of batch 49's SPE: 19, 14, 15 and 18%
+RAW_49_EVENT = (56, 65)  # samples holding 80% of that SPE, marked on the panels
+RAW_49_WINDOW = (40, 80)  # and the range the panels cover, enough either side of the event to read it
 MEMBER_DOT = "0.25"  # edge colour of the member markers: white face and dark edge read on the bars and on the background
 POOR_QUALITY_NOT_VISIBLE = [38, 40, 41, 42]
 # Their own colour and shape as well: the two panels of the model C figure sit side by side, and
@@ -70,6 +73,12 @@ def main(out_dir: pathlib.Path) -> None:
     spe_share = squared.div(squared.sum(axis=1), axis=0) * 100  # each cell's share of the batch's SPE, in percent
     fig = contribution_triptych(spe_share.loc[SPE_OUTLIER], what="Share of SPE [%]", title="Batch 49: share of the SPE carried by each (tag, time) cell")
     save(fig, out_dir, "batch-case-dupont-batch-49-spe-contributions")
+
+    # The same four tags in the raw record. Zoomed: the deviation is large between batches but small
+    # against the full trajectory range, so at full scale it cannot be seen.
+    fig = overlay_panels(batches, RAW_49_TAGS, {SPE_OUTLIER: ORANGE, 54: AQUA},
+                         vlines=RAW_49_EVENT, xlim=RAW_49_WINDOW)
+    save(fig, out_dir, "batch-case-dupont-batch-49-raw")
 
     p1 = model_a.loadings_.iloc[:, 0].unstack(level="sequence").reindex(index=model_a.tag_names_)
     fig = tag_panels(p1, ylabel="$p_1$")
