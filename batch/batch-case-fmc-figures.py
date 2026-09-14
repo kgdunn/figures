@@ -145,7 +145,10 @@ def main(out_dir: pathlib.Path) -> None:
     fig.tight_layout()
     save(fig, out_dir, "batch-case-fmc-alignment")
 
-    fig = overlay_panels(X, ["D-Temp", "J-Temp", "CTankLvl", "ClockTime"], {OPERATING_OUTLIER: ORANGE}, vlines=PHASE_ENDS)
+    # DryPress leads: it carries 49% of batch 20's squared SPE and its first-phase mean is 85 against
+    # an average of 37. J-Temp was here and earned nothing: 6% of the residual, and batch 20 averages
+    # 84.0 there against the others' 83.7.
+    fig = overlay_panels(X, ["DryPress", "D-Temp", "CTankLvl", "ClockTime"], {OPERATING_OUTLIER: ORANGE}, vlines=PHASE_ENDS)
     save(fig, out_dir, "batch-case-fmc-raw-trajectories")
 
     y_scaled = MCUVScaler().fit_transform(Y)
