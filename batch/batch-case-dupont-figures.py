@@ -205,7 +205,7 @@ def main(out_dir: pathlib.Path) -> None:
 
 LAGS = 2  # the lagged layout appends this many preceding samples to each sample's row
 LAYOUT_WINDOW = (40, 80)  # the samples shown, the same window as the batch 49 raw panels
-ROW_SHOWN = 65  # the sample whose lagged row is bracketed: it still holds sample 63, the last one displaced
+ROW_SHOWN = 65  # the sample whose lagged row is bracketed: it still holds sample 63, the last sample the observation-wise row flags
 LAYOUT_COLOURS = {"observation-wise": (GOLD, "s"), "lagged, 2 lags": ("0.4", "o"), "batchwise, so far": (DARK_BLUE, "^")}
 
 
