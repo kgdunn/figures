@@ -4,9 +4,11 @@ Mirrors the analysis in the pid-book chapter
 ``product-development-product-improvement/batch-case-study-dupont.rst``: a
 batchwise-unfolded PCA on the 55 batches of the DuPont polymerization reactor,
 the SPE and score outliers, the contribution plots that name the variables and
-the time of an event, the two rebuilt models, and the poor-quality batches the
-trajectories cannot reveal. The chapter shows the equivalent Plotly code; the
-committed figures are these matplotlib renderings.
+the time of an event, the two rebuilt models, the poor-quality batches the
+trajectories cannot reveal, and batch 49 sample by sample under the
+observation-wise, lagged and batchwise layouts of the model C reference set
+(``batch-case-dupont-lagged-layout.png``). The chapter shows the equivalent
+Plotly code; the committed figures are these matplotlib renderings.
 
 Requires the ``process_improve`` package (``pip install 'process-improve[batch]'``,
 version 1.82.0 or later) for ``BatchPCA`` and ``load_dupont``.
@@ -27,7 +29,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from batch_case_common import AQUA, DARK_BLUE, GREY, MAGENTA, ORANGE, PALE_GREY, PURPLE, contribution_triptych, influence_plot, overlay_panels, save, score_plot, tag_panels, shade_alternate_tags
+from batch_case_common import AQUA, DARK_BLUE, GOLD, GREY, MAGENTA, ORANGE, PALE_GREY, PURPLE, contribution_triptych, influence_plot, overlay_panels, save, score_plot, tag_panels, shade_alternate_tags
 
 from process_improve.batch import BatchPCA, load_dupont
 
@@ -197,6 +199,91 @@ def main(out_dir: pathlib.Path) -> None:
     axes[1].legend(loc="upper left", fontsize=8, title="projected onto model C", title_fontsize=8)  # lower right holds the SPE-limit label
     fig.tight_layout()
     save(fig, out_dir, "batch-case-dupont-model-c")
+
+    lagged_layout_figure(batches, kept_c, model_c, out_dir)
+
+
+LAGS = 2  # the lagged layout appends this many preceding samples to each sample's row
+LAYOUT_WINDOW = (40, 80)  # the samples shown, the same window as the batch 49 raw panels
+ROW_SHOWN = 65  # the sample whose lagged row is bracketed: it still holds sample 63, the last one displaced
+LAYOUT_COLOURS = {"observation-wise": (GOLD, "s"), "lagged, 2 lags": ("0.4", "o"), "batchwise, so far": (DARK_BLUE, "^")}
+
+
+def lagged_rows(table: np.ndarray, lags: int) -> np.ndarray:
+    """One row per sample: its tags, then the same tags at each of the preceding ``lags`` samples."""
+    n = len(table)
+    return np.concatenate([table[lags - lag : n - lag] for lag in range(lags + 1)], axis=1)
+
+
+def lagged_layout_figure(batches: dict, kept_c: dict, model_c: BatchPCA, out_dir: pathlib.Path) -> None:
+    """Batch 49 sample by sample under the observation-wise, lagged and batchwise layouts of the model C reference set.
+
+    The 40 reference batches are scaled as model C scales them, then arranged three ways: one row
+    per sample (observation-wise), one row per sample with its two preceding samples appended
+    (lagged), and one row per batch (batchwise, model C itself). A three-component PCA is fitted
+    to each sample-wise layout and batch 49, which is in none of the reference sets, is run
+    through all three; ``BatchMonitor`` gives model C a limit at every sample. The lower panel
+    shows batch 49's SPE at every sample as a multiple of each layout's 95% limit.
+    """
+    from process_improve.batch import BatchMonitor
+    from process_improve.multivariate import PCA
+
+    def cells(group: dict) -> dict:
+        wide = model_c.unfold_and_scale(group)
+        return {b: wide.loc[b].unstack(level="tag").to_numpy() for b in wide.index}
+
+    reference = cells(kept_c)
+    sample_rows = {
+        "observation-wise": (np.concatenate(list(reference.values())), 0),
+        f"lagged, {LAGS} lags": (np.concatenate([lagged_rows(t, LAGS) for t in reference.values()]), LAGS),
+    }
+    table_49 = cells({SPE_OUTLIER: batches[SPE_OUTLIER]})[SPE_OUTLIER]
+    ratio: dict[str, pd.Series] = {}
+    for name, (rows, lags) in sample_rows.items():
+        model = PCA(n_components=model_c.n_components).fit(pd.DataFrame(rows))
+        spe = np.asarray(model.diagnose(pd.DataFrame(lagged_rows(table_49, lags))).spe, dtype=float)
+        ratio[name] = pd.Series(spe / model.spe_limit(conf_level=0.95), index=np.arange(lags, len(table_49)))
+    trace = BatchMonitor(model_c, conf_level=0.95).fit(kept_c).monitor(batches[SPE_OUTLIER])
+    ratio["batchwise, so far"] = pd.Series(trace.spe / trace.spe_limit, index=trace.time - 1)  # 0-based samples, as the page counts them
+    lo, hi = LAYOUT_WINDOW
+    for name, r in ratio.items():
+        inside = r.loc[lo:hi]
+        print(f"{name}: above the limit at samples {inside.index[inside > 1].tolist()}")
+
+    fig, (top, bottom) = plt.subplots(2, 1, figsize=(9.0, 7.0), sharex=True, gridspec_kw={"height_ratios": [1, 1.15]})
+    tag = "TempC-1"
+    for b, batch in kept_c.items():
+        top.plot(batch[tag].to_numpy(), color=PALE_GREY, lw=0.7, zorder=1)
+    top.plot([], [], color=PALE_GREY, lw=1.2, label="40 reference batches")
+    top.plot(batches[SPE_OUTLIER][tag].to_numpy(), color=ORANGE, lw=1.8, zorder=3, label=f"batch {SPE_OUTLIER}")
+    window = np.array([batch[tag].to_numpy()[lo : hi + 1] for batch in (*kept_c.values(), batches[SPE_OUTLIER])])
+    pad = 0.05 * (window.max() - window.min())
+    top.set_ylim(window.min() - pad, window.max() + 5 * pad)
+    # The lagged row at sample 65 holds samples 63, 64 and 65: sample 63 is the last one batch 49's
+    # early transition displaced, so the row is still flagged although the batch has rejoined the others.
+    y_bracket = window.max() + 2.2 * pad
+    held = (ROW_SHOWN - LAGS, ROW_SHOWN)
+    top.plot([held[0] - 0.3, held[0] - 0.3, held[1] + 0.3, held[1] + 0.3],
+             [y_bracket - 0.6 * pad, y_bracket, y_bracket, y_bracket - 0.6 * pad], color=GREY, lw=1.1, zorder=2)
+    top.annotate(f"the lagged row at sample {ROW_SHOWN}:\nsamples {held[0]}, {held[0] + 1} and {held[1]}, all ten tags",
+                 xy=(held[1] + 0.6, y_bracket), xytext=(held[1] + 1.2, y_bracket - 0.3 * pad), fontsize=8, color=GREY,
+                 ha="left", va="center")
+    top.set_title(tag)
+    top.legend(loc="lower left", fontsize=8)
+    for name, r in ratio.items():
+        colour, marker = LAYOUT_COLOURS[name]
+        inside = r.loc[lo:hi]
+        bottom.plot(inside.index, inside.to_numpy(), color=colour, lw=1.4, marker=marker, ms=4, label=name)
+    bottom.axhline(1.0, color=GREY, ls="--", lw=1.0)
+    bottom.text(lo + 0.5, 1.25, "95% limit", color=GREY, fontsize=8, va="bottom")
+    bottom.set_xlim(lo, hi)
+    bottom.set_ylim(0, 11.5)
+    bottom.set_xlabel("Sample [aligned time]")
+    bottom.set_ylabel("SPE / limit")
+    bottom.set_title("SPE of batch 49 as a multiple of its 95% limit")
+    bottom.legend(loc="upper left", fontsize=8)
+    fig.tight_layout()
+    save(fig, out_dir, "batch-case-dupont-lagged-layout")
 
 
 if __name__ == "__main__":

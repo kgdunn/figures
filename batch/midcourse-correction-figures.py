@@ -11,32 +11,33 @@ function's documented headline exactly.
   batch from the poorest feed class (test batch 28; replay outcome
   3.66 g/L) at every decision point, with the 95% prediction-interval
   band built at each decision point (``MidCourseCorrector.predict``).
-  From the first day the projection sits near 3.2 g/L, far below the
-  8 g/L target; the interval narrows from +/-4.0 g/L at day 0.5 to
-  +/-1.75 at day 4 and +/-0.9 at day 9.5, and its upper end drops below
-  the target from day 2.5 on.
+  From the first day the projection sits near 3.5 g/L, far below the
+  8 g/L target; the interval narrows from +/-2.3 g/L at day 0.5 to
+  +/-1.6 at day 4 and +/-0.9 at day 9.5, and its upper end sits below
+  the target at every decision point.
 - ``mcc-correction-at-k.png``: the same batch's temperature and pH
   schedules before and after the day-4 correction. Instead of
   completing the drop to the 29 degC production hold on schedule, the
-  corrected schedule holds near 34.7 degC at day 4 and ramps down to
+  corrected schedule holds near 34.1 degC at day 4 and ramps down to
   reach the hold only around day 7.5, with a small transient pH dip;
-  executed, the batch finishes at 5.79 g/L instead of 3.66 g/L (+58%).
+  executed, the batch finishes at 5.65 g/L instead of 3.66 g/L (+55%).
 - ``mcc-policy-comparison.png``: forty fresh batches under four executed
   policies: replay 7.51 +/- 1.20 g/L, mid-course correction
-  7.75 +/- 0.78 (five corrected, none harmed; dead band 1.0, the whole
+  7.79 +/- 0.75 (eight corrected, none harmed; dead band 1.0, the whole
   interval must fall short of the target), the
-  oracle-from-the-decision-point ceiling 7.87 +/- 0.63, and the
+  oracle-from-the-decision-point ceiling 7.98 +/- 0.51, and the
   perfect-feedforward (adapted) ceiling 7.82 +/- 1.01. Left: each
   corrected batch's jump. Right: the distributions; correction removes
   the low tail, which feedforward adaptation cannot reach.
 - ``mcc-decision-point-window.png``: the executed gain of the corrected
   batches as the single decision point moves through the batch. The
-  window is mid-batch (days 3 to 5, largest gain at day 4): earlier, the
-  interval at the decision point is wide, so the dead band admits only
-  the clearest shortfalls and the gain is about half of the peak; later,
-  the remaining schedule has no leverage and corrections turn harmful.
+  window is mid-batch (days 3 to 5, with days 3 and 4 tied at about
+  +1.4 g/L): earlier, the prediction has not yet separated the batches
+  that will fall short from those that will not, and two of the nine
+  corrections at day 2 do harm; later, the remaining schedule has no
+  leverage and corrections turn harmful.
 - ``mcc-exploration-dial.png``: predicted versus executed titer of the
-  five corrected batches as the T2 (stay-where-the-model-has-data)
+  eight corrected batches as the T2 (stay-where-the-model-has-data)
   penalty is relaxed, hard caps off. On this process the executed
   outcome improves monotonically and sits above the prediction at every
   setting; the late-decision-point harm in the window figure shows the
