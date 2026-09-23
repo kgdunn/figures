@@ -13,7 +13,10 @@ Acetic, H2S and Lactic (all 30 cheeses), with the folds that
   prediction error before that correction (actual minus predicted taste). The
   least-squares slope through the origin is the slope ratio ``s_a``; the prediction
   error falls only when ``s_a > 1/2``, because
-  ``PRESS[a-1] - PRESS[a] = (2 s_a - 1) * sum(correction**2)``.
+  ``PRESS[a-1] - PRESS[a] = (2 s_a - 1) * sum(correction**2)``. The shaded double
+  wedge is where one cheese's error falls, ``g (2 r - g) > 0``: every dot in it is a
+  cheese the correction helps, and the component helps overall when its slope lies
+  in it.
 * ``pls-fold-weights.png``: the weights of components 1 and 2 in the model fitted
   to all 30 cheeses (bars), and in each of the seven fold models (dots), with the
   arbitrary sign of each fold's component aligned to the full model.
@@ -49,6 +52,7 @@ DARK_BLUE = "#1f3d7a"  # test cheeses, and the slope on the testing data
 ORANGE = "#e6820a"     # the break-even slope of one half
 BLACK = "#111111"      # a correction that is exactly right, slope one
 GREY = "#c9c9c9"       # bars for the model fitted to all cheeses
+GREEN = "#d6ebcf"      # where a correction reduces a cheese's prediction error
 
 plt.rcParams.update({"font.size": 11, "axes.grid": True, "grid.alpha": 0.3, "figure.dpi": 140})
 
@@ -77,20 +81,28 @@ def slope_figure(correction: np.ndarray, error_before: np.ndarray, out_dir: Path
     for a, ax in enumerate(axes):
         g, r = correction[:, a], error_before[:, a]
         reach = 1.08 * np.abs(g).max()
+        high = 1.1 * np.abs(r).max()
         ends = np.array([-reach, reach])
+        # A cheese's squared error falls when r**2 - (r - g)**2 = g (2 r - g) > 0: above the
+        # line of slope 1/2 for a positive correction, below it for a negative one.
+        right, left = np.array([0.0, reach]), np.array([-reach, 0.0])
+        ax.fill_between(right, 0.5 * right, high, color=GREEN, lw=0, zorder=0,
+                        label="Where the correction reduces a cheese's error")
+        ax.fill_between(left, -high, 0.5 * left, color=GREEN, lw=0, zorder=0)
+        ax.set_ylim(-high, high)
         ax.axhline(0, color=BLACK, lw=0.6, zorder=1)
         ax.axvline(0, color=BLACK, lw=0.6, zorder=1)
         ax.plot(ends, ends, color=BLACK, lw=1.8, label="Correction exactly right (slope 1)")
         ax.plot(ends, 0.5 * ends, color=ORANGE, lw=1.8, ls=":", label="Break-even (slope 1/2)")
         ax.plot(ends, slopes[a] * ends, color=DARK_BLUE, lw=1.8, ls="--", label="Slope on the testing data, $s_a$")
-        ax.plot(g, r, "o", ms=6, color=DARK_BLUE, mec="white", mew=0.8, zorder=4, label="Test cheese")
+        ax.plot(g, r, "o", ms=6, color=DARK_BLUE, mec="white", mew=0.8, zorder=4, label="Test cheese (one row of the testing data)")
         ax.set_xlim(ends)
         ax.set_title(f"Component {a + 1}: $s_{a + 1} = {slopes[a]:.2f}$")
         ax.set_xlabel(f"Correction by component {a + 1}\n(change in predicted taste)")
     axes[0].set_ylabel("Prediction error before the component\n(actual \u2212 predicted taste)")
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="lower center", ncol=4, fontsize=9.5, frameon=False)
-    fig.tight_layout(rect=(0, 0.07, 1, 1))
+    fig.legend(handles, labels, loc="lower center", ncol=3, fontsize=9.5, frameon=False)
+    fig.tight_layout(rect=(0, 0.11, 1, 1))
     fig.savefig(out_dir / "pls-heldout-slope-ratio.png")
     plt.close(fig)
 
