@@ -57,7 +57,8 @@ Usage
 
 Writes the five PNGs into ``output_dir`` (default: this script's own
 directory). Full regeneration re-runs the executed policy comparison and
-the two sweeps: roughly 20 minutes on a laptop.
+the two sweeps, with the oracle at every decision day of the window
+sweep: roughly 30 minutes on a laptop.
 """
 
 from __future__ import annotations
