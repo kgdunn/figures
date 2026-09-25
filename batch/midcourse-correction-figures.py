@@ -2,7 +2,8 @@
 
 Five committed PNGs, every quantitative claim executed on the bioreactor
 simulator (corrected schedules re-simulated with the identical disturbance
-seed, so gains are same-batch counterfactuals, never model predictions).
+seed, so executed gains are same-batch counterfactuals; a model's
+prediction, where one is drawn, is labelled as such).
 The seeds replicate ``evaluate_control_policies(y_target=8.0,
 random_state=0)`` from ``process_improve``, so the numbers match that
 function's documented headline exactly.
@@ -26,22 +27,28 @@ function's documented headline exactly.
   7.79 +/- 0.75 (eight corrected, none harmed; dead band 1.0, the whole
   interval must fall short of the target), the
   oracle-from-the-decision-point ceiling 7.98 +/- 0.51, and the
-  perfect-feedforward (adapted) ceiling 7.82 +/- 1.01. Left: each
+  feedforward (adapted) ceiling 7.82 +/- 1.01, each schedule optimised
+  for its batch's Z against the simulator's own equations. Left: each
   corrected batch's jump. Right: the distributions; correction removes
   the low tail, which feedforward adaptation cannot reach.
-- ``mcc-decision-point-window.png``: the executed gain of the corrected
-  batches as the single decision point moves through the batch. The
-  window is mid-batch (days 3 to 5, with days 3 and 4 tied at about
-  +1.4 g/L): earlier, the prediction has not yet separated the batches
-  that will fall short from those that will not, and two of the nine
-  corrections at day 2 do harm; later, the remaining schedule has no
-  leverage and corrections turn harmful.
+- ``mcc-decision-point-window.png``: the mean gain of the corrected
+  batches as the single decision point moves through the batch, three
+  ways: predicted by the model, executed, and the oracle's (the remaining
+  schedule optimised against the simulator itself, with the batch's own
+  seed). The executed window is mid-batch (days 3 to 5, with days 3 and
+  4 tied at about +1.4 g/L): earlier, the prediction has not yet
+  separated the batches that will fall short from those that will not,
+  and two of the nine corrections at day 2 do harm. Later, the oracle
+  still gains 1.6 to 2.1 g/L on the same batches, so the process keeps
+  its leverage; the model's predicted gains fall toward zero, and the
+  corrections computed from them turn harmful.
 - ``mcc-exploration-dial.png``: predicted versus executed titer of the
   eight corrected batches as the T2 (stay-where-the-model-has-data)
   penalty is relaxed, hard caps off. On this process the executed
   outcome improves monotonically and sits above the prediction at every
   setting; the late-decision-point harm in the window figure shows the
-  same freedom working against you once the model's leverage is gone.
+  same freedom working against you once the model's estimate of the
+  leverage is wrong.
 
 Usage
 -----
@@ -313,7 +320,13 @@ def policy_comparison(outdir: pathlib.Path) -> None:
 
 
 def decision_point_window(outdir: pathlib.Path) -> None:
-    """Executed gain of corrected batches versus decision-point placement."""
+    """Gain of the corrected batches versus decision-point placement: predicted, executed, oracle.
+
+    The oracle re-optimises the same batches' remaining schedules against the
+    simulator itself from the same decision point, so the gap between its line
+    and the executed one separates what the process still allows from what the
+    model can see.
+    """
     from process_improve.batch.control import evaluate_control_policies
     from process_improve.simulation import BioreactorSimulator
 
@@ -325,46 +338,45 @@ def decision_point_window(outdir: pathlib.Path) -> None:
             y_target=TARGET,
             decision_points=(k,),
             include_adapted=False,
-            oracle="none",
+            oracle="corrected",
             random_state=0,
         )
         corrected = result.batches[result.batches["corrected"]]
-        gain = corrected["midcourse"] - corrected["replay"]
         rows.append(
             {
                 "day": 0.5 * k,
-                "mean_gain": float(gain.mean()) if len(gain) else 0.0,
+                "predicted": float((corrected["y_hat_predicted"] - corrected["y_hat_no_change"]).mean()),
+                "executed": float((corrected["midcourse"] - corrected["replay"]).mean()),
+                "oracle": float((corrected["oracle_from_k"] - corrected["replay"]).mean()),
                 "n_corrected": int(result.n_corrected),
                 "n_harmed": int(result.n_harmed),
             }
         )
     sweep = pd.DataFrame(rows)
-    print("decision-point sweep:")
+    print("decision-point sweep, mean gain of the corrected batches [g/L]:")
     print(sweep.round(3).to_string())
 
     fig, ax = plt.subplots(figsize=(11.5, 6.8))
     ax.axhline(0, color=GREY, lw=1.0)
-    ax.plot(sweep["day"], sweep["mean_gain"], color=BLUE, lw=2.4, marker="o", ms=9)
-    for _, row in sweep.iterrows():
-        note = f"{row['n_corrected']:.0f} corrected"
-        if row["n_harmed"]:
-            note += f"\n{row['n_harmed']:.0f} harmed"
-        below = row["mean_gain"] > 1.5  # keep the peak's label clear of the title
-        ax.annotate(
-            note,
-            xy=(row["day"], row["mean_gain"]),
-            xytext=(14, -18) if below else (0, 14),
-            textcoords="offset points",
-            ha="left" if below else "center",
-            fontsize=13.5,
-            color=GREY,
-        )
     ax.axvspan(2.9, 5.1, color=GREEN, alpha=0.12)
-    ax.annotate("the window", xy=(4.0, ax.get_ylim()[0] + 0.12), ha="center", fontsize=16, color=GREEN)
+    ax.plot(sweep["day"], sweep["oracle"], color=ORANGE, lw=2.4, ls="--", marker="D", ms=8,
+            label="oracle: optimised against the simulator")
+    ax.plot(sweep["day"], sweep["predicted"], color=GREY, lw=2.0, ls=":", marker="s", ms=7,
+            label="predicted by the model")
+    ax.plot(sweep["day"], sweep["executed"], color=BLUE, lw=2.4, marker="o", ms=9,
+            label="executed: the model's correction")
+    bottom = min(sweep["executed"].min(), 0.0) - 0.75
+    ax.set_ylim(bottom=bottom, top=sweep["oracle"].max() + 1.1)
+    for _, row in sweep.iterrows():  # the counts sit in a row along the bottom, clear of every line
+        note = f"{row['n_corrected']:.0f} corrected"
+        note += f"\n{row['n_harmed']:.0f} harmed" if row["n_harmed"] else "\nnone harmed"
+        ax.annotate(note, xy=(row["day"], bottom + 0.06), ha="center", va="bottom", fontsize=12, color=BLUE)
+    ax.set_xlim(sweep["day"].min() - 0.45, sweep["day"].max() + 0.45)  # room for the end labels
     ax.set_xlabel("Decision point [day]")
-    ax.set_ylabel("Mean executed gain [g/L]")
-    ax.set_ylim(top=sweep["mean_gain"].max() + 0.45)
-    ax.set_title("Executed gain of the corrected batches\nversus decision-point placement")
+    ax.set_ylabel("Mean gain of the corrected batches [g/L]")
+    ax.annotate("the window", xy=(4.0, ax.get_ylim()[1] - 0.3), ha="center", fontsize=16, color=GREEN)
+    ax.set_title("Gain of the corrected batches versus decision-point placement")
+    ax.legend(frameon=False, loc="upper right", fontsize=14)
     ax.grid(color=GRID, lw=0.7)
     save(fig, outdir, "mcc-decision-point-window.png")
 
