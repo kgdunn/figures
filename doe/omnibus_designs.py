@@ -187,7 +187,7 @@ def _library_metrics(design):
         effect_size=1.0,  # delta = sigma
         sigma=1.0,
         n_samples=N_EVAL,
-        random_seed=EVAL_SEED,
+        random_state=EVAL_SEED,
         include_vertices=True,
         fds_resolution=200,
     )

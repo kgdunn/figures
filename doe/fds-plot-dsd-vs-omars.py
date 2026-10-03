@@ -36,7 +36,7 @@ def scaled_fds_curve(design):
     """
     df = pd.DataFrame(np.asarray(design, float), columns=NAMES)
     curve = evaluate_design(df, model=MODEL, metric="fds", n_samples=N_EVAL,
-                            random_seed=EVAL_SEED, include_vertices=True,
+                            random_state=EVAL_SEED, include_vertices=True,
                             fds_resolution=200)["fds"]["curve"]
     return curve["fraction"], curve["scaled_prediction_variance"]
 
