@@ -364,4 +364,8 @@ def verify() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(verify() if "--verify" in sys.argv[1:] else print_literals())
+    # Exit only on --verify: a bare sys.exit() raises SystemExit, which the figure-script
+    # checker counts as a failure.
+    if "--verify" in sys.argv[1:]:
+        sys.exit(verify())
+    print_literals()
