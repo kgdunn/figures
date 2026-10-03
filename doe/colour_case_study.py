@@ -155,7 +155,7 @@ def evaluate(design, *, n_samples: int = 60_000, seed: int = 1) -> dict:
         model="quadratic",
         metric=["d_efficiency", "i_efficiency", "g_efficiency", "degrees_of_freedom", "fds"],
         n_samples=n_samples,
-        random_seed=seed,
+        random_state=seed,
     )
 
 
