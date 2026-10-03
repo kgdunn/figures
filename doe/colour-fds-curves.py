@@ -5,6 +5,7 @@ the average prediction variance, gives the flatter, lower FDS curve; more runs l
 curve. Regenerates ``colour-fds-curves.png``.
 """
 
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import matplotlib.pyplot as plt
 import numpy as np
 

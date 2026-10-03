@@ -121,11 +121,11 @@ def build_designs():
     # two-level factorials carry 2 centre runs so sigma^2 and a one-degree-of-freedom
     # curvature check are available even though the individual quadratics are not
     # estimable.
-    full = _coded(generate_design(FACTORS, "full_factorial", center_points=2))
+    full = _coded(generate_design(FACTORS, "full_factorial", n_center_points=2))
     frac = _coded(
-        generate_design(FACTORS, "fractional_factorial", generators=["E=ABCD"], center_points=2)
+        generate_design(FACTORS, "fractional_factorial", generators=["E=ABCD"], n_center_points=2)
     )
-    bbd = _coded(generate_design(FACTORS, "box_behnken", center_points=6))
+    bbd = _coded(generate_design(FACTORS, "box_behnken", n_center_points=6))
     dsd = _coded(generate_design(FACTORS, "dsd"))
 
     # Face-centred central composite design on a resolution-V half-fraction cube. The
@@ -135,7 +135,7 @@ def build_designs():
     # every run inside [-1, 1]; a rotatable CCD would place the axial runs at +/-2, i.e. on
     # a 2x wider range, which is not a like-for-like design on a fixed [-1, 1] region.
     ccd = _coded(
-        generate_design(FACTORS, "ccd", cube="fractional", alpha="face_centered", center_points=6)
+        generate_design(FACTORS, "ccd", cube="fractional", alpha="face_centered", n_center_points=6)
     )
 
     # OMARS: process_improve generates the larger response-surface OMARS members directly

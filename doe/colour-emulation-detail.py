@@ -9,6 +9,7 @@ close, and D and E lift away at the tail by their late-time drift, the shape no 
 Regenerates ``colour-emulation-detail.png``.
 """
 
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import numpy as np
 import matplotlib.pyplot as plt
 

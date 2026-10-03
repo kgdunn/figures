@@ -9,6 +9,7 @@ concentration) beyond the studied window, so they cannot be made to match the re
 Regenerates ``colour-pls-inversion.png``.
 """
 
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import contextlib
 import io
 

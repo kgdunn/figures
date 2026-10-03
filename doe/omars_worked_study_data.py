@@ -109,7 +109,7 @@ PRIZE = -best.fun - T_NOW
 
 designs = {}
 for n in (13, 17, 21, 27, 31):
-    designs[f"OMARS {n}"] = generate_omars(FACTORS, n_runs=n, model="main_quadratic", random_seed=42).design[NAMES].to_numpy(float)
+    designs[f"OMARS {n}"] = generate_omars(FACTORS, n_runs=n, model="main_quadratic", random_state=42).design[NAMES].to_numpy(float)
 designs["Box-Behnken 27"] = np.asarray(dispatch_box_behnken(FACTORS)[0], float)
 designs["CCD 27"] = np.asarray(dispatch_ccd(FACTORS, alpha="face_centered")[0], float)
 

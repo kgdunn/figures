@@ -6,6 +6,7 @@ easy-to-change factors move almost every run. Regenerates
 ``colour-split-plot-run-order.png``.
 """
 
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import matplotlib.pyplot as plt
 import numpy as np
 

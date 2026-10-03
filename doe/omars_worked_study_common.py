@@ -110,7 +110,7 @@ def study():
     """Run the study as the chapter does and return everything the figures need."""
     reps = np.array([run_batch(CONFIG, **CURRENT, random_state=s) for s in range(20)])
 
-    design = generate_omars(FACTORS, n_runs=27, model="main_quadratic", random_seed=42)
+    design = generate_omars(FACTORS, n_runs=27, model="main_quadratic", random_state=42)
     coded = design.design[NAMES].to_numpy(float)
     is_centre = np.all(coded == 0, axis=1)
     rows = [i for i in range(len(coded)) if not is_centre[i]]

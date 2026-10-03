@@ -115,6 +115,52 @@ matplotlib (or R, or MATLAB) script kept here. When the underlying analysis chan
 the script and regenerate the image in the same commit, so the code and the picture stay in
 step. Hand-drawn diagrams are edited in their `.svg` (or `.pxm`) source and re-exported.
 
+## Scripts that use `process-improve` are run in CI
+
+Many of the generating scripts call the companion package
+[`process-improve`](https://github.com/kgdunn/process-improve), and the package moves. Over
+one release cycle five scripts here stopped running, on renamed keywords and changed return
+types, and nothing noticed until a figure had to be regenerated: four of them drew every
+figure on one page of the book.
+
+Every `.py` file in this repository that reaches the package is therefore executed on each
+pull request by
+[`.github/workflows/check-scripts.yml`](.github/workflows/check-scripts.yml). That means the
+scripts that import it directly, and the ones that import a sibling module which does:
+`colour_case_study` and `omnibus_designs` each stand behind a dozen figures, and a script
+that leans on one of them breaks in exactly the same way. Which scripts are in scope is not
+a list anyone maintains: a new script joins the set by importing the package, or a module
+that does. Run the same check yourself with
+
+```bash
+uv run --no-project --with 'process-improve[all]' python tools/check_figure_scripts.py
+python tools/check_figure_scripts.py --list        # what would run
+python tools/check_figure_scripts.py doe --jobs 1  # one directory, serially
+```
+
+Each script runs in its own process, from its own directory, with `savefig`, `show` and
+`write_image` disabled, so the check writes no image and leaves the committed PNGs alone; CI
+fails if the working tree changes. A traceback fails a script, and so does a
+`DeprecationWarning`, or any warning class the library defines, raised from a line of the
+script itself: that is the library announcing a rename, and it is the warning that was
+missed. A second, advisory job runs everything against the library's `main` branch, so a
+change that will break these scripts is visible before it is released.
+
+A script that should not run, that needs something CI's default environment cannot install,
+or that has grown too slow for every pull request, says so in a comment, with the reason:
+
+```python
+# check-scripts: skip needs a licensed solver that CI cannot install
+# check-scripts: slow a twelve-hour sweep; run it from the nightly schedule
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
+```
+
+`requires` is the interesting one. `pyoptex` pins versions of plotly and numba that cannot
+share an environment with `process-improve[all]`, which is why the colour case study's
+scripts carry that marker: they skip in the main job and run in a third job that installs
+`process-improve[expt]` alongside `pyoptex`, which is what the book tells its reader to
+install for that chapter. Sixteen scripts are in that set.
+
 ## Usage rights
 
 These figures are part of *Process Improvement using Data* and are licensed, like the book,

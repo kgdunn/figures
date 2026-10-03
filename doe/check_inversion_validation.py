@@ -7,6 +7,7 @@ through the ground-truth simulator, and measure how close the resulting curve is
 Compare against each compound's shape floor (the best any amplitude can do). Run from figures/doe.
 """
 
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import contextlib
 import io
 

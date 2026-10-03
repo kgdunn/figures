@@ -5,6 +5,7 @@ Amplitude is divided out first, so this compares shape (development rate and lat
 depth of colour. Regenerates ``colour-shape-distance.png``.
 """
 
+# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import matplotlib.pyplot as plt
 
 from colour_case_study import build_design, shape_distance_to_reference, simulate_curves
