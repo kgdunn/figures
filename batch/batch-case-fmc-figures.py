@@ -186,8 +186,11 @@ def main(out_dir: pathlib.Path) -> None:
     r2y = mb_z.r2_y_per_component_.to_numpy()
     axes[0, 0].set_xlabel(f"super score $t_1$ [$R^2_Y$ {r2y[0]:.1%}]")
     axes[0, 0].set_ylabel(f"super score $t_2$ [$R^2_Y$ {r2y[1]:.1%}]")
-    axes[0, 0].set_title("Super scores: batch 20 (orange) at the lower left")
-    compact_legend(axes[0, 0], "upper left")
+    # a component's sign is arbitrary, so the corner is read off the scores rather than written in
+    t_20 = ss.loc[OPERATING_OUTLIER]
+    corner = f"{'upper' if t_20.iloc[1] > 0 else 'lower'} {'right' if t_20.iloc[0] > 0 else 'left'}"
+    axes[0, 0].set_title(f"Super scores: batch {OPERATING_OUTLIER} (orange) at the {corner}")
+    compact_legend(axes[0, 0], "best")  # the emptiest corner moves with the sign, too
     weights = mb_z.super_weights_.copy()
     weights.columns = [f"component {c}" for c in weights.columns]
     grouped_bars(axes[1, 0], weights, colours=[DARK_BLUE, ORANGE], ylabel="super weight", title="Super weights: how much each block pulls")
@@ -250,11 +253,10 @@ def main(out_dir: pathlib.Path) -> None:
 
     blocks = {"Zchem": Zchem, "Zop": Zop, "X": wide}
     mb = MBPLS(n_components=2).fit(blocks, Y)
-    fig, axes = plt.subplots(1, 3, figsize=(13.0, 4.0), gridspec_kw={"width_ratios": [1, 1, 1]})
+    fig, axes = plt.subplots(1, 3, figsize=(13.0, 4.3), gridspec_kw={"width_ratios": [1, 1, 1]})
     ss = mb.super_scores_
     group_scatter(axes[0], ss.iloc[:, 0], ss.iloc[:, 1], {13: ORANGE, 5: AQUA, 7: AQUA}, **coded)
     annotate_batches(axes[0], ss.iloc[:, 0], ss.iloc[:, 1], (*TRAJECTORY_BATCHES, *QUALITY_GROUP))
-    compact_legend(axes[0], "upper left")
     axes[0].axhline(0, color=GREY, lw=0.8)
     axes[0].axvline(0, color=GREY, lw=0.8)
     r2y = mb.r2_y_per_component_.to_numpy()
@@ -268,7 +270,11 @@ def main(out_dir: pathlib.Path) -> None:
     parity_plot(observed, mb.predictions_["SolventConc"].loc[observed.index],   # the same three batches, in the
                 highlight={13: ORANGE, 5: AQUA, 7: AQUA},                      # same colours, marker shapes and
                 ax=axes[2], title="SolventConc: observed and fitted", **coded)  # sizes as the super-score panel
-    fig.tight_layout()
+    # The super scores fill every corner of their panel, so the classification legend, shared by the score plot
+    # and the parity plot, sits in a row below the panels.
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=len(handles), fontsize=8, frameon=False, bbox_to_anchor=(0.5, 0.0))
+    fig.tight_layout(rect=(0, 0.07, 1, 1))
     save(fig, out_dir, "batch-case-fmc-batch-mbpls")
 
     # Off-spec trajectories, on-spec product: place every batch, block by block, with the nearer group average
@@ -321,7 +327,7 @@ def main(out_dir: pathlib.Path) -> None:
     ax.axhline(0, color=GREY, lw=0.8)
     shade_alternate_tags(ax, len(move))
     label_bars(ax, move.to_numpy(dtype=float), fmt="{:.2f}", floor=0.005)
-    ax.set_ylabel("Contribution to the Zop block score $t_1$")
+    ax.set_ylabel("Contribution to the super score $t_1$")
     ax.set_title("From the neighbours' average to the four batches' average")
     highlight = {**dict.fromkeys(neighbours, AQUA), **dict.fromkeys(anomalous, ORANGE)}
     for k, tag in enumerate(RAW_TAGS):

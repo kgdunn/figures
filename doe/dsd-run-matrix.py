@@ -17,7 +17,7 @@ from process_improve.experiments import Factor, generate_design
 # Generate the six-factor DSD (13 runs; the centre run is embedded, so center_points is
 # not used here).  generate_design returns the runs in randomized execution order.
 factors = [Factor(name=c, low=-1, high=1) for c in "ABCDEF"]
-dsd = generate_design(factors, design_type="dsd", random_seed=42)
+dsd = generate_design(factors, design_type="dsd", random_state=42)
 levels = dsd.design[dsd.factor_names].to_numpy(dtype=float)
 
 # Reorder the runs into the construction pattern [C; -C; 0] with a transparent mirror
