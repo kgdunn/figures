@@ -4,8 +4,9 @@ Model inversion finds, for each candidate chromogen, the minimum-adjustment cont
 settings whose score matches the reference goal (chromogen A at the centre point). This plots those
 settings in coded units, one row per factor, one marker per chromogen. The band between the dashed
 lines at -1 and +1 is the studied range; a marker outside it is a setting the experiment never
-explored. B, C and D can be compensated within the ranges; E and F require a pH (and, for F, a
-concentration) beyond the studied window, so they cannot be made to match the reference there.
+explored. B and D can be compensated within the ranges; C needs a concentration just below the
+studied window, and E and F need all four factors beyond it, so they cannot be made to match the
+reference there.
 Regenerates ``colour-pls-inversion.png``.
 """
 
@@ -34,7 +35,7 @@ factors = list(CONT)                              # concentration, co_solvent, p
 labels = {"concentration": "concentration", "co_solvent": "co-solvent", "pH": "pH",
           "temperature": "temperature"}
 palette = {"B": "#c0392b", "C": "#2e8b57", "D": "#8e44ad", "E": "#d68910", "F": "#17a2b8"}
-_JIT = {"B": -0.18, "C": -0.09, "D": 0.0, "E": 0.09, "F": 0.18}   # spread markers within a row
+_JIT = {"B": -0.24, "C": -0.12, "D": 0.0, "E": 0.12, "F": 0.24}   # spread markers within a row
 
 fig, ax = plt.subplots(figsize=(8.0, 4.6))
 yrows = {f: len(factors) - 1 - i for i, f in enumerate(factors)}   # first factor on top
@@ -56,14 +57,16 @@ for f in factors:
         inside = abs(val) <= 1.0 + 1e-9
         ax.scatter([val], [y + _JIT[c]], s=58, color=palette[c],
                    edgecolor="w" if inside else "k", linewidth=0.6 if inside else 1.3, zorder=4)
-        if not inside:
+        if not inside:                            # label on the outward side, away from the band
             ax.annotate(f"{c}", (val, y + _JIT[c]), fontsize=7.5, color="k",
-                        xytext=(5, 0), textcoords="offset points", va="center", zorder=5)
+                        xytext=(6 if val > 0 else -6, 0), ha="left" if val > 0 else "right",
+                        textcoords="offset points", va="center", zorder=5)
 
 ax.set_yticks([yrows[f] for f in factors])
 ax.set_yticklabels([labels[f] for f in factors])
 ax.set_ylim(-0.6, len(factors) - 0.4)
-ax.set_xlim(-1.6, 2.0)
+coded_all = table[[f"{f}_coded" for f in factors]].to_numpy(float)
+ax.set_xlim(min(-1.6, coded_all.min() - 0.3), max(2.0, coded_all.max() + 0.3))   # every marker shown
 ax.set_xlabel("coded factor setting to match the reference goal (0 = nominal centre)")
 ax.set_title("Compensation to match the reference: inverted factor settings per chromogen",
              fontsize=10, loc="left")

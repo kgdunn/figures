@@ -67,7 +67,8 @@ axR.set_title("Emulation error against the noise scale", fontsize=10, loc="left"
 axR.grid(axis="x", alpha=0.2)
 legend = [Line2D([], [], marker="o", ls="", mfc="w", mec="0.35", mew=1.6, label="best attainable match (any amplitude)"),
           Line2D([], [], marker="o", ls="", color="0.35", label="curve-match inversion (validated)")]
-axR.legend(handles=legend, frameon=False, fontsize=7.5, loc="lower right")
+# Between the F and C rows, right of every marker in them, clear of the noise labels.
+axR.legend(handles=legend, frameon=False, fontsize=7.5, loc="upper right", bbox_to_anchor=(1.0, 0.78))
 
 fig.suptitle("F is not unique: B best, then F, then C; ordered by fixed curve shape, not by amplitude",
              fontsize=11, x=0.01, ha="left")

@@ -12,14 +12,14 @@ Everything here is built with Kevin Dunn's ``process_improve`` library
 (``pip install 'process-improve[expt]'`` plus a separate ``pip install pyoptex`` for the
 coordinate-exchange optimiser): ``generate_design`` builds the mixed-level split-plot
 optimal design directly (v1.52.0+ routes a categorical factor and a per-factor quadratic
-model through the public entry point), ``evaluate_design`` scores D/I/G-efficiency and the
-prediction variance integrated over the whole region (the FDS curve), and the multivariate
-``PLS`` models the ten-point colour-development profile with ``scale=True`` (v1.51.3+ scales
-both blocks; v1.51.4+ reports ``rmse_`` on the original response scale).
+model through the public entry point), ``evaluate_design`` scores D- and G-efficiency, the
+average prediction variance, and its distribution over the whole region (the FDS curve), and the
+multivariate ``PLS`` models the ten-point colour-development profile with ``scale=True``
+(v1.51.3+ scales both blocks; v1.51.4+ reports ``rmse_`` on the original response scale).
 
 The response is simulated from a fixed ground truth so the recovered effects can be checked
-against what was injected. Deterministic: the coordinate exchange is seeded through NumPy's
-global generator and the simulation through an explicit ``default_rng``.
+against what was injected. Deterministic: the coordinate exchange is seeded through
+``generate_design``'s ``random_state`` and the simulation through an explicit ``default_rng``.
 
 Run ``check_colour_case_study.py`` to print the numbers quoted in the chapter; run the
 ``colour-*.py`` scripts to regenerate the figures.
@@ -101,16 +101,17 @@ def build_design(criterion: str = "i_optimal", budget: int = 60, *, seed: int = 
     """Build the mixed-level split-plot optimal design through the public API.
 
     ``criterion`` is ``"i_optimal"`` or ``"d_optimal"``; ``budget`` is the run count.
-    The coordinate exchange draws its restarts from NumPy's global generator, so we
-    seed it here for reproducibility.
+    ``seed`` is passed to ``generate_design`` as ``random_state``, which seeds the
+    coordinate exchange's random restarts, so this is the design the chapter's own
+    code builds with ``random_state=42``.
     """
-    np.random.seed(seed)  # noqa: NPY002  (pyoptex reads the legacy global RNG)
     return generate_design(
         FACTORS,
         design_type=criterion,
         budget=budget,
         hard_to_change=HARD_TO_CHANGE,
         model_type="quadratic",
+        random_state=seed,
     )
 
 
@@ -149,11 +150,11 @@ def fit_profile_pls(design, curves, *, n_components: int = 5) -> PLS:
 
 
 def evaluate(design, *, n_samples: int = 60_000, seed: int = 1) -> dict:
-    """D/I/G-efficiency, degrees of freedom, and the FDS quantiles for a design."""
+    """D- and G-efficiency, average prediction variance, degrees of freedom, and the FDS quantiles."""
     return evaluate_design(
         design,
         model="quadratic",
-        metric=["d_efficiency", "i_efficiency", "g_efficiency", "degrees_of_freedom", "fds"],
+        metric=["d_efficiency", "average_prediction_variance", "g_efficiency", "degrees_of_freedom", "fds"],
         n_samples=n_samples,
         random_state=seed,
     )

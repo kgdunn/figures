@@ -90,7 +90,9 @@ enc_handles = [
 leg1 = ax.legend(handles=colour_handles, frameon=False, fontsize=8, ncol=2, loc="upper right",
                  title="chromogen")
 ax.add_artist(leg1)
-ax.legend(handles=enc_handles, frameon=False, fontsize=8, loc="center right", handletextpad=0.6)
+# Directly under the chromogen key, in the empty band between the SPE limit and the high-T2 runs.
+ax.legend(handles=enc_handles, frameon=False, fontsize=8, loc="upper right",
+          bbox_to_anchor=(1.0, 0.70), handletextpad=0.6)
 ax.grid(alpha=0.2)
 fig.tight_layout()
 fig.savefig("colour-pls-t2-spe.png", dpi=300, facecolor="w", edgecolor="w", transparent=True)

@@ -46,8 +46,8 @@ coef = pd.DataFrame({"term": [short(c) for c in X_int.columns],
 y = np.arange(len(coef))
 
 fig, ax = plt.subplots(figsize=(7.4, 8.2))
-# +/- 1 standard error on the least-squares estimate; the PLS point sits inside it for all but
-# two of the terms, so the shrinkage is small next to the estimation uncertainty.
+# +/- 1 standard error on the least-squares estimate, so the gap between the two fits can be read
+# against the estimation uncertainty of each term.
 ax.errorbar(coef["OLS"], y, xerr=coef["SE"], fmt="none", ecolor="#9dbbe0", elinewidth=6,
             capsize=0, zorder=1, alpha=0.9)
 ax.scatter(coef["OLS"], y, s=46, color="#1f5fa8", marker="o", label="least squares (+/- 1 s.e.)",

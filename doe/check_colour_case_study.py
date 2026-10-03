@@ -62,7 +62,8 @@ for crit in ("i_optimal", "d_optimal"):
         d = build_design(crit, budget=budget)
         m = evaluate(d)
         q = m["fds"]["quantiles"]
-        print(f"  {crit:10s} n={budget}: D={m['d_efficiency']:6.2f}  I={m['i_efficiency']:7.2f}  "
+        print(f"  {crit:10s} n={budget}: D={m['d_efficiency']:6.2f}  "
+              f"avg pred var={m['average_prediction_variance']:.3g}  "
               f"G={m['g_efficiency']:6.2f}  FDS median={q['0.5']:.3f}  FDS max={q['1']:.3f}  "
               f"dof_resid={m['degrees_of_freedom']['residual']}")
 
