@@ -6,7 +6,9 @@ per-run Hotelling's T2 (leverage inside the model plane) depends on the coding. 
 coding the omitted level is carried as the negative sum of the other contrasts, the corner of the
 contrast space farthest from the centre, so its runs read as high leverage; change which level is
 omitted and the flag moves with it. Treatment (reference) and cell-means coding place no level at
-that corner, so nothing crosses the 95% T2 limit. Regenerates ``colour-coding-diagnostics.png``.
+that corner, so the omitted-level flags disappear; the two compound-F runs they still put over the
+95% T2 limit sit only just above it. Each panel title gives the limit and the runs over it, so no
+label sits on the points. Regenerates ``colour-coding-diagnostics.png``.
 """
 
 # check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
@@ -46,11 +48,10 @@ for ax, (title, coding, order) in zip(axes.ravel(), panels):
         ax.scatter(xpos[c] + jit, t2[m], s=34, color=colour_of[c], edgecolor="w",
                    linewidth=0.4, zorder=3)
     ax.axhline(t2lim, color="0.4", ls="--", lw=1.1, zorder=2)
-    ax.text(len(COMPOUND_LEVELS) - 0.5, t2lim, f" 95% = {t2lim:.1f}", color="0.35",
-            fontsize=8, va="bottom", ha="right")
     n_over = int((t2 > t2lim).sum())
     flagged = sorted({c for c in COMPOUND_LEVELS if (t2[compound == c] > t2lim).any()})
-    tag = f"{n_over} over limit ({', '.join(flagged)})" if flagged else "none over limit"
+    over = f"{n_over} over" if flagged else "none over"
+    tag = f"{over} the 95% limit of {t2lim:.1f} (dashed)" + (f": {', '.join(flagged)}" if flagged else "")
     ax.set_title(f"{title}\n{tag}", fontsize=9.5, loc="left")
     ax.set_xticks(list(xpos.values()))
     ax.set_xticklabels(["A (ref)" if c == "A" else c for c in COMPOUND_LEVELS])

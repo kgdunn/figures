@@ -7,8 +7,10 @@ coefficient comparison (``colour-coefficient-comparison.py``) in the response, w
 single peak.
 
 Left: the first two PLS scores, one point per run, encoded three ways so a single panel carries the
-run's compound, its pH, and its concentration. Colour is the chromogen; marker shape is the pH level
-(circle low, up triangle high); marker size is the concentration level (small low, large high).
+run's compound, its pH, its concentration and its co-solvent. Colour is the chromogen; marker shape
+is the pH level (down triangle low, circle high); marker size grows with the concentration; the
+marker is open at the low co-solvent and filled at the high. Each score axis carries the percent of
+the response variance its component explains, in square brackets.
 Right: the W* factor weights (24 model terms) and the C response-point weights (ten time points) on
 the same axes. Each compound term (main effect or interaction) is coloured like its compound in the
 score plot; the other factor terms are black; the time points are red. Regenerates
@@ -67,8 +69,11 @@ for c, colour in zip(COMPOUND_LEVELS, palette):
                         edgecolor="w", linewidth=0.5)
 axS.axhline(0, color="0.7", lw=0.7)
 axS.axvline(0, color="0.7", lw=0.7)
-axS.set_xlabel(f"PLS score t1 (R2Y cumulative = {r2_1:.2f})")
-axS.set_ylabel(f"PLS score t2 (+{r2_2:.2f})")
+axS.set_xlabel(f"PLS score t1 [{100 * r2_1:.0f}% of the response variance]")
+axS.set_ylabel(f"PLS score t2 [{100 * r2_2:.0f}% of the response variance]")
+# Room below the lowest run for the two legends, so neither covers a point.
+lo, hi = scores[:, 1].min(), scores[:, 1].max()
+axS.set_ylim(lo - 0.50 * (hi - lo), hi + 0.06 * (hi - lo))
 axS.set_title("(a) Score plot: colour = chromogen, shape = pH", fontsize=9.5, loc="left")
 
 colour_handles = [Line2D([], [], marker="o", ls="", color=colour, markeredgecolor="w",
@@ -101,82 +106,46 @@ wcolours = [compound_colour[term_compound(n)] if term_compound(n) else "black" f
 axL.scatter(wstar.iloc[:, 0], wstar.iloc[:, 1], s=44, c=wcolours, marker="o",
             edgecolor="w", linewidth=0.5, zorder=3)
 
-# Fix the axis extent (over both point clouds, with padding) before the label repulsion, so the
-# transforms stay stable while labels move and none is pushed off the panel.
-allxy = np.vstack([wstar.iloc[:, :2].to_numpy(), cweights.iloc[:, :2].to_numpy()])
+# The twenty compound terms sit in one tight cluster, too dense for labels beside the markers.
+# Their labels go in a column to the right of the cluster, in the same top-to-bottom order as the
+# points, each joined to its marker by a thin leader line; the four process-factor labels stay
+# beside their own markers. Deterministic, so the layout is reproducible.
+wxy = wstar.iloc[:, :2].to_numpy()
+is_cmp = np.array([term_compound(n) is not None for n in wstar.index])
+order = np.argsort(-wxy[is_cmp, 1])                       # highest point first
+cmp_names = list(wstar.index[is_cmp][order])
+cmp_xy = wxy[is_cmp][order]
+x_col = cmp_xy[:, 0].max() + 0.12
+row = 0.034
+y_top = cmp_xy[:, 1].max() + 0.10
+for k, (name, (a, b)) in enumerate(zip(cmp_names, cmp_xy)):
+    axL.annotate(short(name), xy=(a, b), xytext=(x_col, y_top - k * row), textcoords="data",
+                 fontsize=6.3, color=compound_colour[term_compound(name)], va="center", ha="left",
+                 zorder=4, arrowprops=dict(arrowstyle="-", lw=0.35, color="0.65", shrinkA=0, shrinkB=3))
+factor_offsets = {"pH": (6, 6), "co_solvent": (-6, -10), "temperature": (-6, -10), "concentration": (-8, 8)}
+for name, (a, b) in zip(wstar.index[~is_cmp], wxy[~is_cmp]):
+    dx, dy = factor_offsets.get(name, (6, 6))
+    axL.annotate(short(name), (a, b), xytext=(dx, dy), textcoords="offset points", fontsize=7,
+                 color="0.1", ha="left" if dx > 0 else "right", va="center", zorder=4)
+
+allxy = np.vstack([wxy, cweights.iloc[:, :2].to_numpy()])
 padx = 0.12 * (allxy[:, 0].max() - allxy[:, 0].min())
-pady = 0.10 * (allxy[:, 1].max() - allxy[:, 1].min())
+pady = 0.08 * (allxy[:, 1].max() - allxy[:, 1].min())
 axL.set_xlim(allxy[:, 0].min() - padx, allxy[:, 0].max() + padx)
-axL.set_ylim(allxy[:, 1].min() - pady, allxy[:, 1].max() + pady)
-
-# The 24 term labels overlap badly where the interaction terms cluster. Place each label with a
-# leader line and push the labels apart with a small deterministic repulsion pass (a light-weight
-# stand-in for adjustText: no randomness, so the layout is reproducible).
-# Start each label a little up and to the right of its marker (not centred on it), so even an
-# isolated label with nothing to repel it still sits clear of the point.
-_xr, _yr = axL.get_xlim(), axL.get_ylim()
-_ox, _oy = 0.03 * (_xr[1] - _xr[0]), 0.035 * (_yr[1] - _yr[0])
-anns = [axL.annotate(short(name), xy=(a, b), xytext=(a + _ox, b + _oy), textcoords="data",
-                     fontsize=6.3, color="0.15", zorder=4,
-                     arrowprops=dict(arrowstyle="-", lw=0.4, color="0.55", shrinkA=0, shrinkB=3))
-        for name, (a, b) in zip(wstar.index, wstar.iloc[:, :2].to_numpy())]
-
-
-def repel_labels(ax, annotations, anchor_disp, iterations=600, step=1.3, spring=0.02):
-    """Separate overlapping labels by repelling them, with a spring back to each anchor so the
-    leader lines stay short, and a clamp keeping every label inside the axes. Deterministic."""
-    fig.canvas.draw()
-    rend = fig.canvas.get_renderer()
-    inv = ax.transData.inverted()
-    axbb = ax.get_window_extent(rend)
-    for _ in range(iterations):
-        boxes = [a.get_window_extent(rend) for a in annotations]
-        any_move = False
-        for i, a in enumerate(annotations):
-            bi = boxes[i]
-            cix, ciy = (bi.x0 + bi.x1) / 2, (bi.y0 + bi.y1) / 2
-            hw, hh = (bi.x1 - bi.x0) / 2, (bi.y1 - bi.y0) / 2
-            rx = ry = 0.0
-            for j, bj in enumerate(boxes):
-                if i != j and bi.overlaps(bj):
-                    ox, oy = cix - (bj.x0 + bj.x1) / 2, ciy - (bj.y0 + bj.y1) / 2
-                    norm = (ox * ox + oy * oy) ** 0.5 or 1.0
-                    rx += ox / norm
-                    ry += oy / norm
-            ax_, ay_ = anchor_disp[i]
-            for px, py in anchor_disp:                       # keep labels off the markers
-                ox, oy = cix - px, ciy - py
-                d2 = ox * ox + oy * oy
-                if d2 < 18 ** 2:
-                    norm = d2 ** 0.5 or 1.0
-                    rx += 0.6 * ox / norm
-                    ry += 0.6 * oy / norm
-            rnorm = (rx * rx + ry * ry) ** 0.5
-            mx = (step * rx / rnorm if rnorm else 0.0) + spring * (ax_ - cix)
-            my = (step * ry / rnorm if rnorm else 0.0) + spring * (ay_ - ciy)
-            if abs(mx) > 0.05 or abs(my) > 0.05:
-                nx = min(max(cix + mx, axbb.x0 + hw), axbb.x1 - hw)
-                ny = min(max(ciy + my, axbb.y0 + hh), axbb.y1 - hh)
-                px0, py0 = ax.transData.transform(a.get_position())
-                a.set_position(inv.transform((px0 + (nx - cix), py0 + (ny - ciy))))
-                any_move = True
-        if not any_move:
-            break
-
-
-repel_labels(axL, anns, axL.transData.transform(wstar.iloc[:, :2].to_numpy()))
+axL.set_ylim(min(allxy[:, 1].min(), y_top - len(cmp_names) * row) - pady,
+             max(allxy[:, 1].max(), y_top) + pady)
 
 # Time points t0 -> t9: red circles (no connecting line; it clashed with the label leader lines).
 tvals = cweights.iloc[:, :2].to_numpy()
 axL.scatter(tvals[:, 0], tvals[:, 1], s=40, color="#c0392b", marker="o", edgecolor="w",
             linewidth=0.5, zorder=3)
-# Label only t2, t5, t9; pull them out to the right and fan them by height, each with a leader line
-# in the same style as the model-term labels, since the time points sit in a tight cluster.
-tp_offsets = {"t2": (20, -16), "t5": (24, 0), "t9": (20, 16)}
+# Label t0 beside its marker; pull t2, t5 and t9 out to the right and fan them by height, each with
+# a leader line in the same style as the model-term labels, since those time points sit in a cluster.
+tp_offsets = {"t0": (-8, -10), "t2": (20, -16), "t5": (24, 0), "t9": (20, 16)}
 for lbl, off in tp_offsets.items():
     i = list(cweights.index).index(lbl)
-    axL.annotate(lbl, tvals[i], fontsize=8, color="#7a2318", ha="left", va="center",
-                 xytext=off, textcoords="offset points",
+    axL.annotate(lbl, tvals[i], fontsize=8, color="#7a2318", va="center",
+                 ha="left" if off[0] > 0 else "right", xytext=off, textcoords="offset points",
                  arrowprops=dict(arrowstyle="-", lw=0.4, color="0.55", shrinkA=0, shrinkB=3))
 
 axL.axhline(0, color="0.7", lw=0.7)
@@ -188,7 +157,7 @@ axL.legend(handles=[
     Line2D([], [], marker="o", ls="", color="black", label="process factor (W*)"),
     Line2D([], [], marker="o", ls="", color="0.6", label="compound term, coloured by chromogen"),
     Line2D([], [], marker="o", ls="", color="#c0392b", label="time point (C)")],
-    frameon=False, fontsize=8, loc="best")
+    frameon=False, fontsize=8, loc="lower left")
 axL.grid(alpha=0.2)
 
 fig.tight_layout()
