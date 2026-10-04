@@ -22,17 +22,25 @@ feed = FACTORS[3]
 levels = [feed.low, (feed.low + feed.high) / 2, feed.high]
 colour = {1: BLUE, 2: ORANGE}
 titles = {1: "Parallel run 1", 2: "Parallel run 2, new feed-medium lot"}
-JITTER = 0.0022          # spreads runs at the same level sideways so none hides another
-rng = np.random.default_rng(3)
+SPREAD = 0.0011          # sideways step between runs at one level, so none hides another
+
+
+def spread(n):
+    """Evenly spaced sideways offsets for n points at one level, centred on it."""
+    return (np.arange(n) - (n - 1) / 2) * SPREAD
 
 fig, axes = plt.subplots(1, 2, figsize=(8.6, 3.8), sharey=True)
 for ax, c in zip(axes, (1, 2)):
     ax.axhline(reps.mean(), color="0.82", lw=1.2, zorder=1)
     here = plan["parallel_run"] == c
     design, centre = here & ~is_cp, here & is_cp
-    x = plan.loc[design, "feed_rate"] + rng.uniform(-JITTER, JITTER, design.sum())
-    ax.plot(x, plan.loc[design, "titer"], "o", color=colour[c], ms=6.5, zorder=3, alpha=0.9,
-            label="design runs")
+    for lv in levels:
+        at = design & np.isclose(plan["feed_rate"], lv)
+        y = np.sort(plan.loc[at, "titer"].to_numpy())
+        # Alternate left and right in titer order, so neighbours in titer sit apart sideways.
+        x = lv + spread(len(y))[np.argsort(np.r_[np.arange(0, len(y), 2), np.arange(1, len(y), 2)])]
+        ax.plot(x, y, "o", color=colour[c], ms=6.5, mec="white", mew=0.8, zorder=3,
+                label="design runs" if lv == levels[0] else None)
     ax.plot(plan.loc[centre, "feed_rate"], plan.loc[centre, "titer"], "*", color=colour[c], ms=15,
             mec="0.2", mew=0.8, zorder=4, label="centre runs")
     for lv in levels:
@@ -53,8 +61,8 @@ for ax, c in zip(axes, (1, 2)):
 
 axes[0].set_ylim(3.5, 9.6)
 axes[0].set_ylabel("Titer at harvest, g/L", fontsize=11.5)
-axes[1].text(feed.high + 0.007, reps.mean() + 0.08, f"replicates of the current recipe, {reps.mean():.3f} g/L",
-             ha="right", va="bottom", fontsize=9, color=GREY)
+axes[0].text(feed.low - 0.0075, reps.mean() + 0.06, f"current recipe, {reps.mean():.3f} g/L",
+             ha="left", va="bottom", fontsize=9, color=GREY)
 axes[1].legend(loc="upper right", fontsize=9, frameon=True, facecolor="white", edgecolor="0.85",
                framealpha=1.0, handletextpad=0.5)
 
