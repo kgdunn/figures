@@ -1,9 +1,9 @@
-"""Titer of the thirty batches against the feed rate, by cassette, for the worked OMARS study.
+"""Titer of the thirty batches against the feed rate, by parallel run, for the worked OMARS study.
 
 The feed rate is the largest effect the study finds, so it is the axis the harvest titers are
-read against, one panel per cassette. The short bars are the mean titer of the design runs at
+read against, one panel per parallel run. The short bars are the mean titer of the design runs at
 each feed level; the stars are the centre runs, the only batches at identical settings in both
-cassettes. The second cassette drew on a new lot of feed medium, and the whole pattern sits
+parallel runs. The second parallel run drew on a new lot of feed medium, and the whole pattern sits
 lower there. The chapter estimates that shift from all thirty batches.
 
 Every number comes from omars_worked_study_common.py, which reproduces the chapter's study and
@@ -21,14 +21,14 @@ plan, is_cp, reps = S["plan"], S["is_cp"], S["reps"]
 feed = FACTORS[3]
 levels = [feed.low, (feed.low + feed.high) / 2, feed.high]
 colour = {1: BLUE, 2: ORANGE}
-titles = {1: "Cassette 1", 2: "Cassette 2, new feed-medium lot"}
+titles = {1: "Parallel run 1", 2: "Parallel run 2, new feed-medium lot"}
 JITTER = 0.0022          # spreads runs at the same level sideways so none hides another
 rng = np.random.default_rng(3)
 
 fig, axes = plt.subplots(1, 2, figsize=(8.6, 3.8), sharey=True)
 for ax, c in zip(axes, (1, 2)):
     ax.axhline(reps.mean(), color="0.82", lw=1.2, zorder=1)
-    here = plan["cassette"] == c
+    here = plan["parallel_run"] == c
     design, centre = here & ~is_cp, here & is_cp
     x = plan.loc[design, "feed_rate"] + rng.uniform(-JITTER, JITTER, design.sum())
     ax.plot(x, plan.loc[design, "titer"], "o", color=colour[c], ms=6.5, zorder=3, alpha=0.9,

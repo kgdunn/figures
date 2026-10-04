@@ -1,10 +1,10 @@
 """The thirty-batch campaign plan of the worked OMARS study, in run order.
 
 One column per batch, one row per factor, each cell the level the factor is set to. The
-divider is the change of cassette, and with it the change of feed-medium lot. The outlined
-columns are the centre runs, two in each cassette and spread through its order rather than
-run together. Mirror pairs stay in the same cassette, which is what keeps the main effects
-orthogonal to the cassette; it is not visible in this view, and the chapter's code confirms it.
+divider is the change of parallel run, and with it the change of feed-medium lot. The outlined
+columns are the centre runs, two in each parallel run and spread through its order rather than
+run together. Mirror pairs stay in the same parallel run, which is what keeps the main effects
+orthogonal to the parallel run; it is not visible in this view, and the chapter's code confirms it.
 
 Every number comes from omars_worked_study_common.py, which reproduces the chapter's study and
 checks it against the values the chapter prints.
@@ -21,7 +21,7 @@ from omars_worked_study_common import BLUE, LABELS, NAMES, SPINE, study
 S = study()
 plan, C, is_cp = S["plan"], S["C"], S["is_cp"]
 runs = plan.index.to_numpy()
-n_first = int((plan["cassette"] == 1).sum())
+n_first = int((plan["parallel_run"] == 1).sum())
 
 LOW, MID, HIGH = "#F3C46B", "#F4F4F4", BLUE
 cmap = ListedColormap([LOW, MID, HIGH])
@@ -31,7 +31,7 @@ fig, ax = plt.subplots(figsize=(8.6, 2.9))
 ax.imshow(np.rint(C).T, cmap=cmap, vmin=-1, vmax=1, aspect="auto",
           extent=(0.5, len(runs) + 0.5, len(NAMES) - 0.5, -0.5), interpolation="nearest")
 
-# White grid between cells, then the centre runs outlined and the cassette divider.
+# White grid between cells, then the centre runs outlined and the parallel run divider.
 for x in np.arange(0.5, len(runs) + 1, 1):
     ax.axvline(x, color="white", lw=1.6)
 for y in np.arange(-0.5, len(NAMES), 1):
@@ -39,9 +39,9 @@ for y in np.arange(-0.5, len(NAMES), 1):
 for r in runs[is_cp]:
     ax.add_patch(Rectangle((r - 0.5, -0.5), 1, len(NAMES), fill=False, edgecolor="0.2", lw=1.8, zorder=4))
 ax.axvline(n_first + 0.5, color="0.2", lw=3.0, zorder=5)
-ax.text(n_first / 2 + 0.5, -0.75, f"cassette 1, {n_first} batches", ha="center", va="bottom",
+ax.text(n_first / 2 + 0.5, -0.75, f"parallel run 1, {n_first} batches", ha="center", va="bottom",
         fontsize=10, color="0.25")
-ax.text(n_first + (len(runs) - n_first) / 2 + 0.5, -0.75, f"cassette 2, {len(runs) - n_first} batches",
+ax.text(n_first + (len(runs) - n_first) / 2 + 0.5, -0.75, f"parallel run 2, {len(runs) - n_first} batches",
         ha="center", va="bottom", fontsize=10, color="0.25")
 
 ax.set_xticks(runs)

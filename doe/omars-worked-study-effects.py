@@ -1,7 +1,7 @@
 """The full second-order model fitted in one step, for the worked OMARS study.
 
 At thirty runs the fifteen-term model can be fitted directly: an intercept, four main effects,
-four quadratics and six two-factor interactions, on log titer with the cassette shift removed.
+four quadratics and six two-factor interactions, on log titer with the parallel run shift removed.
 Each coefficient is drawn with its 95% confidence interval on the fifteen residual degrees of
 freedom. The terms the staged analysis selects are filled; the rest are hollow. The script
 checks that the selected terms are the ones whose intervals exclude zero plus the

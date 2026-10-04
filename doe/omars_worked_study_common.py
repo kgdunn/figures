@@ -139,14 +139,14 @@ def study():
 
     rng = np.random.default_rng(7)
     plan = pd.DataFrame(coded, columns=NAMES)
-    plan["cassette"] = np.where(block > 0, 1, 2)
-    plan.loc[is_centre, "cassette"] = 1
+    plan["parallel_run"] = np.where(block > 0, 1, 2)
+    plan.loc[is_centre, "parallel_run"] = 1
     extra = pd.DataFrame(np.zeros((3, 4)), columns=NAMES)
-    extra["cassette"] = [1, 2, 2]
+    extra["parallel_run"] = [1, 2, 2]
     plan = pd.concat([plan, extra], ignore_index=True)
     order = []
     for c in (1, 2):
-        idx = plan.index[plan["cassette"] == c].to_numpy()
+        idx = plan.index[plan["parallel_run"] == c].to_numpy()
         centres = idx[np.all(plan.loc[idx, NAMES] == 0, axis=1)]
         seq = list(rng.permutation(idx[~np.isin(idx, centres)]))
         for k, cpt in enumerate(centres):
@@ -159,16 +159,16 @@ def study():
 
     lot = {1: CONFIG, 2: dataclasses.replace(CONFIG, feed_substrate=0.88 * CONFIG.feed_substrate)}
     seeds = np.random.default_rng(2026).integers(1 << 30, size=len(plan))
-    plan["titer"] = [run_batch(lot[int(r.cassette)], r.hold_temp, r.shift_day, r.pH, r.feed_rate, int(s))
+    plan["titer"] = [run_batch(lot[int(r.parallel_run)], r.hold_temp, r.shift_day, r.pH, r.feed_rate, int(s))
                      for r, s in zip(plan.itertuples(), seeds)]
     plan["log_titer"] = np.log(plan["titer"])
     is_cp = np.all(np.isclose(plan[NAMES], list(CURRENT.values())), axis=1)
 
     C = np.column_stack([(plan[n] - f.low) / (f.high - f.low) * 2 - 1 for n, f in zip(NAMES, FACTORS)])
-    cassette = np.where(plan["cassette"] == 2, 1.0, 0.0)
-    X = np.column_stack([np.ones(len(plan)), cassette, C])
+    second_run = np.where(plan["parallel_run"] == 2, 1.0, 0.0)
+    X = np.column_stack([np.ones(len(plan)), second_run, C])
     b = np.linalg.lstsq(X, plan["log_titer"], rcond=None)[0]
-    plan["log_titer_adj"] = plan["log_titer"] - b[1] * cassette
+    plan["log_titer_adj"] = plan["log_titer"] - b[1] * second_run
 
     result = analyze_omars(plan[NAMES], plan["log_titer_adj"],
                            quadratic_heredity="none", interaction_heredity="none")
@@ -197,7 +197,7 @@ def study():
     _check("replicate mean", reps.mean(), 7.477)
     _check("titer min", plan["titer"].min(), 4.018)
     _check("titer max", plan["titer"].max(), 8.882)
-    _check("cassette effect", b[1], -0.1557)
+    _check("parallel-run effect", b[1], -0.1557)
     _check("recommended hold", decode(x_rec)["hold_temp"], 30.44)
     _check("current titer", truth(np.zeros(4)), 7.436)
     _check("recommended titer", truth(x_rec), 8.303)
@@ -207,7 +207,7 @@ def study():
     assert result.active_quadratics == ["hold_temp^2"]
     assert result.active_interactions == ["hold_temp:shift_day", "hold_temp:pH", "hold_temp:feed_rate"]
 
-    return {"reps": reps, "plan": plan, "is_cp": is_cp, "C": C, "cassette": cassette, "b": b,
+    return {"reps": reps, "plan": plan, "is_cp": is_cp, "C": C, "second_run": second_run, "b": b,
             "result": result, "terms": terms, "bs": bs, "x_rec": x_rec, "best": best,
             "pairs": pairs, "coded": coded}
 
