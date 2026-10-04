@@ -19,7 +19,8 @@ Reproducible; run from this directory to write the PNG alongside it.
 import matplotlib.pyplot as plt
 
 # Gain in titer over the current recipe [g/L] at the recipe each campaign recommended, over
-# two hundred campaigns per design, and how often each of the four real effects was found.
+# two hundred campaigns per design, and how often each of four real effects was found;
+# the figure plots three of them.
 GAINS = {
     "OMARS 13": {"runs": 13, "mean": 0.0445, "p10": -0.8496, "p50": 0.0000, "p90": 0.9364, "worst": -1.9725,
                  "found": {"feed_rate": 0.14, "hold_temp^2": 0.30, "hold_temp:shift_day": 0.67, "shift_day^2": 0.01}},

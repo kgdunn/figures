@@ -4,8 +4,8 @@ At thirty runs the fifteen-term model can be fitted directly: an intercept, four
 four quadratics and six two-factor interactions, on log titer with the parallel run shift removed.
 Each coefficient is drawn with its 95% confidence interval on the fifteen residual degrees of
 freedom. The terms the staged analysis selects are filled; the rest are hollow. The script
-checks that the selected terms are the ones whose intervals exclude zero plus the
-hold-temperature by feed-rate interaction, which is what the chapter says.
+checks that the terms whose intervals exclude zero are the selected ones plus the downshift-day by
+feed-rate interaction, which the staged analysis leaves out, as the chapter says.
 
 Every number comes from omars_worked_study_common.py, which reproduces the chapter's study and
 checks it against the values the chapter prints.
