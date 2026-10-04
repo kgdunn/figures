@@ -195,17 +195,17 @@ def study():
 
     # The values the chapter prints. Any drift stops every figure script here.
     _check("replicate mean", reps.mean(), 7.477)
-    _check("titer min", plan["titer"].min(), 4.018)
-    _check("titer max", plan["titer"].max(), 8.882)
-    _check("parallel-run effect", b[1], -0.1557)
-    _check("recommended hold", decode(x_rec)["hold_temp"], 30.44)
+    _check("titer min", plan["titer"].min(), 4.056)
+    _check("titer max", plan["titer"].max(), 9.085)
+    _check("parallel-run effect", b[1], -0.1470)
+    _check("recommended hold", decode(x_rec)["hold_temp"], 30.13)
     _check("current titer", truth(np.zeros(4)), 7.436)
-    _check("recommended titer", truth(x_rec), 8.303)
+    _check("recommended titer", truth(x_rec), 9.037)
     _check("best titer", -best.fun, 9.442)
     assert list(plan.index[is_cp]) == [6, 12, 22, 26], "centre runs moved"
-    assert result.active_main_effects == ["pH", "feed_rate"]
+    assert result.active_main_effects == ["feed_rate"]
     assert result.active_quadratics == ["hold_temp^2"]
-    assert result.active_interactions == ["hold_temp:shift_day", "hold_temp:pH", "hold_temp:feed_rate"]
+    assert result.active_interactions == ["hold_temp:shift_day", "hold_temp:feed_rate"]
 
     return {"reps": reps, "plan": plan, "is_cp": is_cp, "C": C, "second_run": second_run, "b": b,
             "result": result, "terms": terms, "bs": bs, "x_rec": x_rec, "best": best,

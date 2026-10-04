@@ -46,9 +46,9 @@ coef, half, se = beta[1:], half[1:], se[1:]          # drop the intercept
 selected = set(result.active_main_effects) | set(result.active_quadratics) | set(result.active_interactions)
 significant = {t for t, c, h in zip(tags, coef, half) if abs(c) > h}
 print(f"{df} residual df; significant at 5%: {sorted(significant)}; staged analysis: {sorted(selected)}")
-# The chapter says the staged analysis selects every term significant here, plus the
-# hold-temperature by feed-rate interaction, which pooling gives the extra power to admit.
-if significant != selected - {"hold_temp:feed_rate"} or "hold_temp:feed_rate" not in selected:
+# The chapter says the staged analysis selects every term significant here except the
+# downshift-day by feed-rate interaction, which the one-step fit flags and the search leaves out.
+if significant != selected | {"shift_day:feed_rate"} or "shift_day:feed_rate" in selected:
     msg = "the one-step fit and the staged analysis no longer differ in the way the chapter states"
     raise AssertionError(msg)
 

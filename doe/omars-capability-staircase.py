@@ -11,10 +11,12 @@ model the run budget makes estimable:
     Satd  saturated (the definitive screening design size): no error degrees of freedom
 
 The number in each cell is the error degrees of freedom left over. Blank cells are budgets
-that are not a foldover design at all.
+below the smallest design, or past the Box-Behnken design that closes the column. The 46- and
+54-run rows are even: a foldover with no centre run or with two, read the way the library
+reads it.
 
 Two standard designs are marked in place, on the row of their own run count: the definitive
-screening design, the smallest member of the OMARS family, and the Box-Behnken design, among
+screening design, at the small end of the OMARS family, and the Box-Behnken design, among
 the largest. Between them they show the span a column covers. The Box-Behnken cell closes its
 column: every row below it would repeat Full on more runs, so those are left blank.
 
@@ -109,10 +111,10 @@ legend = [
     Patch(facecolor=FILLS["bbd"], label="BBD: the Box-Behnken design, which closes\n"
                                         "its column; every row below it repeats Full"),
     Patch(facecolor="white", edgecolor="white",
-          label="DSD: the definitive screening design, the\n"
-                "smallest member of the family"),
+          label="DSD: the definitive screening design, at\n"
+                "the small end of the family"),
     Patch(facecolor=FILLS["none"], edgecolor="0.8",
-          label="Not a foldover design at this run count"),
+          label="Below the smallest design, or past\nthe Box-Behnken design"),
     Patch(facecolor="white", edgecolor="#D55E00", lw=2.2,
           label="Outlined: the estimability frontier,\n$N = k^2 + k + 1$"),
 ]
