@@ -1,11 +1,12 @@
 """The fitted model against the true response, for the worked OMARS study.
 
-Both panels are titer over hold temperature and shift day, with pH at 7.1 and the feed rate
-at its high level, 0.070 L/day, where the study's recommendation sits. Left: the four-term
-model the staged analysis selected, refitted and back-transformed from log titer. Right: the
-simulator with every disturbance switched off, evaluated on a grid. The three marks are the
-current recipe, the recipe the study recommends, and the true best in the region. The same
-contour levels and colours are used on both panels, so they can be read against each other.
+Both panels are titer over hold temperature and shift day, with pH at 7.1 and the feed rate at
+its high level, 0.070 L/day per litre, which is where the study's recommendation puts both.
+Left: the five-term model the staged analysis selected, refitted and back-
+transformed from log titer. Right: the simulator with every disturbance switched off, evaluated
+on a grid. The three marks are the current recipe, the recipe the study recommends, and the
+true best in the region. The same contour levels and colours are used on both panels, so they
+can be read against each other.
 
 Every number comes from omars_worked_study_common.py, which reproduces the chapter's study and
 checks it against the values the chapter prints.
@@ -47,7 +48,7 @@ marks = {
 }
 
 fig, axes = plt.subplots(1, 2, figsize=(8.6, 4.1), sharey=True)
-for ax, Z, title in zip(axes, (fitted, true), ("Fitted four-term model", "True response, no disturbance")):
+for ax, Z, title in zip(axes, (fitted, true), ("Fitted five-term model", "True response, no disturbance")):
     cf = ax.contourf(t_real, s_real, Z, levels=levels, cmap="Blues")
     cs = ax.contour(t_real, s_real, Z, levels=levels, colors="white", linewidths=0.7)
     ax.clabel(cs, fmt="%.1f", fontsize=8, colors="0.25")
@@ -69,7 +70,7 @@ fig.legend(*axes[0].get_legend_handles_labels(), loc="lower center", bbox_to_anc
            fontsize=9.5, frameon=False, columnspacing=1.8)
 
 cbar = fig.colorbar(cf, ax=axes, shrink=0.9, pad=0.02)
-cbar.set_label("Titer, g/L  (pH 7.1, feed 0.070 L/day)", fontsize=10.5, color="0.25")
+cbar.set_label("Titer, g/L  (pH 7.1, feed 0.070 L/day per L)", fontsize=10.5, color="0.25")
 cbar.ax.tick_params(colors="0.25", labelsize=9.5)
 cbar.outline.set_edgecolor(SPINE)
 
