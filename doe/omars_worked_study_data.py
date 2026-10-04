@@ -109,7 +109,11 @@ PRIZE = -best.fun - T_NOW
 
 designs = {}
 for n in (13, 17, 21, 27, 31):
-    designs[f"OMARS {n}"] = generate_omars(FACTORS, n_runs=n, model="main_quadratic", random_state=42).design[NAMES].to_numpy(float)
+    # Below the estimability frontier (21 runs in four factors) only main effects and quadratics
+    # can be estimated, so the design is searched for that model; from the frontier up it is
+    # searched for the full second-order model, as the book's study does at 27 runs.
+    model = "full_second_order" if n >= 21 else "main_quadratic"
+    designs[f"OMARS {n}"] = generate_omars(FACTORS, n_runs=n, model=model, random_state=42).design[NAMES].to_numpy(float)
 designs["Box-Behnken 27"] = np.asarray(dispatch_box_behnken(FACTORS)[0], float)
 designs["CCD 27"] = np.asarray(dispatch_ccd(FACTORS, alpha="face_centered")[0], float)
 

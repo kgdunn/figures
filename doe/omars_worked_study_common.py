@@ -110,7 +110,7 @@ def study():
     """Run the study as the chapter does and return everything the figures need."""
     reps = np.array([run_batch(CONFIG, **CURRENT, random_state=s) for s in range(20)])
 
-    design = generate_omars(FACTORS, n_runs=27, model="main_quadratic", random_state=42)
+    design = generate_omars(FACTORS, n_runs=27, model="full_second_order", random_state=42)
     coded = design.design[NAMES].to_numpy(float)
     is_centre = np.all(coded == 0, axis=1)
     rows = [i for i in range(len(coded)) if not is_centre[i]]
@@ -195,17 +195,17 @@ def study():
 
     # The values the chapter prints. Any drift stops every figure script here.
     _check("replicate mean", reps.mean(), 7.477)
-    _check("titer min", plan["titer"].min(), 4.290)
-    _check("titer max", plan["titer"].max(), 9.116)
-    _check("cassette effect", b[1], -0.1272)
-    _check("recommended hold", decode(x_rec)["hold_temp"], 29.54)
+    _check("titer min", plan["titer"].min(), 4.018)
+    _check("titer max", plan["titer"].max(), 8.882)
+    _check("cassette effect", b[1], -0.1557)
+    _check("recommended hold", decode(x_rec)["hold_temp"], 30.44)
     _check("current titer", truth(np.zeros(4)), 7.436)
-    _check("recommended titer", truth(x_rec), 8.376)
+    _check("recommended titer", truth(x_rec), 8.303)
     _check("best titer", -best.fun, 9.442)
     assert list(plan.index[is_cp]) == [6, 12, 22, 26], "centre runs moved"
-    assert result.active_main_effects == ["feed_rate"]
+    assert result.active_main_effects == ["pH", "feed_rate"]
     assert result.active_quadratics == ["hold_temp^2"]
-    assert result.active_interactions == ["hold_temp:shift_day"]
+    assert result.active_interactions == ["hold_temp:shift_day", "hold_temp:pH", "hold_temp:feed_rate"]
 
     return {"reps": reps, "plan": plan, "is_cp": is_cp, "C": C, "cassette": cassette, "b": b,
             "result": result, "terms": terms, "bs": bs, "x_rec": x_rec, "best": best,

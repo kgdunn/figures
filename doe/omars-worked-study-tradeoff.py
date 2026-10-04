@@ -25,12 +25,12 @@ GAINS = {
                  "found": {"feed_rate": 0.14, "hold_temp^2": 0.30, "hold_temp:shift_day": 0.67, "shift_day^2": 0.01}},
     "OMARS 17": {"runs": 17, "mean": 0.3480, "p10": -0.8967, "p50": 0.7165, "p90": 1.0963, "worst": -3.2462,
                  "found": {"feed_rate": 0.94, "hold_temp^2": 0.21, "hold_temp:shift_day": 0.35, "shift_day^2": 0.30}},
-    "OMARS 21": {"runs": 21, "mean": 0.1140, "p10": -1.0372, "p50": 0.1181, "p90": 1.1991, "worst": -2.5599,
-                 "found": {"feed_rate": 0.33, "hold_temp^2": 0.40, "hold_temp:shift_day": 0.72, "shift_day^2": 0.01}},
-    "OMARS 27": {"runs": 27, "mean": 0.9389, "p10": 0.1181, "p50": 1.0720, "p90": 1.2282, "worst": -0.3504,
-                 "found": {"feed_rate": 1.00, "hold_temp^2": 0.78, "hold_temp:shift_day": 0.99, "shift_day^2": 0.29}},
-    "OMARS 31": {"runs": 31, "mean": 0.9499, "p10": 0.5772, "p50": 1.0344, "p90": 1.2264, "worst": -1.2979,
-                 "found": {"feed_rate": 0.98, "hold_temp^2": 0.88, "hold_temp:shift_day": 0.97, "shift_day^2": 0.06}},
+    "OMARS 21": {"runs": 21, "mean": 0.3522, "p10": -0.0207, "p50": 0.1181, "p90": 1.1991, "worst": -0.8178,
+                 "found": {"feed_rate": 0.83, "hold_temp^2": 0.13, "hold_temp:shift_day": 0.78, "shift_day^2": 0.12}},
+    "OMARS 27": {"runs": 27, "mean": 0.9327, "p10": 0.3909, "p50": 1.0086, "p90": 1.2103, "worst": -0.6348,
+                 "found": {"feed_rate": 1.00, "hold_temp^2": 0.85, "hold_temp:shift_day": 0.98, "shift_day^2": 0.04}},
+    "OMARS 31": {"runs": 31, "mean": 0.5095, "p10": -0.2100, "p50": 0.6568, "p90": 1.1072, "worst": -1.0931,
+                 "found": {"feed_rate": 0.99, "hold_temp^2": 0.44, "hold_temp:shift_day": 0.99, "shift_day^2": 0.49}},
     "Box-Behnken 27": {"runs": 27, "mean": 0.9277, "p10": 0.1181, "p50": 1.1989, "p90": 1.6771, "worst": -2.8099,
                        "found": {"feed_rate": 0.99, "hold_temp^2": 0.77, "hold_temp:shift_day": 0.41, "shift_day^2": 0.06}},
     "CCD 27": {"runs": 27, "mean": 0.8607, "p10": 0.1818, "p50": 0.9424, "p90": 1.6284, "worst": -1.5835,
@@ -97,7 +97,7 @@ ax_f.set_xlim(11.5, 32.5)
 ax_f.set_xlabel("Number of runs, $N$", fontsize=13)
 ax_f.legend(loc="lower right", bbox_to_anchor=(1.0, 0.02), fontsize=10, frameon=True, facecolor="white",
             edgecolor="0.85", framealpha=1.0)
-ax_f.text(11.9, -1.5, "hollow star, hollow diamond: Box-Behnken\nand CCD at 27 runs, as in the upper panel",
+ax_f.text(11.9, -1.5, "hollow star, hollow diamond: Box-Behnken\nand CCD at 27 runs, as in the upper plot",
           ha="left", va="bottom", fontsize=9, color=GREY)
 
 for axis in (ax, ax_f):
