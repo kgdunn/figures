@@ -1,7 +1,7 @@
 """The fitted model against the true response, for the worked OMARS study.
 
 Both panels are titer over hold temperature and shift day, with pH at 7.1 and the feed rate at
-its high level, 0.070 L/day. The study's recommendation also sets pH to 7.3, which this slice
+its high level, 0.070 L/day per litre. The study's recommendation also sets pH to 7.3, which this slice
 does not show. Left: the seven-term model the staged analysis selected, refitted and back-
 transformed from log titer. Right: the simulator with every disturbance switched off, evaluated
 on a grid. The three marks are the current recipe, the recipe the study recommends, and the
@@ -70,7 +70,7 @@ fig.legend(*axes[0].get_legend_handles_labels(), loc="lower center", bbox_to_anc
            fontsize=9.5, frameon=False, columnspacing=1.8)
 
 cbar = fig.colorbar(cf, ax=axes, shrink=0.9, pad=0.02)
-cbar.set_label("Titer, g/L  (pH 7.1, feed 0.070 L/day)", fontsize=10.5, color="0.25")
+cbar.set_label("Titer, g/L  (pH 7.1, feed 0.070 L/day per L)", fontsize=10.5, color="0.25")
 cbar.ax.tick_params(colors="0.25", labelsize=9.5)
 cbar.outline.set_edgecolor(SPINE)
 

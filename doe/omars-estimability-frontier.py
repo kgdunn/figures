@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 k = np.arange(3, 8)
-saturated = 2 * k + 1                        # the DSD size: estimable, but no error df
+dsd = np.where(k % 2 == 0, 2 * k + 1, 2 * k + 3)   # odd k: conference matrix of order k+1
 parameters = 1 + 2 * k + k * (k - 1) // 2    # terms in the full second-order model
 frontier = k**2 + k + 1                      # smallest foldover that can estimate them
 
@@ -30,30 +30,35 @@ ax.fill_between(k, parameters, frontier, color=VERMILLION, alpha=0.13, zorder=1)
 ax.annotate(
     "Shaded band: more runs than\nparameters, yet still not estimable\n"
     "(the band is $k(k-1)/2$ runs deep)",
-    xy=(6.3, 20.0), fontsize=12.5, color=VERMILLION, ha="center", va="center", zorder=6,
+    xy=(6.15, 5.5), fontsize=12.5, color=VERMILLION, ha="center", va="center", zorder=6,
 )
 
 ax.plot(k, frontier, marker="o", ms=8, lw=2.4, color=VERMILLION, zorder=5,
         label="Estimability frontier, $k^2 + k + 1$")
 ax.plot(k, parameters, marker="s", ms=7, lw=2.2, color=BLUE, zorder=5,
         label="Parameters in the full second-order model, $1 + 2k + k(k-1)/2$")
-ax.plot(k, saturated, marker="^", ms=7, lw=2.2, color=ORANGE, zorder=5,
-        label="Definitive screening design, $2k + 1$ runs")
+ax.plot(k, dsd, marker="^", ms=7, lw=2.2, color=ORANGE, zorder=5,
+        label="Definitive screening design, $2k + 1$ runs ($2k + 3$ for odd $k$)")
 
 # Label each frontier value; these are the default run sizes generate_omars picks.
 for kk, ff in zip(k, frontier):
     ax.annotate(f"{ff}", xy=(kk, ff), xytext=(0, 9), textcoords="offset points",
                 ha="center", fontsize=12, color=VERMILLION, fontweight="bold")
+# Below each square, except at k = 3, where the DSD marker sits just under it: there, to its left.
 for kk, pp in zip(k, parameters):
-    ax.annotate(f"{pp}", xy=(kk, pp), xytext=(0, -17), textcoords="offset points",
-                ha="center", fontsize=11.5, color=BLUE)
+    left = kk == 3
+    ax.annotate(f"{pp}", xy=(kk, pp), xytext=(-9, 0) if left else (0, -17),
+                textcoords="offset points",
+                ha="right" if left else "center", va="center" if left else "baseline",
+                fontsize=11.5, color=BLUE)
 
-# The four-factor case, worked in the text: 19 runs, 15 parameters, rank 14. The note sits
+# The four-factor case, worked in the text: 19 runs, 15 parameters, and equation
+# eq-omars-rank-bound caps every 19-run foldover at rank 14. The note sits
 # above the frontier and to its left, where the axes are empty, rather than below the line
 # among the definitive screening design markers. Its leader stops short of the frontier and
 # points towards the marked cross, rather than crossing the line to touch it.
 ax.plot([4], [19], marker="x", ms=12, mew=2.6, color=GREY, zorder=6)
-ax.annotate("19 runs, 15 parameters,\nmodel matrix rank 14",
+ax.annotate("19 runs, 15 parameters,\nrank at most 14",
             xy=(3.88, 21.4), xytext=(3.05, 33.0), ha="left", va="center", fontsize=12,
             color=GREY, zorder=7,
             arrowprops=dict(arrowstyle="->", color=GREY, lw=2.2, shrinkB=3, zorder=7,
@@ -62,7 +67,7 @@ ax.annotate("19 runs, 15 parameters,\nmodel matrix rank 14",
 ax.set_xticks(k)
 ax.set_xlabel("Number of factors, $k$", fontsize=13)
 ax.set_ylabel("Number of runs, $N$", fontsize=13)
-ax.set_xlim(2.8, 7.35)
+ax.set_xlim(2.65, 7.35)
 ax.set_ylim(0, 63)
 ax.grid(axis="y", color="0.9", lw=0.9)
 ax.set_axisbelow(True)
