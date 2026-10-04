@@ -3,8 +3,8 @@
 Left: the temperature schedule of one batch, warm growth at 36.8 degC, a 1.5-day ramp starting on
 the shift day, then the production hold. The current recipe is drawn in full; all four combinations
 of the low and high hold temperature and shift day are drawn lightly, to show the region the study
-covers. Right: titer against day for twenty replicate batches at the current recipe, each with
-its own disturbance draw, over the noise-free curve.
+covers. Right: for twenty replicate batches at the current recipe, each with its own disturbance
+draw, the titer minus that of the same batch with every disturbance switched off.
 
 Every number comes from omars_worked_study_common.py, which reproduces the chapter's study and
 checks it against the values the chapter prints.
@@ -45,21 +45,28 @@ ax_t.set_xlabel("Day of the batch", fontsize=11.5)
 ax_t.set_ylabel("Temperature setpoint, °C", fontsize=11.5)
 ax_t.legend(loc="upper right", fontsize=9.5, frameon=True, facecolor="white", edgecolor="0.85", framealpha=1.0)
 
-# Right: twenty replicate batches at the current recipe, as the chapter runs them.
+# Right: twenty replicate batches at the current recipe, as the chapter runs them, each drawn as
+# its departure from the batch with every disturbance switched off.
+quiet = simulate(QUIET, **CURRENT, random_state=0).states["titer"]
+deviations = []
 for s in range(20):
-    states = simulate(CONFIG, **CURRENT, random_state=s).states
-    ax_y.plot(states.index, states["titer"], color=BLUE, lw=1.0, alpha=0.35, zorder=2)
-quiet = simulate(QUIET, **CURRENT, random_state=0).states
-ax_y.plot(quiet.index, quiet["titer"], color=VERMILION, lw=2.2, zorder=4, label="no disturbance")
-ax_y.plot([], [], color=BLUE, lw=1.0, alpha=0.6, label="20 replicate\nbatches")
+    titer = simulate(CONFIG, **CURRENT, random_state=s).states["titer"]
+    deviations.append(titer - quiet)
+    ax_y.plot(titer.index, titer - quiet, color=BLUE, lw=1.0, alpha=0.35, zorder=2)
+ax_y.axhline(0.0, color=VERMILION, lw=2.2, zorder=4, label="undisturbed")
+ax_y.plot([], [], color=BLUE, lw=1.0, alpha=0.6, label="20 replicates")
+reach = 1.15 * max(float(abs(d).max()) for d in deviations)
+top = 1.45 * reach       # headroom above the curves for the legend
 ax_y.axvspan(CURRENT["shift_day"], CURRENT["shift_day"] + RAMP_DAYS, color="0.93", lw=0, zorder=1)
-ax_y.text(CURRENT["shift_day"] + RAMP_DAYS / 2, 8.9, "ramp", ha="center", va="top", fontsize=9.5,
-          color=GREY)
+ax_y.text(CURRENT["shift_day"] + RAMP_DAYS / 2, 0.98 * reach, "ramp", ha="center", va="top",
+          fontsize=9.5, color=GREY)
 ax_y.set_xlim(0, CONFIG.batch_days)
-ax_y.set_ylim(0, 9.2)
+ax_y.set_ylim(-reach, top)
+ax_y.set_yticks(np.arange(-0.5, 0.51, 0.25))   # ticks only where the curves are
+ax_y.spines["left"].set_bounds(-reach, reach)
 ax_y.set_xlabel("Day of the batch", fontsize=11.5)
-ax_y.set_ylabel("Titer, g/L", fontsize=11.5)
-ax_y.legend(loc="lower right", fontsize=9.5, frameon=True, facecolor="white", edgecolor="0.85", framealpha=1.0)
+ax_y.set_ylabel("Titer minus undisturbed titer, g/L", fontsize=11.5)
+ax_y.legend(loc="upper right", ncols=2, fontsize=9.5, frameon=True, facecolor="white", edgecolor="0.85", framealpha=1.0)
 
 for ax in (ax_t, ax_y):
     for side in ("top", "right"):
