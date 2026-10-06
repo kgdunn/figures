@@ -159,7 +159,7 @@ h1 {{ position: absolute; left: 48px; top: 46px; font-size: 50px; line-height: 1
 .panel-h {{ position: absolute; top: 186px; font-size: 31px; font-weight: 750; letter-spacing: -0.01em; }}
 .panel-s {{ position: absolute; top: 228px; font-size: 19px; line-height: 1.35; color: var(--ink2); }}
 .rule {{ position: absolute; top: 178px; height: 3px; background: var(--ink); border-radius: 2px; }}
-.colh {{ position: absolute; transform: translateY(-100%); font-size: 16px; line-height: 1.25; color: var(--muted); font-weight: 500; }}
+.colh {{ position: absolute; transform: translateY(-100%); font-size: 18px; line-height: 1.25; color: var(--ink2); font-weight: 700; }}
 .num {{ width: 46px; text-align: right; font-size: 25px; font-weight: 650; transform: translateY(-50%);
   font-variant-numeric: tabular-nums; }}
 .chk {{ transform: translate(-50%, -50%); color: var(--muted); }}
@@ -219,8 +219,8 @@ the model that fits and its error degrees of freedom.</div>
 <div class="colh" style="left:48px;top:372px;width:46px;text-align:right">runs</div>
 <div class="colh" style="left:104px;top:372px">resolution, generator</div>
 <div class="colh" style="left:396px;top:372px;width:46px;text-align:right">runs</div>
-<div class="colh" style="left:456px;top:372px;width:60px;text-align:center">main<br>effects<br>clean</div>
-<div class="colh" style="left:520px;top:372px;width:84px;text-align:center">model</div>
+<div class="colh" style="left:450px;top:372px;width:72px;text-align:center">main<br>effects<br>clean</div>
+<div class="colh" style="left:524px;top:372px;width:76px;text-align:center">model</div>
 <div class="colh" style="left:604px;top:372px;width:50px;text-align:right">error<br>df</div>
 <div class="colh" style="left:682px;top:372px;width:160px">interactions<br>that fit, of 6</div>
 
