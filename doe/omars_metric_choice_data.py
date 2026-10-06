@@ -97,7 +97,11 @@ def walk(k: int, h: int, visit) -> None:
 
     def dfs(idx, left, counts, gram):
         if left == 0:
-            visit(counts + [0] * (len(reps) - len(counts)))
+            # The pruning below only bounds the Gram sums; a leaf still has to meet them.
+            # Without this check the power frontier took in foldovers whose main effects
+            # are not orthogonal, which are not OMARS designs.
+            if not any(gram):
+                visit(counts + [0] * (len(reps) - len(counts)))
             return
         if idx == len(reps):
             return
@@ -155,7 +159,6 @@ def power_frontier(k: int, n_runs: int, n_centre: int):
                     n[a] += c
         if min(n) < 1:
             return
-        best[0] = min(best[0], 1.0 / (2 * min(n)))
 
         totals = [0] * n_terms
         gram = [[0] * n_terms for _ in range(n_terms)]
@@ -183,6 +186,9 @@ def power_frontier(k: int, n_runs: int, n_centre: int):
         # inverse costs nothing; np.linalg.cond would run an SVD on every candidate.
         if not np.all(np.isfinite(d)) or np.min(d[1:]) <= 0 or np.max(d[1:]) > 1e6:
             return
+        # Only now, once the full model is known to fit: a design that cannot fit it has no
+        # main-effect power under it either, however its half-rows cover the factors.
+        best[0] = min(best[0], 1.0 / (2 * min(n)))
         best[1] = min(best[1], float(np.max(d[k + 1:])))       # interactions
         best[2] = min(best[2], float(np.max(d[1:k + 1])))      # quadratics
 

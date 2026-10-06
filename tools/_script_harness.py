@@ -32,6 +32,9 @@ FAILURE_PREFIX = "@@FIGURE-SCRIPT-RESULT@@ "
 def _silence_output() -> None:
     """Make plotting headless and stop every writer of image files."""
     os.environ.setdefault("MPLBACKEND", "Agg")
+    # For a script whose writer is neither matplotlib nor plotly (a page rendered by a
+    # browser, say): it reads this and skips the write itself.
+    os.environ["FIGURE_SCRIPT_CHECK"] = "1"
     with contextlib.suppress(ImportError):
         import matplotlib
 
