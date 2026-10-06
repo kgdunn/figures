@@ -336,37 +336,65 @@ def random_design(fam: Family, h: int, rng) -> np.ndarray | None:
     return out
 
 
-def search_hc(args):
-    """Iterated local search for one (h, centre count), steering by each measure in turn
-    and keeping the best of every measure over every design it scores."""
-    k, h, n_centre, restarts, seed = args
+def descend(fam, hood, start, n_centre, full, key, best):
+    """Steepest descent on one measure from ``start``, recording every design scored."""
+    sense = SENSE[key]
+    current = np.array(start, dtype=int)
+    sc = score(fam, current[None], n_centre, full)
+    best.update(sc, current[None])
+    cur = sense * sc[key][0] if np.isfinite(sc[key][0]) else -math.inf
+    for _ in range(200):
+        nbs = hood.moves(current)
+        if not len(nbs):
+            return
+        sc = score(fam, nbs, n_centre, full)
+        best.update(sc, nbs)
+        vals = np.where(np.isfinite(sc[key]), sense * sc[key], -math.inf)
+        i = int(np.argmax(vals))
+        if vals[i] <= cur + 1e-12:
+            return
+        current, cur = nbs[i], vals[i]
+
+
+def search_chain(args):
+    """Search one centre-point count upward from the exact range, h = 11, 12, ...
+
+    Each measure is searched from random designs and, as well, from the best design one
+    half-row smaller with one axial half-row added. An axial half-row (one factor off zero)
+    leaves the main effects orthogonal and only adds to X'X, so that seed is already at least
+    as good as the smaller design on A, D, E, I, G and the three power variances: the search
+    can never report a larger design as worse on those than a smaller one.
+    """
+    k, n_centre, start_counts, restarts, seed = args
     fam = Family(k)
     hood = Neighbourhood(fam)
     rng = np.random.default_rng(seed)
-    full = h >= k * (k + 1) // 2 and 2 * h + n_centre > 1 + 2 * k + k * (k - 1) // 2
-    best = Best()
-    keys = [key for key in SENSE if full or not key.startswith("c_")]
-    for key in keys:
-        sense = SENSE[key]
-        for _ in range(restarts):
-            current = None
-            while current is None:
-                current = random_design(fam, h, rng)
-            cur_score = score(fam, current[None], n_centre, full)
-            best.update(cur_score, current[None])
-            cur = sense * cur_score[key][0] if np.isfinite(cur_score[key][0]) else -math.inf
-            for _ in range(200):
-                nbs = hood.moves(current)
-                if not len(nbs):
-                    break
-                sc = score(fam, nbs, n_centre, full)
-                best.update(sc, nbs)
-                vals = np.where(np.isfinite(sc[key]), sense * sc[key], -math.inf)
-                i = int(np.argmax(vals))
-                if vals[i] <= cur + 1e-12:
-                    break
-                current, cur = nbs[i], vals[i]
-    return (h, n_centre), (best.value, {kk: v.tolist() for kk, v in best.counts.items()})
+    axial = [i for i, v in enumerate(fam.reps) if sum(1 for x in v if x) == 1]
+    previous = {key: np.array(v, dtype=int) for key, v in start_counts.items()}
+    results = {}
+    h = H_EXACT + 1
+    while 2 * h + n_centre <= MAX_RUNS:
+        full = h >= k * (k + 1) // 2 and 2 * h + n_centre > 1 + 2 * k + k * (k - 1) // 2
+        best = Best()
+        keys = [key for key in SENSE if full or not key.startswith("c_")]
+        for key in keys:
+            seeds = []
+            for src in {tuple(v) for v in previous.values()}:
+                for a in axial:
+                    grown = np.array(src, dtype=int)
+                    grown[a] += 1
+                    seeds.append(grown)
+            for _ in range(restarts):
+                design = None
+                while design is None:
+                    design = random_design(fam, h, rng)
+                seeds.append(design)
+            for start in seeds:
+                descend(fam, hood, start, n_centre, full, key, best)
+        results[h] = (best.value, {kk: v.tolist() for kk, v in best.counts.items()})
+        previous = dict(best.counts)
+        h += 1
+    return n_centre, results
 
 
 # ---------------------------------------------------------------------------------------
@@ -414,9 +442,11 @@ def correlation_matrix(fam: Family, counts, n_centre: int) -> np.ndarray:
 def run(k: int = 4, restarts: int = 150):
     with multiprocessing.Pool(4) as pool:
         exact = dict(pool.map(exact_h, [(k, h) for h in range(H_EXACT, k - 1, -1)]))
-        jobs = [(k, h, c, restarts, 1000 * h + c) for c in CENTRES
-                for h in range(H_EXACT + 1, (MAX_RUNS - c) // 2 + 1)]
-        searched = dict(pool.map(search_hc, jobs))
+        jobs = [(k, c, exact[H_EXACT][c][1], restarts, 1000 + c) for c in CENTRES]
+        searched = {}
+        for c, per_h in pool.map(search_chain, jobs):
+            for h, got in per_h.items():
+                searched[(h, c)] = got
     return exact, searched
 
 
@@ -495,22 +525,27 @@ def check_k3() -> int:
 
 
 def check_search(k: int = 4, restarts: int = 150) -> int:
-    """Search h = 9 and 10 as if out of reach, and compare with the exact walk."""
+    """Search h = 9 and 10 as if out of reach, seeded from the exact h = 8, and compare."""
+    global H_EXACT
     with multiprocessing.Pool(4) as pool:
-        exact = dict(pool.map(exact_h, [(k, 10), (k, 9)]))
-        jobs = [(k, h, c, restarts, 7 * h + c) for h in (9, 10) for c in CENTRES
-                if 2 * h + c <= MAX_RUNS]
-        found = dict(pool.map(search_hc, jobs))
+        exact = dict(pool.map(exact_h, [(k, 10), (k, 9), (k, 8)]))
+    H_EXACT, saved_max = 8, globals()["MAX_RUNS"]
     hits = total = 0
-    for (h, c), (vals, _) in sorted(found.items()):
-        truth = exact[h][c][0]
-        for key, v in sorted(vals.items()):
-            total += 1
-            gap = SENSE[key] * (truth[key] - v)
-            hit = gap <= 1e-9 * max(1.0, abs(truth[key]))
-            hits += hit
-            print(f"h={h} c={c} {key:6s} exact {truth[key]:.6f} found {v:.6f} "
-                  f"{'match' if hit else f'short by {gap:.2e}'}")
+    try:
+        for c in CENTRES:
+            globals()["MAX_RUNS"] = 2 * 10 + c
+            _, per_h = search_chain((k, c, exact[8][c][1], restarts, 7 + c))
+            for h, (vals, _) in sorted(per_h.items()):
+                truth = exact[h][c][0]
+                for key, v in sorted(vals.items()):
+                    total += 1
+                    gap = SENSE[key] * (truth[key] - v)
+                    hit = gap <= 1e-9 * max(1.0, abs(truth[key]))
+                    hits += hit
+                    print(f"h={h} c={c} {key:6s} exact {truth[key]:.6f} found {v:.6f} "
+                          f"{'match' if hit else f'short by {gap:.2e}'}", flush=True)
+    finally:
+        H_EXACT, globals()["MAX_RUNS"] = 10, saved_max
     print(f"\nsearch reached the exact best in {hits} of {total} cells")
     return 0
 
