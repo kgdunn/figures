@@ -384,6 +384,8 @@ labels += ["Box-Behnken design, 15 runs", "Definitive screening design, 9 runs"]
 axes[0, 0].legend(handles, labels, frameon=False, loc="upper right", fontsize=9,
                   bbox_to_anchor=(1.02, 0.98))
 
+fig.suptitle(f"Three factors ($k$ = {K}): the best value attainable at each run count",
+             fontsize=15, fontweight="bold", x=0.5, y=0.972)
 fig.tight_layout(rect=[0, 0, 1, 0.965])
 fig.savefig("omars-metric-choice.png", dpi=250, facecolor="w", edgecolor="w",
             bbox_inches="tight")
