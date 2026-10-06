@@ -12,6 +12,7 @@ the page falls back to the system sans.
 Reproducible; run from this directory to write the PNG alongside it.
 """
 
+import os
 import pathlib
 import subprocess
 import tempfile
@@ -122,8 +123,13 @@ add(f'<div class="aside" style="left:{LX + 56}px;top:{(y(16) + y(32)) // 2}px">F
 
 body = "\n".join(parts)
 
+# The script check (tools/check_figure_scripts.py) sets FIGURE_SCRIPT_CHECK: it then runs
+# everything above, every library call and assertion, but fetches no font and renders no PNG.
+CHECK_RUN = bool(os.environ.get("FIGURE_SCRIPT_CHECK"))
 font_file = pathlib.Path.home() / ".cache" / "pid-figures" / "inter-latin.woff2"
 try:
+    if CHECK_RUN:
+        raise OSError("check run")
     if not font_file.exists():
         font_file.parent.mkdir(parents=True, exist_ok=True)
         font_file.write_bytes(urllib.request.urlopen(INTER, timeout=30).read())
@@ -225,7 +231,10 @@ Python library.</span><b>learnche.org/pid</b></div>
 </body></html>
 """
 
-with tempfile.TemporaryDirectory() as tmp:
-    page = pathlib.Path(tmp) / f"{STEM}.html"
-    page.write_text(html, encoding="utf-8")
-    subprocess.run(["node", str(HERE / f"{STEM}.mjs"), str(page), str(HERE / f"{STEM}.png")], check=True)
+if CHECK_RUN:
+    print("check run: page built, PNG not rendered")
+else:
+    with tempfile.TemporaryDirectory() as tmp:
+        page = pathlib.Path(tmp) / f"{STEM}.html"
+        page.write_text(html, encoding="utf-8")
+        subprocess.run(["node", str(HERE / f"{STEM}.mjs"), str(page), str(HERE / f"{STEM}.png")], check=True)
