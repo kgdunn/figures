@@ -98,6 +98,30 @@ def search(f, n):
     return optimize.minimize(f, start, method="L-BFGS-B", bounds=[(-1, 1)] * n)
 
 
+def check_optimum(f, z, tol=1e-4, h=1e-6):
+    """Fail unless z is a constrained minimum of f over [-1, 1]^n, to first order.
+
+    Along a factor inside its range the slope must be zero; at a bound it must point out of
+    the region. Powell's search once stopped where the slope along hold temperature was
+    still 0.14, and every printed number agreed with the figures, since all came from that
+    point: agreement is not a check of the search itself, but this is.
+    """
+    z = np.asarray(z, float)
+    for i, zi in enumerate(z):
+        lo, hi = z.copy(), z.copy()
+        lo[i], hi[i] = max(zi - h, -1.0), min(zi + h, 1.0)
+        slope = (f(hi) - f(lo)) / (hi[i] - lo[i])
+        if zi >= 1 - 1e-6:
+            ok = slope <= tol  # at the upper bound f may only fall outwards
+        elif zi <= -1 + 1e-6:
+            ok = slope >= -tol
+        else:
+            ok = abs(slope) <= tol
+        if not ok:
+            msg = f"the search did not reach a minimum: slope {slope:.4g} along factor {i} at {zi:.4f}"
+            raise AssertionError(msg)
+
+
 def second_order_columns(C):
     cols = [C[:, i] ** 2 for i in range(C.shape[1])]
     cols += [C[:, i] * C[:, j] for i, j in itertools.combinations(range(C.shape[1]), 2)]
@@ -190,6 +214,7 @@ def study():
         return -float((model_matrix(terms, x) @ bs).ravel()[0])
 
     opt = search(predicted, len(moved))
+    check_optimum(predicted, opt.x)
     x_rec = np.zeros(4)
     x_rec[moved] = opt.x
 
