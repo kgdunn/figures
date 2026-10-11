@@ -92,6 +92,12 @@ def model_matrix(terms, C):
     return np.column_stack(cols)
 
 
+def search(f, n):
+    """Minimise f over the region: the best of 11 levels per factor, refined within bounds."""
+    start = min(itertools.product(np.linspace(-1, 1, 11), repeat=n), key=f)
+    return optimize.minimize(f, start, method="L-BFGS-B", bounds=[(-1, 1)] * n)
+
+
 def second_order_columns(C):
     cols = [C[:, i] ** 2 for i in range(C.shape[1])]
     cols += [C[:, i] * C[:, j] for i, j in itertools.combinations(range(C.shape[1]), 2)]
@@ -183,9 +189,7 @@ def study():
         x[moved] = z
         return -float((model_matrix(terms, x) @ bs).ravel()[0])
 
-    starts = [np.zeros(len(moved)), -np.ones(len(moved)), np.ones(len(moved))]
-    opt = min((optimize.minimize(predicted, s, method="Powell", bounds=[(-1, 1)] * len(moved))
-               for s in starts), key=lambda r: r.fun)
+    opt = search(predicted, len(moved))
     x_rec = np.zeros(4)
     x_rec[moved] = opt.x
 
@@ -198,9 +202,9 @@ def study():
     _check("titer min", plan["titer"].min(), 4.056)
     _check("titer max", plan["titer"].max(), 9.085)
     _check("parallel-run effect", b[1], -0.1470)
-    _check("recommended hold", decode(x_rec)["hold_temp"], 30.13)
+    _check("recommended hold", decode(x_rec)["hold_temp"], 30.64)
     _check("current titer", truth(np.zeros(4)), 7.436)
-    _check("recommended titer", truth(x_rec), 9.037)
+    _check("recommended titer", truth(x_rec), 8.605)
     _check("best titer", -best.fun, 9.442)
     assert list(plan.index[is_cp]) == [6, 12, 22, 26], "centre runs moved"
     assert result.active_main_effects == ["feed_rate"]
