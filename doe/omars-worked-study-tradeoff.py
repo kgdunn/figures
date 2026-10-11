@@ -22,19 +22,19 @@ import matplotlib.pyplot as plt
 # two hundred campaigns per design, and how often each of four real effects was found;
 # the figure plots three of them.
 GAINS = {
-    "OMARS 13": {"runs": 13, "mean": 0.0445, "p10": -0.8496, "p50": 0.0000, "p90": 0.9364, "worst": -1.9725,
+    "OMARS 13": {"runs": 13, "mean": 0.08711, "p10": -0.8497, "p50": -0.02071, "p90": 0.8573, "worst": -1.201,
                  "found": {"feed_rate": 0.14, "hold_temp^2": 0.30, "hold_temp:shift_day": 0.67, "shift_day^2": 0.01}},
-    "OMARS 17": {"runs": 17, "mean": 0.3480, "p10": -0.8967, "p50": 0.7165, "p90": 1.0963, "worst": -3.2462,
-                 "found": {"feed_rate": 0.94, "hold_temp^2": 0.21, "hold_temp:shift_day": 0.35, "shift_day^2": 0.30}},
-    "OMARS 21": {"runs": 21, "mean": 0.3522, "p10": -0.0207, "p50": 0.1181, "p90": 1.1991, "worst": -0.8178,
+    "OMARS 17": {"runs": 17, "mean": 0.4361, "p10": -0.8834, "p50": 0.8323, "p90": 1.142, "worst": -3.246,
+                 "found": {"feed_rate": 0.94, "hold_temp^2": 0.20, "hold_temp:shift_day": 0.35, "shift_day^2": 0.34}},
+    "OMARS 21": {"runs": 21, "mean": 0.6954, "p10": 0.000, "p50": 0.8573, "p90": 1.199, "worst": -1.093,
                  "found": {"feed_rate": 0.83, "hold_temp^2": 0.13, "hold_temp:shift_day": 0.78, "shift_day^2": 0.12}},
-    "OMARS 27": {"runs": 27, "mean": 0.8867, "p10": 0.1181, "p50": 0.9494, "p90": 1.6696, "worst": -1.6551,
+    "OMARS 27": {"runs": 27, "mean": 0.7612, "p10": -0.02071, "p50": 0.9244, "p90": 1.094, "worst": -1.118,
                  "found": {"feed_rate": 0.91, "hold_temp^2": 0.85, "hold_temp:shift_day": 1.00, "shift_day^2": 0.04}},
-    "OMARS 31": {"runs": 31, "mean": 0.9209, "p10": 0.5388, "p50": 1.0013, "p90": 1.5377, "worst": -0.3901,
+    "OMARS 31": {"runs": 31, "mean": 0.8506, "p10": 0.5546, "p50": 0.9236, "p90": 1.158, "worst": -0.3901,
                  "found": {"feed_rate": 1.00, "hold_temp^2": 0.85, "hold_temp:shift_day": 1.00, "shift_day^2": 0.23}},
-    "Box-Behnken 27": {"runs": 27, "mean": 0.9277, "p10": 0.1181, "p50": 1.1989, "p90": 1.6771, "worst": -2.8099,
+    "Box-Behnken 27": {"runs": 27, "mean": 0.8848, "p10": -0.2215, "p50": 1.199, "p90": 1.677, "worst": -3.246,
                        "found": {"feed_rate": 0.99, "hold_temp^2": 0.77, "hold_temp:shift_day": 0.41, "shift_day^2": 0.06}},
-    "CCD 27": {"runs": 27, "mean": 0.8607, "p10": 0.1818, "p50": 0.9424, "p90": 1.6284, "worst": -1.5835,
+    "CCD 27": {"runs": 27, "mean": 0.7597, "p10": -0.03423, "p50": 0.9403, "p90": 1.133, "worst": -1.149,
                "found": {"feed_rate": 0.91, "hold_temp^2": 0.88, "hold_temp:shift_day": 1.00, "shift_day^2": 0.09}},
 }
 PRIZE = 2.0064
@@ -53,8 +53,9 @@ ax.axhline(PRIZE, color=GREY, lw=1.2, ls=(0, (5, 4)), zorder=1)
 ax.text(31.4, PRIZE + 0.04, f"best possible, {PRIZE:.3f} g/L", ha="right", va="bottom",
         fontsize=10.5, color=GREY)
 ax.axhline(0, color="#98A2AB", lw=1.0, zorder=1)
-ax.text(11.8, -0.06, "no better than today's recipe", ha="left", va="top", fontsize=10.5,
-        color="#5A6570", bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.5})
+# In the gap below the zero line between the 21- and 27-run marks, clear of every band and bar.
+ax.text(21.5, -0.08, "no better than\ntoday's recipe", ha="left", va="top", fontsize=10.5,
+        color="#5A6570")
 
 ax.fill_between(runs, [v["p10"] for v in omars], [v["p90"] for v in omars],
                 color=BLUE, alpha=0.14, lw=0, zorder=2, label="OMARS, 10th to 90th percentile")

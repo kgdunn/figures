@@ -95,9 +95,12 @@ def campaign_gain(C, seed):
         x = np.zeros(4); x[moved] = z
         return -float((model_matrix(terms, x) @ b).ravel()[0])
 
-    starts = [np.zeros(len(moved)), -np.ones(len(moved)), np.ones(len(moved))]
-    opt = min((optimize.minimize(predicted, s, method="Powell", bounds=[(-1, 1)] * len(moved)) for s in starts),
-              key=lambda r: r.fun)
+    # The model's maximum: the best point of an 11-level grid over the region, refined with
+    # L-BFGS-B, as the book does. The grid is evaluated in one matrix product for speed.
+    grid = np.array(list(itertools.product(np.linspace(-1, 1, 11), repeat=len(moved))))
+    G = np.zeros((len(grid), 4)); G[:, moved] = grid
+    start = grid[np.argmax(model_matrix(terms, G) @ b)]
+    opt = optimize.minimize(predicted, start, method="L-BFGS-B", bounds=[(-1, 1)] * len(moved))
     x = np.zeros(4); x[moved] = opt.x
     return truth(x) - T_NOW, found
 
@@ -129,8 +132,8 @@ for name, C in designs.items():
         for t in KEY_TERMS:
             hits[t] += t in found
     q = np.percentile(gains, [10, 50, 90])
-    print(f'    "{name}": {{"runs": {len(C)}, "mean": {np.mean(gains):.4f}, "p10": {q[0]:.4f}, '
-          f'"p50": {q[1]:.4f}, "p90": {q[2]:.4f}, "worst": {np.min(gains):.4f}, '
+    print(f'    "{name}": {{"runs": {len(C)}, "mean": {np.mean(gains):#.4g}, "p10": {q[0]:#.4g}, '
+          f'"p50": {q[1]:#.4g}, "p90": {q[2]:#.4g}, "worst": {np.min(gains):#.4g}, '
           f'"found": {{' + ", ".join(f'"{t}": {hits[t] / N_SEEDS:.2f}' for t in KEY_TERMS) + "}},", flush=True)
 print("}")
 print(f"PRIZE = {PRIZE:.4f}")
