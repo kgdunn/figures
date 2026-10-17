@@ -22,12 +22,12 @@ import matplotlib.pyplot as plt
 # two hundred campaigns per design, and how often each of four real effects was found;
 # the figure plots three of them.
 GAINS = {
-    "OMARS 13": {"runs": 13, "mean": 0.08711, "p10": -0.8497, "p50": -0.02071, "p90": 0.8573, "worst": -1.201,
-                 "found": {"feed_rate": 0.14, "hold_temp^2": 0.30, "hold_temp:shift_day": 0.67, "shift_day^2": 0.01}},
-    "OMARS 17": {"runs": 17, "mean": 0.4361, "p10": -0.8834, "p50": 0.8323, "p90": 1.142, "worst": -3.246,
-                 "found": {"feed_rate": 0.94, "hold_temp^2": 0.20, "hold_temp:shift_day": 0.35, "shift_day^2": 0.34}},
-    "OMARS 21": {"runs": 21, "mean": 0.6954, "p10": 0.000, "p50": 0.8573, "p90": 1.199, "worst": -1.093,
-                 "found": {"feed_rate": 0.83, "hold_temp^2": 0.13, "hold_temp:shift_day": 0.78, "shift_day^2": 0.12}},
+    "OMARS 13": {"runs": 13, "mean": 0.1690, "p10": -0.02071, "p50": 0.000, "p90": 0.8573, "worst": -3.246,
+                 "found": {"feed_rate": 0.28, "hold_temp^2": 0.02, "hold_temp:shift_day": 0.41, "shift_day^2": 0.10}},
+    "OMARS 17": {"runs": 17, "mean": 0.4468, "p10": -0.8849, "p50": 0.8321, "p90": 1.142, "worst": -3.246,
+                 "found": {"feed_rate": 0.98, "hold_temp^2": 0.20, "hold_temp:shift_day": 0.41, "shift_day^2": 0.38}},
+    "OMARS 21": {"runs": 21, "mean": 0.8082, "p10": 0.000, "p50": 0.8573, "p90": 1.199, "worst": -1.093,
+                 "found": {"feed_rate": 0.89, "hold_temp^2": 0.50, "hold_temp:shift_day": 0.81, "shift_day^2": 0.01}},
     "OMARS 27": {"runs": 27, "mean": 0.7612, "p10": -0.02071, "p50": 0.9244, "p90": 1.094, "worst": -1.118,
                  "found": {"feed_rate": 0.91, "hold_temp^2": 0.85, "hold_temp:shift_day": 1.00, "shift_day^2": 0.04}},
     "OMARS 31": {"runs": 31, "mean": 0.8506, "p10": 0.5546, "p50": 0.9236, "p90": 1.158, "worst": -0.3901,
@@ -99,8 +99,9 @@ ax_f.set_xlim(11.5, 32.5)
 ax_f.set_xlabel("Number of runs, $N$", fontsize=13)
 ax_f.legend(loc="lower right", bbox_to_anchor=(1.0, 0.02), fontsize=10, frameon=True, facecolor="white",
             edgecolor="0.85", framealpha=1.0)
-ax_f.text(11.9, -1.5, "hollow star, hollow diamond: Box-Behnken\nand CCD at 27 runs, as in the upper plot",
-          ha="left", va="bottom", fontsize=9, color=GREY)
+# Top left, above the 13-run points and left of the feed-rate line's climb to 17 runs.
+ax_f.text(11.8, 101, "hollow star: Box-Behnken\nhollow diamond: CCD\nboth at 27 runs",
+          ha="left", va="top", fontsize=9, color=GREY)
 
 for axis in (ax, ax_f):
     axis.grid(axis="y", color="0.9", lw=0.9)
