@@ -9,7 +9,7 @@ four continuous process factors, two of which are hard to change, so the design 
 split-plot mixed-level optimal design.
 
 Everything here is built with Kevin Dunn's ``process_improve`` library
-(``pip install 'process-improve[expt]'`` plus a separate ``pip install pyoptex`` for the
+(``pip install process-improve`` plus a separate ``pip install pyoptex`` for the
 coordinate-exchange optimiser): ``generate_design`` builds the mixed-level split-plot
 optimal design directly (v1.52.0+ routes a categorical factor and a per-factor quadratic
 model through the public entry point), ``evaluate_design`` scores D- and G-efficiency, the
