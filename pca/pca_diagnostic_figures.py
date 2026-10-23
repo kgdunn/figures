@@ -7,8 +7,8 @@ Three committed PNGs, replacing the base-R output of
   first ten components of the distillation-tower data explains.
 - ``eigenvalue-scree-plot-cumulative.png``: the same, accumulated.
 - ``barplot-for-R2-and-Q2.png``: cumulative R-squared beside cumulative
-  Q-squared for the LDPE case study, showing where cross-validation stops
-  rewarding extra components.
+  Q-squared for the LDPE case study, marking the number of components at
+  which cross-validated Q-squared is highest.
 - ``q2-across-packages.png``: the Q-squared Simca-P reported beside the
   element-wise one computed by ``process_improve``, on one axis.
 
@@ -97,7 +97,9 @@ Q2 = {
     "ProSensus 11.08": [0.32847, 0.50085, 0.575319, 0.6338, 0.7637, 0.8231,
                         0.87225, 0.916889, 0.986077, 0.998795, 0.99972],
 }
-# Where each package's Q-squared stops rewarding another component.
+# Where each package's Q-squared is highest over the first eight components, before
+# the model runs out of variation to hold out (r2_q2_plot checks this against Q2).
+FIRST = 8
 STOP_AFTER = {"Simca-P 11.5": 2, "ProSensus 11.08": 8}
 
 mpl.rcParams.update(
@@ -171,6 +173,9 @@ def r2_q2_plot(package: str, outdir: pathlib.Path, name: str, shown: int = 11) -
     r2 = R2[:shown]
     components = np.arange(1, shown + 1)
     stop = STOP_AFTER[package]
+    best = int(np.argmax(Q2[package][:FIRST])) + 1
+    if best != stop:
+        raise ValueError(f"{package}: Q2 is highest at {best} of the first {FIRST}, not {stop}")
     print(f"{package}: R² goes {100 * R2[2]:.0f}% to {100 * R2[3]:.0f}% "
           f"on the 4th component, while Q² goes {100 * q2[2]:.0f}% to {100 * q2[3]:.0f}%")
 
@@ -192,9 +197,15 @@ def r2_q2_plot(package: str, outdir: pathlib.Path, name: str, shown: int = 11) -
     axes[1].axvline(stop + 0.5, color=VERMILLION, linestyle="--", linewidth=2)
     # The note goes in the corner rather than beside the line: the bars to
     # the right of the line are tall in one of these two figures.
-    axes[1].annotate(f"$Q^2$ stops rising after {stop} components",
+    # Q-squared rises again after the peak (Simca-P at the fifth and eighth
+    # components), so the note names the peak rather than saying it stops rising.
+    note = (f"$Q^2$ is highest at {stop} components" if shown <= FIRST
+            else f"Of the first {FIRST} components,\n$Q^2$ is highest at {stop}")
+    axes[1].annotate(note,
                      (0.02, 0.99), xycoords="axes fraction", color=VERMILLION,
-                     fontsize=13, ha="left", va="top")
+                     fontsize=13, ha="left", va="top", zorder=3,
+                     # The dashed line runs up through the note; keep the text legible.
+                     bbox={"facecolor": "white", "edgecolor": "none", "pad": 1})
     axes[1].set_title(package)
     fig.tight_layout()
     save(fig, outdir, name)
@@ -350,8 +361,7 @@ def main(outdir: pathlib.Path) -> None:
     # eleven variables, so by the ninth component the model is fitting
     # what little is left and cross-validation predicts it almost exactly.
     # Those three bars tower over the rest and bury the point the figure
-    # is making, that Q-squared stops rewarding components after the
-    # second. The two package images keep all eleven, as their originals
+    # is making, that Q-squared is highest at the second component. The two package images keep all eleven, as their originals
     # do.
     r2_q2_plot("Simca-P 11.5", outdir, "barplot-for-R2-and-Q2.png", shown=8)
     r2_q2_plot("Simca-P 11.5", outdir, "barplot-for-R2-and-Q2-Simca.png")
