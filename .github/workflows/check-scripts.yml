@@ -16,7 +16,7 @@ name: Check figure scripts
 # The `colour-case-study` job covers the scripts the first two cannot: the colour
 # case study's design is built by pyoptex, whose plotly and numba pins conflict
 # with the [all] extra, so those scripts carry a `check-scripts: requires pyoptex`
-# marker and skip there. This job installs [expt] plus pyoptex and runs them.
+# marker and skip there. This job installs process-improve plus pyoptex and runs them.
 #
 # Whole run is a few minutes wall clock, so there is no fast subset: every script
 # runs on every pull request. `# check-scripts: slow` exists for a script that
@@ -126,11 +126,12 @@ jobs:
 
       - name: Run the scripts that need pyoptex
         run: |
-          # [expt] for pyDOE3 and [ilp] for the OMARS solver, which the other DOE
-          # scripts in this directory need. [plotting] cannot come along: it wants
-          # plotly >= 6.5.2 while pyoptex pins plotly < 6. These scripts draw with
-          # matplotlib, so that is installed on its own.
-          uv run --no-project --with 'process-improve[expt,ilp]' --with pyoptex --with matplotlib \
+          # Plain process-improve: no design in this directory needs an extra
+          # (OMARS solves with the HiGHS solver that ships with SciPy). [plotting]
+          # cannot come along: it wants plotly >= 6.5.2 while pyoptex pins
+          # plotly < 6. These scripts draw with matplotlib, so that is installed
+          # on its own.
+          uv run --no-project --with process-improve --with pyoptex --with matplotlib \
             python tools/check_figure_scripts.py doe --jobs 4
 
       - name: Confirm no figure was rewritten

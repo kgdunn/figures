@@ -2,7 +2,7 @@
 design-quality subchapter (``judging-and-comparing-designs.rst``).
 
 The designs and their quality metrics are built with Kevin Dunn's ``process_improve``
-library (``pip install 'process-improve[expt]'``): ``generate_design`` constructs the
+library (``pip install process-improve``): ``generate_design`` constructs the
 factorials, the Box-Behnken design and the definitive screening design, and
 ``evaluate_design`` scores D-efficiency, the variance inflation factors, the power and the
 prediction variance integrated over the whole region (used for the FDS curves and the
