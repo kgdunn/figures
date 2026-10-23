@@ -46,7 +46,7 @@ Defects in the originals corrected here:
 
 Usage
 -----
-    uv run --with numpy --with pandas --with scipy --with matplotlib python tablet_spectra_pca_figures.py [output_dir]
+    uv run --with 'process-improve[all]' python tablet_spectra_pca_figures.py [output_dir]
 """
 
 from __future__ import annotations
@@ -62,6 +62,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scipy.stats
+from process_improve.multivariate.methods import hotellings_t2_limit, spe_calculation
 
 BLUE = "#0072B2"
 GREEN = "#009E73"
@@ -160,34 +161,11 @@ def r2_per_wavelength(r2: dict, outdir: pathlib.Path) -> None:
     save(fig, outdir, "spectral-data-R2-per-variable.png")
 
 
-def spe_limit(distances: np.ndarray, confidence: float = 0.95) -> float:
-    """Confidence limit on the residual distance, as a distance.
-
-    The sum of squared residuals of a row is not chi-squared distributed,
-    because the residuals are neither independent nor of equal variance.
-    Nomikos and MacGregor (1995) match a scaled chi-squared, g * chi2(h),
-    to the mean and variance of the observed sums of squares, and read the
-    limit off that. This is the calculation ``process_improve`` uses in
-    ``multivariate/_limits.py``; it is repeated here so the script needs
-    only numpy and scipy.
-
-    The input and the returned limit are distances (square roots), which is
-    what the rest of this script plots, so the values are squared going in
-    and the limit square-rooted coming out.
-    """
-    squared = np.asarray(distances, dtype=float) ** 2
-    centre = float(squared.mean())
-    variance = float(squared.var(ddof=1))
-    g = variance / (2 * centre)
-    h = 2 * centre**2 / variance
-    return float(np.sqrt(scipy.stats.chi2.ppf(confidence, h) * g))
-
-
 def spe_per_tablet(spe: dict, outdir: pathlib.Path) -> None:
     tablets = np.arange(1, len(spe[1]) + 1)
     fig, axes = plt.subplots(3, 1, figsize=(12, 8), sharex=True)
     for ax, a in zip(axes, COMPONENTS):
-        limit = spe_limit(spe[a])
+        limit = float(spe_calculation(spe[a], conf_level=0.95))
         above = int((spe[a] > limit).sum())
         print(f"A = {a}: 95% SPE limit {limit:.2f}, {above} of {len(tablets)} tablets above it")
         ax.grid(color=GRID, linewidth=0.8)
@@ -210,11 +188,23 @@ def t2_limit(n_rows: int, n_components: int, confidence: float) -> float:
     Rows that the model was fitted on use A(N-1)/(N-A) times the F value;
     a future observation, not in the fit, uses A(N^2-1)/(N(N-A)) instead.
     These 460 tablets are the fitting set, so the first form applies.
+
+    ``process_improve``'s ``hotellings_t2_limit`` gives only the second form,
+    which is this one times (N+1)/N. That fixed ratio is checked against the
+    library on every run, so a change to how the library computes the limit
+    fails here instead of leaving this figure on the old formula.
     """
-    return float(
+    limit = float(
         n_components * (n_rows - 1) / (n_rows - n_components)
         * scipy.stats.f.ppf(confidence, n_components, n_rows - n_components)
     )
+    future = hotellings_t2_limit(conf_level=confidence, n_components=n_components, n_rows=n_rows)
+    if not np.isclose(future, limit * (n_rows + 1) / n_rows, rtol=1e-9):
+        raise ValueError(
+            f"process_improve's T² limit {future:.6f} is no longer {(n_rows + 1) / n_rows:.6f} times "
+            f"this script's {limit:.6f}: the library changed its formula, so update t2_limit here."
+        )
+    return limit
 
 
 def ellipse(spread_i: float, spread_j: float, limit: float) -> np.ndarray:
