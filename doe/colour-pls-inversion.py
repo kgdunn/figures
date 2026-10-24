@@ -10,7 +10,6 @@ reference there.
 Regenerates ``colour-pls-inversion.png``.
 """
 
-# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import contextlib
 import io
 

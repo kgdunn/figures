@@ -11,7 +11,6 @@ that corner, so the omitted-level flags disappear; the two compound-F runs they 
 label sits on the points. Regenerates ``colour-coding-diagnostics.png``.
 """
 
-# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import contextlib
 import io
 
