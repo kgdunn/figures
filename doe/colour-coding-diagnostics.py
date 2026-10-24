@@ -6,9 +6,8 @@ per-run Hotelling's T2 (leverage inside the model plane) depends on the coding. 
 coding the omitted level is carried as the negative sum of the other contrasts, the corner of the
 contrast space farthest from the centre, so its runs read as high leverage; change which level is
 omitted and the flag moves with it. Treatment (reference) and cell-means coding place no level at
-that corner, so the omitted-level flags disappear; the two compound-F runs they still put over the
-95% T2 limit sit only just above it. Each panel title gives the limit and the runs over it, so no
-label sits on the points. Regenerates ``colour-coding-diagnostics.png``.
+that corner, so the omitted-level flags disappear and no run passes the 95% T2 limit. Each panel
+title gives the limit and the runs over it, so no label sits on the points. Regenerates ``colour-coding-diagnostics.png``.
 """
 
 import contextlib
