@@ -27,7 +27,7 @@ def n_changes(v):
 
 
 for ax, group, title in [(axes[0], hard, "Hard-to-change factors: held over whole plots"),
-                         (axes[1], easy, "Easy-to-change factors: reset almost every run")]:
+                         (axes[1], easy, "Easy-to-change factors: reset at most runs")]:
     for name in group:
         v = run[name].to_numpy(float)
         ax.step(x, v, where="post", color=palette[name], lw=1.6,
