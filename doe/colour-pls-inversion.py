@@ -4,9 +4,9 @@ Model inversion finds, for each candidate chromogen, the minimum-adjustment cont
 settings whose score matches the reference goal (chromogen A at the centre point). This plots those
 settings in coded units, one row per factor, one marker per chromogen. The band between the dashed
 lines at -1 and +1 is the studied range; a marker outside it is a setting the experiment never
-explored. B and D can be compensated within the ranges; C needs a concentration just below the
-studied window, and E and F need all four factors beyond it, so they cannot be made to match the
-reference there.
+explored. Only B can be compensated within the ranges; C needs a pH just above the studied window,
+D a higher concentration and co-solvent, E a pH far above the window, and F a lower co-solvent and
+a higher pH, so they cannot be made to match the reference there.
 Regenerates ``colour-pls-inversion.png``.
 """
 
