@@ -1,5 +1,5 @@
 """Shared construction, response simulation, and modelling for the mixed-level
-split-plot case study (``design-analysis-experiments/mixed-level-profile-case-study.rst``).
+split-plot case study (``product-development-product-improvement/mixed-level-profile-case-study.rst``).
 
 The scenario: an analytical laboratory develops a coloured metal-chelate complex with an
 arylazo *chromogen* and follows the colour as it develops, logging absorbance at the
@@ -9,10 +9,10 @@ four continuous process factors, two of which are hard to change, so the design 
 split-plot mixed-level optimal design.
 
 Everything here is built with Kevin Dunn's ``process_improve`` library
-(``pip install process-improve`` plus a separate ``pip install pyoptex`` for the
-coordinate-exchange optimiser): ``generate_design`` builds the mixed-level split-plot
-optimal design directly (v1.52.0+ routes a categorical factor and a per-factor quadratic
-model through the public entry point), ``evaluate_design`` scores D- and G-efficiency, the
+(``pip install process-improve``; no other optimiser is needed): ``generate_design`` builds the
+mixed-level split-plot optimal design directly with its own coordinate exchange (v1.52.0+ routes
+a categorical factor and a per-factor quadratic model through the public entry point; the design
+the chapter prints is the one v2.1.0 returns), ``evaluate_design`` scores D- and G-efficiency, the
 average prediction variance, and its distribution over the whole region (the FDS curve), and the
 multivariate ``PLS`` models the ten-point colour-development profile with ``scale=True``
 (v1.51.3+ scales both blocks; v1.51.4+ reports ``rmse_`` on the original response scale).
