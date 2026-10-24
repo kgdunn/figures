@@ -2,7 +2,7 @@
 
 Across the 60-run order, the two hard-to-change factors (co-solvent fraction and
 temperature) hold their level over long stretches (the whole plots), while the two
-easy-to-change factors move almost every run. Regenerates
+easy-to-change factors move at most runs. Regenerates
 ``colour-split-plot-run-order.png``.
 """
 
