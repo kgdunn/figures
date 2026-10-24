@@ -2,11 +2,10 @@
 
 Across the 60-run order, the two hard-to-change factors (co-solvent fraction and
 temperature) hold their level over long stretches (the whole plots), while the two
-easy-to-change factors move almost every run. Regenerates
+easy-to-change factors move at most runs. Regenerates
 ``colour-split-plot-run-order.png``.
 """
 
-# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -28,7 +27,7 @@ def n_changes(v):
 
 
 for ax, group, title in [(axes[0], hard, "Hard-to-change factors: held over whole plots"),
-                         (axes[1], easy, "Easy-to-change factors: reset almost every run")]:
+                         (axes[1], easy, "Easy-to-change factors: reset at most runs")]:
     for name in group:
         v = run[name].to_numpy(float)
         ax.step(x, v, where="post", color=palette[name], lw=1.6,

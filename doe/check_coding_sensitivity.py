@@ -6,7 +6,6 @@ vs cell-means; and the coding-invariant curve-match inversion. Also the minimal 
 demonstration.
 """
 
-# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import contextlib
 import io
 

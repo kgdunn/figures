@@ -13,7 +13,6 @@ with concentration, and the marker fill marks the co-solvent (open low, filled h
 Regenerates ``colour-pls-t2-spe.png``.
 """
 
-# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import contextlib
 import io
 
@@ -72,9 +71,9 @@ ax.text(ax.get_xlim()[1], spe_lim, f"SPE 95% = {spe_lim:.1f} ", color="0.35", fo
 # Reference goal: chromogen A at the centre point, projected onto the model.
 ax.scatter([goal["t2"]], [goal["spe"]], s=190, color="k", marker="*", zorder=5)
 
-ax.set_xlabel("Hotelling's $T^2$ (3 components)")
-ax.set_ylabel("SPE (3 components)")
-ax.set_title("Model diagnostics: $T^2$ vs SPE, with 95% limits", fontsize=10, loc="left")
+ax.set_xlabel("Hotelling's $T^2$ (3 components)", fontsize=12, fontweight="bold")
+ax.set_ylabel("SPE (3 components)", fontsize=12, fontweight="bold")
+ax.set_title("Model diagnostics: $T^2$ vs SPE, with 95% limits", fontsize=12, fontweight="bold", loc="left")
 
 colour_handles = [Line2D([], [], marker="o", ls="", color=colour, markeredgecolor="w",
                          label="A (ref)" if c == "A" else c)
@@ -83,16 +82,16 @@ enc_handles = [
     Line2D([], [], marker="v", ls="", color="0.35", markeredgecolor="w", label="low pH"),
     Line2D([], [], marker="o", ls="", color="0.35", markeredgecolor="w", label="high pH"),
     Line2D([], [], marker="None", ls="", label=r"size $\propto$ concentration"),
-    Line2D([], [], marker="None", ls="", label="open = low co-solvent, filled = high"),
+    Line2D([], [], marker="o", ls="", markerfacecolor="w", markeredgecolor="0.35", label="open: low co-solvent"),
+    Line2D([], [], marker="o", ls="", color="0.35", markeredgecolor="w", label="filled: high co-solvent"),
     Line2D([], [], marker="*", ls="", color="k", markersize=11, label="goal: A at centre"),
     Line2D([], [], color="0.4", ls="--", lw=1.1, label="95% limits"),
 ]
-leg1 = ax.legend(handles=colour_handles, frameon=False, fontsize=8, ncol=2, loc="upper right",
-                 title="chromogen")
+leg1 = ax.legend(handles=colour_handles, frameon=False, fontsize=10, ncol=2, loc="upper right",
+                 title="chromogen", title_fontsize=11)
 ax.add_artist(leg1)
-# Directly under the chromogen key, in the empty band between the SPE limit and the high-T2 runs.
-ax.legend(handles=enc_handles, frameon=False, fontsize=8, loc="upper right",
-          bbox_to_anchor=(1.0, 0.70), handletextpad=0.6)
+# In the empty lower-right corner (high T2, low SPE), clear of the SPE limit line.
+ax.legend(handles=enc_handles, frameon=False, fontsize=10, loc="lower right", handletextpad=0.6)
 ax.grid(alpha=0.2)
 fig.tight_layout()
 fig.savefig("colour-pls-t2-spe.png", dpi=300, facecolor="w", edgecolor="w", transparent=True)

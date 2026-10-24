@@ -17,7 +17,6 @@ score plot; the other factor terms are black; the time points are red. Regenerat
 ``colour-pls-interaction-scores-loadings.png``.
 """
 
-# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D

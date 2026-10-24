@@ -3,7 +3,6 @@
 Run from this directory:  python check_colour_case_study.py
 """
 
-# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
 from __future__ import annotations
 
 import contextlib
