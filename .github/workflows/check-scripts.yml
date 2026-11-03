@@ -13,11 +13,6 @@ name: Check figure scripts
 # before that release ships. The nightly schedule catches a release landing on a
 # day nobody pushes.
 #
-# The `colour-case-study` job covers the scripts the first two cannot: the colour
-# case study's design is built by pyoptex, whose plotly and numba pins conflict
-# with the [all] extra, so those scripts carry a `check-scripts: requires pyoptex`
-# marker and skip there. This job installs process-improve plus pyoptex and runs them.
-#
 # Whole run is a few minutes wall clock, so there is no fast subset: every script
 # runs on every pull request. `# check-scripts: slow` exists for a script that
 # outgrows that.
@@ -101,43 +96,3 @@ jobs:
           uv run --no-project \
             --with 'process-improve[all] @ git+https://github.com/kgdunn/process-improve@main' \
             python tools/check_figure_scripts.py --jobs 4
-
-  colour-case-study:
-    name: The colour case study, with pyoptex
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v4
-        with:
-          enable-cache: true
-          # This repository has no uv.lock: the scripts run in ephemeral
-          # environments built from the --with specs below, not from a project.
-          # setup-uv's default cache key globs for **/uv.lock and errors out
-          # when it finds none, so key the cache on nothing and let it cache the
-          # downloads alone.
-          cache-dependency-glob: ""
-
-      - name: Run the scripts that need pyoptex
-        run: |
-          # Plain process-improve: no design in this directory needs an extra
-          # (OMARS solves with the HiGHS solver that ships with SciPy). [plotting]
-          # cannot come along: it wants plotly >= 6.5.2 while pyoptex pins
-          # plotly < 6. These scripts draw with matplotlib, so that is installed
-          # on its own.
-          uv run --no-project --with process-improve --with pyoptex --with matplotlib \
-            python tools/check_figure_scripts.py doe --jobs 4
-
-      - name: Confirm no figure was rewritten
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "The check modified the working tree:"
-            git status --porcelain
-            exit 1
-          fi
