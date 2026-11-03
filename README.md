@@ -152,14 +152,12 @@ or that has grown too slow for every pull request, says so in a comment, with th
 ```python
 # check-scripts: skip needs a licensed solver that CI cannot install
 # check-scripts: slow a twelve-hour sweep; run it from the nightly schedule
-# check-scripts: requires pyoptex -- the I-optimal colour design comes from pyoptex
+# check-scripts: requires <module> -- a package that cannot share an environment with [all]
 ```
 
-`requires` is the interesting one. `pyoptex` pins versions of plotly and numba that cannot
-share an environment with `process-improve[all]`, which is why the colour case study's
-scripts carry that marker: they skip in the main job and run in a third job that installs
-`process-improve` alongside `pyoptex`, which is what the book tells its reader to
-install for that chapter. Sixteen scripts are in that set.
+`requires` runs a script only where the named modules import, and skips it elsewhere. Both
+jobs install `process-improve[all]` and nothing else, so CI does not run a script with that
+marker. Write the module names first and any explanation after `--`.
 
 ## Usage rights
 
