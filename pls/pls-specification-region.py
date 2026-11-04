@@ -153,7 +153,7 @@ def build_figure(out_dir: Path) -> None:
     corners = np.array(np.meshgrid(*([lo, hi] for lo, hi in zip(low, high)))).reshape(3, -1).T
     corner_frame = pd.DataFrame(corners, columns=X_COLUMNS)
     corner_taste = pls.predict(corner_frame).to_numpy().ravel()
-    corner_t2 = pls.diagnose(corner_frame).hotellings_t2.to_numpy()
+    corner_t2 = pls.diagnose(corner_frame).cumulative_hotellings_t2.iloc[:, -1].to_numpy()
     taste_ok = (corner_taste >= TASTE_LOW) & (corner_taste <= TASTE_HIGH)
 
     fig = plt.figure(figsize=(13.2, 6.2))

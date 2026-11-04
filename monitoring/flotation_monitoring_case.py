@@ -304,7 +304,7 @@ def main() -> None:
 
     p2_scaled = scaler.transform(p2_sub)
     result = model.diagnose(p2_scaled)
-    t2 = result.hotellings_t2.iloc[:, -1]
+    t2 = result.cumulative_hotellings_t2.iloc[:, -1]
     spe = result.spe
     t2_lim = float(model.hotellings_t2_limit(conf_level=CONF_LEVEL))
     spe_lim = float(model.spe_limit(conf_level=CONF_LEVEL))
