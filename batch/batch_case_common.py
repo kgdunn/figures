@@ -410,7 +410,9 @@ def score_plot(
         fig = ax.figure
     scores = model.scores_
     x, y = scores.iloc[:, pc_horiz - 1], scores.iloc[:, pc_vert - 1]
-    ex, ey = model.ellipse_coordinates(score_horiz=pc_horiz, score_vert=pc_vert, conf_level=conf_level)
+    # The ellipse encloses the batches the model was fitted to, so it is drawn for fitted rows.
+    ex, ey = model.ellipse_coordinates(score_horiz=pc_horiz, score_vert=pc_vert, conf_level=conf_level,
+                                       judged_rows="fitted")
     ax.plot(ex, ey, color=GREY, lw=1, ls="--", label=f"{conf_level:.0%} confidence ellipse")
     highlight = highlight or {}
     # Area, not radius, carries the quantity: doubling the area means doubling the value it stands for.
@@ -463,6 +465,7 @@ def influence_plot(
     groups: pd.Series | None = None,
     group_styles: dict[str, tuple[str, str]] | None = None,
     legend_loc: str = "upper left",
+    label_t2_limit: bool = True,
     ax=None,
 ) -> Figure:
     """Hotelling's T2 against SPE for every batch, with both limits drawn.
@@ -481,7 +484,8 @@ def influence_plot(
         fig = ax.figure
     t2 = model.hotellings_t2_.iloc[:, -1]
     spe = model.spe_.iloc[:, -1]
-    t2_limit = float(model.hotellings_t2_limit(conf_level=conf_level))
+    # Every dot is a batch the model was fitted to, so the T2 limit is the one for fitted rows.
+    t2_limit = float(model.hotellings_t2_limit(conf_level=conf_level, judged_rows="fitted"))
     spe_limit = float(model.spe_limit(conf_level=conf_level))
     highlight = highlight or {}
 
@@ -492,7 +496,8 @@ def influence_plot(
 
     ax.axvline(t2_limit, color=GREY, ls="--", lw=1)
     ax.axhline(spe_limit, color=GREY, ls="--", lw=1)
-    ax.text(t2_limit, 0.99, f" {conf_level:.0%} limit", transform=ax.get_xaxis_transform(), va="top", ha="left", fontsize=8.5, color=GREY)
+    if label_t2_limit:  # a caller that draws a second T2 limit beside this one labels both itself
+        ax.text(t2_limit, 0.99, f" {conf_level:.0%} limit", transform=ax.get_xaxis_transform(), va="top", ha="left", fontsize=8.5, color=GREY)
     ax.text(0.995, spe_limit, f"{conf_level:.0%} limit", transform=ax.get_yaxis_transform(), va="bottom", ha="right", fontsize=8.5, color=GREY)
 
     # ``sizes`` carries the same quantity, on the same scale, as the score plot that precedes this one,

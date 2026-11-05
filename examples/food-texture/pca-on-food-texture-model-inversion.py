@@ -17,7 +17,8 @@ are:
      constraint lines in the (t_1, t_2) score plane.
 
 Headline numbers: R^2 cumulative = [0.606, 0.865]; SPE 95% limit = 1.383;
-T^2 95% limit = 6.645. Constrained inversion: Hardness loadings
+T^2 95% limit = 5.747, the limit for the pastries the model was fitted to
+(``judged_rows="fitted"``; the F limit for a new pastry would be 6.645). Constrained inversion: Hardness loadings
 p_h = [0.153, 0.805]; target t* = (2, -1); Hardness 110 projects to
 (1.980, -1.103) and Hardness 150 projects to (2.274, 0.438).
 
@@ -87,8 +88,9 @@ def figure_scores_and_loadings(model: PCA, out: pathlib.Path) -> None:
     """Score plot (with 95% T^2 ellipse) and loadings plot, side by side."""
     scores = model.scores_
     loadings = model.loadings_
+    # The ellipse encloses the pastries the model was fitted to, so it is drawn for fitted rows.
     ci_x, ci_y = model.ellipse_coordinates(score_horiz=1, score_vert=2,
-                                           conf_level=CONF_LEVEL)
+                                           conf_level=CONF_LEVEL, judged_rows="fitted")
     r2 = model.r2_cumulative_.values
     pct1 = 100 * r2[0]
     pct2 = 100 * (r2[1] - r2[0])
@@ -141,8 +143,9 @@ def figure_constraint_projection(model: PCA, scaler: MCUVScaler,
     scores = model.scores_
     t1 = scores.iloc[:, 0].to_numpy()
     t2 = scores.iloc[:, 1].to_numpy()
+    # The same ellipse as the score plot's, drawn around the pastries the model was fitted to.
     ci_x, ci_y = model.ellipse_coordinates(score_horiz=1, score_vert=2,
-                                           conf_level=CONF_LEVEL)
+                                           conf_level=CONF_LEVEL, judged_rows="fitted")
     p_h = model.loadings_.loc["Hardness"].to_numpy()
     t_star = np.array([2.0, -1.0])
 
@@ -154,65 +157,71 @@ def figure_constraint_projection(model: PCA, scaler: MCUVScaler,
 
     constraints = {110: ("#4c72b0", project_to_constraint(110)),
                    150: ("#dd8452", project_to_constraint(150))}
+    # Where each coordinate label sits, in points from its marker: the Hardness = 110 projection lies
+    # just below t*, so its label goes below and to the left, clear of the star and its label; the
+    # Hardness = 150 label is centred above its marker, clear of the line, the pastries and the ellipse.
+    label_offset = {110: ((-10, -6), "right", "top"), 150: ((0, 10), "center", "bottom")}
 
-    fig, ax = plt.subplots(figsize=(8, 7.5))
+    r2 = model.r2_cumulative_.values
+    pct1, pct2 = 100 * r2[0], 100 * (r2[1] - r2[0])
+    # The book shows this figure 750 px wide, so the text is set larger than matplotlib's default.
+    with plt.rc_context({"font.size": 13}):
+        fig, ax = plt.subplots(figsize=(8, 7.5))
 
-    # Observed pastry scores (context) and the 95% T^2 ellipse.
-    ax.plot(t1, t2, ".", color="#bdbdbd", markersize=6,
-            label="Pastry scores")
-    ax.plot(ci_x, ci_y, color="palevioletred", linewidth=1.3, alpha=0.7,
-            label="95% $T^2$ limit")
-    ax.axhline(0, color="grey", linewidth=0.5)
-    ax.axvline(0, color="grey", linewidth=0.5)
+        # Observed pastry scores (context) and the 95% T^2 ellipse.
+        ax.plot(t1, t2, ".", color="#bdbdbd", markersize=6,
+                label="Pastry scores")
+        ax.plot(ci_x, ci_y, color="palevioletred", linewidth=1.3, alpha=0.7,
+                label="95% $T^2$ limit")
+        ax.axhline(0, color="grey", linewidth=0.5)
+        ax.axvline(0, color="grey", linewidth=0.5)
 
-    # Axis range, wide enough to hold the data, t*, and both projections.
-    proj_x = [t_proj[0] for _, (_, t_proj) in constraints.values()]
-    proj_y = [t_proj[1] for _, (_, t_proj) in constraints.values()]
-    x_lo = min(t1.min(), ci_x.min(), t_star[0], *proj_x)
-    x_hi = max(t1.max(), ci_x.max(), t_star[0], *proj_x)
-    y_lo = min(t2.min(), ci_y.min(), t_star[1], *proj_y)
-    y_hi = max(t2.max(), ci_y.max(), t_star[1], *proj_y)
-    x_pad = 0.10 * (x_hi - x_lo)
-    y_pad = 0.10 * (y_hi - y_lo)
-    ax.set_xlim(x_lo - x_pad, x_hi + x_pad)
-    ax.set_ylim(y_lo - y_pad, y_hi + y_pad)
+        # Axis range, wide enough to hold the data, t*, and both projections.
+        proj_x = [t_proj[0] for _, (_, t_proj) in constraints.values()]
+        proj_y = [t_proj[1] for _, (_, t_proj) in constraints.values()]
+        x_lo = min(t1.min(), ci_x.min(), t_star[0], *proj_x)
+        x_hi = max(t1.max(), ci_x.max(), t_star[0], *proj_x)
+        y_lo = min(t2.min(), ci_y.min(), t_star[1], *proj_y)
+        y_hi = max(t2.max(), ci_y.max(), t_star[1], *proj_y)
+        x_pad = 0.10 * (x_hi - x_lo)
+        y_pad = 0.10 * (y_hi - y_lo)
+        ax.set_xlim(x_lo - x_pad, x_hi + x_pad)
+        ax.set_ylim(y_lo - y_pad, y_hi + y_pad)
 
-    # Constraint lines: { (t1, t2) : p_h[0]*t1 + p_h[1]*t2 = z_h }.
-    line_x = np.array([x_lo - x_pad, x_hi + x_pad])
-    for hardness, (color, (z_h, t_proj)) in constraints.items():
-        line_y = (z_h - p_h[0] * line_x) / p_h[1]
-        ax.plot(line_x, line_y, color=color, linewidth=1.8)
-        # Label the line on its open left end.
-        ax.annotate(f"Hardness = {hardness}",
-                    (line_x[0], line_y[0]), textcoords="offset points",
-                    xytext=(8, 6), ha="left", fontsize=9, color=color)
-        # Projection arrow from t* to the constrained score.
-        ax.annotate("", xy=tuple(t_proj), xytext=tuple(t_star),
-                    arrowprops=dict(arrowstyle="->", color=color,
-                                    linewidth=1.6, shrinkA=0, shrinkB=0))
-        ax.plot(*t_proj, "o", color=color, markersize=10,
-                markeredgecolor="white", markeredgewidth=1.0, zorder=5)
-        ax.annotate(f"  ({t_proj[0]:.2f}, {t_proj[1]:.2f})", tuple(t_proj),
-                    textcoords="offset points", xytext=(8, -4),
-                    fontsize=8, color=color)
+        # Constraint lines: { (t1, t2) : p_h[0]*t1 + p_h[1]*t2 = z_h }.
+        line_x = np.array([x_lo - x_pad, x_hi + x_pad])
+        for hardness, (color, (z_h, t_proj)) in constraints.items():
+            line_y = (z_h - p_h[0] * line_x) / p_h[1]
+            ax.plot(line_x, line_y, color=color, linewidth=1.8)
+            # Label the line on its open left end.
+            ax.annotate(f"Hardness = {hardness}",
+                        (line_x[0], line_y[0]), textcoords="offset points",
+                        xytext=(8, 6), ha="left", color=color)
+            # Projection arrow from t* to the constrained score.
+            ax.annotate("", xy=tuple(t_proj), xytext=tuple(t_star),
+                        arrowprops=dict(arrowstyle="->", color=color,
+                                        linewidth=1.6, shrinkA=0, shrinkB=0))
+            ax.plot(*t_proj, "o", color=color, markersize=10,
+                    markeredgecolor="white", markeredgewidth=1.0, zorder=5)
+            offset, ha, va = label_offset[hardness]
+            ax.annotate(f"({t_proj[0]:.2f}, {t_proj[1]:.2f})", tuple(t_proj),
+                        textcoords="offset points", xytext=offset, ha=ha, va=va, color=color)
 
-    # The target score t*.
-    ax.plot(*t_star, "*", color="black", markersize=15, zorder=6,
-            label="Target $t^*$")
-    ax.annotate("$t^* = (2,\\ -1)$", tuple(t_star), textcoords="offset points",
-                xytext=(10, 8), fontsize=10)
+        # The target score t*.
+        ax.plot(*t_star, "*", color="black", markersize=15, zorder=6,
+                label="Target $t^*$")
+        ax.annotate("$t^* = (2,\\ -1)$", tuple(t_star), textcoords="offset points",
+                    xytext=(12, 6), ha="left", va="bottom", fontsize=14)
 
-    ax.set_xlabel("$t_1$")
-    ax.set_ylabel("$t_2$")
-    ax.set_title("Constrained inversion: target projected onto Hardness lines")
-    ax.set_aspect("equal", adjustable="box")
-    ax.legend(loc="lower right", fontsize=9)
-    ax.grid(True, alpha=0.3)
+        ax.set_xlabel(f"$t_1$ [{pct1:.1f}%]")
+        ax.set_ylabel(f"$t_2$ [{pct2:.1f}%]")
+        ax.set_title("Constrained inversion: target projected onto Hardness lines")
+        ax.set_aspect("equal", adjustable="box")
+        ax.legend(loc="lower right")
+        ax.grid(True, alpha=0.3)
 
-    fig.tight_layout()
-    fig.savefig(out, dpi=140)
-    plt.close(fig)
-
+        fig.savefig(out, dpi=140, bbox_inches="tight")
+        plt.close(fig)
 
 def main() -> None:
     food = pd.read_csv(DATA_FILE)
@@ -230,7 +239,7 @@ def main() -> None:
     print("[1/3] SPE figure done")
 
     t2 = model.hotellings_t2_.iloc[:, -1]
-    t2_limit = float(model.hotellings_t2_limit(conf_level=CONF_LEVEL))
+    t2_limit = float(model.hotellings_t2_limit(conf_level=CONF_LEVEL, judged_rows="fitted"))
     print(f"95% T^2 limit: {t2_limit:.3f}")
     figure_t2(t2, t2_limit,
               FIGURES_DIR / "pca-on-food-texture-model-inversion-t2.png")

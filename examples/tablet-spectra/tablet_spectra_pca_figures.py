@@ -20,8 +20,11 @@ here reads ``tablet-spectra.csv`` from openmv.net, with the committed
 
 The model is a PCA by singular value decomposition on the autoscaled data,
 which is what ``prcomp(spectra, scale=TRUE)`` did. The T-squared limits are
-computed from the F-distribution rather than pasted in as the constants
-7.90771 and 11.5244 the R script carried.
+computed rather than pasted in as the constants 7.90771 and 11.5244 the R
+script carried. The 460 tablets are the observations the model was fitted to,
+so the limits are those for fitted rows: the beta limits that
+``process_improve``'s ``hotellings_t2_limit`` gives with ``judged_rows="fitted"``,
+7.774 and 11.24, which the book's Hotelling's T-squared section explains.
 
 Following the original, SPE here is the residual *distance* (the square
 root of the sum of the squared residuals of a row), not the sum of squares.
@@ -33,9 +36,11 @@ Defects in the originals corrected here:
   what one and two components explain together. The legend now says so.
 - The two T-squared limits were hard-coded constants (7.90771 and
   11.5244) with no derivation, and would silently become wrong if the
-  number of components or tablets changed. They are computed from the
-  F-distribution, reproducing those two values, and printed when this
-  script runs.
+  number of components or tablets changed. They are computed, and printed
+  when this script runs. Those two constants were the limit
+  A(N-1)/(N-A) times the F value, which treats the model's centre as known;
+  the tablets are drawn against the beta limit for the observations used
+  to build the model instead.
 - The score plot's ellipses were drawn dotted in red and green, a pairing
   that is hard to tell apart for a colourblind reader; they are now
   distinguished by colour and dash pattern from a colourblind-safe pair.
@@ -61,7 +66,6 @@ mpl.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scipy.stats
 from process_improve.multivariate.methods import hotellings_t2_limit, spe_calculation
 
 BLUE = "#0072B2"
@@ -185,26 +189,14 @@ def spe_per_tablet(spe: dict, outdir: pathlib.Path) -> None:
 def t2_limit(n_rows: int, n_components: int, confidence: float) -> float:
     """Hotelling's T-squared limit for observations used to build the model.
 
-    Rows that the model was fitted on use A(N-1)/(N-A) times the F value;
-    a future observation, not in the fit, uses A(N^2-1)/(N(N-A)) instead.
-    These 460 tablets are the fitting set, so the first form applies.
-
-    ``process_improve``'s ``hotellings_t2_limit`` gives only the second form,
-    which is this one times (N+1)/N. That fixed ratio is checked against the
-    library on every run, so a change to how the library computes the limit
-    fails here instead of leaving this figure on the old formula.
+    These 460 tablets are the fitting set, so the limit is the one for fitted
+    rows: ``(N-1)^2/N`` times the beta percentile, which is what
+    ``process_improve``'s ``hotellings_t2_limit`` gives with
+    ``judged_rows="fitted"``. A future observation, not in the fit, would use
+    the wider F limit, ``judged_rows="new"``.
     """
-    limit = float(
-        n_components * (n_rows - 1) / (n_rows - n_components)
-        * scipy.stats.f.ppf(confidence, n_components, n_rows - n_components)
-    )
-    future = hotellings_t2_limit(conf_level=confidence, n_components=n_components, n_rows=n_rows)
-    if not np.isclose(future, limit * (n_rows + 1) / n_rows, rtol=1e-9):
-        raise ValueError(
-            f"process_improve's T² limit {future:.6f} is no longer {(n_rows + 1) / n_rows:.6f} times "
-            f"this script's {limit:.6f}: the library changed its formula, so update t2_limit here."
-        )
-    return limit
+    return float(hotellings_t2_limit(conf_level=confidence, n_components=n_components,
+                                     n_rows=n_rows, judged_rows="fitted"))
 
 
 def ellipse(spread_i: float, spread_j: float, limit: float) -> np.ndarray:
@@ -215,7 +207,7 @@ def ellipse(spread_i: float, spread_j: float, limit: float) -> np.ndarray:
     ])
 
 
-def score_plot(scores: np.ndarray, spread: np.ndarray, limits: dict,
+def score_plot(scores: np.ndarray, spread: np.ndarray, explained: np.ndarray, limits: dict,
                outdir: pathlib.Path) -> None:
     fig, ax = plt.subplots(figsize=(10, 6.5))
     ax.grid(color=GRID, linewidth=0.8)
@@ -228,10 +220,11 @@ def score_plot(scores: np.ndarray, spread: np.ndarray, limits: dict,
         ax.plot(curve[:, 0], curve[:, 1], style,
                 color=ORANGE if confidence == 0.95 else VERMILLION,
                 linewidth=2, label=f"{100 * confidence:.0f}% limit")
-    ax.set_xlabel("$t_1$")
-    ax.set_ylabel("$t_2$")
+    ax.set_xlabel(f"$t_1$ [{explained[0]:.1%}]")
+    ax.set_ylabel(f"$t_2$ [{explained[1]:.1%}]")
     ax.set_title("Score plot for tablet spectra")
-    ax.legend(frameon=False, loc="upper right")
+    # Lower left: the one corner with no tablet in it.
+    ax.legend(frameon=False, loc="lower left")
     save(fig, outdir, "spectral-data-t1-t2-scoreplot.png")
 
 
@@ -281,7 +274,7 @@ def main(outdir: pathlib.Path) -> None:
     raw_spectra_plot(data, outdir)
     r2_per_wavelength(r2, outdir)
     spe_per_tablet(spe, outdir)
-    score_plot(scores, spread, limits, outdir)
+    score_plot(scores, spread, explained, limits, outdir)
     t2_line_plot(t2, limits, outdir)
 
 

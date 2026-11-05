@@ -154,15 +154,17 @@ def figure_shewhart(phase1, phase2, out: pathlib.Path) -> None:
 
 def figure_score_phase1(model, n_phase1_sub, out: pathlib.Path) -> None:
     scores = model.scores_
-    ci_x, ci_y = model.ellipse_coordinates(score_horiz=1, score_vert=2, conf_level=CONF_LEVEL)
+    # The ellipse encloses the phase-1 subgroups the model was fitted to, so it is drawn for fitted rows.
+    ci_x, ci_y = model.ellipse_coordinates(score_horiz=1, score_vert=2, conf_level=CONF_LEVEL, judged_rows="fitted")
 
     fig, ax = plt.subplots(figsize=(7, 6))
     ax.plot(scores.iloc[:, 0], scores.iloc[:, 1], "k.", markersize=5, alpha=0.8, label="Phase 1 subgroup scores")
     ax.plot(ci_x, ci_y, color="palevioletred", linewidth=1.8, label="95% T^2 ellipse")
     ax.axhline(0, color="grey", linewidth=0.5)
     ax.axvline(0, color="grey", linewidth=0.5)
-    ax.set_xlabel("$t_1$")
-    ax.set_ylabel("$t_2$")
+    r2 = model.r2_per_component_
+    ax.set_xlabel(f"$t_1$ [{r2.iloc[0]:.1%}]")
+    ax.set_ylabel(f"$t_2$ [{r2.iloc[1]:.1%}]")
     ax.set_title(f"Phase-1 score plot ({n_phase1_sub} subgroups)")
     ax.set_aspect("equal", adjustable="datalim")
     ax.legend(loc="upper right", fontsize=9)
@@ -304,9 +306,10 @@ def main() -> None:
 
     p2_scaled = scaler.transform(p2_sub)
     result = model.diagnose(p2_scaled)
-    t2 = result.hotellings_t2.iloc[:, -1]
+    t2 = result.cumulative_hotellings_t2.iloc[:, -1]
     spe = result.spe
-    t2_lim = float(model.hotellings_t2_limit(conf_level=CONF_LEVEL))
+    # Phase-2 subgroups are new rows to the model, so their T2 limit is the one for new rows.
+    t2_lim = float(model.hotellings_t2_limit(conf_level=CONF_LEVEL, judged_rows="new"))
     spe_lim = float(model.spe_limit(conf_level=CONF_LEVEL))
     print(f"95% T^2 limit: {t2_lim:.2f}   95% SPE limit: {spe_lim:.2f}")
 

@@ -105,10 +105,12 @@ pls_full = PLS(n_components=3, scale=True).fit(X_int, curves)
 g = goal_projection(pls_full, design_info)
 t2_run = pls_full.hotellings_t2_.iloc[:, -1].to_numpy()
 spe_run = pls_full.spe_.iloc[:, -1].to_numpy()
-print(f"  limits: T2_95={g['t2_limit']:.1f}  SPE_95={g['spe_limit']:.1f}")
+# The runs are the rows the model was fitted to; the goal is a new row, with the wider T2 limit.
+t2_lim_runs = float(pls_full.hotellings_t2_limit(0.95, judged_rows="fitted"))
+print(f"  limits: T2_95 runs={t2_lim_runs:.1f} new row={g['t2_limit']:.1f}  SPE_95={g['spe_limit']:.1f}")
 print(f"  goal (A at centre): SPE={g['spe']:.2f}  T2={g['t2']:.3f}  "
       f"(inside: {g['spe'] < g['spe_limit'] and g['t2'] < g['t2_limit']})")
-print(f"  runs over T2: {int((t2_run > g['t2_limit']).sum())}  over SPE: {int((spe_run > g['spe_limit']).sum())}  "
+print(f"  runs over T2: {int((t2_run > t2_lim_runs).sum())}  over SPE: {int((spe_run > g['spe_limit']).sum())}  "
       f"max T2={t2_run.max():.1f}")
 tab = invert_to_factors(pls_full, design_info, g["score"])
 for cmp_ in ["B", "C", "D", "E", "F"]:
@@ -178,11 +180,12 @@ def diag_row(cmp_, cd):
 
 def t2spe(cmp_, cd):
     d = quiet(lambda: pls_full.diagnose(diag_row(cmp_, cd)))
-    return float(d.hotellings_t2.iloc[0]), float(d.spe.iloc[0])
+    return float(d.cumulative_hotellings_t2.iloc[0, -1]), float(d.spe.iloc[0])
 
 
 y_goal = curve_of("A", [0, 0, 0, 0])
-t2_lim, spe_lim = float(pls_full.hotellings_t2_limit()), float(pls_full.spe_limit())
+# an inverted point is a new row, so it is held below the T2 limit for new rows
+t2_lim, spe_lim = float(pls_full.hotellings_t2_limit(judged_rows="new")), float(pls_full.spe_limit())
 for cmp_ in ["B", "C", "D", "E", "F"]:
     obj = lambda cd, _c=cmp_: float(np.sum((y_goal - curve_of(_c, cd)) ** 2))  # noqa: E731
     cons = [{"type": "ineq", "fun": lambda cd, _c=cmp_: t2_lim - t2spe(_c, cd)[0]},

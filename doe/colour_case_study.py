@@ -366,7 +366,8 @@ def goal_projection(pls, design_info) -> dict:
     """Project chromogen A at the centre point (all continuous at coded 0) onto the fitted PLS.
 
     Returns the goal score, its SPE and Hotelling's T2, and the 95% limits, so the caller can
-    confirm the goal sits inside the model before using the prediction as an inversion target.
+    confirm the goal sits inside the model before using the prediction as an inversion target. The
+    goal is a new row to the model, so its T2 limit is the one for new rows (``judged_rows="new"``).
     """
     goal_x = encode_row(design_info, "A", [0.0, 0.0, 0.0, 0.0])
     p = project_point(pls, goal_x)
@@ -375,7 +376,7 @@ def goal_projection(pls, design_info) -> dict:
         "spe": p["spe"],
         "t2": p["t2"],
         "spe_limit": float(pls.spe_limit(0.95)),
-        "t2_limit": float(pls.hotellings_t2_limit(0.95)),
+        "t2_limit": float(pls.hotellings_t2_limit(0.95, judged_rows="new")),
     }
 
 
