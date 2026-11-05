@@ -6,7 +6,9 @@ per-run Hotelling's T2 (leverage inside the model plane) depends on the coding. 
 coding the omitted level is carried as the negative sum of the other contrasts, the corner of the
 contrast space farthest from the centre, so its runs read as high leverage; change which level is
 omitted and the flag moves with it. Treatment (reference) and cell-means coding place no level at
-that corner, so the omitted-level flags disappear and no run passes the 95% T2 limit. Each panel
+that corner, so the omitted-level flags disappear: three and two runs pass the 95% T2 limit, none by
+much, which is what that limit allows among sixty. The limit is the one for the runs the model was
+fitted to (``judged_rows="fitted"``). Each panel
 title gives the limit and the runs over it, so no label sits on the points. Regenerates ``colour-coding-diagnostics.png``.
 """
 
@@ -39,7 +41,7 @@ for ax, (title, coding, order) in zip(axes.ravel(), panels):
     with contextlib.redirect_stderr(io.StringIO()):
         pls, _ = fit_coding(design, curves, coding, order=order)
     t2 = pls.hotellings_t2_.iloc[:, -1].to_numpy()
-    t2lim = float(pls.hotellings_t2_limit(0.95))
+    t2lim = float(pls.hotellings_t2_limit(0.95, judged_rows="fitted"))  # the runs the model was fitted to
     for c in COMPOUND_LEVELS:
         m = compound == c
         jit = rng.uniform(-0.18, 0.18, m.sum())

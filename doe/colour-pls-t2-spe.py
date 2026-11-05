@@ -2,7 +2,8 @@
 
 Each of the sixty runs is placed by its Hotelling's T2 (distance inside the model plane) and its
 SPE (distance to the model plane). The vertical and horizontal dashed lines are the 95% limits from
-``hotellings_t2_limit`` and ``spe_limit``; a run in the lower-left rectangle is within both. The
+``hotellings_t2_limit`` and ``spe_limit``, the T2 limit being the one for the runs the model was
+fitted to (``judged_rows="fitted"``); a run in the lower-left rectangle is within both. The
 reference goal (chromogen A at the centre point, projected onto the model) is drawn as an asterisk
 and sits well inside both limits, so the model's prediction can be trusted at that point.
 
@@ -33,7 +34,7 @@ with contextlib.redirect_stderr(io.StringIO()):
 
 t2 = pls.hotellings_t2_.iloc[:, -1].to_numpy()      # per-run T2 at 3 components (correct)
 spe = pls.spe_.iloc[:, -1].to_numpy()               # per-run SPE at 3 components (correct)
-t2_lim = float(pls.hotellings_t2_limit(0.95))
+t2_lim = float(pls.hotellings_t2_limit(0.95, judged_rows="fitted"))  # the runs the model was fitted to
 spe_lim = float(pls.spe_limit(0.95))
 goal = goal_projection(pls, design_info)
 

@@ -46,7 +46,8 @@ def main():
         t2 = pls.hotellings_t2_.iloc[:, -1].to_numpy()
         spe = pls.spe_.iloc[:, -1].to_numpy()
         r2 = float(np.asarray(pls.r2_cumulative_).ravel()[-1])
-        t2lim, spelim = float(pls.hotellings_t2_limit()), float(pls.spe_limit())
+        # the runs are the rows each model was fitted to
+        t2lim, spelim = float(pls.hotellings_t2_limit(judged_rows="fitted")), float(pls.spe_limit())
         per = {c: round(float(t2[compound == c].max()), 1) for c in COMPOUND_LEVELS}
         overs = int((t2 > t2lim).sum())
         oversp = int((spe > spelim).sum())
