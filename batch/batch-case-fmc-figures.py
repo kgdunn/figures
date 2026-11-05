@@ -217,7 +217,8 @@ def main(out_dir: pathlib.Path) -> None:
     squared = pca_x.spe_contributions(x_scaled) ** 2  # NaN only at the missing cells; the rest from the observed cells
     fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), gridspec_kw={"width_ratios": [1, 1.1]})
     score_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE}, labels=[OPERATING_OUTLIER, *QUALITY_GROUP], title="Batch PCA on the trajectories: scores", legend_loc="upper left", ax=axes[0], **coded)
-    influence_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE}, labels=[OPERATING_OUTLIER, 41, 51], title="Batch PCA: Hotelling's $T^2$ against SPE", legend_loc="center right", ax=axes[1], **coded)
+    # 41 and 51 are above the SPE limit alone, 10 and 60 above the T2 limit for fitted batches alone: the text names all four.
+    influence_plot(pca_x, highlight={OPERATING_OUTLIER: ORANGE}, labels=[OPERATING_OUTLIER, 10, 41, 51, 60], title="Batch PCA: Hotelling's $T^2$ against SPE", legend_loc="center right", ax=axes[1], **coded)
     fig.tight_layout()
     save(fig, out_dir, "batch-case-fmc-batch-pca")
 
