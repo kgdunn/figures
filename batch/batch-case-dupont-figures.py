@@ -177,8 +177,18 @@ def main(out_dir: pathlib.Path) -> None:
     # its label goes up into the empty band on a leader, the other three place themselves.
     influence_plot(model_c, highlight={b: POOR_QUALITY_COLOUR for b in POOR_QUALITY_NOT_VISIBLE},
                    highlight_marker=POOR_QUALITY_MARKER, labels=POOR_QUALITY_NOT_VISIBLE,
-                   label_leader={38: (4, 30)},
+                   label_leader={38: (4, 30)}, label_t2_limit=False,
                    title="Model C and the 15 batches left out of it", ax=axes[1])
+    # The dashed T2 limit is for model C's own 40 batches. The 15 projected batches are new rows to the
+    # model, judged by the wider limit for new rows, drawn dotted beside it.
+    # Each label runs up its own line, on the side away from the other, in the empty band above the cloud.
+    t2_limit_fitted = float(model_c.hotellings_t2_limit(conf_level=0.95, judged_rows="fitted"))
+    t2_limit_new = float(model_c.hotellings_t2_limit(conf_level=0.95, judged_rows="new"))
+    axes[1].axvline(t2_limit_new, color=GREY, ls=":", lw=1.2)
+    for limit, text, side in ((t2_limit_fitted, "95% limit, model C's batches", "right"),
+                              (t2_limit_new, "95% limit, new batches", "left")):
+        axes[1].text(limit, 0.5, text, transform=axes[1].get_xaxis_transform(), rotation=90,
+                     va="bottom", ha=side, fontsize=8, color=GREY)
     for label, (ids, colour, marker) in left_out.items():
         axes[1].scatter([float(projected[b].hotellings_t2) for b in ids], [float(projected[b].spe) for b in ids],
                         s=40 if marker == "o" else 52, color=colour, marker=marker,
