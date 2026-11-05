@@ -180,7 +180,7 @@ def diag_row(cmp_, cd):
 
 def t2spe(cmp_, cd):
     d = quiet(lambda: pls_full.diagnose(diag_row(cmp_, cd)))
-    return float(d.hotellings_t2.iloc[0]), float(d.spe.iloc[0])
+    return float(d.cumulative_hotellings_t2.iloc[0, -1]), float(d.spe.iloc[0])
 
 
 y_goal = curve_of("A", [0, 0, 0, 0])
