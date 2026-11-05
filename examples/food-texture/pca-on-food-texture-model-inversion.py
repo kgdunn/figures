@@ -17,7 +17,8 @@ are:
      constraint lines in the (t_1, t_2) score plane.
 
 Headline numbers: R^2 cumulative = [0.606, 0.865]; SPE 95% limit = 1.383;
-T^2 95% limit = 6.645. Constrained inversion: Hardness loadings
+T^2 95% limit = 5.747, the limit for the pastries the model was fitted to
+(``judged_rows="fitted"``; the F limit for a new pastry would be 6.645). Constrained inversion: Hardness loadings
 p_h = [0.153, 0.805]; target t* = (2, -1); Hardness 110 projects to
 (1.980, -1.103) and Hardness 150 projects to (2.274, 0.438).
 
@@ -87,8 +88,9 @@ def figure_scores_and_loadings(model: PCA, out: pathlib.Path) -> None:
     """Score plot (with 95% T^2 ellipse) and loadings plot, side by side."""
     scores = model.scores_
     loadings = model.loadings_
+    # The ellipse encloses the pastries the model was fitted to, so it is drawn for fitted rows.
     ci_x, ci_y = model.ellipse_coordinates(score_horiz=1, score_vert=2,
-                                           conf_level=CONF_LEVEL)
+                                           conf_level=CONF_LEVEL, judged_rows="fitted")
     r2 = model.r2_cumulative_.values
     pct1 = 100 * r2[0]
     pct2 = 100 * (r2[1] - r2[0])
@@ -141,8 +143,9 @@ def figure_constraint_projection(model: PCA, scaler: MCUVScaler,
     scores = model.scores_
     t1 = scores.iloc[:, 0].to_numpy()
     t2 = scores.iloc[:, 1].to_numpy()
+    # The same ellipse as the score plot's, drawn around the pastries the model was fitted to.
     ci_x, ci_y = model.ellipse_coordinates(score_horiz=1, score_vert=2,
-                                           conf_level=CONF_LEVEL)
+                                           conf_level=CONF_LEVEL, judged_rows="fitted")
     p_h = model.loadings_.loc["Hardness"].to_numpy()
     t_star = np.array([2.0, -1.0])
 
@@ -230,7 +233,7 @@ def main() -> None:
     print("[1/3] SPE figure done")
 
     t2 = model.hotellings_t2_.iloc[:, -1]
-    t2_limit = float(model.hotellings_t2_limit(conf_level=CONF_LEVEL))
+    t2_limit = float(model.hotellings_t2_limit(conf_level=CONF_LEVEL, judged_rows="fitted"))
     print(f"95% T^2 limit: {t2_limit:.3f}")
     figure_t2(t2, t2_limit,
               FIGURES_DIR / "pca-on-food-texture-model-inversion-t2.png")
