@@ -35,7 +35,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
-from matplotlib.patches import FancyArrowPatch, FancyBboxPatch, Polygon
+from matplotlib.patches import FancyBboxPatch, Polygon
 
 FOUNDATION, ROOF = "data-visualization", "product-development-product-improvement"
 # Card per chapter, in reading order (this sets the numbers): title, what is inside, and the
@@ -165,7 +165,7 @@ def draw_card(ax: plt.Axes, number: int, chapter: str, centre: tuple, slab: bool
 def plot_building(links: collections.Counter) -> plt.Figure:
     """Draw the slabs, the floors and the ribbons between them."""
     plt.rcParams["font.family"] = ["Inter", "DejaVu Sans"]
-    fig, ax = plt.subplots(figsize=(10.8, 7.0))
+    fig, ax = plt.subplots(figsize=(10.0, 7.0))
     for pair, n in links.items():
         if n < MIN_LINKS or FOUNDATION in pair:  # the foundation sits under everything: no ribbons needed
             continue
@@ -176,19 +176,7 @@ def plot_building(links: collections.Counter) -> plt.Figure:
         draw_ribbon(ax, start, end, width=0.045 * n**0.5, handles=HANDLES.get(pair, (0.5, 0.5)))
     for number, (chapter, (_, _, centre)) in enumerate(CHAPTERS.items(), start=1):
         draw_card(ax, number, chapter, centre, slab=chapter in (FOUNDATION, ROOF))
-    grey = "#8a8f98"  # readable on the light and the dark page alike
-    ax.add_patch(FancyArrowPatch((10.25, 1.1), (10.25, 5.8), arrowstyle="-|>", mutation_scale=14, color=grey, lw=1.2))
-    ax.text(
-        10.45,
-        3.45,
-        "Each chapter builds on those below it",
-        rotation=90,
-        ha="center",
-        va="center",
-        fontsize=9,
-        color=grey,
-    )
-    ax.set_xlim(0, 10.8)
+    ax.set_xlim(0, 10.0)
     ax.set_ylim(0, 6.9)
     ax.axis("off")
     fig.subplots_adjust(0, 0, 1, 1)
