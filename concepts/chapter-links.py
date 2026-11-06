@@ -28,7 +28,6 @@ Usage
 """
 
 import collections
-import itertools
 import pathlib
 import re
 import sys
@@ -62,9 +61,9 @@ CHAPTERS = {
     ),
 }
 MIN_LINKS = 5
-# A ribbon that would pass behind a card it does not belong to goes through a waypoint instead:
+# A ribbon that would pass behind a card it does not belong to rises steeply and turns late instead:
 # univariate to experiments climbs the gap left of the least squares card.
-WAYPOINTS = {frozenset(("univariate-review", "design-analysis-experiments")): [(5.9, 3.35)]}
+HANDLES = {frozenset(("univariate-review", "design-analysis-experiments")): (0.8, 0.2)}
 CARD_W, CARD_H, SLAB_X = 3.0, 0.78, (0.2, 9.8)
 LABEL_RE = re.compile(r"^\.\. _([^:]+):\s*$", re.MULTILINE)
 REF_RE = re.compile(r":ref:`(?:[^`<]*<)?([^`<>]+)>?`")
@@ -94,15 +93,18 @@ def colour_at(y: float) -> tuple:
     return CMAP((y - Y_RANGE[0]) / (Y_RANGE[1] - Y_RANGE[0]))
 
 
-def draw_ribbon(ax: plt.Axes, points: list[tuple], width: float) -> None:
-    """Draw a ribbon through ``points``, one cubic Bezier per step, each leaving and arriving vertically."""
+def draw_ribbon(ax: plt.Axes, start: tuple, end: tuple, width: float, handles: tuple = (0.5, 0.5)) -> None:
+    """Draw a cubic Bezier ribbon that leaves and arrives vertically, shaded by height.
+
+    ``handles`` sets how far each end's Bezier handle reaches, as a fraction of the rise. The default
+    gives a symmetric S; a long first handle and a short last one rise steeply and turn late.
+    """
+    (x0, y0), (x1, y1) = start, end
+    rise = y1 - y0
+    ctrl = np.array([(x0, y0), (x0, y0 + handles[0] * rise), (x1, y1 - handles[1] * rise), (x1, y1)])
     t = np.linspace(0, 1, 80)[:, None]
     weights = np.hstack([(1 - t) ** 3, 3 * t * (1 - t) ** 2, 3 * t**2 * (1 - t), t**3])
-    steps = [
-        weights @ np.array([(x0, y0), (x0, (y0 + y1) / 2), (x1, (y0 + y1) / 2), (x1, y1)])
-        for (x0, y0), (x1, y1) in itertools.pairwise(points)
-    ]
-    centre = np.vstack([steps[0], *(step[1:] for step in steps[1:])])  # drop the repeated joining points
+    centre = weights @ ctrl
     tangent = np.gradient(centre, axis=0)
     normal = np.c_[-tangent[:, 1], tangent[:, 0]] / np.linalg.norm(tangent, axis=1)[:, None]
     outline = np.vstack([centre + normal * width / 2, (centre - normal * width / 2)[::-1]])
@@ -171,7 +173,7 @@ def plot_building(links: collections.Counter) -> plt.Figure:
         start, end = CHAPTERS[low][2], CHAPTERS[high][2]
         if high == ROOF:  # rise straight up into the roof slab
             end = (start[0], end[1])
-        draw_ribbon(ax, [start, *WAYPOINTS.get(pair, []), end], width=0.045 * n**0.5)
+        draw_ribbon(ax, start, end, width=0.045 * n**0.5, handles=HANDLES.get(pair, (0.5, 0.5)))
     for number, (chapter, (_, _, centre)) in enumerate(CHAPTERS.items(), start=1):
         draw_card(ax, number, chapter, centre, slab=chapter in (FOUNDATION, ROOF))
     grey = "#8a8f98"  # readable on the light and the dark page alike
