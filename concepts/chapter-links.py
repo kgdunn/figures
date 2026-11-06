@@ -1,13 +1,15 @@
-"""How the chapters of the PID book refer to each other, drawn as an arc diagram.
+"""How the chapters of the PID book build on one another, drawn as a building.
 
-The figure is measured, not drawn by hand: every ``:ref:`` in a chapter that
-points at a label defined in a different chapter is one link. The chapters sit
-on a line in reading order. Arcs above the line point back to an earlier
-chapter (the material a chapter builds on); arcs below point ahead to a later
-chapter. Line width grows with the square root of the number of links, which is printed
-on each arc.
+Chapter 1 (visualization) is used everywhere, so it is the foundation slab under
+the whole figure. The applications chapter draws on the methods before it, so it
+is the roof. The method chapters are the floors in between, each sitting above the
+chapters it needs.
 
-Re-run it after a content change and the figure follows the book.
+The ribbons are measured, not drawn by hand: every ``:ref:`` in one chapter that
+points at a label in another counts once, in either direction, and a ribbon is
+drawn for each pair of chapters with at least ``MIN_LINKS`` of them. Its width
+grows with the square root of that count. Re-run the script after a content
+change and the ribbons follow the book; only the placement of the cards is fixed.
 
 Usage
 -----
@@ -24,32 +26,34 @@ import re
 import sys
 
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrowPatch
+import numpy as np
+from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.patches import FancyArrowPatch, FancyBboxPatch, Polygon
 
-# Short names for the chapter folders, in reading order (contents.rst decides the order).
-SHORT_NAMES = {
-    "data-visualization": "Visualization",
-    "univariate-review": "Univariate\nstatistics",
-    "process-monitoring": "Process\nmonitoring",
-    "least-squares-modelling": "Least\nsquares",
-    "design-analysis-experiments": "Designed\nexperiments",
-    "latent-variable-modelling": "Latent\nvariables",
-    "product-development-product-improvement": "Product\ndevelopment",
+FOUNDATION, ROOF = "data-visualization", "product-development-product-improvement"
+# Card per chapter, in reading order (it sets the numbers): title, one line on what is inside, and the centre (x, y) of the card.
+# The slabs (foundation and roof) span the full width, so only their height matters.
+CHAPTERS = {
+    FOUNDATION: ("Visualizing process data", "Plots and tables, used in every chapter", (5.0, 0.55)),
+    "univariate-review": ("Univariate data analysis", "Variability and confidence intervals", (4.4, 1.95)),
+    "process-monitoring": ("Process monitoring", "Shewhart, CUSUM and EWMA charts", (2.0, 3.35)),
+    "least-squares-modelling": ("Least squares modelling", "Regression, residuals, outliers", (8.0, 3.35)),
+    "design-analysis-experiments": ("Design of experiments", "Factorials and response surfaces", (8.0, 4.75)),
+    "latent-variable-modelling": ("Latent variable modelling", "PCA and PLS", (4.6, 4.75)),
+    ROOF: ("Applications", "Troubleshooting, soft sensors, batch monitoring", (5.0, 6.35)),
 }
+MIN_LINKS = 5
+CARD_W, CARD_H, SLAB_X = 3.0, 0.78, (0.2, 9.8)
 LABEL_RE = re.compile(r"^\.\. _([^:]+):\s*$", re.MULTILINE)
 REF_RE = re.compile(r":ref:`(?:[^`<]*<)?([^`<>]+)>?`")
-BACK, AHEAD = "#2a6fb0", "#d9822b"
+# Dark and solid at the foundation, lighter towards the applications at the top.
+CMAP = LinearSegmentedColormap.from_list("floors", ["#0b4f5c", "#1f7a99", "#3a6fc4", "#6a4fb8"])
+Y_RANGE = (0.55, 6.35)
 
 
-def read_chapter_order(book_root: pathlib.Path) -> list[str]:
-    """Return the chapter folders in the order of the numbered toctree in ``contents.rst``."""
-    lines = (book_root / "contents.rst").read_text().splitlines()
-    return [ln.strip().removesuffix("/index") for ln in lines if ln.strip().removesuffix("/index") in SHORT_NAMES]
-
-
-def count_links(book_root: pathlib.Path, chapters: list[str]) -> collections.Counter:
-    """Count ``:ref:`` links from each chapter to every other chapter."""
-    texts = {ch: [f.read_text() for f in (book_root / ch).rglob("*.rst")] for ch in chapters}
+def count_links(book_root: pathlib.Path) -> collections.Counter:
+    """Count ``:ref:`` links between each pair of chapters, ignoring direction."""
+    texts = {ch: [f.read_text() for f in (book_root / ch).rglob("*.rst")] for ch in CHAPTERS}
     owner = {lab.lower(): ch for ch, docs in texts.items() for doc in docs for lab in LABEL_RE.findall(doc)}
     links = collections.Counter()
     for ch, docs in texts.items():
@@ -57,41 +61,79 @@ def count_links(book_root: pathlib.Path, chapters: list[str]) -> collections.Cou
             for target in REF_RE.findall(doc):
                 dest = owner.get(target.strip().lower())
                 if dest and dest != ch:
-                    links[ch, dest] += 1
+                    links[frozenset((ch, dest))] += 1
     return links
 
 
-def plot_links(chapters: list[str], links: collections.Counter) -> plt.Figure:
-    """Draw the arc diagram: back-references above the line, forward references below."""
-    pos = {ch: i for i, ch in enumerate(chapters)}
-    fig, ax = plt.subplots(figsize=(10, 5.2))
-    for (src, dest), n in sorted(links.items(), key=lambda kv: kv[1]):  # thick arcs drawn last
-        x0, x1 = pos[src], pos[dest]
-        back = x1 < x0
-        # arc3's control point sits at y = -rad * dx, so rad > 0 sends leftward arrows up, rightward down.
-        rad = 0.55
-        colour = BACK if back else AHEAD
-        ax.add_patch(
-            FancyArrowPatch(
-                (x0, 0), (x1, 0), connectionstyle=f"arc3,rad={rad}", arrowstyle="-|>",
-                mutation_scale=7 + 2 * n**0.5, lw=0.8 * n**0.5, color=colour, alpha=0.75,
-                shrinkA=16, shrinkB=16, zorder=2,
-            )
-        )
-        ax.text((x0 + x1) / 2, -rad * (x1 - x0) / 2, str(n),  # a quadratic bezier peaks at half its control ha="center",
-                va="center", fontsize=7, color=colour, zorder=4,
-                bbox={"boxstyle": "round,pad=0.15", "fc": "white", "ec": "none"})
-    for ch, x in pos.items():
-        ax.scatter(x, 0, s=900, color="white", edgecolor="#333333", lw=1.4, zorder=3)
-        ax.text(x, 0, str(x + 1), ha="center", va="center", fontsize=11, weight="bold", zorder=4)
-        ax.text(x, -1.3, SHORT_NAMES[ch], ha="center", va="top", fontsize=9)
-    ax.text(-0.5, 1.6, "Refers back to an earlier chapter", color=BACK, fontsize=10, weight="bold")
-    ax.text(-0.5, -1.0, "Refers ahead to a later chapter", color=AHEAD, fontsize=10, weight="bold")
-    ax.set_xlim(-0.6, len(chapters) - 0.4)
-    ax.set_ylim(-1.75, 1.75)
-    ax.set_aspect("equal")
+def colour_at(y: float) -> tuple:
+    """Colour of the building at height ``y``."""
+    return CMAP((y - Y_RANGE[0]) / (Y_RANGE[1] - Y_RANGE[0]))
+
+
+def draw_ribbon(ax: plt.Axes, start: tuple, end: tuple, width: float) -> None:
+    """Draw a cubic Bezier ribbon that leaves and arrives vertically, shaded by height."""
+    (x0, y0), (x1, y1) = start, end
+    bend = (y1 - y0) / 2
+    ctrl = np.array([(x0, y0), (x0, y0 + bend), (x1, y1 - bend), (x1, y1)])
+    t = np.linspace(0, 1, 80)[:, None]
+    weights = np.hstack([(1 - t) ** 3, 3 * t * (1 - t) ** 2, 3 * t**2 * (1 - t), t**3])
+    centre = weights @ ctrl
+    tangent = np.gradient(centre, axis=0)
+    normal = np.c_[-tangent[:, 1], tangent[:, 0]] / np.linalg.norm(tangent, axis=1)[:, None]
+    outline = np.vstack([centre + normal * width / 2, (centre - normal * width / 2)[::-1]])
+    patch = Polygon(outline, closed=True, facecolor="none", edgecolor="none")
+    ax.add_patch(patch)
+    # One vertical gradient, clipped to the ribbon, so its colour always matches the floor it passes.
+    image = ax.imshow(np.linspace(0, 1, 256)[:, None], cmap=CMAP, extent=(0, 10, *Y_RANGE), origin="lower",
+                      aspect="auto", alpha=0.42, zorder=1)
+    image.set_clip_path(patch)
+
+
+def draw_card(ax: plt.Axes, chapter_number: int, title: str, subtitle: str, centre: tuple, slab: bool) -> None:
+    """Draw one chapter card: a rounded box with a number badge, the title and a subtitle."""
+    x, y = centre
+    left, width = (SLAB_X[0], SLAB_X[1] - SLAB_X[0]) if slab else (x - CARD_W / 2, CARD_W)
+    style = "round,pad=0,rounding_size=0.14"
+    ax.add_patch(FancyBboxPatch((left + 0.04, y - CARD_H / 2 - 0.05), width, CARD_H, boxstyle=style,
+                                fc="black", ec="none", alpha=0.12, zorder=2))  # soft drop shadow
+    ax.add_patch(FancyBboxPatch((left, y - CARD_H / 2), width, CARD_H, boxstyle=style, fc=colour_at(y), ec="none",
+                                zorder=3))
+    badge_x = left + 0.38
+    ax.scatter(badge_x, y, s=560, color="white", zorder=4)
+    ax.text(badge_x, y, str(chapter_number), ha="center", va="center", fontsize=12, weight="bold",
+            color=colour_at(y), zorder=5)
+    if slab:  # one line on a wide slab: the subtitle follows the title
+        ax.text(badge_x + 0.4, y, title, ha="left", va="center", fontsize=12, weight="bold", color="white", zorder=5)
+        ax.text(9.6, y, subtitle, ha="right", va="center", fontsize=9.5, color="white", alpha=0.88, zorder=5)
+    else:
+        ax.text(badge_x + 0.38, y + 0.13, title, ha="left", va="center", fontsize=10.5, weight="bold", color="white",
+                zorder=5)
+        ax.text(badge_x + 0.38, y - 0.16, subtitle, ha="left", va="center", fontsize=8, color="white", alpha=0.88,
+                zorder=5)
+
+
+def plot_building(links: collections.Counter) -> plt.Figure:
+    """Draw the slabs, the floors and the ribbons between them."""
+    plt.rcParams["font.family"] = ["Inter", "DejaVu Sans"]
+    fig, ax = plt.subplots(figsize=(10.8, 7.0))
+    for pair, n in links.items():
+        if n < MIN_LINKS or FOUNDATION in pair:  # the foundation sits under everything: no ribbons needed
+            continue
+        low, high = sorted(pair, key=lambda ch: CHAPTERS[ch][2][1])
+        start, end = CHAPTERS[low][2], CHAPTERS[high][2]
+        if high == ROOF:  # rise straight up into the roof slab
+            end = (start[0], end[1])
+        draw_ribbon(ax, start, end, width=0.045 * n**0.5)
+    for number, (chapter, (title, subtitle, centre)) in enumerate(CHAPTERS.items(), start=1):
+        draw_card(ax, number, title, subtitle, centre, slab=chapter in (FOUNDATION, ROOF))
+    ax.add_patch(FancyArrowPatch((10.25, 1.1), (10.25, 5.8), arrowstyle="-|>", mutation_scale=14, color="#8a8f98",
+                                 lw=1.2))
+    ax.text(10.45, 3.45, "Each chapter builds on those below it", rotation=90, ha="center", va="center",
+            fontsize=9, color="#6b7079")
+    ax.set_xlim(0, 10.8)
+    ax.set_ylim(0, 6.9)
     ax.axis("off")
-    fig.tight_layout()
+    fig.subplots_adjust(0, 0, 1, 1)
     return fig
 
 
@@ -100,10 +142,10 @@ def main() -> None:
     here = pathlib.Path(__file__).absolute()  # absolute, not resolve: keep the book's figures/ symlink
     book_root = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else here.parents[2]
     out = pathlib.Path(sys.argv[2]) if len(sys.argv) > 2 else here.with_suffix(".png")
-    chapters = read_chapter_order(book_root)
-    links = count_links(book_root, chapters)
-    plot_links(chapters, links).savefig(out, dpi=200)
-    print(f"{sum(links.values())} cross-chapter links over {len(links)} chapter pairs -> {out}")
+    links = count_links(book_root)
+    plot_building(links).savefig(out, dpi=200, facecolor="white")
+    drawn = sum(1 for pair, n in links.items() if n >= MIN_LINKS and FOUNDATION not in pair)
+    print(f"{sum(links.values())} cross-chapter links; {drawn} ribbons drawn -> {out}")
 
 
 if __name__ == "__main__":
